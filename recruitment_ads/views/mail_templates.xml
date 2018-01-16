@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+         <template id="assets_backend" name="a_js assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/recruitment_ads/static/src/js/activity.js"></script>
+            </xpath>
+        </template>
+
+
+        <template id="callresult" inherit_id="mail.message_activity_done">
+            <xpath expr="//div[@t-field='activity.note']" position="after">
+                <div t-if="activity.call_result_id" style="margin-top: 8px;">
+                    <strong> Call result</strong>
+                    <div t-field="activity.call_result_id" style="margin-left: 8px;"></div>
+                </div>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

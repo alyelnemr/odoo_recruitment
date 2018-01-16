@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+     <t t-extend="mail.activity_feedback_form">
+
+           <t t-jquery="div" t-operation="replace">
+
+                <div>
+
+                     <select t-if="previous_activity_type_id == 2" type="text" name="delivery_time" class="form-control o_required" rows="3" id="activity_call_result" placeholder="Call Result">
+                        <option value=""></option>
+                        <option value="Interested">Interested</option>
+                        <option value="Not interested">Not interested</option>
+                        <option value="Invited">Invited</option>
+                        <option value="No Reply">No Reply</option>
+                        <option value="Wrong Number">Wrong Number</option>
+                        <option value="Confirmation">Confirmation</option>
+                        <option value="Not Qualified">Not Qualified</option>
+                        <option value="Over Scale">Over Scale</option>
+                        <option value="Another Number">Another Number</option>
+                    </select>
+                    <hr></hr>
+
+                    <!--textarea class="form-control" rows="3" id="activity_call_result" placeholder="Call Result"/-->
+                    <textarea class="form-control" rows="3" id="activity_feedback" placeholder="Write Feedback"/>
+                    <div class="mt8">
+                        <button type="button" class="btn btn-xs btn-primary o_activity_popover_done_next" t-att-data-previous-activity-type-id="previous_activity_type_id">
+                            Done &amp; Schedule Next</button>
+                        <button type="button" class="btn btn-xs btn-primary o_activity_popover_done">
+                            Done</button>
+                        <button type="button" class="btn btn-xs btn-link o_activity_popover_discard">
+                            Discard</button>
+                    </div>
+                </div>
+
+
+
+          </t>
+     </t>
+</templates>

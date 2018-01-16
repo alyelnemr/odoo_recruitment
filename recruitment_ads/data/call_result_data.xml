@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- Call Result Data -->
+        <record id="mail_call_result_interested" model="call.result">
+            <field name="name">Interested</field>
+        </record>
+
+         <record id="mail_call_result_not_interested" model="call.result">
+            <field name="name">Not interested</field>
+        </record>
+
+        <record id="mail_call_result_invited" model="call.result">
+            <field name="name">Invited</field>
+        </record>
+
+
+        <record id="mail_call_result_no_reply" model="call.result">
+            <field name="name">No Reply</field>
+        </record>
+
+        <record id="mail_call_result_wrong_number" model="call.result">
+            <field name="name"> Wrong Number</field>
+        </record>
+
+
+        <record id="mail_call_result_confirmation" model="call.result">
+            <field name="name"> Confirmation </field>
+        </record>
+
+        <record id="mail_call_result_not_qualified" model="call.result">
+            <field name="name"> Not Qualified </field>
+        </record>
+
+        <record id="mail_call_result_over_scale" model="call.result">
+            <field name="name"> Over Scale </field>
+        </record>
+
+
+        <record id="mail_call_result_another number" model="call.result">
+            <field name="name"> Another Number </field>
+        </record>
+
+
+
+    </data>
+</openerp>
