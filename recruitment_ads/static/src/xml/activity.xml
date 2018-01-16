@@ -5,7 +5,7 @@
            <t t-jquery="div" t-operation="replace">
 
                 <div>
-
+                        <b>Call Result</b>
                      <select t-if="previous_activity_type_id == 2" type="text" name="delivery_time" class="form-control o_required" rows="3" id="activity_call_result" placeholder="Call Result">
                         <option value=""></option>
                         <option value="Interested">Interested</option>

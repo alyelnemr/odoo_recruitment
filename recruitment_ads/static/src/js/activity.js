@@ -54,17 +54,21 @@ MailActivity.include({
                         var feedback = _.escape($popover.find('#activity_feedback').val());
                         var call_result_id = _.escape($popover.find('#activity_call_result').val());
 
-                        if (!call_result_id && previous_activity_type_id != 2 ){
-                              self._markActivityDone(activity_id, feedback)
-                            .then(self._reload.bind(self, {activity: true, thread: true}));
-
-                        }
+//                        if (previous_activity_type_id != 2 ){
+//                              self._markActivityDone(activity_id, feedback)
+//                            .then(self._reload.bind(self, {activity: true, thread: true}));
+//
+//                        }
                         if (call_result_id ){
                              self._markActivityDone(activity_id, feedback)
                             .then(self._reload.bind(self, {activity: true, thread: true}));
                         }
-                         self._markActivityDDDone(activity_id,call_result_id)
+
+                        if (previous_activity_type_id == 2){
+                            self._markActivityDDDone(activity_id,call_result_id)
                             .then(self._reload.bind(self, {activity: true, thread: true}));
+                        }
+
 
 
                     });

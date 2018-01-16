@@ -30,7 +30,7 @@ class MailActivity(models.Model):
             return message.ids and message.ids[0] or False
 
         elif not call_result_id  and self.activity_type_id.name == 'Call':
-            raise UserError(_("Please select one of call result"))
+            raise UserError(_("Please select call result"))
 
 
     def action_feedback(self, feedback=False):
