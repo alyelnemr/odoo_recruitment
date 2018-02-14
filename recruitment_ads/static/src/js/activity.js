@@ -59,13 +59,13 @@ MailActivity.include({
 //                            .then(self._reload.bind(self, {activity: true, thread: true}));
 //
 //                        }
-                        if (call_result_id ){
-                             self._markActivityDone(activity_id, feedback)
-                            .then(self._reload.bind(self, {activity: true, thread: true}));
-                        }
 
                         if (previous_activity_type_id == 2){
                             self._markActivityDDDone(activity_id,call_result_id)
+                            .then(self._reload.bind(self, {activity: true, thread: true}));
+                        }
+                        else{
+                            self._markActivityDone(activity_id, feedback)
                             .then(self._reload.bind(self, {activity: true, thread: true}));
                         }
 
