@@ -7,6 +7,7 @@ class MailActivity(models.Model):
     _inherit = 'mail.activity'
 
     call_result_id = fields.Char(string="Call result")
+    interview_id = fields.Many2one('calendar.event.interview',string="Interview")
 
 
 
