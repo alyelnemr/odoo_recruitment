@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_calendar_event_interview_form" model="ir.ui.view">
+            <field name="name">view_calendar_event_interview_form</field>
+            <field name="model">calendar.event.interview</field>
+            <field name="type">form</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="string">Interview</attribute>
+                </form>
+            </field>
+        </record>
+        <record id="view_calendar_event_interview_calender" model="ir.ui.view">
+            <field name="name">view_calendar_event_interview_calender</field>
+            <field name="model">calendar.event.interview</field>
+            <field name="type">calendar</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_calendar"/>
+            <field name="arch" type="xml">
+                <calendar position="attributes">
+                    <attribute name="string">Interviews</attribute>
+                </calendar>
+            </field>
+        </record>
+    </data>
+</odoo>
