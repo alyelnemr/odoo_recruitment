@@ -15,8 +15,83 @@ var Widget = require('web.Widget');
 var Chatter = require('mail.Chatter');
 var Session = require('web.session');
 
-var QWeb = core.qweb;
+//To Fix A bug in it
+var CalendarController = require('web.CalendarController');
+var QuickCreate = require('web.CalendarQuickCreate');
+var dialogs = require('web.view_dialogs');
+var _t = core._t;
 
+var QWeb = core.qweb;
+CalendarController.include({
+    _onOpenCreate : function (event) {
+        var self = this;
+        if (this.model.get().scale === "month") {
+            event.data.allDay = true;
+        }
+        var data = this.model.calendarEventToRecord(event.data);
+
+        var context = _.extend({}, this.context, event.options && event.options.context);
+        context.default_name = data.name || null;
+        context['default_' + this.mapping.date_start] = data[this.mapping.date_start] || null;
+        if (this.mapping.date_stop) {
+            context['default_' + this.mapping.date_stop] = data[this.mapping.date_stop] || null;
+        }
+        if (this.mapping.date_delay) {
+            context['default_' + this.mapping.date_delay] = data[this.mapping.date_delay] || null;
+        }
+        if (this.mapping.all_day) {
+            context['default_' + this.mapping.all_day] = data[this.mapping.all_day] || null;
+        }
+
+        for (var k in context) {
+            if (context[k] && context[k]._isAMomentObject) {
+                context[k] = context[k].clone().utc().format('YYYY-MM-DD HH:mm:ss');
+            }
+        }
+
+        var options = _.extend({}, this.options, event.options, {context: context});
+
+        if (this.quick != null) {
+            this.quick.destroy();
+            this.quick = null;
+        }
+
+        if(!options.disableQuickCreate && !event.data.disableQuickCreate && this.quickAddPop) {
+            this.quick = new QuickCreate(this, true, options, data, event.data);
+            this.quick.open();
+            this.quick.focus();
+            return;
+        }
+
+        var title = _t("Create");
+        if (this.renderer.arch.attrs.string) {
+            title += ': ' + this.renderer.arch.attrs.string;
+        }
+        if (this.eventOpenPopup) {
+            new dialogs.FormViewDialog(self, {
+                res_model: this.modelName,
+                context: context,
+                title: title,
+                view_id : parseInt(this.formViewId) || false, //Bug Fixed view id should be spe
+                disable_multiple_selection: true,
+                on_saved: function () {
+                    if (event.data.on_save) {
+                        event.data.on_save();
+                    }
+                    self.reload();
+                },
+            }).open();
+        } else {
+            this.do_action({
+                type: 'ir.actions.act_window',
+                res_model: this.modelName,
+                views: [[parseInt(this.formViewId) || false, 'form']], // Bug Fixed view id should be integer not string
+                target: 'current',
+                context: context,
+            });
+        }
+    },
+});
 Chatter.include({
     events: {
         'click .o_chatter_button_new_message': '_onOpenComposerMessage',
@@ -44,19 +119,27 @@ Chatter.include({
     },
     _onScheduleInterview: function () {
         self = this;
-        Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
-                "model": "ir.ui.view",
-                "method": "get_view_id",
-                "args": ['recruitment_ads.view_calendar_event_interview_calender'],
-                "kwargs": {}
-            }).then(function(view_id){
-                var action = {
+        var get_calendar_view = Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+            "model": "ir.ui.view",
+            "method": "get_view_id",
+            "args": ['recruitment_ads.view_calendar_event_interview_calender'],
+            "kwargs": {}
+            });
+        var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+            "model": "ir.ui.view",
+            "method": "get_view_id",
+            "args": ['recruitment_ads.view_calendar_event_interview_form'],
+            "kwargs": {}
+            });
+        $.when(get_calendar_view,get_form_view).then(function(calendar_view_id,form_view_id){
+            var action = {
                     type: 'ir.actions.act_window',
                     name: 'Schedule Interview',
                     res_model: 'calendar.event',
-                    view_mode: 'calendar,tree,form',
+                    view_mode: 'calendar,form',
                     view_type: 'form',
-                    views: [[false || view_id, 'calendar']],
+                    view_id: false || form_view_id,
+                    views: [[false || calendar_view_id, 'calendar'],[false || form_view_id ,'form']],
                     target: 'current',
                     domain: [['type','=','interview']],
                     context: {
@@ -66,8 +149,8 @@ Chatter.include({
                         default_type: 'interview',
                     },
                 };
-                return self.do_action(action);
-            });
+            return self.do_action(action);
+        });
 
     },
 

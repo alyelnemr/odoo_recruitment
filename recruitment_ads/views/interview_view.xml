@@ -1,43 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="view_calendar_event_interview_form" model="ir.ui.view">
-            <field name="name">view_calendar_event_interview_form</field>
-            <field name="model">calendar.event</field>
-            <field name="type">form</field>
-            <field name="mode">primary</field>
-            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
-            <field name="arch" type="xml">
-                <form position="attributes">
-                    <attribute name="string">Interview</attribute>
-                </form>
+    <record id="view_calendar_event_interview_form" model="ir.ui.view">
+        <field name="name">view_calendar_event_interview_form</field>
+        <field name="model">calendar.event</field>
+        <field name="type">form</field>
+        <field name="priority" eval="1"/>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="string">Interview</attribute>
+            </form>
+            <label for="name" position="attributes">
+                <attribute name="string">Interview Subject</attribute>
+            </label>
+            <label for="partner_ids" position="attributes">
+                <attribute name="string">Assigned To</attribute>
+            </label>
+            <field name="partner_ids" position="attributes">
+                <attribute name="placeholder">Select assignees...</attribute>
             </field>
-        </record>
-        <record id="view_calendar_event_interview_calender" model="ir.ui.view">
-            <field name="name">view_calendar_event_interview_calender</field>
-            <field name="model">calendar.event</field>
-            <field name="type">calendar</field>
-            <field name="mode">primary</field>
-            <field name="inherit_id" ref="calendar.view_calendar_event_calendar"/>
-            <field name="arch" type="xml">
-                <calendar position="attributes">
-                    <attribute name="string">Interviews</attribute>
-                </calendar>
+            <xpath expr="//div[@class='oe_title']/h2" position="after">
+                <label for="extra_followers_ids" string="Followers" class="oe_edit_only"/>
+                <h2>
+                    <field name="extra_followers_ids" widget="many2manyattendee"
+                           placeholder="Select followers..."
+                           class="oe_inline"/>
+                </h2>
+            </xpath>
+            <page name="page_details" position="attributes">
+                <attribute name="string">Details</attribute>
+            </page>
+            <field name="categ_ids" position="replace"/>
+            <page name="page_details" position="inside">
+                <field name="recurrency" invisible="1"/>
+            </page>
+            <page name="page_options" position="replace"/>
+            <page name="page_invitations" position="replace"/>
+            <page name="page_misc" position="replace"/>
+        </field>
+    </record>
+    <delete model="ir.ui.view" search="[('id','=',ref('recruitment_ads.view_calendar_event_interview_calender'))]"/>
+    <record id="view_calendar_event_interview_calender" model="ir.ui.view">
+        <field name="name">view_calendar_event_interview_calender</field>
+        <field name="model">calendar.event</field>
+        <field name="priority" eval="3"/>
+        <field name="type">calendar</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <calendar string="Interviews" date_start="start" date_stop="stop" date_delay="duration" all_day="allday"
+                      readonly_form_view_id="%(calendar.view_calendar_event_form_popup)d"
+                      form_view_id="%(recruitment_ads.view_calendar_event_interview_form)d"
+                      event_open_popup="true"
+                      event_limit="3"
+                      color="partner_id">
+                <field name="name"/>
+                <field name="partner_ids" write_model="calendar.contacts" write_field="partner_id"
+                       avatar_field="image_small"/>
+                <field name="is_highlighted" invisible="1"/>
+            </calendar>
+        </field>
+    </record>
+    <record id="view_calendar_event_tree_inherit" model="ir.ui.view">
+        <field name="name">view_calendar_event_tree_inherit</field>
+        <field name="model">calendar.event</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
+        <field name="arch" type="xml">
+            <field name="message_needaction" position="after">
+                <field name="type" invisible="1"/>
             </field>
-        </record>
-        <record id="view_calendar_event_tree_inherit" model="ir.ui.view">
-            <field name="name">view_calendar_event_tree_inherit</field>
-            <field name="model">calendar.event</field>
-            <field name="type">tree</field>
-            <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
-            <field name="arch" type="xml">
-                <field name="message_needaction" position="after">
-                    <field name="type" invisible="1"/>
-                </field>
-            </field>
-        </record>
-        <record id="calendar.action_calendar_event" model="ir.actions.act_window">
-            <field name="domain">[('type','=','normal')]</field>
-        </record>
-    </data>
+        </field>
+    </record>
+    <record id="calendar.action_calendar_event" model="ir.actions.act_window">
+        <field name="domain">[('type','=','normal')]</field>
+    </record>
 </odoo>
