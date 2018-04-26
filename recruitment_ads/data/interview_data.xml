@@ -3,7 +3,7 @@
     <data noupdate="0">
         <record id="mail_activity_type_data_interview" model="mail.activity.type">
             <field name="name">Interview</field>
-            <field name="category">meeting</field>
+            <field name="category">interview</field>
         </record>
     </data>
 </openerp>

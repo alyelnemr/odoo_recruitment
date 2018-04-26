@@ -2,12 +2,15 @@ from datetime import date, datetime, timedelta
 from odoo import api, exceptions, fields, models, _
 from odoo.exceptions import UserError, AccessError
 
+class MailActivityType(models.Model):
+    _inherit = "mail.activity.type"
 
+    category = fields.Selection(selection_add=[('interview', 'Interview')])
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
 
     call_result_id = fields.Char(string="Call result")
-    interview_id = fields.Many2one('calendar.event.interview',string="Interview")
+
 
 
 

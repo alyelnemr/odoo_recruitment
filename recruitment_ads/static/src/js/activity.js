@@ -11,9 +11,39 @@ var utils = require('mail.utils');
 var QWeb = core.qweb;
 var _t = core._t;
 var MailActivity = require('mail.Activity');
+var Session = require('web.session');
 
 
 MailActivity.include({
+
+    _onEditActivity: function (event, options) {
+            var self = this;
+            var _super = this._super.bind(this);
+            var activity_id = $(event.currentTarget).data('activity-id');
+            var activity = _.find(this.activities, function (act) { return act.id === activity_id; });
+            if (activity && activity.activity_category === 'interview' && activity.calendar_event_id) {
+                var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+                    "model": "ir.ui.view",
+                    "method": "get_view_id",
+                    "args": ['recruitment_ads.view_calendar_event_interview_form'],
+                    "kwargs": {}
+                });
+
+                $.when(get_form_view).then(function(form_view_id){
+                        return _super(event, _.extend({
+                        res_model: 'calendar.event',
+                        res_id: activity.calendar_event_id[0],
+                        view_id: form_view_id || false,
+                        views: [[form_view_id || false, 'form']],
+                    }));
+
+                });
+
+            }
+            else{
+                return self._super(event, options);
+            }
+        },
 
     _markActivityDDDone: function (id, call_result_id ) {
         return this._rpc({
