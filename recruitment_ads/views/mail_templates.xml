@@ -17,6 +17,10 @@
                     <strong> Call result</strong>
                     <div t-field="activity.call_result_id" style="margin-left: 8px;"></div>
                 </div>
+                <div t-if="activity.interview_result" style="margin-top: 8px;">
+                    <strong> Interview result</strong>
+                    <div t-field="activity.interview_result" style="margin-left: 8px;"></div>
+                </div>
             </xpath>
         </template>
 

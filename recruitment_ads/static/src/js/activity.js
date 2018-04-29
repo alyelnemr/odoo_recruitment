@@ -71,23 +71,31 @@ MailActivity.include({
         }
     },
 
-    _markActivityDDDone: function (id, call_result_id ) {
+    _markActivityDDDone: function (id, feedback,call_result_id ) {
         return this._rpc({
                 model: 'mail.activity',
                 method: 'action_call_result',
                 args: [[id]],
-                kwargs: {call_result_id: call_result_id},
+                kwargs: {feedback:feedback,call_result_id: call_result_id},
             });
       },
 
 
+    _markInterviewDone: function (id, feedback,interview_result) {
+        return this._rpc({
+                model: 'mail.activity',
+                method: 'action_interview_result',
+                args: [[id]],
+                kwargs: {feedback:feedback,interview_result: interview_result},
+            });
+      },
 
     _onMarkActivityDone: function (event) {
-        debugger;
         event.preventDefault();
         var self = this;
         var $popover_el = $(event.currentTarget);
         var activity_id = $popover_el.data('activity-id');
+        var activity = _.find(this.activities, function (act) { return act.id === activity_id; });
         var previous_activity_type_id = $popover_el.data('previous-activity-type-id');
         if (!$popover_el.data('bs.popover')) {
             $popover_el.popover({
@@ -95,38 +103,96 @@ MailActivity.include({
                 html: 'true',
                 trigger:'click',
                 content : function() {
-                    var $popover = $(QWeb.render("mail.activity_feedback_form", {'previous_activity_type_id': previous_activity_type_id}));
+                    var $popover = $(QWeb.render("mail.activity_feedback_form", {'previous_activity_type_id': previous_activity_type_id,'activity_category':activity && activity.activity_category}));
                     $popover.on('click', '.o_activity_popover_done_next', function () {
                         var feedback = _.escape($popover.find('#activity_feedback').val());
                         var call_result_id = _.escape($popover.find('#activity_call_result').val());
+                        var interview_result = _.escape($popover.find('#activity_interview_result').val());
                         var previous_activity_type_id = $popover_el.data('previous-activity-type-id');
-                        self._markActivityDone(activity_id, feedback )
-                            .then(self.scheduleActivity.bind(self, previous_activity_type_id));
-                        self._markActivityDDDone(activity_id, call_result_id )
-                            .then(self.scheduleActivity.bind(self, previous_activity_type_id));
+                        if (activity && activity.activity_category === 'interview') {
+                            if (interview_result === "") {
+                                Dialog.alert(
+                                    self,
+                                    _t("Please select Interview result!"), {
+                                        confirm_callback: function () {
+                                            self._reload.bind(self, {activity: true});
+                                        },
+                                    }
+                                );
+                            }
+                            else{
+                                self._markInterviewDone(activity_id,feedback,interview_result)
+                                    .then(self.scheduleActivity.bind(self, previous_activity_type_id));
+                            }
+                        }
+                        else if (previous_activity_type_id == 2){
+                            if (call_result_id === "") {
+                                Dialog.alert(
+                                    self,
+                                    _t("Please select Call result!"), {
+                                        confirm_callback: function () {
+                                            self._reload.bind(self, {activity: true});
+                                        },
+                                    }
+                                );
+                            }
+                            else{
+                                self._markActivityDDDone(activity_id, feedback,call_result_id )
+                                    .then(self.scheduleActivity.bind(self, previous_activity_type_id));
+                            }
+                        }
+                        else{
+                            self._markActivityDone(activity_id, feedback )
+                                .then(self.scheduleActivity.bind(self, previous_activity_type_id));
+                        }
                     });
                     $popover.on('click', '.o_activity_popover_done', function () {
 
                         var feedback = _.escape($popover.find('#activity_feedback').val());
-                        var call_result_id = _.escape($popover.find('#activity_call_result').val());
 
 //                        if (previous_activity_type_id != 2 ){
 //                              self._markActivityDone(activity_id, feedback)
 //                            .then(self._reload.bind(self, {activity: true, thread: true}));
 //
 //                        }
-
                         if (previous_activity_type_id == 2){
-                            self._markActivityDDDone(activity_id,call_result_id)
-                            .then(self._reload.bind(self, {activity: true, thread: true}));
+                            var call_result_id = _.escape($popover.find('#activity_call_result').val());
+                               if (call_result_id === "") {
+                                    Dialog.alert(
+                                        self,
+                                        _t("Please select Call result!"), {
+                                            confirm_callback: function () {
+                                                self._reload.bind(self, {activity: true});
+                                            },
+                                        }
+                                    );
+                               }
+                               else{
+                                    self._markActivityDDDone(activity_id,feedback,call_result_id)
+                                    .then(self._reload.bind(self, {activity: true, thread: true}));
+                               }
+                        }
+                        else if(activity && activity.activity_category === 'interview') {
+                            var interview_result = _.escape($popover.find('#activity_interview_result').val());
+                            if (interview_result === "") {
+                                Dialog.alert(
+                                    self,
+                                    _t("Please select Interview result!"), {
+                                        confirm_callback: function () {
+                                            self._reload.bind(self, {activity: true});
+                                        },
+                                    }
+                                );
+                            }
+                            else{
+                                self._markInterviewDone(activity_id,feedback,interview_result)
+                                .then(self._reload.bind(self, {activity: true, thread: true}));
+                            }
                         }
                         else{
                             self._markActivityDone(activity_id, feedback)
                             .then(self._reload.bind(self, {activity: true, thread: true}));
                         }
-
-
-
                     });
                     $popover.on('click', '.o_activity_popover_discard', function () {
                         $popover_el.popover('hide');

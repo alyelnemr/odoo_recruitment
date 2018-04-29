@@ -16,6 +16,16 @@
                     <option value="Over Scale">Over Scale</option>
                     <option value="Another Number">Another Number</option>
                 </select>
+                <b t-if="activity_category == 'interview'">Interview Result</b>
+                <select t-if="activity_category == 'interview'" type="text" name="interview" class="form-control o_required" rows="3" id="activity_interview_result" placeholder="interview Result">
+                    <option value=""></option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="No Show">No Show</option>
+                    <option value="No Reply">No Reply</option>
+                    <option value="Re Schedule">Re Schedule</option>
+                    <option value="Short Listed">Short Listed</option>
+                </select>
                 <hr></hr>
 
                 <!--textarea class="form-control" rows="3" id="activity_call_result" placeholder="Call Result"/-->
