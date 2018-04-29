@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+from odoo import models, fields, api , _
+from odoo.exceptions import ValidationError
 from odoo.addons.calendar.models.calendar import Meeting
 
 
@@ -9,6 +10,12 @@ class Interview(models.Model):
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
     extra_followers_ids = fields.Many2many('res.partner', string="Followers", compute='_get_extra_followers',
                                            inverse='_set_extra_followers')
+
+    @api.constrains('duration','allday')
+    def check_duration(self):
+        for meeting in self:
+            if not meeting.allday and meeting.duration <= 0 :
+                raise ValidationError(_("Duration Can't be less than or equal to zero"))
 
     @api.model
     def create(self, values):

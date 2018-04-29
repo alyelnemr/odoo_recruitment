@@ -1,18 +1,17 @@
-from datetime import date, datetime, timedelta
-from odoo import api, exceptions, fields, models, _
-from odoo.exceptions import UserError, AccessError
+from odoo import fields, models, _
+from odoo.exceptions import UserError
+
 
 class MailActivityType(models.Model):
     _inherit = "mail.activity.type"
 
     category = fields.Selection(selection_add=[('interview', 'Interview')])
+
+
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
 
     call_result_id = fields.Char(string="Call result")
-
-
-
 
     def action_call_result(self, call_result_id=False):
         message = self.env['mail.message']
@@ -33,9 +32,8 @@ class MailActivity(models.Model):
             self.unlink()
             return message.ids and message.ids[0] or False
 
-        elif not call_result_id  and self.activity_type_id.name == 'Call':
+        elif not call_result_id and self.activity_type_id.name == 'Call':
             raise UserError(_("Please select call result"))
-
 
     def action_feedback(self, feedback=False):
         message = self.env['mail.message']
@@ -57,10 +55,7 @@ class MailActivity(models.Model):
                 return message.ids and message.ids[0] or False
 
 
-
-
-
 class CallResult(models.Model):
-    _name='call.result'
+    _name = 'call.result'
 
     name = fields.Char(string="Name")
