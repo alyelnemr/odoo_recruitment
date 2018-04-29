@@ -12,38 +12,64 @@ var QWeb = core.qweb;
 var _t = core._t;
 var MailActivity = require('mail.Activity');
 var Session = require('web.session');
+var Dialog = require('web.Dialog');
 
 
 MailActivity.include({
 
     _onEditActivity: function (event, options) {
-            var self = this;
-            var _super = this._super.bind(this);
-            var activity_id = $(event.currentTarget).data('activity-id');
-            var activity = _.find(this.activities, function (act) { return act.id === activity_id; });
-            if (activity && activity.activity_category === 'interview' && activity.calendar_event_id) {
-                var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
-                    "model": "ir.ui.view",
-                    "method": "get_view_id",
-                    "args": ['recruitment_ads.view_calendar_event_interview_form'],
-                    "kwargs": {}
-                });
+        var self = this;
+        var _super = this._super.bind(this);
+        var activity_id = $(event.currentTarget).data('activity-id');
+        var activity = _.find(this.activities, function (act) { return act.id === activity_id; });
+        if (activity && activity.activity_category === 'interview' && activity.calendar_event_id) {
+            var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+                "model": "ir.ui.view",
+                "method": "get_view_id",
+                "args": ['recruitment_ads.view_calendar_event_interview_form'],
+                "kwargs": {}
+            });
 
-                $.when(get_form_view).then(function(form_view_id){
-                        return _super(event, _.extend({
-                        res_model: 'calendar.event',
-                        res_id: activity.calendar_event_id[0],
-                        view_id: form_view_id || false,
-                        views: [[form_view_id || false, 'form']],
-                    }));
+            $.when(get_form_view).then(function(form_view_id){
+                    return _super(event, _.extend({
+                    res_model: 'calendar.event',
+                    res_id: activity.calendar_event_id[0],
+                    view_id: form_view_id || false,
+                    views: [[form_view_id || false, 'form']],
+                }));
 
-                });
+            });
 
-            }
-            else{
-                return self._super(event, options);
-            }
-        },
+        }
+        else{
+            return self._super(event, options);
+        }
+    },
+
+    _onUnlinkActivity: function (event, options) {
+        event.preventDefault();
+        var self = this;
+        var activity_id = $(event.currentTarget).data('activity-id');
+        var activity = _.find(this.activities, function (act) { return act.id === activity_id; });
+        if (activity && activity.activity_category === 'interview' && activity.calendar_event_id) {
+            Dialog.confirm(
+                self,
+                _t("The activity is linked to a interview. Deleting it will remove the interview as well. Do you want to proceed ?"), {
+                    confirm_callback: function () {
+                        return self._rpc({
+                            model: 'mail.activity',
+                            method: 'unlink_w_meeting',
+                            args: [[activity_id]],
+                        })
+                        .then(self._reload.bind(self, {activity: true}));
+                    },
+                }
+            );
+        }
+        else {
+            return self._super(event, options);
+        }
+    },
 
     _markActivityDDDone: function (id, call_result_id ) {
         return this._rpc({

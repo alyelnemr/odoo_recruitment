@@ -143,7 +143,7 @@ Chatter.include({
                     target: 'current',
                     domain: [['type','=','interview']],
                     context: {
-                        default_name: self.record_name,
+                        default_name: self.record_name+"'s interview",
                         default_res_id: self.record.res_id,
                         default_res_model: self.record.model,
                         default_type: 'interview',
