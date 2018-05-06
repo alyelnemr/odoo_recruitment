@@ -39,7 +39,7 @@
                 <field name="recurrency" invisible="1"/>
             </page>
             <page name="page_options" position="replace"/>
-            <page name="page_invitations" position="replace"/>
+            <!--<page name="page_invitations" position="replace"/>-->
             <page name="page_misc" position="replace"/>
             <div class="oe_chatter" position="replace"/>
             <!--page name="page_details" position="after">

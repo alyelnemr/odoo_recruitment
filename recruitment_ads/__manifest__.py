@@ -13,6 +13,7 @@ Handel recruitment Process
         'views/interview_view.xml',
         'data/call_result_data.xml',
         'data/interview_data.xml',
+        'data/interview_email_templates.xml',
 
        
     ],
