@@ -19,9 +19,10 @@ class MailActivity(models.Model):
         self.write(dict(interview_result=interview_result, feedback=feedback))
         for activity in self:
             record = self.env[activity.res_model].browse(activity.res_id)
+            interviewers = activity.calendar_event_id.partner_ids.mapped('name')
             record.message_post_with_view(
                 'mail.message_activity_done',
-                values={'activity': activity},
+                values={'activity': activity,'interviewers':','.join(interviewers) if interviewers else False},
                 subtype_id=self.env.ref('mail.mt_activities').id,
                 mail_activity_type_id=activity.activity_type_id.id,
             )

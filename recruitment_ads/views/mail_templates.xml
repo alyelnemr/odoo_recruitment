@@ -3,7 +3,7 @@
     <data>
 
 
-         <template id="assets_backend" name="a_js assets" inherit_id="web.assets_backend">
+        <template id="assets_backend" name="a_js assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/activity.js"/>
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/chatter.js"/>
@@ -12,13 +12,22 @@
 
 
         <template id="callresult" inherit_id="mail.message_activity_done">
+            <xpath expr="//span[@t-field='activity.user_id.name']" position="replace">
+                <t t-if="activity.activity_type_id.category == 'interview'">
+                    <span t-esc="interviewers"/>
+                </t>
+                <t t-if="activity.activity_type_id.category != 'interview'">
+                    <span t-field="activity.user_id.name"/>
+                </t>
+            </xpath>
+
             <xpath expr="//div[@t-field='activity.note']" position="after">
                 <div t-if="activity.call_result_id" style="margin-top: 8px;">
-                    <strong> Call result</strong>
+                    <strong>Call result</strong>
                     <div t-field="activity.call_result_id" style="margin-left: 8px;"></div>
                 </div>
                 <div t-if="activity.interview_result" style="margin-top: 8px;">
-                    <strong> Interview result</strong>
+                    <strong>Interview result</strong>
                     <div t-field="activity.interview_result" style="margin-left: 8px;"></div>
                 </div>
             </xpath>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="view_calendar_event_interview_form" model="ir.ui.view">
         <field name="name">view_calendar_event_interview_form</field>
         <field name="model">calendar.event</field>
@@ -15,10 +16,10 @@
                 <attribute name="string">Interview Subject</attribute>
             </label>
             <label for="partner_ids" position="attributes">
-                <attribute name="string">Assigned To</attribute>
+                <attribute name="string">Interviewers</attribute>
             </label>
             <field name="partner_ids" position="attributes">
-                <attribute name="placeholder">Select assignees...</attribute>
+                <attribute name="placeholder">Select Interviewers...</attribute>
             </field>
              <field name="partner_ids" position="attributes">
                 <attribute name="required">1</attribute>
@@ -86,5 +87,15 @@
     </record>
     <record id="calendar.action_calendar_event" model="ir.actions.act_window">
         <field name="domain">[('type','=','normal')]</field>
+    </record>
+    <record id="mail_activity_view_form_popup_inherit" model="ir.ui.view">
+        <field name="name">mail_activity_view_form_popup_inherit</field>
+        <field name="model">mail.activity</field>
+        <field name="inherit_id" ref="mail.mail_activity_view_form_popup"/>
+        <field name="arch" type="xml">
+            <field name="activity_type_id" position="attributes">
+                <attribute name="domain">[('category','!=','interview')]</attribute>
+            </field>
+        </field>
     </record>
 </odoo>

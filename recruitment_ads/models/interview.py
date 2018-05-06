@@ -14,6 +14,9 @@ class Interview(models.Model):
                                            relation='interview_followers_interview_rel', column1='interview_id',
                                            column2='follower_id')
 
+    partner_ids = fields.Many2many('res.partner',string='Interviewers')
+
+
     @api.constrains('duration', 'allday')
     def check_duration(self):
         for meeting in self:
@@ -256,7 +259,7 @@ class Attendee(models.Model):
                 # prepare rendering context for mail template
 
                 rendering_context = dict(self._context)
-                applicants = self.filtered(lambda a: a.applicant_name != False)
+                applicants = self.filtered(lambda a: a.applicant_name != False and a.email != False)
                 if applicants:
                     rendering_context.update({
                         'email_to': ','.join(applicants.mapped('email')),
@@ -264,7 +267,7 @@ class Attendee(models.Model):
                     })
                 else:
                     rendering_context.update({
-                        'email_to': ','.join(self.mapped('email')),
+                        'email_to': ','.join(self.filtered(lambda a:a.email != False).mapped('email')),
                     })
                 invitation_template = invitation_template.with_context(rendering_context)
 

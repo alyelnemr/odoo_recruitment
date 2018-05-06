@@ -22,7 +22,6 @@
                     <option value="Accepted">Accepted</option>
                     <option value="Rejected">Rejected</option>
                     <option value="No Show">No Show</option>
-                    <option value="No Reply">No Reply</option>
                     <option value="Re Schedule">Re Schedule</option>
                     <option value="Short Listed">Short Listed</option>
                 </select>
