@@ -54,7 +54,6 @@
                         <ul>
                         % if object.location:
                             <li>Location: ${object.location}
-                            (<a target="_blank" href="http://maps.google.com/maps?oi=map&q=${object.location}">View Map</a>)
                             </li>
                         % endif
                         % if object.description :
@@ -138,7 +137,6 @@
                         <ul>
                         % if object.event_id.location:
                             <li>Location: ${object.event_id.location}
-                            (<a target="_blank" href="http://maps.google.com/maps?oi=map&q=${object.event_id.location}">View Map</a>)
                             </li>
                         % endif
                         % if object.event_id.description :
@@ -222,7 +220,6 @@
                         <ul>
                         % if object.event_id.location:
                             <li>Location: ${object.event_id.location}
-                            (<a target="_blank" href="http://maps.google.com/maps?oi=map&q=${object.event_id.location}">View Map</a>)
                             </li>
                         % endif
                         % if object.event_id.description :
