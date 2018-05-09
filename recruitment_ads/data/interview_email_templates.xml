@@ -65,13 +65,15 @@
                         <li>Attendees
                         <ul>
                         % for attendee in object.attendee_ids:
+                            % if attendee.applicant_name:
+                                <li>
+                                    <span style="margin-left:5px">${attendee.applicant_name}</span>
+                                </li>
+                            % endif
+                        % endfor
+                        % for interviewer in object.partner_ids:
                             <li>
-                                <div style="display:inline-block; border-radius: 50%; width:10px; height:10px;background:${colors[attendee.state] or 'white'};"></div>
-                                % if attendee.common_name != object.common_name:
-                                <span style="margin-left:5px">${attendee.common_name}</span>
-                                % else:
-                                <span style="margin-left:5px">You</span>
-                                % endif
+                                <span style="margin-left:5px">${interviewer.name}</span>
                             </li>
                         % endfor
                         </ul></li>
@@ -148,13 +150,15 @@
                         <li>Attendees
                         <ul>
                         % for attendee in object.event_id.attendee_ids:
+                            % if attendee.applicant_name:
+                                <li>
+                                    <span style="margin-left:5px">${attendee.applicant_name}</span>
+                                </li>
+                            % endif
+                        % endfor
+                        % for interviewer in object.event_id.partner_ids:
                             <li>
-                                <div style="display:inline-block; border-radius: 50%; width:10px; height:10px;background:${colors[attendee.state] or 'white'};"></div>
-                                % if attendee.common_name != object.common_name:
-                                <span style="margin-left:5px">${attendee.common_name}</span>
-                                % else:
-                                <span style="margin-left:5px">You</span>
-                                % endif
+                                <span style="margin-left:5px">${interviewer.name}</span>
                             </li>
                         % endfor
                         </ul></li>
@@ -231,13 +235,15 @@
                         <li>Attendees
                         <ul>
                         % for attendee in object.event_id.attendee_ids:
+                            % if attendee.applicant_name:
+                                <li>
+                                    <span style="margin-left:5px">${attendee.applicant_name}</span>
+                                </li>
+                            % endif
+                        % endfor
+                        % for interviewer in object.event_id.partner_ids:
                             <li>
-                                <div style="display:inline-block; border-radius: 50%; width:10px; height:10px;background:${colors[attendee.state] or 'white'};"></div>
-                                % if attendee.common_name != object.common_name:
-                                <span style="margin-left:5px">${attendee.common_name}</span>
-                                % else:
-                                <span style="margin-left:5px">You</span>
-                                % endif
+                                <span style="margin-left:5px">${interviewer.name}</span>
                             </li>
                         % endfor
                         </ul></li>
