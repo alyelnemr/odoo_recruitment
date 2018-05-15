@@ -2,6 +2,7 @@
 import logging
 
 from odoo import models, fields, api, tools
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -25,6 +26,10 @@ class Partner(models.Model):
                                            email),
                                        attrlst, size=100)
             for dn, entry in results:
+                #_logger.debug(dn)
+                service_account = re.search(r"OU=service(account)?s?",dn,re.I+re.DOTALL) #don't take service accounts
+                if service_account:
+                    continue
                 for attr,val in entry.items():
                     res[attr] = tools.ustr(val[0])
                 employees.append(res.copy())
@@ -37,13 +42,13 @@ class Partner(models.Model):
 
         def remap_vals(val,mapper):
             mapped_val ={}
-            for key in val:
-                mapped_val[mapper[key]]=val[key]
+            for key in mapper:
+                mapped_val[mapper[key]]=val.get(key,'')
             return mapped_val
 
         employees_data = self.get_ldap_employee_data(attrlst=['name','mail','title'])
         mails = list(map(lambda emp:emp['mail'],employees_data))
-        employee_to_update = self.search([('email','in',mails)])
+        employee_to_update = self.search([('email','in',mails),'|',('active','=',True),('active','=',False)])
         mails_to_create_employee = list(set(mails) - set(employee_to_update.mapped('email')))
         _logger.info("Searching for employees to update")
         updated = 0
@@ -52,12 +57,15 @@ class Partner(models.Model):
             attr_map = {'name':'name','mail':'email','title':'function'}
 
             for val in values:
-                values_hash = val.get('name','') + '-' + val.get('title','')
-                emp_hash = emp.name + '-' + emp.function or ''
+                values_hash = val.get('name','') + '-' + val.get('title','') + '-' + str(True)
+                emp_hash = emp.name + '-' + (emp.function or '') + '-' + str(emp.active)
                 if values_hash != emp_hash:
-                    emp.write(remap_vals(val,attr_map))
+                    vals = remap_vals(val,attr_map)
+                    vals['active'] = True
+                    emp.write(vals)
                     updated +=1
-                    _logger.debug(" %s  Employees has been updated" % (updated))
+                    _logger.debug("Employee: %s has been updated because of different hashes %s : %s" % (emp.name,values_hash,emp_hash))
+        _logger.info("A total of %s Employees have been updated"% (updated))
         created= 0
         _logger.info("found %s Employees to create" % (len(mails_to_create_employee)))
         for mail in mails_to_create_employee:
@@ -74,8 +82,8 @@ class Partner(models.Model):
             _logger.debug(" %s of %s Employees has been created" % (created,len(mails_to_create_employee)))
         employee_to_archive = self.search([('email','not in',mails),('employee','=',True)])
         _logger.info("found %s Employees to archive" % (len(employee_to_archive)))
-        # if employee_to_archive:
-        #     employee_to_archive.write({'active':False})
+        if employee_to_archive:
+            employee_to_archive.write({'active':False})
 
 
 
