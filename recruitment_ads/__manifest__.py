@@ -7,7 +7,7 @@
     'description': """
 Handel recruitment Process
     """,
-    'depends': ['base', 'base_setup', 'bus', 'web_tour','hr_recruitment', 'mail'],
+    'depends': ['base', 'base_setup', 'bus', 'web_tour','hr_recruitment', 'mail','sync_ldap_ads'],
     'data': [
         'security/groups.xml',
         'views/mail_templates.xml',
