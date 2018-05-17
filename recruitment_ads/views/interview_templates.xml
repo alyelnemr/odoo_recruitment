@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="display_interviewers">
+        <ul>
+            <t t-foreach="interviewers" t-as="interview">
+                <li><t t-esc="interview"/></li>
+            </t>
+        </ul>
+    </template>
+</odoo>

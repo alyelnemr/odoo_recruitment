@@ -9,13 +9,40 @@ class Interview(models.Model):
     _inherit = 'calendar.event'
 
     hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
+    job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant')
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
     extra_followers_ids = fields.Many2many('res.partner', string="Followers",
                                            relation='interview_followers_interview_rel', column1='interview_id',
                                            column2='follower_id')
 
-    partner_ids = fields.Many2many('res.partner',string='Interviewers')
+    partner_ids = fields.Many2many('res.partner', string='Interviewers')
+    display_partners = fields.Html(string='Interviewers', compute='_display_partners')
+    last_stage_activity = fields.Char('Last stage activity', compute='_get_last_activity')
+    last_stage_result = fields.Char('Last stage result')
 
+    @api.depends('activity_ids')
+    def _get_last_activity(self):
+        for rec in self:
+            activities = rec.with_context({'active_test': False}).activity_ids
+            if activities:
+                last_id = min(activities.ids)
+                rec.last_stage_activity = self.env['mail.activity'].browse(last_id).activity_category
+
+    @api.depends('partner_ids')
+    def _display_partners(self):
+        for rec in self:
+            if rec.partner_ids:
+                res = self.env.ref('recruitment_ads.display_interviewers').render(
+                    {"interviewers": rec.partner_ids.mapped('name')}
+                    )
+                rec.display_partners = res
+
+    @api.depends('res_id', 'res_model_id')
+    def _get_applicant(self):
+        for r in self:
+            if r.res_model_id.model == 'hr.applicant':
+                r.hr_applicant_id = self.env['hr.applicant'].browse([r.res_id])
+                r.job_id = self.env['hr.applicant'].browse([r.res_id]).job_id
 
     @api.constrains('duration', 'allday')
     def check_duration(self):
@@ -210,12 +237,6 @@ class Interview(models.Model):
             }
         return result
 
-    @api.depends('res_id', 'res_model_id')
-    def _get_applicant(self):
-        for r in self:
-            if r.res_model_id.model == 'hr.applicant':
-                r.hr_applicant_id = self.env['hr.applicant'].browse([r.res_id])
-
 
 class Attendee(models.Model):
     _inherit = 'calendar.attendee'
@@ -267,7 +288,7 @@ class Attendee(models.Model):
                     })
                 else:
                     rendering_context.update({
-                        'email_to': ','.join(self.filtered(lambda a:a.email != False).mapped('email')),
+                        'email_to': ','.join(self.filtered(lambda a: a.email != False).mapped('email')),
                     })
                 invitation_template = invitation_template.with_context(rendering_context)
 

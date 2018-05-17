@@ -25,7 +25,9 @@
                 <attribute name="required">1</attribute>
             </field>
             <field name="partner_ids" position="attributes">
-                <attribute name="context">{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True}</attribute>
+                <attribute name="context">
+                    {'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True}
+                </attribute>
             </field>
             <field name="partner_ids" position="attributes">
                 <attribute name="options">{'no_create_edit': True,'no_create':True}</attribute>
@@ -93,6 +95,27 @@
             </field>
         </field>
     </record>
+    <delete model="ir.ui.view" search="[('id','=',ref('recruitment_ads.view_calendar_event_tree_interview'))]"/>
+    <record id="view_calendar_event_tree_interview" model="ir.ui.view">
+        <field name="name">view_calendar_event_tree_interview</field>
+        <field name="model">calendar.event</field>
+        <field name="type">tree</field>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0">
+                <field name="job_id"/>
+                <field name="name" string="Subject"/>
+                <field name="user_id"/>
+                <field name="start_datetime"/>
+                <field name="start_date"/>
+                <field name="display_partners"/>
+                <field name="last_stage_activity"/>
+                <field name="last_stage_result"/>
+                <field name="type" invisible="1"/>
+                <field name="state" invisible="1"/>
+            </tree>
+        </field>
+    </record>
     <record id="calendar.action_calendar_event" model="ir.actions.act_window">
         <field name="domain">[('type','=','normal')]</field>
     </record>
@@ -106,4 +129,26 @@
             </field>
         </field>
     </record>
+    <act_window
+            id="action_interview_calendar_event"
+            name="Interviews"
+            res_model="calendar.event"
+            view_mode="tree"
+            domain="[('type','=','interview')]"
+            context="{'default_type': 'interview', 'default_duration': 0.5}"
+            view_type="form"/>
+
+    <record id="act_window_view_calendar_event_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_calendar_event_tree_interview"/>
+        <field name="act_window_id" ref="action_interview_calendar_event"/>
+    </record>
+    <delete model="ir.actions.act_window.view" search="[('id','=',ref('act_window_view_calendar_event_form'))]"/>
+    <menuitem id="menu_interview_calendar"
+              name="Interviews"
+              parent="hr_recruitment.menu_crm_case_categ0_act_job"
+              sequence="21"
+              action="action_interview_calendar_event"
+              groups="recruitment_ads.group_view_interviews"/>
 </odoo>
