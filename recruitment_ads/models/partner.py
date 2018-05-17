@@ -1,10 +1,17 @@
-from odoo import models, api
-from odoo.osv.expression import get_unaccent_wrapper
+from odoo import models, api, fields
 from odoo.addons.base.res.res_partner import Partner
+from odoo.osv.expression import get_unaccent_wrapper
 
 
 class PartnerInherit(models.Model):
     _inherit = 'res.partner'
+
+    short_display = fields.Char("Short display name", compute='_compute_short_display_name', store=True)
+
+    @api.depends('name')
+    def _compute_short_display_name(self):
+        for partner in self:
+            partner.short_display = ''.join([part[0] for part in partner.name.split(maxsplit=1)])
 
     @api.multi
     def name_get(self):

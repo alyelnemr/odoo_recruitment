@@ -25,8 +25,11 @@
                 <attribute name="required">1</attribute>
             </field>
             <field name="partner_ids" position="attributes">
+                <attribute name="widget">many2many_short_tags</attribute>
+            </field>
+            <field name="partner_ids" position="attributes">
                 <attribute name="context">
-                    {'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True}
+                    {'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}
                 </attribute>
             </field>
             <field name="partner_ids" position="attributes">
@@ -35,10 +38,10 @@
             <xpath expr="//div[@class='oe_title']/h2" position="after">
                 <label for="extra_followers_ids" string="Followers" class="oe_edit_only"/>
                 <h2>
-                    <field name="extra_followers_ids" widget="many2many_tags"
+                    <field name="extra_followers_ids" widget="many2many_short_tags"
                            placeholder="Select followers..."
                            options="{'no_create_edit': True,'no_create':True}"
-                           context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True}"
+                           context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}"
                            class="oe_inline"/>
                 </h2>
             </xpath>
@@ -144,7 +147,7 @@
         <field name="view_id" ref="view_calendar_event_tree_interview"/>
         <field name="act_window_id" ref="action_interview_calendar_event"/>
     </record>
-    <delete model="ir.actions.act_window.view" search="[('id','=',ref('act_window_view_calendar_event_form'))]"/>
+    <!--<delete model="ir.actions.act_window.view" search="[('id','=',ref('act_window_view_calendar_event_form'))]"/>-->
     <menuitem id="menu_interview_calendar"
               name="Interviews"
               parent="hr_recruitment.menu_crm_case_categ0_act_job"

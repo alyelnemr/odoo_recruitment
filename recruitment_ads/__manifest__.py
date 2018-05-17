@@ -21,6 +21,7 @@ Handel recruitment Process
     ],
     'qweb': [
         'static/src/xml/activity.xml',
+        'static/src/xml/fields.xml',
 
     ],
    
