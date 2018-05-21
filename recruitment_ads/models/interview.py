@@ -34,7 +34,7 @@ class Interview(models.Model):
             if rec.partner_ids:
                 res = self.env.ref('recruitment_ads.display_interviewers').render(
                     {"interviewers": rec.partner_ids.mapped('name')}
-                    )
+                )
                 rec.display_partners = res
 
     @api.depends('res_id', 'res_model_id')
