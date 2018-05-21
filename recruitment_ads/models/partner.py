@@ -18,7 +18,7 @@ class PartnerInherit(models.Model):
         res = []
         if 'display_pos' in self._context:
             for rec in self:
-                res.append((rec.id, rec.name + ' - ' + rec.function or ''))
+                res.append((rec.id, rec.name + ' - ' + (rec.function or '')))
         else:
             return super(PartnerInherit, self).name_get()
         return res
