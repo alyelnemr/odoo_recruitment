@@ -17,16 +17,8 @@ class Interview(models.Model):
 
     partner_ids = fields.Many2many('res.partner', string='Interviewers')
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
-    last_stage_activity = fields.Char('Last stage activity', compute='_get_last_activity')
+    last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')
-
-    @api.depends('activity_ids')
-    def _get_last_activity(self):
-        for rec in self:
-            activities = rec.with_context({'active_test': False}).activity_ids
-            if activities:
-                last_id = min(activities.ids)
-                rec.last_stage_activity = self.env['mail.activity'].browse(last_id).activity_category
 
     @api.depends('partner_ids')
     def _display_partners(self):
@@ -167,6 +159,15 @@ class Interview(models.Model):
             if not self._context.get('dont_notify'):
                 if len(meeting.alarm_ids) > 0:
                     self.env['calendar.alarm_manager'].notify_next_alarm(meeting.partner_ids.ids)
+
+            #Update last stage activity and and result if found
+            done_activites = meeting.hr_applicant_id.with_context({'active_test': False}).activity_ids.filtered(
+                lambda a: not a.active).sorted('write_date',reverse=True)
+            if done_activites:
+                meeting.update({
+                    'last_stage_activity':done_activites[0].activity_type_id.name,
+                    'last_stage_result':done_activites[0].call_result_id or done_activites[0].interview_result,
+                })
             return meeting
         else:
             return super(Interview, self).create(values)

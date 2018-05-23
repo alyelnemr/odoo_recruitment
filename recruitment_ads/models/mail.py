@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class MailActivityType(models.Model):
@@ -14,6 +14,17 @@ class MailActivity(models.Model):
     interview_result = fields.Char(string="Interview result")
     active = fields.Boolean(string='Active', default=True)
 
+    @api.multi
+    def update_calendar_event(self,result=False):
+        for activity in self:
+            if activity.res_model == 'hr.applicant':
+                hr_applicant_id = self.env['hr.applicant'].browse([activity.res_id])
+                not_done_interviews = hr_applicant_id.activity_ids.filtered(
+                    lambda a: a.activity_category == 'interview' and a.id != activity.id)
+                not_done_interviews.mapped('calendar_event_id').write(
+                    {'last_stage_activity': activity.activity_type_id.name,
+                     'last_stage_result': result})
+
     def action_interview_result(self, feedback=False, interview_result=False):
         message = self.env['mail.message']
 
@@ -21,7 +32,6 @@ class MailActivity(models.Model):
         for activity in self:
             record = self.env[activity.res_model].browse(activity.res_id)
             interviewers = activity.calendar_event_id.partner_ids.mapped('name')
-            activity.calendar_event_id.last_stage_result = interview_result
             record.message_post_with_view(
                 'mail.message_activity_done',
                 values={'activity': activity, 'interviewers': ','.join(interviewers) if interviewers else False},
@@ -31,6 +41,7 @@ class MailActivity(models.Model):
             message |= record.message_ids[0]
 
         self.write({'active': False})
+        self.update_calendar_event(interview_result)
         return message.ids and message.ids[0] or False
 
     def action_call_result(self, feedback=False, call_result_id=False):
@@ -49,6 +60,7 @@ class MailActivity(models.Model):
             message |= record.message_ids[0]
 
         self.write({'active': False})
+        self.update_calendar_event(call_result_id)
         return message.ids and message.ids[0] or False
 
     def action_feedback(self, feedback=False):
@@ -66,6 +78,7 @@ class MailActivity(models.Model):
             message |= record.message_ids[0]
 
         self.write({'active': False})
+        self.update_calendar_event()
         return message.ids and message.ids[0] or False
 
 
