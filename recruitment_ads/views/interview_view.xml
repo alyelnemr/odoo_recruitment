@@ -107,10 +107,9 @@
         <field name="arch" type="xml">
             <tree create="0" edit="0">
                 <field name="job_id"/>
-                <field name="name" string="Subject"/>
-                <field name="user_id"/>
-                <field name="start_datetime"/>
-                <field name="start_date"/>
+                <field name="name" string="Subject/Application Name"/>
+                <field name="user_id" string="Recruiter Responsible"/>
+                <field name="display_start" string="Interview Date Time"/>
                 <field name="display_partners"/>
                 <field name="last_stage_activity"/>
                 <field name="last_stage_result"/>

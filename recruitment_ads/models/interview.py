@@ -160,13 +160,13 @@ class Interview(models.Model):
                 if len(meeting.alarm_ids) > 0:
                     self.env['calendar.alarm_manager'].notify_next_alarm(meeting.partner_ids.ids)
 
-            #Update last stage activity and and result if found
+            # Update last stage activity and and result if found
             done_activites = meeting.hr_applicant_id.with_context({'active_test': False}).activity_ids.filtered(
-                lambda a: not a.active).sorted('write_date',reverse=True)
+                lambda a: not a.active).sorted('write_date', reverse=True)
             if done_activites:
                 meeting.update({
-                    'last_stage_activity':done_activites[0].activity_type_id.name,
-                    'last_stage_result':done_activites[0].call_result_id or done_activites[0].interview_result,
+                    'last_stage_activity': done_activites[0].activity_type_id.name,
+                    'last_stage_result': done_activites[0].call_result_id or done_activites[0].interview_result,
                 })
             return meeting
         else:
@@ -211,7 +211,8 @@ class Interview(models.Model):
                 meeting_partners |= partner
 
             if meeting_attendees:
-                to_notify = meeting_attendees.filtered(lambda a: a.email != current_user.email)
+                to_notify = meeting_attendees.filtered(
+                    lambda a: a.email and current_user.email and a.email.lower() != current_user.email.lower())
                 to_notify._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
 
                 meeting.write(
@@ -244,7 +245,7 @@ class Attendee(models.Model):
     _inherit = 'calendar.attendee'
 
     applicant_name = fields.Char(string='Applicant Name')
-    is_applicant = fields.Boolean(string='Is Applicant?',default=False)
+    is_applicant = fields.Boolean(string='Is Applicant?', default=False)
 
     @api.depends('partner_id', 'partner_id.name', 'email')
     def _compute_common_name(self):
