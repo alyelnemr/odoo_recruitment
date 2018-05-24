@@ -188,6 +188,7 @@ class Interview(models.Model):
                     'email': meeting.hr_applicant_id.email_from,
                     'event_id': meeting.id,
                     'applicant_name': meeting.hr_applicant_id.partner_name,
+                    'is_applicant': True,
                 }
                 meeting_attendees |= self.env['calendar.attendee'].create(applicant_vals)
 
@@ -243,6 +244,7 @@ class Attendee(models.Model):
     _inherit = 'calendar.attendee'
 
     applicant_name = fields.Char(string='Applicant Name')
+    is_applicant = fields.Boolean(string='Is Applicant?',default=False)
 
     @api.depends('partner_id', 'partner_id.name', 'email')
     def _compute_common_name(self):
@@ -281,7 +283,7 @@ class Attendee(models.Model):
                 # prepare rendering context for mail template
 
                 rendering_context = dict(self._context)
-                applicants = self.filtered(lambda a: a.applicant_name != False and a.email != False)
+                applicants = self.filtered(lambda a: a.is_applicant and a.email)
                 if applicants:
                     rendering_context.update({
                         'email_to': ','.join(applicants.mapped('email')),
