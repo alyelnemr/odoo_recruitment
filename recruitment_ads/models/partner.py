@@ -46,22 +46,17 @@ class PartnerInherit(models.Model):
 
                 query = """SELECT id
                              FROM res_partner
-                          {where} ({email} {operator} {percent}
-                               OR {display_name} {operator} {percent}
-                               OR {reference} {operator} {percent}
-                               OR {vat} {operator} {percent})
+                          {where} ({display_name} {operator} {percent}
+                               OR {name} {operator} {percent})
                                -- don't panic, trust postgres bitmap
-                         ORDER BY {display_name} {operator} {percent} desc,
-                                  {display_name}
+                         ORDER BY {name}
                         """.format(where=where_str,
                                    operator=operator,
-                                   email=unaccent('email'),
                                    display_name=unaccent('display_name'),
-                                   reference=unaccent('ref'),
+                                   name=unaccent('name'),
                                    percent=unaccent('%s'),
-                                   vat=unaccent('vat'), )
-
-                where_clause_params += [search_name] * 5
+                                   )
+                where_clause_params += [search_name] * 2
                 if limit:
                     query += ' limit %s'
                     where_clause_params.append(limit)
