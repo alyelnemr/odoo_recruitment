@@ -41,6 +41,7 @@ class MailActivity(models.Model):
             message |= record.message_ids[0]
 
         self.write({'active': False})
+        self.mapped('calendar_event_id').write({'is_interview_done':True})
         self.update_calendar_event(interview_result)
         return message.ids and message.ids[0] or False
 

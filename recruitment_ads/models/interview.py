@@ -1,5 +1,6 @@
 import base64
 
+import pytz
 from odoo import models, fields, api, _
 from odoo.addons.calendar.models.calendar import Meeting, is_calendar_id, calendar_id2real_id
 from odoo.exceptions import ValidationError
@@ -19,6 +20,48 @@ class Interview(models.Model):
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
     last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')
+    is_interview_done = fields.Boolean('Is interview done?', default=False)
+
+    @api.multi
+    def _inverse_dates(self):
+        for meeting in self:
+            if meeting.allday:
+                tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
+
+                enddate = fields.Datetime.from_string(meeting.stop_date)
+                enddate = tz.localize(enddate)
+                enddate = enddate.replace(hour=23, minute=59)
+                enddate = enddate.astimezone(pytz.utc)
+                meeting.stop = fields.Datetime.to_string(enddate)
+
+                startdate = fields.Datetime.from_string(meeting.start_date)
+                startdate = tz.localize(startdate)  # Add "+hh:mm" timezone
+                startdate = startdate.replace(hour=0)  # Set 0 AM in localtime
+                startdate = startdate.astimezone(pytz.utc)  # Convert to UTC
+                meeting.start = fields.Datetime.to_string(startdate)
+            else:
+                meeting.start = meeting.start_datetime
+                meeting.stop = meeting.stop_datetime
+
+    @api.constrains('partner_ids', 'start', 'stop')
+    def check_overlapping_interviews(self):
+        for interview in self.filtered(lambda m: m.type == 'interview'):
+            domain = [
+                ('partner_ids', 'in', interview.partner_ids.ids),
+                ('is_interview_done', '=', False),
+                ('type', '=', 'interview'),
+                ('start', '<', interview.stop),
+                ('stop', '>', interview.start),
+                ('id', '!=', interview.id),
+            ]
+            overlapped_interviews = self.search(domain)
+            if overlapped_interviews:
+                error_message = ""
+                for overlapped_interview in overlapped_interviews:
+                    conflicted_partners = interview.partner_ids & overlapped_interview.partner_ids
+                    error_message += ', '.join(conflicted_partners.mapped(
+                        'name')) + ' has interview from ' + overlapped_interview.start + ' to ' + overlapped_interview.stop + '\n'
+                raise ValidationError(error_message)
 
     @api.depends('partner_ids')
     def _display_partners(self):
