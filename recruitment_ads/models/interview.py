@@ -58,10 +58,19 @@ class Interview(models.Model):
             overlapped_interviews = self.search(domain)
             if overlapped_interviews:
                 error_message = ""
+                tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
                 for overlapped_interview in overlapped_interviews:
+                    startdate = fields.Datetime.from_string(overlapped_interview.start)
+                    startdate = pytz.utc.localize(startdate)  # Add "+00:00" timezone
+                    startdate = startdate.astimezone(tz)  #Convert to user timezone
+                    startdate = fields.Datetime.to_string(startdate)
+                    enddate = fields.Datetime.from_string(overlapped_interview.stop)
+                    enddate = pytz.utc.localize(enddate)
+                    enddate = enddate.astimezone(tz)
+                    enddate = fields.Datetime.to_string(enddate)
                     conflicted_partners = interview.partner_ids & overlapped_interview.partner_ids
                     error_message += ', '.join(conflicted_partners.mapped(
-                        'name')) + ' has interview from ' + overlapped_interview.start + ' to ' + overlapped_interview.stop + '\n'
+                        'name')) + ' has interview from ' + startdate + ' to ' + enddate + '\n'
                 raise ValidationError(error_message)
 
     @api.depends('partner_ids')
