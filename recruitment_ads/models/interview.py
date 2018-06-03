@@ -10,7 +10,7 @@ class Interview(models.Model):
     _inherit = 'calendar.event'
 
     hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
-    job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant')
+    job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant', store=True)
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
     extra_followers_ids = fields.Many2many('res.partner', string="Followers",
                                            relation='interview_followers_interview_rel', column1='interview_id',
@@ -20,6 +20,7 @@ class Interview(models.Model):
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
     last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')
+    department_id = fields.Many2one('hr.department', string='Department', compute='_get_applicant', store=True)
     is_interview_done = fields.Boolean('Is interview done?', default=False)
 
     @api.multi
@@ -78,6 +79,7 @@ class Interview(models.Model):
             if r.res_model_id.model == 'hr.applicant':
                 r.hr_applicant_id = self.env['hr.applicant'].browse([r.res_id])
                 r.job_id = self.env['hr.applicant'].browse([r.res_id]).job_id
+                r.department_id = self.env['hr.applicant'].browse([r.res_id]).department_id
 
     @api.constrains('duration', 'allday')
     def check_duration(self):

@@ -118,6 +118,20 @@
             </tree>
         </field>
     </record>
+
+    <record id="view_calendar_event_interview_search" model="ir.ui.view">
+        <field name="name">calendar.event.interview.search</field>
+        <field name="model">calendar.event</field>
+        <field name="arch" type="xml">
+            <search string="Search Interview">
+                <field name="partner_ids"/>
+                <field name="user_id" string="Recruiter Responsible"/>
+                <field name="job_id"/>
+                <field name="department_id" operator="child_of"/>
+            </search>
+        </field>
+    </record>
+
     <record id="calendar.action_calendar_event" model="ir.actions.act_window">
         <field name="domain">[('type','=','normal')]</field>
     </record>
@@ -131,14 +145,15 @@
             </field>
         </field>
     </record>
-    <act_window
-            id="action_interview_calendar_event"
-            name="Interviews"
-            res_model="calendar.event"
-            view_mode="tree"
-            domain="[('type','=','interview')]"
-            context="{'default_type': 'interview', 'default_duration': 0.5}"
-            view_type="form"/>
+    <record id="action_interview_calendar_event" model="ir.actions.act_window">
+        <field name="name">Interviews</field>
+        <field name="res_model">calendar.event</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('type','=','interview')]</field>
+        <field name="context">{'default_type': 'interview', 'default_duration': 0.5}</field>
+        <field name="view_type">form</field>
+        <field name="search_view_id" ref="view_calendar_event_interview_search"/>
+    </record>
 
     <record id="act_window_view_calendar_event_tree" model="ir.actions.act_window.view">
         <field name="sequence" eval="0"/>
