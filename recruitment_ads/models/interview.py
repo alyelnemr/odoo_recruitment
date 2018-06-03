@@ -23,26 +23,6 @@ class Interview(models.Model):
     department_id = fields.Many2one('hr.department', string='Department', compute='_get_applicant', store=True)
     is_interview_done = fields.Boolean('Is interview done?', default=False)
 
-    @api.multi
-    def _inverse_dates(self):
-        for meeting in self:
-            if meeting.allday:
-                tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
-
-                enddate = fields.Datetime.from_string(meeting.stop_date)
-                enddate = tz.localize(enddate)
-                enddate = enddate.replace(hour=23, minute=59)
-                enddate = enddate.astimezone(pytz.utc)
-                meeting.stop = fields.Datetime.to_string(enddate)
-
-                startdate = fields.Datetime.from_string(meeting.start_date)
-                startdate = tz.localize(startdate)  # Add "+hh:mm" timezone
-                startdate = startdate.replace(hour=0)  # Set 0 AM in localtime
-                startdate = startdate.astimezone(pytz.utc)  # Convert to UTC
-                meeting.start = fields.Datetime.to_string(startdate)
-            else:
-                meeting.start = meeting.start_datetime
-                meeting.stop = meeting.stop_datetime
 
     @api.constrains('partner_ids', 'start', 'stop')
     def check_overlapping_interviews(self):
