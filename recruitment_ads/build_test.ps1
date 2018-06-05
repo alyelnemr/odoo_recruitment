@@ -1,1 +1,0 @@
-cmd.exe /c 'build_test.bat'
