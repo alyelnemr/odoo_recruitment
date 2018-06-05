@@ -1,1 +1,1 @@
-cmd.exe /c 'build_test.bat'
+cmd.exe /c 'C:\Program Files (x86)\Odoo 11.0\server\odoo\custom addons\Recruitment\build_test.bat'
