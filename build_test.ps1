@@ -1,3 +1,3 @@
-cd "C:\PROGRA~2\ODOO11~1.0\nssm\win64"
+cd "C:\PSTools"
 cmd /c 'dir'
-cmd /c 'nssm.exe'
+cmd /c 'PsExec.exe'
