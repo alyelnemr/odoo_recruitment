@@ -21,7 +21,7 @@ $ArgumentList = ""
         $output
       }
     }
-    $process.WaitForExit(5000)
+    #$process.WaitForExit(5000)
     & "$Env:SystemRoot\system32\cmd.exe" `
       /c exit $process.ExitCode
   }
