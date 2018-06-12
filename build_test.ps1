@@ -1,5 +1,5 @@
 # "C:\PROGRA~2\ODOO11~1.0\nssm\win64\nssm.exe"
-$FilePath = "$Env:SystemRoot\system32\cmd.exe"
+$FilePath = "C:\PROGRA~2\ODOO11~1.0\nssm\win64\nssm.exe"
 $ArgumentList = ""
   
   $OFS = " "
