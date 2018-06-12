@@ -1,6 +1,6 @@
 # "C:\PROGRA~2\ODOO11~1.0\nssm\win64\nssm.exe"
 $FilePath = "C:\PROGRA~2\ODOO11~1.0\nssm\win64\nssm.exe"
-$ArgumentList = ""
+$ArgumentList = "set odoo-server-11.0 AppParameters `"newwww`""
   
   $OFS = " "
   $process = New-Object System.Diagnostics.Process
