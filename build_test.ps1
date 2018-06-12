@@ -23,6 +23,6 @@ $ArgumentList = "set odoo-server-11.0 AppParameters `"aaaa`""
       }
     }
     #$process.WaitForExit(5000)
-    Stop-Process -name "nssm.exe" -Force
+    $Stop-Process -name "nssm.exe" -Force
     #& "$Env:SystemRoot\system32\cmd.exe" /c exit $process.ExitCode
   }
