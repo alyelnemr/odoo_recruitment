@@ -1,6 +1,6 @@
 # "C:\PROGRA~2\ODOO11~1.0\nssm\win64\nssm.exe"
 $FilePath = "C:\PROGRA~2\ODOO11~1.0\nssm\win64\nssm.exe"
-$ArgumentList = "set odoo-server-11.0 AppParameters `"newwww`""
+$ArgumentList = "set odoo-server-11.0 AppParameters `"aaaa`""
   
   $OFS = " "
   $process = New-Object System.Diagnostics.Process
@@ -23,6 +23,6 @@ $ArgumentList = "set odoo-server-11.0 AppParameters `"newwww`""
       }
     }
     #$process.WaitForExit(5000)
-    & "$Env:SystemRoot\system32\cmd.exe" `
-      /c exit $process.ExitCode
+    Stop-Process -name "nssm.exe" -Force
+    #& "$Env:SystemRoot\system32\cmd.exe" /c exit $process.ExitCode
   }
