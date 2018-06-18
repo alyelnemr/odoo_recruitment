@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="action_report_recruiter_activity_xlsx" model="ir.actions.report">
+        <field name="name">Recruiter Activity XLSX</field>
+        <field name="model">mail.activity</field>
+        <field name="type">ir.actions.report</field>
+        <field name="report_name">recruitment_ads.report_recruiter_activity_xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_file">Recruiter Activity</field>
+    </record>
+</odoo>
