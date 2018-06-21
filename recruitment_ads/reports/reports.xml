@@ -2,7 +2,7 @@
 <odoo>
     <record id="action_report_recruiter_activity_xlsx" model="ir.actions.report">
         <field name="name">Recruiter Activity XLSX</field>
-        <field name="model">mail.activity</field>
+        <field name="model">recruiter.activity.report.wizard</field>
         <field name="type">ir.actions.report</field>
         <field name="report_name">recruitment_ads.report_recruiter_activity_xlsx</field>
         <field name="report_type">xlsx</field>

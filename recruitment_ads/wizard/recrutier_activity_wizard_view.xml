@@ -13,6 +13,14 @@
                         <field name="recruiter_ids" widget="many2many_tags"/>
                         <field name="job_ids" widget="many2many_tags"/>
                     </group>
+                    <div>
+                        <field name="cv_source" class="oe_inline"/>
+                        <label for="cv_source"/>
+                        <field name="calls" class="oe_inline"/>
+                        <label for="calls"/>
+                        <field name="interviews"/>
+                        <label for="interviews"/>
+                    </div>
                     <footer>
                         <button name="button_export_xlsx" type="object" string="Export (XLSX)" class="oe_highlight"/>
                         <button string="Cancel" class="btn-default" special="cancel"/>
