@@ -102,7 +102,7 @@ class AbstractReportXslx(models.AbstractModel):
 
         self._set_column_width()
 
-        self._write_report_name()
+        #self._write_report_name()
 
         self._generate_report_content(workbook, report)
 

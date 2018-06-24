@@ -51,73 +51,20 @@ class RecActivityXslx(models.AbstractModel):
         return sheets
 
     def _generate_report_content(self, workbook, report):
-        no_records = True
         if report.cv_source:
-            domain = [
-                ('create_date', '>=', report.date_from + ' 00:00:00'),
-                ('create_date', '<=', report.date_to + ' 23:59:59'),
-            ]
-            if report.recruiter_ids:
-                domain.append(('user_id', 'in', report.recruiter_ids.ids))
-            if report.job_ids:
-                domain.append(('job_id', 'in', report.job_ids.ids))
-
             self.write_array_header('CV Source')
-
-            applications = self.env['hr.applicant'].search(domain, order='create_date desc')
-            if applications:
-                no_records = False
-
-            for app_line in applications:
+            for app_line in report.application_ids:
                 self.write_line(app_line, 'CV Source')
 
         if report.calls:
-            domain = [
-                ('write_date', '>=', report.date_from + ' 00:00:00'),
-                ('write_date', '<=', report.date_to + ' 23:59:59'),
-                ('active', '=', False),
-                ('call_result_id', '!=', False),
-            ]
-            if report.recruiter_ids:
-                domain.append(('create_uid', 'in', report.recruiter_ids.ids))
-
-            calls = self.env['mail.activity'].search(domain, order='write_date desc')
-            if calls:
-                no_records = False
-
-            if report.job_ids:
-                calls = calls.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in report.job_ids)
-
             self.write_array_header('Calls')
-
-            for call in calls:
+            for call in report.call_ids:
                 self.write_line(CallLineWrapper(call), 'Calls')
 
         if report.interviews:
-            domain = [
-                ('write_date', '>=', report.date_from + ' 00:00:00'),
-                ('write_date', '<=', report.date_to + ' 23:59:59'),
-                ('active', '=', False),
-                ('activity_category', '=', 'interview'),
-            ]
-            if report.recruiter_ids:
-                domain.append(('create_uid', 'in', report.recruiter_ids.ids))
-
-            interviews = self.env['mail.activity'].search(domain, order='write_date desc')
-            if interviews:
-                no_records = False
-
-            if report.job_ids:
-                interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in report.job_ids)
-
             self.write_array_header('Interviews')
-
-            for interview in interviews:
+            for interview in report.interview_ids:
                 self.write_line(InterviewLineWrapper(interview), 'Interviews')
-
-        if no_records:
-            raise ValidationError(_("No record to display"))
-
 
 class CallLineWrapper:
     def __init__(self, call):

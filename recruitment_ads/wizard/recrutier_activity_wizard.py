@@ -17,6 +17,10 @@ class RecruiterActivityReportWizard(models.TransientModel):
     calls = fields.Boolean('Calls')
     interviews = fields.Boolean('Interviews')
 
+    application_ids = fields.Many2many('hr.applicant')
+    call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id')
+    interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id')
+
     @api.constrains('date_from','date_to')
     def check_dates(self):
         for r in self:
@@ -48,5 +52,55 @@ class RecruiterActivityReportWizard(models.TransientModel):
         self.ensure_one()
         if not (self.calls or self.cv_source or self.interviews):
             raise ValidationError(_("Please Select at least one activity to export"))
+        no_records = True
+        if self.cv_source:
+            domain = [
+                ('create_date', '>=', self.date_from + ' 00:00:00'),
+                ('create_date', '<=', self.date_to + ' 23:59:59'),
+            ]
+            if self.recruiter_ids:
+                domain.append(('user_id', 'in', self.recruiter_ids.ids))
+            if self.job_ids:
+                domain.append(('job_id', 'in', self.job_ids.ids))
+            applications = self.env['hr.applicant'].search(domain, order='create_date desc')
+            if applications:
+                no_records = False
+            self.application_ids |= applications
+
+        if self.calls:
+            domain = [
+                ('write_date', '>=', self.date_from + ' 00:00:00'),
+                ('write_date', '<=', self.date_to + ' 23:59:59'),
+                ('active', '=', False),
+                ('call_result_id', '!=', False),
+            ]
+            if self.recruiter_ids:
+                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+            calls = self.env['mail.activity'].search(domain, order='write_date desc')
+            if calls:
+                no_records = False
+            if self.job_ids:
+                calls = calls.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in report.job_ids)
+            self.call_ids |= calls
+
+        if self.interviews:
+            domain = [
+                ('write_date', '>=', self.date_from + ' 00:00:00'),
+                ('write_date', '<=', self.date_to + ' 23:59:59'),
+                ('active', '=', False),
+                ('activity_category', '=', 'interview'),
+            ]
+            if self.recruiter_ids:
+                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+            interviews = self.env['mail.activity'].search(domain, order='write_date desc')
+            if interviews:
+                no_records = False
+            if self.job_ids:
+                interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in report.job_ids)
+            self.interview_ids |= interviews
+
+        if no_records:
+            raise ValidationError(_("No record to display"))
+
         report = self.env.ref('recruitment_ads.action_report_recruiter_activity_xlsx')
         return report.report_action(self)
