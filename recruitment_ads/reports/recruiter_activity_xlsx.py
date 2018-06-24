@@ -14,7 +14,7 @@ class RecActivityXslx(models.AbstractModel):
         if report.cv_source:
             sheets.append({
                 'CV Source': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
                     1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     2: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
                     3: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
@@ -121,29 +121,29 @@ class RecActivityXslx(models.AbstractModel):
 
 class CallLineWrapper:
     def __init__(self, call):
-        rec = call.env[call.res_model].browse(call.res_id)
+        applicant = call.env[call.res_model].browse(call.res_id)
         self.create_uid = call.create_uid
-        self.partner_name = rec.partner_name
+        self.partner_name = applicant.partner_name
         self.write_date = call.write_date
         self.user_id = call.user_id
         self.call_result_id = call.call_result_id
         self.feedback = call.feedback
-        self.department_id = rec.department_id
-        self.job_id = rec.job_id
+        self.department_id = applicant.department_id
+        self.job_id = applicant.job_id
         self._context = call._context
         self.env = call.env
 
 
 class InterviewLineWrapper:
     def __init__(self, interview):
-        rec = interview.env[interview.res_model].browse(interview.res_id)
+        applicant = interview.env[interview.res_model].browse(interview.res_id)
         self.create_uid = interview.create_uid
-        self.partner_name = rec.partner_name
+        self.partner_name = applicant.partner_name
         self.start_date = interview.calendar_event_id.start
         self.partner_ids = interview.calendar_event_id.partner_ids
         self.interview_result = interview.interview_result
         self.feedback = interview.feedback
-        self.department_id = rec.department_id
-        self.job_id = rec.job_id
+        self.department_id = applicant.department_id
+        self.job_id = applicant.job_id
         self._context = interview._context
         self.env = interview.env
