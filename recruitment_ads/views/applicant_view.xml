@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="crm_case_form_view_job_inherited" model="ir.ui.view">
+            <field name="name">Jobs - Recruitment Form inherit</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="replace"/>
+                <xpath expr="//label[@for='name']" position="before">
+                    <label for="partner_id" string="Search For Applicant" class="oe_edit_only"/>
+                    <field name="partner_id" context="{'search_for_applicant': True, 'search_view_ref': 'recruitment_ads.view_create_new_applicant_search', 'tree_view_ref':'recruitment_ads.view_create_new_applicant_tree'}"/>
+                    <separator/>
+                </xpath>
+
+                <xpath expr="//field[@name='description']" position="after">
+                    <separator string="History"/>
+                    <field name="applicant_history_ids">
+                        <tree>
+                            <field name="partner_id" string="Applicant Name"/>
+                            <field name="job_id" string="Job Position"/>
+                            <field name="last_activity" string="Last Activity"/>
+                            <field name="last_activity_date" string="Last Activity Date"/>
+                            <field name="result" string="Result"/>
+                            <field name="last_stage_id" string="Last Stage"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_create_new_applicant_search" model="ir.ui.view">
+            <field name="name">view create new applicant search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Search Applicant">
+                    <field name="name" filter_domain="['|','|','|',('name','ilike',self),('mobile','ilike',self),('phone','ilike',self),('email','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_create_new_applicant_tree" model="ir.ui.view">
+            <field name="name">view create new applicant tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="mobile"/>
+                    <field name="phone"/>
+                    <field name="email"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>
