@@ -25,70 +25,25 @@ class PartnerInherit(models.Model):
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if self._context.get('match_name_start',False):
-            if args is None:
-                args = []
-            if name and operator in ('=', 'ilike', '=ilike', 'like', '=like'):
-                self.check_access_rights('read')
-                where_query = self._where_calc(args)
-                self._apply_ir_rules(where_query, 'read')
-                from_clause, where_clause, where_clause_params = where_query.get_sql()
-                where_str = where_clause and (" WHERE %s AND " % where_clause) or ' WHERE '
-
-                # search on the name of the contacts and of its company
-                search_name = name
-                if operator in ('ilike', 'like'):
-                    search_name = '%s%%' % name
-                if operator in ('=ilike', '=like'):
-                    operator = operator[1:]
-
-                unaccent = get_unaccent_wrapper(self.env.cr)
-
-                query = """SELECT id
+        match_name_start = self._context.get('match_name_start',False)
+        search_for_applicant = self._context.get('search_for_applicant',False)
+        unaccent = get_unaccent_wrapper(self.env.cr)
+        if match_name_start:
+            like_search_name = '%s%%' % name
+            query_sql = """SELECT id
                              FROM res_partner
                           {where} ({display_name} {operator} {percent}
                                OR {name} {operator} {percent})
                                -- don't panic, trust postgres bitmap
                          ORDER BY {name}
-                        """.format(where=where_str,
-                                   operator=operator,
-                                   display_name=unaccent('display_name'),
-                                   name=unaccent('name'),
-                                   percent=unaccent('%s'),
-                                   )
-                where_clause_params += [search_name] * 2
-                if limit:
-                    query += ' limit %s'
-                    where_clause_params.append(limit)
-                self.env.cr.execute(query, where_clause_params)
-                partner_ids = [row[0] for row in self.env.cr.fetchall()]
-
-                if partner_ids:
-                    return self.browse(partner_ids).name_get()
-                else:
-                    return []
-            return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
-
-        elif self._context.get('search_for_applicant',False):
-            if args is None:
-                args = []
-            if name and operator in ('=', 'ilike', '=ilike', 'like', '=like'):
-                self.check_access_rights('read')
-                where_query = self._where_calc(args)
-                self._apply_ir_rules(where_query, 'read')
-                from_clause, where_clause, where_clause_params = where_query.get_sql()
-                where_str = where_clause and (" WHERE %s AND " % where_clause) or ' WHERE '
-
-                # search on the name of the contacts and of its company
-                search_name = name
-                if operator in ('ilike', 'like'):
-                    search_name = '%%%s%%' % name
-                if operator in ('=ilike', '=like'):
-                    operator = operator[1:]
-
-                unaccent = get_unaccent_wrapper(self.env.cr)
-
-                query = """SELECT id
+                        """
+            query_data = {
+                'display_name': unaccent('display_name'),
+                'name': unaccent('name'),
+            }
+        elif search_for_applicant:
+            like_search_name = '%%%s%%' % name
+            query_sql = """SELECT id
                              FROM res_partner
                           {where} ({display_name} {operator} {percent}
                                OR {name} {operator} {percent}
@@ -97,16 +52,36 @@ class PartnerInherit(models.Model):
                                OR {email} {operator} {percent})
                                -- don't panic, trust postgres bitmap
                          ORDER BY {name}
-                        """.format(where=where_str,
+                        """
+            query_data = {
+                'display_name': unaccent('display_name'),
+                'name': unaccent('name'),
+                'mobile': unaccent('mobile'),
+                'phone': unaccent('phone'),
+                'email': unaccent('email')
+            }
+
+        if match_name_start or search_for_applicant:
+            if args is None:
+                args = []
+            if name and operator in ('=', 'ilike', '=ilike', 'like', '=like'):
+                self.check_access_rights('read')
+                where_query = self._where_calc(args)
+                self._apply_ir_rules(where_query, 'read')
+                from_clause, where_clause, where_clause_params = where_query.get_sql()
+                where_str = where_clause and (" WHERE %s AND " % where_clause) or ' WHERE '
+
+                # search on the name of the contacts and of its company
+                search_name = name
+                if operator in ('ilike', 'like'):
+                    search_name = like_search_name
+                if operator in ('=ilike', '=like'):
+                    operator = operator[1:]
+                query = query_sql.format(where=where_str,
                                    operator=operator,
                                    percent=unaccent('%s'),
-                                   display_name=unaccent('display_name'),
-                                   name=unaccent('name'),
-                                   mobile=unaccent('mobile'),
-                                   phone=unaccent('phone'),
-                                   email=unaccent('email'),
-                                   )
-                where_clause_params += [search_name] * 5
+                                         **query_data)
+                where_clause_params += [search_name] * len(query_data)
                 if limit:
                     query += ' limit %s'
                     where_clause_params.append(limit)

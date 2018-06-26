@@ -356,35 +356,3 @@ class Attendee(models.Model):
                 res_interview = super(Attendee, interviews)._send_mail_to_attendees(
                     map_meeting_interview_template.get(template_xmlid, template_xmlid), force_send)
         return res_interview and res_meeting
-
-
-class Applicant(models.Model):
-    _inherit = 'hr.applicant'
-    email_from = fields.Char(required=True)
-    partner_phone = fields.Char(required=True)
-    partner_mobile = fields.Char(required=True)
-    partner_name = fields.Char(required=True)
-
-    @api.multi
-    def action_makeMeeting(self):
-        self.ensure_one()
-        calendar_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_calender').id
-        form_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_form').id
-        action = {
-            'type': 'ir.actions.act_window',
-            'name': 'Schedule Interview',
-            'res_model': 'calendar.event',
-            'view_mode': 'calendar,form',
-            'view_type': 'form',
-            'view_id': form_view_id,
-            'views': [[calendar_view_id, 'calendar'], [form_view_id, 'form']],
-            'target': 'current',
-            'domain': [['type', '=', 'interview']],
-            'context': {
-                'default_name': self.name + "'s interview",
-                'default_res_id': self.id,
-                'default_res_model': self._name,
-                'default_type': 'interview',
-            },
-        }
-        return action
