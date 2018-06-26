@@ -25,7 +25,43 @@ class PartnerInherit(models.Model):
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if 'match_name_start' in self._context:
+        match_name_start = self._context.get('match_name_start',False)
+        search_for_applicant = self._context.get('search_for_applicant',False)
+        unaccent = get_unaccent_wrapper(self.env.cr)
+        if match_name_start:
+            like_search_name = '%s%%' % name
+            query_sql = """SELECT id
+                             FROM res_partner
+                          {where} ({display_name} {operator} {percent}
+                               OR {name} {operator} {percent})
+                               -- don't panic, trust postgres bitmap
+                         ORDER BY {name}
+                        """
+            query_data = {
+                'display_name': unaccent('display_name'),
+                'name': unaccent('name'),
+            }
+        elif search_for_applicant:
+            like_search_name = '%%%s%%' % name
+            query_sql = """SELECT id
+                             FROM res_partner
+                          {where} ({display_name} {operator} {percent}
+                               OR {name} {operator} {percent}
+                               OR {mobile} {operator} {percent}
+                               OR {phone} {operator} {percent}
+                               OR {email} {operator} {percent})
+                               -- don't panic, trust postgres bitmap
+                         ORDER BY {name}
+                        """
+            query_data = {
+                'display_name': unaccent('display_name'),
+                'name': unaccent('name'),
+                'mobile': unaccent('mobile'),
+                'phone': unaccent('phone'),
+                'email': unaccent('email')
+            }
+
+        if match_name_start or search_for_applicant:
             if args is None:
                 args = []
             if name and operator in ('=', 'ilike', '=ilike', 'like', '=like'):
@@ -38,25 +74,14 @@ class PartnerInherit(models.Model):
                 # search on the name of the contacts and of its company
                 search_name = name
                 if operator in ('ilike', 'like'):
-                    search_name = '%s%%' % name
+                    search_name = like_search_name
                 if operator in ('=ilike', '=like'):
                     operator = operator[1:]
-
-                unaccent = get_unaccent_wrapper(self.env.cr)
-
-                query = """SELECT id
-                             FROM res_partner
-                          {where} ({display_name} {operator} {percent}
-                               OR {name} {operator} {percent})
-                               -- don't panic, trust postgres bitmap
-                         ORDER BY {name}
-                        """.format(where=where_str,
+                query = query_sql.format(where=where_str,
                                    operator=operator,
-                                   display_name=unaccent('display_name'),
-                                   name=unaccent('name'),
                                    percent=unaccent('%s'),
-                                   )
-                where_clause_params += [search_name] * 2
+                                         **query_data)
+                where_clause_params += [search_name] * len(query_data)
                 if limit:
                     query += ' limit %s'
                     where_clause_params.append(limit)
@@ -68,4 +93,5 @@ class PartnerInherit(models.Model):
                 else:
                     return []
             return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
+
         return super(PartnerInherit, self).name_search(name=name, args=args, operator=operator, limit=limit)
