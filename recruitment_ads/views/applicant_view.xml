@@ -34,7 +34,7 @@
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <search string="Search Applicant">
-                    <field name="name" filter_domain="['|','|','|',('name','ilike',self),('mobile','ilike',self),('phone','ilike',self),('email','ilike',self)]"/>
+                    <field name="id" filter_domain="['|','|','|',('name','ilike',self),('mobile','ilike',self),('phone','ilike',self),('email','ilike',self)]"/>
                 </search>
             </field>
         </record>
