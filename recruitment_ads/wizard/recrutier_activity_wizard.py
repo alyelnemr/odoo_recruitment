@@ -77,10 +77,10 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if self.recruiter_ids:
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             calls = self.env['mail.activity'].search(domain, order='write_date desc')
-            if calls:
-                no_records = False
             if self.job_ids:
                 calls = calls.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
+            if calls:
+                no_records = False
             self.call_ids |= calls
 
         if self.interviews:
@@ -93,10 +93,10 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if self.recruiter_ids:
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             interviews = self.env['mail.activity'].search(domain, order='write_date desc')
-            if interviews:
-                no_records = False
             if self.job_ids:
                 interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
+            if interviews:
+                no_records = False
             self.interview_ids |= interviews
 
         if no_records:
