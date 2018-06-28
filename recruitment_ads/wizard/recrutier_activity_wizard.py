@@ -7,8 +7,8 @@ class RecruiterActivityReportWizard(models.TransientModel):
     _name = "recruiter.activity.report.wizard"
     _description = "Recruiter Activity Report Wizard"
 
-    date_from = fields.Date(string='Start Date',required=True,default=fields.Date.today())
-    date_to = fields.Date(string='End Date',required=True,default=fields.Date.today())
+    date_from = fields.Date(string='Start Date',required=True,default=fields.Date.today)
+    date_to = fields.Date(string='End Date',required=True,default=fields.Date.today)
 
     recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible')
     job_ids = fields.Many2many('hr.job', string='Job Position')
@@ -59,7 +59,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ('create_date', '<=', self.date_to + ' 23:59:59'),
             ]
             if self.recruiter_ids:
-                domain.append(('user_id', 'in', self.recruiter_ids.ids))
+                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             if self.job_ids:
                 domain.append(('job_id', 'in', self.job_ids.ids))
             applications = self.env['hr.applicant'].search(domain, order='create_date desc')
