@@ -80,7 +80,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if calls:
                 no_records = False
             if self.job_ids:
-                calls = calls.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in report.job_ids)
+                calls = calls.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
             self.call_ids |= calls
 
         if self.interviews:
@@ -96,7 +96,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if interviews:
                 no_records = False
             if self.job_ids:
-                interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in report.job_ids)
+                interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
             self.interview_ids |= interviews
 
         if no_records:
