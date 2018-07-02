@@ -361,7 +361,7 @@ class Attendee(models.Model):
 class Applicant(models.Model):
     _inherit = 'hr.applicant'
     email_from = fields.Char(required=True)
-    partner_phone = fields.Char(required=True)
+    partner_phone = fields.Char()
     partner_mobile = fields.Char(required=True)
     partner_name = fields.Char(required=True)
 

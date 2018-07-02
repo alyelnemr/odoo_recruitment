@@ -7,6 +7,7 @@ class PartnerInherit(models.Model):
     _inherit = 'res.partner'
 
     short_display = fields.Char("Short display name", compute='_compute_short_display_name', store=True)
+    applicant = fields.Boolean(string='Applicant')
 
     @api.depends('name')
     def _compute_short_display_name(self):
@@ -120,3 +121,12 @@ class PartnerInherit(models.Model):
             return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
 
         return super(PartnerInherit, self).name_search(name=name, args=args, operator=operator, limit=limit)
+
+    _sql_constraints = [
+        ('mobile_uniq',
+         'UNIQUE (mobile)',
+         'Data entered before.'),
+        ('email_uniq',
+         'UNIQUE (email)',
+         'Data entered before.')
+    ]

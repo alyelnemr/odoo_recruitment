@@ -9,7 +9,9 @@
                 <xpath expr="//field[@name='partner_id']" position="replace"/>
                 <xpath expr="//label[@for='name']" position="before">
                     <label for="partner_id" string="Search For Applicant" class="oe_edit_only"/>
-                    <field name="partner_id" context="{'search_for_applicant': True, 'search_view_ref': 'recruitment_ads.view_create_new_applicant_search', 'tree_view_ref':'recruitment_ads.view_create_new_applicant_tree'}"/>
+                    <field name="partner_id"
+                           domain="[('applicant', '=', True)]"
+                           context="{'search_for_applicant': True, 'search_view_ref': 'recruitment_ads.view_create_new_applicant_search', 'tree_view_ref':'recruitment_ads.view_create_new_applicant_tree', 'form_view_ref':'recruitment_ads.view_partner_form_inherit','default_applicant': 'True'}"/>
                     <separator/>
                 </xpath>
 
@@ -34,7 +36,8 @@
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <search string="Search Applicant">
-                    <field name="id" filter_domain="['|','|','|',('name','ilike',self),('mobile','ilike',self),('phone','ilike',self),('email','ilike',self)]"/>
+                    <field name="id"
+                           filter_domain="['|','|','|',('name','ilike',self),('mobile','ilike',self),('phone','ilike',self),('email','ilike',self)]"/>
                 </search>
             </field>
         </record>
@@ -49,6 +52,40 @@
                     <field name="phone"/>
                     <field name="email"/>
                 </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_partner_form_inherit">
+            <field name="name">res partner form inherit</field>
+            <field name="model">res.partner</field>
+            <field name="mode">extension</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='sales_purchases']/group/group/field[@name='customer']" position="after">
+                    <field name="applicant"/>
+                </xpath>
+                <xpath expr="//field[@name='company_type']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('applicant','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <!--Changing the behavior of the parent_id field to be invisible only if the applicant field is True, and keeping the default behavior the same if the applicant field is False-->
+                    <attribute name="attrs">{'invisible': ['|', '&amp;','|', '&amp;',
+                        ('is_company','=', True),
+                        ('parent_id', '=', False),
+                        ('company_name', '!=', False),
+                        ('company_name', '!=', ''),
+                        ('applicant','=', True)
+                        ]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="attrs">{'invisible': [('applicant','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='mobile']" position="attributes">
+                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='email']" position="attributes">
+                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>
+                </xpath>
             </field>
         </record>
     </data>
