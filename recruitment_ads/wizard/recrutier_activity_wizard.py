@@ -18,14 +18,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
     interviews = fields.Boolean('Interviews')
 
     application_ids = fields.Many2many('hr.applicant')
-    call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id')
-    interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id')
+    call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id',domain=[('active','=',False)])
+    interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id',domain=[('active','=',False)])
 
     @api.constrains('date_from','date_to')
     def check_dates(self):
         for r in self:
             if r.date_to < r.date_from:
-                raise (_("The End Date must be greater than or equal to start Date"))
+                raise ValidationError(_("You can't select start date greater than end date"))
 
     @api.onchange('date_from','date_to')
     def onchange_job_ids(self):
@@ -65,7 +65,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
             applications = self.env['hr.applicant'].search(domain, order='create_date desc')
             if applications:
                 no_records = False
-            self.application_ids |= applications
+            self.application_ids = [(6,0,applications.ids)]
 
         if self.calls:
             domain = [
@@ -73,15 +73,16 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ('write_date', '<=', self.date_to + ' 23:59:59'),
                 ('active', '=', False),
                 ('call_result_id', '!=', False),
+                ('res_model', '=', 'hr.applicant'),
             ]
             if self.recruiter_ids:
-                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+                domain.append(('real_create_uid', 'in', self.recruiter_ids.ids))
             calls = self.env['mail.activity'].search(domain, order='write_date desc')
             if self.job_ids:
-                calls = calls.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
+                calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in self.job_ids)
             if calls:
                 no_records = False
-            self.call_ids |= calls
+            self.call_ids = [(6,0,calls.ids)]
 
         if self.interviews:
             domain = [
@@ -89,15 +90,16 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ('write_date', '<=', self.date_to + ' 23:59:59'),
                 ('active', '=', False),
                 ('activity_category', '=', 'interview'),
+                ('res_model', '=', 'hr.applicant')
             ]
             if self.recruiter_ids:
-                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+                domain.append(('real_create_uid', 'in', self.recruiter_ids.ids))
             interviews = self.env['mail.activity'].search(domain, order='write_date desc')
             if self.job_ids:
                 interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
             if interviews:
                 no_records = False
-            self.interview_ids |= interviews
+            self.interview_ids = [(6,0,interviews.ids)]
 
         if no_records:
             raise ValidationError(_("No record to display"))

@@ -13,9 +13,21 @@ class MailActivity(models.Model):
     call_result_id = fields.Char(string="Call result")
     interview_result = fields.Char(string="Interview result")
     active = fields.Boolean(string='Active', default=True)
+    real_create_uid = fields.Many2one('res.users', string='Real Create User',
+                                      help='Store the real create user as odoo always overwrite create_uid with admin',
+                                      default=lambda self: self.env.user)
+    real_write_uid = fields.Many2one('res.users', string='Real Write User',
+                                     help='Store the real write user as odoo always overwrite write_uid with admin',
+                                     default=lambda self: self.env.user)
 
     @api.multi
-    def update_calendar_event(self,result=False):
+    def write(self, vals):
+        vals['real_write_uid'] = self.env.user.id
+        activity = super(MailActivity, self).write(vals)
+        return activity
+
+    @api.multi
+    def update_calendar_event(self, result=False):
         for activity in self:
             if activity.res_model == 'hr.applicant':
                 hr_applicant_id = self.env['hr.applicant'].browse([activity.res_id])
@@ -41,7 +53,7 @@ class MailActivity(models.Model):
             message |= record.message_ids[0]
 
         self.write({'active': False})
-        self.mapped('calendar_event_id').write({'is_interview_done':True})
+        self.mapped('calendar_event_id').write({'is_interview_done': True})
         self.update_calendar_event(interview_result)
         return message.ids and message.ids[0] or False
 

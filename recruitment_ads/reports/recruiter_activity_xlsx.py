@@ -25,7 +25,7 @@ class RecActivityXslx(models.AbstractModel):
         if report.calls:
             sheets.append({
                 'Calls': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20, 'type': 'many2one'},
                     1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     2: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
                     3: {'header': _('Called By'), 'field': 'user_id', 'width': 10, 'type': 'many2one'},
@@ -38,7 +38,7 @@ class RecActivityXslx(models.AbstractModel):
         if report.interviews:
             sheets.append({
                 'Interviews': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20, 'type': 'many2one'},
                     1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     2: {'header': _('Interview Date'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
                     3: {'header': _('Interviewers'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
@@ -69,7 +69,7 @@ class RecActivityXslx(models.AbstractModel):
 class CallLineWrapper:
     def __init__(self, call):
         applicant = call.env[call.res_model].browse(call.res_id)
-        self.create_uid = call.create_uid
+        self.real_create_uid = call.real_create_uid
         self.partner_name = applicant.partner_name
         self.write_date = call.write_date
         self.user_id = call.user_id
@@ -84,7 +84,7 @@ class CallLineWrapper:
 class InterviewLineWrapper:
     def __init__(self, interview):
         applicant = interview.env[interview.res_model].browse(interview.res_id)
-        self.create_uid = interview.create_uid
+        self.real_create_uid = interview.real_create_uid
         self.partner_name = applicant.partner_name
         self.start_date = interview.calendar_event_id.start
         self.partner_ids = interview.calendar_event_id.partner_ids
