@@ -53,17 +53,17 @@ class RecActivityXslx(models.AbstractModel):
     def _generate_report_content(self, workbook, report):
         if report.cv_source:
             self.write_array_header('CV Source')
-            for app_line in report.application_ids:
+            for app_line in report.application_ids.sorted('create_date',reverse=True):
                 self.write_line(app_line, 'CV Source')
 
         if report.calls:
             self.write_array_header('Calls')
-            for call in report.call_ids:
+            for call in report.call_ids.sorted('write_date',reverse=True):
                 self.write_line(CallLineWrapper(call), 'Calls')
 
         if report.interviews:
             self.write_array_header('Interviews')
-            for interview in report.interview_ids:
+            for interview in report.interview_ids.sorted('write_date',reverse=True):
                 self.write_line(InterviewLineWrapper(interview), 'Interviews')
 
 class CallLineWrapper:
