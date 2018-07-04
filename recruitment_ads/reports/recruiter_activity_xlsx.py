@@ -1,5 +1,5 @@
 from odoo import _, models
-from odoo.exceptions import ValidationError
+import re
 
 
 class RecActivityXslx(models.AbstractModel):
@@ -19,33 +19,35 @@ class RecActivityXslx(models.AbstractModel):
                     2: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
                     3: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
                     4: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                    5: {'header': _('Job Position'), 'field': 'job_id', 'width': 22, 'type': 'many2one'},
+                    5: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                 }
             })
         if report.calls:
             sheets.append({
                 'Calls': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
+                        'type': 'many2one'},
                     1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     2: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
                     3: {'header': _('Called By'), 'field': 'user_id', 'width': 10, 'type': 'many2one'},
                     4: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
                     5: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
                     6: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    7: {'header': _('Job Description'), 'field': 'job_id', 'width': 22, 'type': 'many2one'},
+                    7: {'header': _('Job Description'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                 }
             })
         if report.interviews:
             sheets.append({
                 'Interviews': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
+                        'type': 'many2one'},
                     1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     2: {'header': _('Interview Date'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
                     3: {'header': _('Interviewers'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
                     4: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
                     5: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
                     6: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    7: {'header': _('Job Description'), 'field': 'job_id', 'width': 22, 'type': 'many2one'},
+                    7: {'header': _('Job Description'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                 }
             })
         return sheets
@@ -53,18 +55,19 @@ class RecActivityXslx(models.AbstractModel):
     def _generate_report_content(self, workbook, report):
         if report.cv_source:
             self.write_array_header('CV Source')
-            for app_line in report.application_ids.sorted('create_date',reverse=True):
+            for app_line in report.application_ids.sorted('create_date', reverse=True):
                 self.write_line(app_line, 'CV Source')
 
         if report.calls:
             self.write_array_header('Calls')
-            for call in report.call_ids.sorted('write_date',reverse=True):
+            for call in report.call_ids.sorted('write_date', reverse=True):
                 self.write_line(CallLineWrapper(call), 'Calls')
 
         if report.interviews:
             self.write_array_header('Interviews')
-            for interview in report.interview_ids.sorted('write_date',reverse=True):
+            for interview in report.interview_ids.sorted('write_date', reverse=True):
                 self.write_line(InterviewLineWrapper(interview), 'Interviews')
+
 
 class CallLineWrapper:
     def __init__(self, call):
@@ -74,7 +77,7 @@ class CallLineWrapper:
         self.write_date = call.write_date
         self.user_id = call.user_id
         self.call_result_id = call.call_result_id
-        self.feedback = call.feedback
+        self.feedback = re.sub(r"<.*?>",'',call.feedback)
         self.department_id = applicant.department_id
         self.job_id = applicant.job_id
         self._context = call._context
@@ -89,7 +92,7 @@ class InterviewLineWrapper:
         self.start_date = interview.calendar_event_id.start
         self.partner_ids = interview.calendar_event_id.partner_ids
         self.interview_result = interview.interview_result
-        self.feedback = interview.feedback
+        self.feedback = re.sub(r"<.*?>",'',interview.feedback)
         self.department_id = applicant.department_id
         self.job_id = applicant.job_id
         self._context = interview._context
