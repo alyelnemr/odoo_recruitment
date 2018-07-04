@@ -1,6 +1,10 @@
-from odoo import models, api, fields
+import logging
+
+from odoo import models, api, fields,tools
 from odoo.addons.base.res.res_partner import Partner
 from odoo.osv.expression import get_unaccent_wrapper
+
+_schema = logging.getLogger('odoo.schema')
 
 
 class PartnerInherit(models.Model):
@@ -8,6 +12,30 @@ class PartnerInherit(models.Model):
 
     short_display = fields.Char("Short display name", compute='_compute_short_display_name', store=True)
     applicant = fields.Boolean(string='Applicant')
+
+    _sql_constraints = [
+        ('mobile_uniq',
+         'CHECK (1=1)',
+         'Data entered before.'),
+        ('email_uniq',
+         'CHECK (1=1)',
+         'Data entered before.')
+    ]
+
+    @api.model_cr_context
+    def _auto_init(self):
+        res = super(PartnerInherit, self)._auto_init()
+        if not tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
+            self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
+                                                                          '(mobile) WHERE (applicant is TRUE)'))
+            _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_mobile_uniq_index',
+                          '(mobile) WHERE (applicant is TRUE)')
+        if not tools.index_exists(self._cr, 'res_partner_email_uniq_index'):
+            self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_email_uniq_index', self._table,
+                                                                          '(email) WHERE (applicant is TRUE)'))
+            _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_email_uniq_index',
+                          '(email) WHERE (applicant is TRUE)')
+        return res
 
     @api.depends('name')
     def _compute_short_display_name(self):
@@ -26,8 +54,8 @@ class PartnerInherit(models.Model):
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
-        match_name_start = self._context.get('match_name_start',False)
-        search_for_applicant = self._context.get('search_for_applicant',False)
+        match_name_start = self._context.get('match_name_start', False)
+        search_for_applicant = self._context.get('search_for_applicant', False)
         unaccent = get_unaccent_wrapper(self.env.cr)
         if match_name_start:
             like_search_name = '%s%%' % name
@@ -79,8 +107,8 @@ class PartnerInherit(models.Model):
                 if operator in ('=ilike', '=like'):
                     operator = operator[1:]
                 query = query_sql.format(where=where_str,
-                                   operator=operator,
-                                   percent=unaccent('%s'),
+                                         operator=operator,
+                                         percent=unaccent('%s'),
                                          **query_data)
                 where_clause_params += [search_name] * len(query_data)
                 if limit:
@@ -96,12 +124,3 @@ class PartnerInherit(models.Model):
             return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
 
         return super(PartnerInherit, self).name_search(name=name, args=args, operator=operator, limit=limit)
-
-    _sql_constraints = [
-        ('mobile_uniq',
-         'UNIQUE (mobile)',
-         'Data entered before.'),
-        ('email_uniq',
-         'UNIQUE (email)',
-         'Data entered before.')
-    ]

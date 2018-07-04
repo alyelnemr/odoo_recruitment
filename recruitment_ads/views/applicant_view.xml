@@ -10,6 +10,7 @@
                 <xpath expr="//label[@for='name']" position="before">
                     <label for="partner_id" string="Search For Applicant" class="oe_edit_only"/>
                     <field name="partner_id"
+                           options="{'no_quick_create':True}"
                            domain="[('applicant', '=', True)]"
                            context="{'search_for_applicant': True, 'search_view_ref': 'recruitment_ads.view_create_new_applicant_search', 'tree_view_ref':'recruitment_ads.view_create_new_applicant_tree', 'form_view_ref':'recruitment_ads.view_partner_form_inherit','default_applicant': 'True'}"/>
                     <separator/>

@@ -9,7 +9,7 @@ class Applicant(models.Model):
     partner_mobile = fields.Char(required=True)
     partner_name = fields.Char(required=True)
 
-    partner_id = fields.Many2one('res.partner', "Contact", required=True)
+    partner_id = fields.Many2one('res.partner', "Applicant", required=True)
     applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
                                              string='history', readonly=True)
     last_activity = fields.Many2one('mail.activity.type', compute='_get_last_activity')
@@ -38,6 +38,13 @@ class Applicant(models.Model):
     def onchange_hr_applicant(self):
         history = self._get_history_data(self.partner_id.id)
         self.applicant_history_ids = [(6, 0, history.ids)]
+
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        self.partner_phone = self.partner_id.phone
+        self.partner_mobile = self.partner_id.mobile
+        self.email_from = self.partner_id.email
+        self.partner_name = self.partner_id.name
 
     @api.multi
     def action_makeMeeting(self):
