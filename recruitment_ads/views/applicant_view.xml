@@ -1,6 +1,20 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
+        <record model="ir.ui.view" id="crm_case_form_view_job_inherit2">
+            <field name="name">Jobs - Recruitment Form</field>
+            <field name="model">hr.applicant</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
         <record id="crm_case_form_view_job_inherited" model="ir.ui.view">
             <field name="name">Jobs - Recruitment Form inherit</field>
             <field name="model">hr.applicant</field>
@@ -18,14 +32,15 @@
 
                 <xpath expr="//field[@name='description']" position="after">
                     <separator string="History"/>
-                    <field name="applicant_history_ids">
-                        <tree>
+                    <field name="applicant_history_ids"  context="{'form_view_ref' : 'recruitment_ads.crm_case_form_view_job_inherit2'}">
+                        <!---->
+                        <tree create="false" edit="false" delete="false">
                             <field name="partner_id" string="Applicant Name"/>
                             <field name="job_id" string="Job Position"/>
                             <field name="last_activity" string="Last Activity"/>
                             <field name="last_activity_date" string="Last Activity Date"/>
                             <field name="result" string="Result"/>
-                            <field name="last_stage_id" string="Last Stage"/>
+                            <field name="stage_id" string="Last Stage"/>
                         </tree>
                     </field>
                 </xpath>
