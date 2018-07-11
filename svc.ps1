@@ -8,8 +8,3 @@ param(
 #add assembly
 get-service $svcname | restart-service
 
-
-
-
-
-
