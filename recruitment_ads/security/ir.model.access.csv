@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+full_access_business_unit,full_access_business_unit,model_business_unit,hr.group_hr_user,1,1,1,1
+public_access_business_unit,public_access_business_unit,model_business_unit,,1,0,0,0
+full_access_job_title,full_access_job_title,model_job_title,hr.group_hr_user,1,1,1,1
+public_access_job_title,public_access_job_title,model_job_title,,1,0,0,0

@@ -6,5 +6,4 @@
     <record id="group_view_recruiter_activities" model="res.groups">
         <field name="name">View Recruiter Activities</field>
     </record>
-
 </odoo>
