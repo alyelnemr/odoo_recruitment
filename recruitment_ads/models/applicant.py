@@ -11,22 +11,23 @@ class Applicant(models.Model):
 
     partner_id = fields.Many2one('res.partner', "Applicant", required=True)
     applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
-                                             string='history', readonly=True)
-    last_activity = fields.Many2one('mail.activity.type', compute='_get_last_activity')
-    last_activity_date = fields.Date(compute='_get_last_activity')
-    result = fields.Char(compute='_get_last_activity')
+                                             string='History', readonly=False)
+    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity')
+    last_activity_date = fields.Date(compute='_get_activity')
+    result = fields.Char(compute='_get_activity')
 
     @api.depends('activity_ids')
-    def _get_last_activity(self):
-        for record in self:
-            if record.activity_ids:
-                last_activity = record.activity_ids.sorted('create_date')[-1]
-                record.last_activity = last_activity.activity_type_id
-                record.last_activity_date = last_activity.date_deadline
+    def _get_activity(self):
+        for applicant in self:
+            activities = applicant.with_context({'active_test':False}).activity_ids
+            if activities:
+                last_activity = activities.sorted('create_date')[-1]
+                applicant.last_activity = last_activity.activity_type_id
+                applicant.last_activity_date = last_activity.date_deadline
                 if last_activity.activity_category == 'interview':
-                    record.result = last_activity.interview_result
+                    applicant.result = last_activity.interview_result
                 else:
-                    record.result = last_activity.call_result_id
+                    applicant.result = last_activity.call_result_id
 
     def _get_history_data(self, applicant_id):
         if applicant_id == False:
