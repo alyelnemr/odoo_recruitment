@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_create_job_business_unit_form,access_create_job_business_unit_group,model_business_unit,recruitment_ads.group_create_job_position,1,1,1,1
-access_create_job_hr_department_form,access_create_job_hr_department_group,model_hr_department,recruitment_ads.group_create_job_position,1,1,1,1
-access_create_job_job_position_form,access_create_job_job_position_group,model_job_position,recruitment_ads.group_create_job_position,1,1,1,1
+full_access_business_unit,full_access_business_unit,model_business_unit,hr.group_hr_user,1,1,1,1
+public_access_business_unit,public_access_business_unit,model_business_unit,,1,0,0,0
+full_access_job_title,full_access_job_title,model_job_title,hr.group_hr_user,1,1,1,1
+public_access_job_title,public_access_job_title,model_job_title,,1,0,0,0

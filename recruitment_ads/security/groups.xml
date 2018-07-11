@@ -6,8 +6,4 @@
     <record id="group_view_recruiter_activities" model="res.groups">
         <field name="name">View Recruiter Activities</field>
     </record>
-    <record id="group_create_job_position" model="res.groups">
-        <field name="name">View Create a Job Position </field>
-        <field name="category_id" ref="base.module_category_hr_recruitment"/>
-    </record>
 </odoo>

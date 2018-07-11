@@ -12,10 +12,11 @@
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="attributes">
                     <attribute name="domain">[('business_unit_id', '=', business_unit_id)]</attribute>
+                    <attribute name="context">{'default_business_unit_id':business_unit_id}</attribute>
                 </xpath>
                 <xpath expr="//group" position="after">
                     <separator string="Job Position"/>
-                    <field name="job_position"/>
+                    <field name="job_title_ids"/>
                 </xpath>
             </field>
         </record>
@@ -35,21 +36,66 @@
                 </xpath>
             </field>
         </record>
-        <!--Create a Job Position form-->
+        <!--Create a Job Position popup form-->
         <record id="hr_job_simple_form_inherit" model="ir.ui.view">
-        <field name="name">hr.job.simple.form.inherit</field>
-        <field name="model">hr.job</field>
-        <field name="inherit_id" ref="hr_recruitment.hr_job_simple_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="before">
-                <field name="business_unit_id" class="oe_inline"/>
-                <field name="department_id" class="oe_inline" domain="[('business_unit_id', '=', business_unit_id)]"/>
-                <field name="job_position" class="oe_inline" domain="[('department_ids', 'in', department_id)]" placeholder="e.g. Sales Manager"/>
-            </xpath>
-            <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="attrs">{'invisible': True}</attribute>
-            </xpath>
-        </field>
+            <field name="name">hr.job.simple.form.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_job_simple_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="business_unit_id" class="oe_inline"/>
+                    <field name="department_id" class="oe_inline"
+                           domain="[('business_unit_id', '=', business_unit_id)]"/>
+                    <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
+                           placeholder="e.g. Sales Manager"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="attrs">{'invisible': True}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--Create a Job Position form-->
+        <record id="hr_job_form_inherit" model="ir.ui.view">
+            <field name="name">hr.job.form.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="replace"/>
+                <xpath expr="//div[@class='oe_title']" position="replace">
+                    <div class="oe_title">
+                        <label for="business_unit_id"/>
+                        <h3>
+                            <field name="business_unit_id"/>
+                        </h3>
+                        <label for="department_id"/>
+                        <h3>
+                            <field name="department_id" domain="[('business_unit_id', '=', business_unit_id)]"
+                                   context="{'default_business_unit_id':business_unit_id}"/>
+                        </h3>
+                        <label for="job_title_id"/>
+                        <h3>
+                            <field name="job_title_id" domain="[('department_ids', '=', department_id)]"
+                                   context="{'default_department_ids':[(4,department_id)]}"/>
+                        </h3>
+                        <field name="name" invisible="1"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_job_title_form" model="ir.ui.view">
+            <field name="name">job.title.form</field>
+            <field name="model">job.title</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="department_ids" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+
         </record>
     </data>
 </odoo>
