@@ -72,7 +72,9 @@ class ResCompanyLDAP(models.Model):
             conn.unbind()
         except ldap.INVALID_CREDENTIALS:
             _logger.error('LDAP bind failed.')
+            raise
         except ldap.LDAPError as e:
             _logger.error('An LDAP exception occurred: %s', e)
+            raise
         _logger.info("LDAP Sync Found  %s entries in %s pages" % (len_records, pages))
         return results
