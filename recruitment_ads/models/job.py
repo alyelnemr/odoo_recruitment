@@ -21,8 +21,9 @@ class Department(models.Model):
     @api.constrains('business_unit_id', 'parent_id')
     def check_business_unit(self):
         for dep in self:
-            if dep.business_unit_id != dep.parent_id.business_unit_id:
-                raise ValidationError(_("You can't create department with BU different from its parent department "))
+            if dep.parent_id.business_unit_id:
+                if dep.business_unit_id != dep.parent_id.business_unit_id:
+                    raise ValidationError(_("You can't create department with BU different from its parent department "))
 
 
 class Job(models.Model):
