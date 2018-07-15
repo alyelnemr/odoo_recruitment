@@ -7,3 +7,8 @@ param(
 #stop-service
 #add assembly
 get-service $svcname | restart-service
+
+
+
+
+
