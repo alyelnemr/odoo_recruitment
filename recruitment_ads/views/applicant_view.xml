@@ -20,6 +20,7 @@
             <field name="model">hr.applicant</field>
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
+                <xpath expr="//button[@name='create_employee_from_applicant']" position="replace"/>
                 <xpath expr="//field[@name='partner_id']" position="replace"/>
                 <xpath expr="//label[@for='name']" position="before">
                     <label for="partner_id" string="Search For Applicant" class="oe_edit_only"/>

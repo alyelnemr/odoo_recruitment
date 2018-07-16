@@ -15,7 +15,11 @@ class BusinessUnit(models.Model):
 
 class Department(models.Model):
     _inherit = "hr.department"
-    business_unit_id = fields.Many2one('business.unit', required=True)
+
+    def _get_default_bu(self):
+        return self.env.ref('recruitment_ads.main_andalusia_bu')
+
+    business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     job_title_ids = fields.Many2many('job.title', 'hr_dep_job_rel', 'dep_id', 'job_id', string='Job Titles')
 
     @api.constrains('business_unit_id', 'parent_id')
@@ -23,12 +27,21 @@ class Department(models.Model):
         for dep in self:
             if dep.parent_id.business_unit_id:
                 if dep.business_unit_id != dep.parent_id.business_unit_id:
-                    raise ValidationError(_("You can't create department with BU different from its parent department "))
+                    raise ValidationError(
+                        _("You can't create department with BU different from its parent department "))
+
+    _sql_constraints = [('name_business_unit_id_unique',
+                         'unique(name,business_unit_id)',
+                         'The name of the department be unique per business unit!'),]
 
 
 class Job(models.Model):
     _inherit = ['hr.job']
-    business_unit_id = fields.Many2one('business.unit', required=True)
+
+    def _get_default_bu(self):
+        return self.env.ref('recruitment_ads.main_andalusia_bu')
+
+    business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
 
