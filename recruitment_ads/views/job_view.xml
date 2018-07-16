@@ -15,7 +15,7 @@
                     <attribute name="context">{'default_business_unit_id':business_unit_id}</attribute>
                 </xpath>
                 <xpath expr="//group" position="after">
-                    <separator string="Job Position"/>
+                    <separator string="Job Titles"/>
                     <field name="job_title_ids"/>
                 </xpath>
             </field>
