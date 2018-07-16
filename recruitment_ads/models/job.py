@@ -17,7 +17,7 @@ class Department(models.Model):
     _inherit = "hr.department"
 
     def _get_default_bu(self):
-        return self.env.ref('recruitment_ads.main_andalusia_bu')
+        return self.env.ref('recruitment_ads.main_andalusia_bu',raise_if_not_found=False)
 
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     job_title_ids = fields.Many2many('job.title', 'hr_dep_job_rel', 'dep_id', 'job_id', string='Job Titles')
@@ -39,7 +39,7 @@ class Job(models.Model):
     _inherit = ['hr.job']
 
     def _get_default_bu(self):
-        return self.env.ref('recruitment_ads.main_andalusia_bu')
+        return self.env.ref('recruitment_ads.main_andalusia_bu',raise_if_not_found=False)
 
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
