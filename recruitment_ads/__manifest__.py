@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name' : 'Recruitment',
-    'version' : '1.1',
+    'version' : '1.0.5',
     'summary': 'Recruitment Managment',
     'sequence': 30,
     'description': """
