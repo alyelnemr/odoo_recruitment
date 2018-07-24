@@ -47,7 +47,7 @@
                     <field name="department_id" class="oe_inline"
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
-                           placeholder="e.g. Sales Manager"/>
+                           context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="attrs">{'invisible':True,'required':False}</attribute>
