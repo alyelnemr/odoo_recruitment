@@ -56,6 +56,7 @@
             <page name="page_invitations" position="replace"/>
             <page name="page_misc" position="replace"/>
             <div class="oe_chatter" position="replace"/>
+            <button name="action_open_calendar_event" position="replace"/>
             <!--page name="page_details" position="after">
                 <page string="Chat">
 
@@ -98,7 +99,16 @@
             </field>
         </field>
     </record>
-    <delete model="ir.ui.view" search="[('id','=',ref('recruitment_ads.view_calendar_event_tree_interview'))]"/>
+
+    <record id="view_calendar_event_interview_form_popup" model="ir.ui.view">
+        <field name="name">view_calendar_event_interview_form_popup</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form_popup"/>
+        <field name="arch" type="xml">
+            <button name="action_open_calendar_event" position="replace"/>
+        </field>
+    </record>
+    <!--<delete model="ir.ui.view" search="[('id','=',ref('recruitment_ads.view_calendar_event_tree_interview'))]"/>-->
     <record id="view_calendar_event_tree_interview" model="ir.ui.view">
         <field name="name">view_calendar_event_tree_interview</field>
         <field name="model">calendar.event</field>
