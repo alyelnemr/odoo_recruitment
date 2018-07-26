@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class Applicant(models.Model):
@@ -8,7 +9,7 @@ class Applicant(models.Model):
     partner_phone = fields.Char(required=True)
     partner_mobile = fields.Char(required=True)
     partner_name = fields.Char(required=True)
-    job_id = fields.Many2one('hr.job', "Applied Job",ondelete='restrict')
+    job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
 
     partner_id = fields.Many2one('res.partner', "Applicant", required=True)
     applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
@@ -17,10 +18,16 @@ class Applicant(models.Model):
     last_activity_date = fields.Date(compute='_get_activity')
     result = fields.Char(compute='_get_activity')
 
+    @api.multi
+    def unlink(self):
+        if self.with_context({'active_test': False}).activity_ids:
+            raise ValidationError(_("Can't delete application that has activities"))
+        return super(Applicant, self).unlink()
+
     @api.depends('activity_ids')
     def _get_activity(self):
         for applicant in self:
-            activities = applicant.with_context({'active_test':False}).activity_ids
+            activities = applicant.with_context({'active_test': False}).activity_ids
             if activities:
                 last_activity = activities.sorted('create_date')[-1]
                 applicant.last_activity = last_activity.activity_type_id
