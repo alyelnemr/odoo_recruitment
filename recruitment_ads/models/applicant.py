@@ -8,6 +8,7 @@ class Applicant(models.Model):
     partner_phone = fields.Char(required=True)
     partner_mobile = fields.Char(required=True)
     partner_name = fields.Char(required=True)
+    job_id = fields.Many2one('hr.job', "Applied Job",ondelete='restrict')
 
     partner_id = fields.Many2one('res.partner', "Applicant", required=True)
     applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
