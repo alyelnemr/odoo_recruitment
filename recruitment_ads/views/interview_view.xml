@@ -19,6 +19,10 @@
             <form position="attributes">
                 <attribute name="string">Interview</attribute>
             </form>
+            <field name="res_model" position="before">
+                <button string="Send Mail" class="oe_stat_button pull-right" icon="fa-mail" type="object"
+                        name="action_mail_compose_message"/>
+            </field>
             <label for="name" position="attributes">
                 <attribute name="string">Interview Subject</attribute>
             </label>

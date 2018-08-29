@@ -23,7 +23,6 @@ class Interview(models.Model):
     department_id = fields.Many2one('hr.department', string='Department', compute='_get_applicant', store=True)
     is_interview_done = fields.Boolean('Is interview done?', default=False)
 
-
     @api.constrains('partner_ids', 'start', 'stop')
     def check_overlapping_interviews(self):
         for interview in self.filtered(lambda m: m.type == 'interview'):
@@ -42,7 +41,7 @@ class Interview(models.Model):
                 for overlapped_interview in overlapped_interviews:
                     startdate = fields.Datetime.from_string(overlapped_interview.start)
                     startdate = pytz.utc.localize(startdate)  # Add "+00:00" timezone
-                    startdate = startdate.astimezone(tz)  #Convert to user timezone
+                    startdate = startdate.astimezone(tz)  # Convert to user timezone
                     startdate = fields.Datetime.to_string(startdate)
                     enddate = fields.Datetime.from_string(overlapped_interview.stop)
                     enddate = pytz.utc.localize(enddate)
@@ -125,7 +124,8 @@ class Interview(models.Model):
             if values.get('partner_ids', False) or values.get('extra_followers_ids',
                                                               False):  # here is the adding trigger
                 attendees_create = all_meetings.with_context(
-                    dont_notify=True).create_attendees()  # to prevent multiple notify_next_alarm
+                    dont_notify=True,
+                    send_inviation_mail=True).create_attendees()  # to prevent multiple notify_next_alarm
 
             # Notify attendees if there is an alarm on the modified event, or if there was an alarm
             # that has just been removed, as it might have changed their next event notification
@@ -245,9 +245,10 @@ class Interview(models.Model):
                 meeting_partners |= partner
 
             if meeting_attendees:
-                to_notify = meeting_attendees.filtered(
-                    lambda a: a.email and current_user.email and a.email.lower() != current_user.email.lower())
-                to_notify._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
+                if self._context.get('send_invitation_mail', False):
+                    to_notify = meeting_attendees.filtered(
+                        lambda a: a.email and current_user.email and a.email.lower() != current_user.email.lower())
+                    to_notify._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
 
                 meeting.write(
                     {'attendee_ids': [(4, meeting_attendee.id) for meeting_attendee in meeting_attendees]})
@@ -273,6 +274,37 @@ class Interview(models.Model):
                 'removed_partners': partners_to_remove
             }
         return result
+
+    @api.multi
+    def action_mail_compose_message(self):
+        self.ensure_one()
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = ir_model_data.get_object_reference('recruitment_ads', 'calendar_template_interview_invitation')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = {
+            'default_model': 'calendar.event',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'force_email': True
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
 
 class Attendee(models.Model):
