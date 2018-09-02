@@ -12,11 +12,11 @@ class Interview(models.Model):
     hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
     job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant', store=True)
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
-    extra_followers_ids = fields.Many2many('res.partner', string="Followers",
+    extra_followers_ids = fields.Many2many('res.partner', string="Followers",domain=[('employee','=',True)],
                                            relation='interview_followers_interview_rel', column1='interview_id',
                                            column2='follower_id')
 
-    partner_ids = fields.Many2many('res.partner', string='Interviewers')
+    partner_ids = fields.Many2many('res.partner', string='Interviewers',domain=[('employee','=',True)])
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
     last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')
@@ -81,7 +81,7 @@ class Interview(models.Model):
         extra_followers_ids field"""
 
         # compute duration, only if start and stop are modified
-        if not 'duration' in values and 'start' in values and 'stop' in values:
+        if 'duration' not in values and 'start' in values and 'stop' in values:
             values['duration'] = self._get_duration(values['start'], values['stop'])
 
         self._sync_activities(values)
@@ -253,7 +253,8 @@ class Interview(models.Model):
                 meeting.write(
                     {'attendee_ids': [(4, meeting_attendee.id) for meeting_attendee in meeting_attendees]})
             if meeting_partners:
-                meeting.message_subscribe(partner_ids=meeting_partners.ids)
+                meeting.message_subscribe(partner_ids=meeting_partners.filtered(
+                    lambda partner: partner not in extra_followers_ids or partner in meeting.partner_ids).ids)
 
             # We remove old attendees who are not in partner_ids now.
             all_partners = meeting.partner_ids | extra_followers_ids
@@ -280,11 +281,15 @@ class Interview(models.Model):
         self.ensure_one()
         ir_model_data = self.env['ir.model.data']
         try:
-            template_id = ir_model_data.get_object_reference('recruitment_ads', 'calendar_template_interview_invitation')[1]
+            template_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'calendar_template_interview_invitation_for_candidate')[1]
         except ValueError:
             template_id = False
         try:
-            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+            compose_form_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'view_interview_mail_compose_message_wizard_from')[1]
         except ValueError:
             compose_form_id = False
         ctx = {
@@ -293,13 +298,16 @@ class Interview(models.Model):
             'default_use_template': bool(template_id),
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
+            'default_candidate_id': self.hr_applicant_id.partner_id.id,
+            'default_partner_ids': [(6, 0, self.partner_ids.ids)],
+            'default_follower_ids': [(6, 0, self.extra_followers_ids.ids)],
             'force_email': True
         }
         return {
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'mail.compose.message',
+            'res_model': 'interview.mail.compose.message',
             'views': [(compose_form_id, 'form')],
             'view_id': compose_form_id,
             'target': 'new',
@@ -344,7 +352,6 @@ class Attendee(models.Model):
 
             if template_xmlid == 'calendar.calendar_template_meeting_invitation':
 
-                calendar_view = self.env.ref('calendar.view_calendar_event_calendar')
                 invitation_template = self.env.ref(map_meeting_interview_template.get(template_xmlid, template_xmlid))
 
                 # prepare rendering context for mail template

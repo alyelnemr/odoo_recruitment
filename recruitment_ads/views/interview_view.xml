@@ -20,7 +20,7 @@
                 <attribute name="string">Interview</attribute>
             </form>
             <field name="res_model" position="before">
-                <button string="Send Mail" class="oe_stat_button pull-right" icon="fa-mail" type="object"
+                <button string="Send invitation Mail" class="oe_stat_button pull-right" icon="fa-envelope" type="object"
                         name="action_mail_compose_message"/>
             </field>
             <label for="name" position="attributes">
@@ -67,18 +67,8 @@
             <page name="page_invitations" position="replace"/>
             <page name="page_misc" position="replace"/>
             <div class="oe_chatter" position="replace"/>
-            <!--<button name="action_open_calendar_event" position="replace"/>-->
-            <!--page name="page_details" position="after">
-                <page string="Chat">
-
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="message_ids" widget="mail_thread"/>
-
-                </page>
-            </page-->
         </field>
     </record>
-    <!--<delete model="ir.ui.view" search="[('id','=',ref('recruitment_ads.view_calendar_event_interview_calender'))]"/>-->
     <record id="view_calendar_event_interview_calender" model="ir.ui.view">
         <field name="name">view_calendar_event_interview_calender</field>
         <field name="model">calendar.event</field>
@@ -119,7 +109,6 @@
             <button name="action_open_calendar_event" position="replace"/>
         </field>
     </record>
-    <!--<delete model="ir.ui.view" search="[('id','=',ref('recruitment_ads.view_calendar_event_tree_interview'))]"/>-->
     <record id="view_calendar_event_tree_interview" model="ir.ui.view">
         <field name="name">view_calendar_event_tree_interview</field>
         <field name="model">calendar.event</field>
@@ -134,6 +123,8 @@
                 <field name="display_partners"/>
                 <field name="last_stage_activity"/>
                 <field name="last_stage_result"/>
+                <button string="Send invitation Mail" icon="fa-envelope" type="object"
+                        name="action_mail_compose_message"/>
                 <field name="type" invisible="1"/>
                 <field name="state" invisible="1"/>
             </tree>
@@ -149,6 +140,7 @@
                 <field name="user_id" string="Recruiter Responsible"/>
                 <field name="job_id"/>
                 <field name="department_id" operator="child_of"/>
+                <filter name="filter_my_interviews" help="My Interviews" domain="[('user_id','=',uid)]"/>
             </search>
         </field>
     </record>
@@ -171,7 +163,7 @@
         <field name="res_model">calendar.event</field>
         <field name="view_mode">tree</field>
         <field name="domain">[('type','=','interview')]</field>
-        <field name="context">{'default_type': 'interview', 'default_duration': 0.5}</field>
+        <field name="context">{'default_type': 'interview', 'default_duration': 0.5,'search_default_filter_my_interviews':1}</field>
         <field name="view_type">form</field>
         <field name="search_view_id" ref="view_calendar_event_interview_search"/>
     </record>
