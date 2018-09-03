@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+# noinspection PyStatementEffect
 {
     'name' : 'Recruitment',
     'version' : '1.0.5',
     'summary': 'Recruitment Managment',
+    'category': 'Employees',
+    'author':'AHBS Odoo Team',
+    'website': "http://www.andalusia.net",
     'sequence': 30,
     'description': """
 Handel recruitment Process
@@ -21,6 +25,7 @@ Handel recruitment Process
         'views/applicant_view.xml',
         'views/job_view.xml',
         'wizard/recrutier_activity_wizard_view.xml',
+        'wizard/interview_mail_compose_message_wizard_view.xml',
         'reports/reports.xml',
     ],
 

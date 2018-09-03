@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# noinspection PyStatementEffect
 {
     'name': "LDAP Sync",
 
@@ -9,7 +10,7 @@
         Sync LDAP users to Odoo Partners
         """,
 
-    'author': "Andalusia",
+    'author':'AHBS Odoo Team',
     'website': "http://www.andalusia.net",
 
     # Categories can be used to filter modules in modules listing

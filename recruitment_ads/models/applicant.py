@@ -78,3 +78,10 @@ class Applicant(models.Model):
             },
         }
         return action
+
+    @api.multi
+    @api.returns('ir.attachment')
+    def get_resume(self):
+        """Get Resume(s) of applicant"""
+        self.ensure_one()
+        return self.env['ir.attachment'].search([('res_model', '=', 'hr.applicant'), ('res_id', 'in', self.ids)])

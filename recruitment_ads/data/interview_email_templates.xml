@@ -2,20 +2,21 @@
 <odoo>
     <data>
         <record id="calendar_template_interview_invitation" model="mail.template">
-            <field name="name">Calendar: Interview Invitation</field>
+            <field name="name">Interview &amp; Followers Invitation</field>
             <field name="email_from">${object.user_id.email or ''}</field>
             <field name="subject">${object.name}</field>
             <field name="model_id" ref="calendar.model_calendar_event"/>
             <field name="email_to" >${ctx and ctx['email_to']}</field>
             <field name="email_cc">${ctx and ctx['email_cc']}</field>
             <field name="auto_delete" eval="True"/>
+            <field name="user_signature" eval="True"/>
             <field name="body_html"><![CDATA[
 <div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
 % set colors = {'needsAction': 'grey', 'accepted': 'green', 'tentative': '#FFFF00',  'declined': 'red'}
     <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
         <tbody><tr>
             <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
+                <img src="/web/image/res.company/1/logo" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
             </td>
         </tr></tbody>
     </table>
@@ -35,51 +36,105 @@
             <td style="padding:10px 10px 10px 5px;font-size: 14px;">
                 <p style="font-size: 20px; text-align: center;">Invitation to <strong>${object.name}</strong></p>
                 <p>
-                    <strong>Dear ${object.hr_applicant_id.partner_name or object.hr_applicant_id.email_from}</strong>,<br />
-                    ${object.user_id.partner_id.name} invited you for the ${object.name} meeting of ${object.user_id.company_id.name}.</p>
+                    <strong>Dear
+                    % if object.partner_ids and len(object.partner_ids) == 1
+                        ${object.partner_ids[0].name}
+                    % else
+                        All
+                    % endif
+                    </strong>,<br /><br />
+                    Greetings , As discussed in our phone conversation today, we would like to invite you to attend an interview on ${object.job_id.name} with Applicant ${object.partner_name}.</p>
                 <table style="margin-top: 20px;"><tr>
-                    <td>
-                        <div style="border-top-left-radius:3px;border-top-right-radius:3px;font-size:12px;border-collapse:separate;text-align:center;font-weight:bold;color:#ffffff;width:130px;min-height: 18px;background:#875A7B;padding-top: 4px;border:1px solid #875A7B;">
-                            ${object.get_interval('dayname', tz=object.user_id.tz if not object.allday else None)}
-                        </div>
-                        <div style="font-size:48px;min-height:auto;font-weight:bold;text-align:center;color: #5F5F5F;background-color: #F8F8F8;width: 130px;border:1px solid #875A7B;">
-                            ${object.get_interval('day', tz=object.user_id.tz if not object.allday else None)}
-                        </div>
-                        <div style='font-size:12px;text-align:center;font-weight:bold;color:#ffffff;background-color:#875A7B'>${object.get_interval('month', tz=object.user_id.tz if not object.allday else None)}</div>
-                        <div style="border-collapse:separate;color: #5F5F5F;text-align:center;width: 130px;font-size:12px;border-bottom-right-radius:3px;font-weight:bold;border:1px solid #875A7B;border-bottom-left-radius:3px;">${not object.allday and object.get_interval('time', tz=object.user_id.tz) or ''}</div>
-                    </td>
+                    <td width="20px;"/>
                     <td width="20px;"/>
                     <td>
-                        <p>Details of the event</p>
                         <ul>
-                        % if object.location:
-                            <li>Location: ${object.location}
+                            <li>
+                            Date of Interview: ${object.get_interval('dayname', tz=object.user_id.tz if not object.allday else None)},  ${object.get_interval('day', tz=object.user_id.tz if not object.allday else None)} ${object.get_interval('month', tz=object.user_id.tz if not object.allday else None)}
                             </li>
-                        % endif
-                        % if object.description :
-                            <li>Description: ${object.description}</li>
-                        % endif
+                            <li>
+                            Time of Interview: ${object.get_interval('time', tz=object.user_id.tz) or ''}
+                            </li>
                         % if not object.allday and object.duration
                             <li>Duration: ${('%dH%02d' % (object.duration,(object.duration*60)%60))}</li>
                         % endif
-                        <li>Attendees
-                        <ul>
-                        % for attendee in object.attendee_ids:
-                            % if attendee.applicant_name:
-                                <li>
-                                    <span style="margin-left:5px">${attendee.applicant_name}</span>
-                                </li>
-                            % endif
-                        % endfor
-                        % for interviewer in object.partner_ids:
-                            <li>
-                                <span style="margin-left:5px">${interviewer.name}</span>
+                            <li>Location: The address is as below (Alex.): 32 Mohammed Safwat St, kafr abdo , Alexandria , Egypt .
+                            <br/>
+                            Kindly find the Google map for your reference :(<a target="_blank" href="https://www.google.com.eg/maps/place/32+Mohammed+Safwat,+Abu+an+Nawatir,+Qism+Sidi+Gabir,+Alexandria+Governorate/@31.2227111,29.9489959,17z/data=!3m1!4b1!4m5!3m4!1s0x14f5c4c1d9b58c91:0xd99f7f42668d66bd!8m2!3d31.2227111!4d29.9511846">View Map</a>)
                             </li>
-                        % endfor
-                        </ul></li>
-                        </ul>
                     </td>
                 </tr></table>
+                <p>
+                    Please, if you have any questions, please let me know.
+                </p>
+            </td>
+        </tr></tbody>
+    </table>
+</div>]]></field>
+        </record>
+        <record id="calendar_template_interview_invitation_for_candidate" model="mail.template">
+            <field name="name">Candidate Invitation</field>
+            <field name="email_from">${object.user_id.email or ''}</field>
+            <field name="subject">${object.name}</field>
+            <field name="model_id" ref="calendar.model_calendar_event"/>
+            <field name="email_to" >${(object.hr_applicant_id.email_from) | safe}</field>
+            <field name="email_cc">${','.join(object.partner_ids.mapped('email'))}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="user_signature" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+% set colors = {'needsAction': 'grey', 'accepted': 'green', 'tentative': '#FFFF00',  'declined': 'red'}
+    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
+        <tbody><tr>
+            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
+                <img src="/web/image/res.company/1/logo" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
+            </td>
+        </tr></tbody>
+    </table>
+    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
+        <tbody><tr>
+            <td valign="top" style="width:600px; padding:10px 10px 10px 5px;">
+                <div>
+                    <hr width="100%" style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0;margin:15px auto;padding:0">
+                </div>
+            </td>
+        </tr></tbody>
+    </table>
+</div>
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
+        <tbody><tr>
+            <td style="padding:10px 10px 10px 5px;font-size: 14px;">
+                <p style="font-size: 20px; text-align: center;">Invitation to <strong>${object.name}</strong></p>
+                <p>
+                    <strong>Dear ${object.hr_applicant_id.partner_name or object.hr_applicant_id.email_from}</strong>,<br /><br />
+                    Greetings , As discussed in our phone conversation today, we would like to invite you to attend an ${object.name} with one of Andalusia Careers Assessors.
+                    It is my great pleasure to inform you that your interview has been scheduled as follows:</p>
+                <table style="margin-top: 20px;"><tr>
+                    <td width="20px;"/>
+                    <td width="20px;"/>
+                    <td>
+                        <ul>
+                            <li>
+                            Date of Interview: ${object.get_interval('dayname', tz=object.user_id.tz if not object.allday else None)},  ${object.get_interval('day', tz=object.user_id.tz if not object.allday else None)} ${object.get_interval('month', tz=object.user_id.tz if not object.allday else None)}
+                            </li>
+                            <li>
+                            Time of Interview: ${object.get_interval('time', tz=object.user_id.tz) or ''}
+                            </li>
+                        % if not object.allday and object.duration
+                            <li>Duration: ${('%dH%02d' % (object.duration,(object.duration*60)%60))}</li>
+                        % endif
+                            <li>Location: The address is as below (Alex.): 32 Mohammed Safwat St, kafr abdo , Alexandria , Egypt .
+                            <br/>
+                            Kindly find the Google map for your reference :(<a target="_blank" href="https://www.google.com.eg/maps/place/32+Mohammed+Safwat,+Abu+an+Nawatir,+Qism+Sidi+Gabir,+Alexandria+Governorate/@31.2227111,29.9489959,17z/data=!3m1!4b1!4m5!3m4!1s0x14f5c4c1d9b58c91:0xd99f7f42668d66bd!8m2!3d31.2227111!4d29.9511846">View Map</a>)
+                            </li>
+                    </td>
+                </tr></table>
+                <p>
+                    Please, if you have any questions, please let me know.
+                    </br>
+                    We are looking forward to meeting you and we are waiting for your confirmation.
+                </p>
             </td>
         </tr></tbody>
     </table>

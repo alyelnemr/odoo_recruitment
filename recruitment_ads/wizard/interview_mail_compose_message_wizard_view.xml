@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_interview_mail_compose_message_wizard_from" model="ir.ui.view">
+        <field name="name">view_interview_mail_compose_message_wizard_from</field>
+        <field name="model">interview.mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <button name="save_as_template" position="replace"/>
+            <field name="template_id" position="replace"/>
+            <label for="partner_ids" position="before">
+                <field name="template_id" widget="radio" options="{'no_create': True,'no_open':True}"
+                       context="{'default_model': model, 'default_body_html': body, 'default_subject': subject}"/>
+                <field name="candidate_id"
+                       attrs="{'invisible':[('template_id','=',%(recruitment_ads.calendar_template_interview_invitation)d)]}"/>
+                <field name="application_id" invisible="1"/>
+            </label>
+            <xpath expr="//group/div[2]/span[2]" position="replace"/>
+            <label for="partner_ids" position="attributes">
+                <attribute name="string">Interviewers</attribute>
+            </label>
+            <field name="partner_ids" position="attributes">
+                <attribute name="context">
+                    {'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}
+                </attribute>
+                <attribute name="widget">many2many_short_tags</attribute>
+                <attribute name="options">{'no_create':True}</attribute>
+            </field>
+            <xpath expr="//div[2]" position="after">
+                <field name="follower_ids" widget="many2many_short_tags" options="{'no_create':True}"
+                       context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}"
+                       attrs="{'invisible':[('template_id','=',%(recruitment_ads.calendar_template_interview_invitation_for_candidate)d)]}"/>
+            </xpath>
+            <field name="active_domain" position="after">
+                <div colspan="2" class="oe_form_box_info oe_text_center">
+                    <p class="mt8">
+                        <strong>
+                            <span>
+                                No of emails sent is:
+                            </span>
+                            <field class="oe_inline" name="candidate_sent_count"
+                                   attrs="{'invisible':[('template_id','=',%(recruitment_ads.calendar_template_interview_invitation)d)]}"/>
+                            <field class="oe_inline" name="interviewer_sent_count"
+                                   attrs="{'invisible':[('template_id','=',%(recruitment_ads.calendar_template_interview_invitation_for_candidate)d)]}"/>
+                        </strong>
+                    </p>
+                </div>
+            </field>
+
+        </field>
+    </record>
+</odoo>

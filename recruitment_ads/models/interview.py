@@ -12,17 +12,19 @@ class Interview(models.Model):
     hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
     job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant', store=True)
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
-    extra_followers_ids = fields.Many2many('res.partner', string="Followers",
+    extra_followers_ids = fields.Many2many('res.partner', string="Followers", domain=[('employee', '=', True)],
                                            relation='interview_followers_interview_rel', column1='interview_id',
                                            column2='follower_id')
 
-    partner_ids = fields.Many2many('res.partner', string='Interviewers')
+    partner_ids = fields.Many2many('res.partner', string='Interviewers', domain=[('employee', '=', True)])
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
     last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')
     department_id = fields.Many2one('hr.department', string='Department', compute='_get_applicant', store=True)
     is_interview_done = fields.Boolean('Is interview done?', default=False)
 
+    candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count")
+    interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count")
 
     @api.constrains('partner_ids', 'start', 'stop')
     def check_overlapping_interviews(self):
@@ -42,7 +44,7 @@ class Interview(models.Model):
                 for overlapped_interview in overlapped_interviews:
                     startdate = fields.Datetime.from_string(overlapped_interview.start)
                     startdate = pytz.utc.localize(startdate)  # Add "+00:00" timezone
-                    startdate = startdate.astimezone(tz)  #Convert to user timezone
+                    startdate = startdate.astimezone(tz)  # Convert to user timezone
                     startdate = fields.Datetime.to_string(startdate)
                     enddate = fields.Datetime.from_string(overlapped_interview.stop)
                     enddate = pytz.utc.localize(enddate)
@@ -82,7 +84,7 @@ class Interview(models.Model):
         extra_followers_ids field"""
 
         # compute duration, only if start and stop are modified
-        if not 'duration' in values and 'start' in values and 'stop' in values:
+        if 'duration' not in values and 'start' in values and 'stop' in values:
             values['duration'] = self._get_duration(values['start'], values['stop'])
 
         self._sync_activities(values)
@@ -122,10 +124,13 @@ class Interview(models.Model):
                         super(Meeting, real_meeting).write({'final_date': final_date})
 
             attendees_create = False
-            if values.get('partner_ids', False) or values.get('extra_followers_ids',
-                                                              False):  # here is the adding trigger
+            if values.get('partner_ids', False) or values.get('extra_followers_ids', False):
+                # here is the adding trigger only if the the user manually sent the mail
+                # would an automatic mail sent for updates
+                send_invitation_mail = True if meeting.interviewer_sent_count > 0 else False
                 attendees_create = all_meetings.with_context(
-                    dont_notify=True).create_attendees()  # to prevent multiple notify_next_alarm
+                    dont_notify=True,
+                    send_invitation_mail=send_invitation_mail).create_attendees()  # to prevent multiple notify_next_alarm
 
             # Notify attendees if there is an alarm on the modified event, or if there was an alarm
             # that has just been removed, as it might have changed their next event notification
@@ -146,7 +151,8 @@ class Interview(models.Model):
                     else:
                         attendee_to_email = current_meeting.attendee_ids
 
-                    if attendee_to_email:
+                    if attendee_to_email and (
+                            current_meeting.candidate_sent_count > 0 or current_meeting.interviewer_sent_count > 0):
                         attendee_to_email._send_mail_to_attendees('calendar.calendar_template_meeting_changedate')
         return True
 
@@ -245,14 +251,16 @@ class Interview(models.Model):
                 meeting_partners |= partner
 
             if meeting_attendees:
-                to_notify = meeting_attendees.filtered(
-                    lambda a: a.email and current_user.email and a.email.lower() != current_user.email.lower())
-                to_notify._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
+                if self._context.get('send_invitation_mail', False):
+                    to_notify = meeting_attendees.filtered(
+                        lambda a: a.email and current_user.email and a.email.lower() != current_user.email.lower())
+                    to_notify._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
 
                 meeting.write(
                     {'attendee_ids': [(4, meeting_attendee.id) for meeting_attendee in meeting_attendees]})
             if meeting_partners:
-                meeting.message_subscribe(partner_ids=meeting_partners.ids)
+                meeting.message_subscribe(partner_ids=meeting_partners.filtered(
+                    lambda partner: partner not in extra_followers_ids or partner in meeting.partner_ids).ids)
 
             # We remove old attendees who are not in partner_ids now.
             all_partners = meeting.partner_ids | extra_followers_ids
@@ -273,6 +281,45 @@ class Interview(models.Model):
                 'removed_partners': partners_to_remove
             }
         return result
+
+    @api.multi
+    def action_mail_compose_message(self):
+        self.ensure_one()
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'calendar_template_interview_invitation_for_candidate')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'view_interview_mail_compose_message_wizard_from')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = {
+            'default_model': 'calendar.event',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'default_candidate_id': self.hr_applicant_id.partner_id.id,
+            'default_application_id': self.hr_applicant_id.id,
+            'default_partner_ids': [(6, 0, self.partner_ids.ids)],
+            'default_follower_ids': [(6, 0, self.extra_followers_ids.ids)],
+            'force_email': True
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'interview.mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
 
 class Attendee(models.Model):
@@ -312,7 +359,6 @@ class Attendee(models.Model):
 
             if template_xmlid == 'calendar.calendar_template_meeting_invitation':
 
-                calendar_view = self.env.ref('calendar.view_calendar_event_calendar')
                 invitation_template = self.env.ref(map_meeting_interview_template.get(template_xmlid, template_xmlid))
 
                 # prepare rendering context for mail template
