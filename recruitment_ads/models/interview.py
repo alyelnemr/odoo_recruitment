@@ -12,16 +12,19 @@ class Interview(models.Model):
     hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
     job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant', store=True)
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
-    extra_followers_ids = fields.Many2many('res.partner', string="Followers",domain=[('employee','=',True)],
+    extra_followers_ids = fields.Many2many('res.partner', string="Followers", domain=[('employee', '=', True)],
                                            relation='interview_followers_interview_rel', column1='interview_id',
                                            column2='follower_id')
 
-    partner_ids = fields.Many2many('res.partner', string='Interviewers',domain=[('employee','=',True)])
+    partner_ids = fields.Many2many('res.partner', string='Interviewers', domain=[('employee', '=', True)])
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
     last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')
     department_id = fields.Many2one('hr.department', string='Department', compute='_get_applicant', store=True)
     is_interview_done = fields.Boolean('Is interview done?', default=False)
+
+    candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count")
+    interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count")
 
     @api.constrains('partner_ids', 'start', 'stop')
     def check_overlapping_interviews(self):
@@ -121,11 +124,13 @@ class Interview(models.Model):
                         super(Meeting, real_meeting).write({'final_date': final_date})
 
             attendees_create = False
-            if values.get('partner_ids', False) or values.get('extra_followers_ids',
-                                                              False):  # here is the adding trigger
+            if values.get('partner_ids', False) or values.get('extra_followers_ids', False):
+                # here is the adding trigger only if the the user manually sent the mail
+                # would an automatic mail sent for updates
+                send_invitation_mail = True if meeting.interviewer_sent_count > 0 else False
                 attendees_create = all_meetings.with_context(
                     dont_notify=True,
-                    send_inviation_mail=True).create_attendees()  # to prevent multiple notify_next_alarm
+                    send_invitation_mail=send_invitation_mail).create_attendees()  # to prevent multiple notify_next_alarm
 
             # Notify attendees if there is an alarm on the modified event, or if there was an alarm
             # that has just been removed, as it might have changed their next event notification
@@ -146,7 +151,8 @@ class Interview(models.Model):
                     else:
                         attendee_to_email = current_meeting.attendee_ids
 
-                    if attendee_to_email:
+                    if attendee_to_email and (
+                            current_meeting.candidate_sent_count > 0 or current_meeting.interviewer_sent_count > 0):
                         attendee_to_email._send_mail_to_attendees('calendar.calendar_template_meeting_changedate')
         return True
 
@@ -299,6 +305,7 @@ class Interview(models.Model):
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'default_candidate_id': self.hr_applicant_id.partner_id.id,
+            'default_application_id': self.hr_applicant_id.id,
             'default_partner_ids': [(6, 0, self.partner_ids.ids)],
             'default_follower_ids': [(6, 0, self.extra_followers_ids.ids)],
             'force_email': True

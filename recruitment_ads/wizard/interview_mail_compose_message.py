@@ -1,3 +1,5 @@
+import base64
+
 from odoo import models, fields, api
 from odoo.tools import pycompat
 
@@ -14,8 +16,15 @@ class InterviewMailComposeMessage(models.Model):
                                     'follower_id', string='Followers', domain=[('employee', '=', True)], )
     attachment_ids = fields.Many2many('ir.attachment', 'interview_mail_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
-    candidate_mail_sent = fields.Boolean('Candidate Invitation')
-    interviewers_mail_sent = fields.Boolean('Interview & Followers Invitation')
+    candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count",compute='_get_count')
+    interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count",compute='_get_count')
+
+    @api.depends('model','res_id')
+    def _get_count(self):
+        for wizard in self:
+            interview = self.env[wizard.model].browse(wizard.res_id)
+            wizard.candidate_sent_count = interview.candidate_sent_count
+            wizard.interviewer_sent_count = interview.interviewer_sent_count
 
     @api.model
     def generate_email_for_composer(self, template_id, res_ids, fields=None):
@@ -48,15 +57,22 @@ class InterviewMailComposeMessage(models.Model):
         or mail_mails. """
         self.ensure_one()
         results = dict.fromkeys(res_ids, False)
+        real_ids, xml_ids = zip(*self.template_id.get_xml_id().items())
+
+        # generate attachment
+        template_values = self.generate_email_for_composer(
+            self.template_id.id, res_ids,
+            fields=['attachment_ids'])
 
         for res_id in res_ids:
-            real_ids, xml_ids = zip(*self.template_id.get_xml_id().items())
+            email_dict = template_values[res_id]
             if xml_ids[0] == 'recruitment_ads.calendar_template_interview_invitation_for_candidate':
                 email_to = self.application_id.email_from or self.candidate_id.email
                 email_cc = ','.join([p.email for p in self.partner_ids])
             else:
                 email_to = ','.join([p.email for p in self.partner_ids])
                 email_cc = ','.join([p.email for p in self.follower_ids])
+
             mail_values = {
                 'subject': self.subject,
                 'body_html': self.body or '',
@@ -71,7 +87,18 @@ class InterviewMailComposeMessage(models.Model):
                 'no_auto_thread': self.no_auto_thread,
                 'mail_server_id': self.mail_server_id.id,
                 'mail_activity_type_id': self.mail_activity_type_id.id,
+                'attachments': [(name, base64.b64decode(enc_cont)) for name, enc_cont in
+                                email_dict.pop('attachments', list())],
             }
+            # process attachments: should not be encoded before being processed by message_post / mail_mail create
+            attachment_ids = []
+            for attach_id in mail_values.pop('attachment_ids'):
+                new_attach_id = self.env['ir.attachment'].browse(attach_id).copy(
+                    {'res_model': self._name, 'res_id': self.id})
+                attachment_ids.append(new_attach_id.id)
+            mail_values['attachment_ids'] = self.env['mail.thread']._message_preprocess_attachments(
+                mail_values.pop('attachments', []),
+                attachment_ids, 'mail.message', 0)
 
             results[res_id] = mail_values
         return results
@@ -97,8 +124,6 @@ class InterviewMailComposeMessage(models.Model):
 
             Mail = self.env['mail.mail']
             if wizard.template_id:
-                # template user_signature is added when generating body_html
-                # mass mailing: use template auto_delete value -> note, for emails mass mailing only
                 Mail = Mail.with_context(mail_notify_user_signature=True)
 
             res_ids = [wizard.res_id]
@@ -111,7 +136,23 @@ class InterviewMailComposeMessage(models.Model):
                 all_mail_values = wizard.get_mail_values(res_ids)
                 for res_id, mail_values in all_mail_values.items():
                     batch_mails |= Mail.create(mail_values)
-
                 batch_mails.send(auto_commit=auto_commit)
 
+            # update emails counter
+            real_ids, xml_ids = zip(*wizard.template_id.get_xml_id().items())
+            interview = self.env[self.model].browse(self.res_id)
+            if xml_ids[0] == 'recruitment_ads.calendar_template_interview_invitation_for_candidate':
+                interview.candidate_sent_count += 1
+            elif xml_ids[0] == 'recruitment_ads.calendar_template_interview_invitation':
+                interview.interviewer_sent_count += 1
+
         return {'type': 'ir.actions.act_window_close'}
+
+    @api.multi
+    @api.onchange('template_id')
+    def onchange_template_id_wrapper(self):
+        """Override this function to add Candidate CV as an attachment for interviewer mail"""
+        super(InterviewMailComposeMessage, self).onchange_template_id_wrapper()
+        real_ids, xml_ids = zip(*self.template_id.get_xml_id().items())
+        if xml_ids[0] == 'recruitment_ads.calendar_template_interview_invitation':
+            self.attachment_ids |= self.application_id.get_resume()
