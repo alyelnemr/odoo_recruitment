@@ -31,9 +31,10 @@
         <record model="ir.actions.act_window" id="action_job_offer">
             <field name="name">Offers</field>
             <field name="res_model">hr.offer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
             <field name="target">new</field>
-            <!--<field name="search_view_id" eval="False"/>-->
-            <field name="form_view_id" ref="recruitment_ads.job_offer_form_view"/>
+            <field name="view_id" ref="recruitment_ads.job_offer_form_view"/>
         </record>
     </data>
 </odoo>

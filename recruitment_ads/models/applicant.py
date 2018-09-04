@@ -78,3 +78,15 @@ class Applicant(models.Model):
             },
         }
         return action
+
+
+class Stage(models.Model):
+    _inherit = 'hr.recruitment.stage'
+
+    @api.multi
+    def unlink(self):
+        """Prevent deleting offer stage"""
+        real_ids, xml_ids = zip(*self.get_xml_id().items())
+        if 'recruitment_ads.application_stage_offer_cycle_data' in xml_ids:
+            raise ValidationError(_("You can't delete offer stage"))
+        return super(Stage, self).unlink()
