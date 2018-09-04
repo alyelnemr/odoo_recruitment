@@ -7,6 +7,7 @@ from odoo.tools import pycompat
 class InterviewMailComposeMessage(models.Model):
     _name = 'interview.mail.compose.message'
     _inherit = 'mail.compose.message'
+    _description = 'Interview Mail wizard'
 
     candidate_id = fields.Many2one('res.partner', string='Candidate', readonly=True)
     application_id = fields.Many2one('hr.applicant', string='Application', readonly=True)
@@ -18,6 +19,9 @@ class InterviewMailComposeMessage(models.Model):
                                       'attachment_id', string='Attachments')
     candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count",compute='_get_count')
     interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count",compute='_get_count')
+
+    # this field caused errors as it not inherited!!!! needed to be redefined again
+    website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)
 
     @api.depends('model','res_id')
     def _get_count(self):
