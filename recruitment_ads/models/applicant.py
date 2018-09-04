@@ -78,3 +78,22 @@ class Applicant(models.Model):
             },
         }
         return action
+
+    @api.multi
+    def action_generate_offer(self):
+        self.ensure_one()
+        if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') or self.job_id.user_id == self.env.user:
+            form_view_id = self.env.ref('recruitment_ads.job_offer_form_view').id
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': 'Offers',
+                'res_model': 'hr.offer',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'view_id': form_view_id,
+                'target': 'new',
+                'flags': {'form': {'action_buttons': False, 'options': {'mode': 'create'}}}
+            }
+        else:
+            raise ValidationError(_("You cannot create offer to this applicant, you are't the recruitment responsible for the job nor the manager"))
+        return action

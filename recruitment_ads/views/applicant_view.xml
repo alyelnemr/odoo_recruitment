@@ -48,9 +48,8 @@
                 </xpath>
                 <xpath expr="//header/button[2]" position="after">
                     <button string="Generate Offer"
-                            name="%(recruitment_ads.action_job_offer)d"
-                            type="action"
-                            class="oe_stat_button"
+                            name="action_generate_offer"
+                            type="object"
                             context="{'default_application_id': id}"
                             attrs="{'invisible': [('stage_id', '!=', %(recruitment_ads.application_stage_offer_cycle_data)d)]}"
                     />

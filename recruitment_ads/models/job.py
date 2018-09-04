@@ -44,6 +44,7 @@ class Job(models.Model):
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
+    user_id = fields.Many2one('res.users', default=lambda self:self.env.user)
 
     @api.onchange('job_title_id')
     def onchange_job_title_id(self):
