@@ -1,9 +1,12 @@
 import base64
 
+import babel.dates
 import pytz
 from odoo import models, fields, api, _
+from odoo import tools
 from odoo.addons.calendar.models.calendar import Meeting, is_calendar_id, calendar_id2real_id
 from odoo.exceptions import ValidationError
+from odoo.tools import pycompat
 
 
 class Interview(models.Model):
@@ -25,6 +28,26 @@ class Interview(models.Model):
 
     candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count")
     interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count")
+
+    display_corrected_start_date = fields.Char('start Datetime', compute='_compute_display_corrected_start_date')
+
+    @api.multi
+    @api.depends('allday', 'start_date', 'start_datetime')
+    def _compute_display_corrected_start_date(self):
+        """Convert interview start Date or Date time to the string with corrected Time zone and format"""
+        for meeting in self:
+            date_format,time_format = self._get_date_formats()
+            if meeting.allday:
+                # just correct the date format
+                start_date = fields.Date.from_string(meeting.start_date)
+                meeting.display_corrected_start_date = start_date.strftime(date_format)
+            else:
+                # correct the timezone and datetime format
+                tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
+                start_datetime = fields.Datetime.from_string(meeting.start_datetime)
+                start_datetime = pytz.utc.localize(start_datetime)
+                start_datetime = tz.normalize(start_datetime)
+                meeting.display_corrected_start_date = start_datetime.strftime(date_format+' '+time_format)
 
     @api.constrains('partner_ids', 'start', 'stop')
     def check_overlapping_interviews(self):
@@ -308,6 +331,7 @@ class Interview(models.Model):
             'default_application_id': self.hr_applicant_id.id,
             'default_partner_ids': [(6, 0, self.partner_ids.ids)],
             'default_follower_ids': [(6, 0, self.extra_followers_ids.ids)],
+            'time_format': '%I:%M %p',
             'force_email': True
         }
         return {
@@ -320,6 +344,67 @@ class Interview(models.Model):
             'target': 'new',
             'context': ctx,
         }
+
+    @api.model
+    def _get_date_formats(self):
+        """ get current date and time format, according to the context lang
+            :return: a tuple with (format date, format time)
+            override to force a time format passed in context
+        """
+        lang = self._context.get("lang")
+        lang_params = {}
+        if lang:
+            record_lang = self.env['res.lang'].search([("code", "=", lang)], limit=1)
+            lang_params = {
+                'date_format': record_lang.date_format,
+                'time_format': record_lang.time_format
+            }
+
+        # formats will be used for str{f,p}time() which do not support unicode in Python 2, coerce to str
+        format_date = pycompat.to_native(lang_params.get("date_format", '%B-%d-%Y'))
+        if self._context.get('time_format', False):
+            format_time = pycompat.to_native(self._context.get('time_format', '%I:%M %p'))
+        else:
+            format_time = pycompat.to_native(lang_params.get("time_format", '%I:%M %p'))
+        return (format_date, format_time)
+
+    @api.multi
+    def get_interval(self, interval, tz=None):
+        """ Format and localize some dates to be used in email templates
+            :param string interval: Among 'day', 'month', 'dayname' and 'time' indicating the desired formatting
+            :param string tz: Timezone indicator (optional)
+            :return unicode: Formatted date or time (as unicode string, to prevent jinja2 crash)
+
+            Override it to make interval time return
+        """
+        self.ensure_one()
+        date = fields.Datetime.from_string(self.start)
+
+        if tz:
+            timezone = pytz.timezone(tz or 'UTC')
+            date = date.replace(tzinfo=pytz.timezone('UTC')).astimezone(timezone)
+
+        if interval == 'day':
+            # Day number (1-31)
+            result = pycompat.text_type(date.day)
+
+        elif interval == 'month':
+            # Localized month name and year
+            result = babel.dates.format_date(date=date, format='MMMM y', locale=self._context.get('lang') or 'en_US')
+
+        elif interval == 'dayname':
+            # Localized day name
+            result = babel.dates.format_date(date=date, format='EEEE', locale=self._context.get('lang') or 'en_US')
+
+        elif interval == 'time':
+            # Localized time
+            # FIXME: formats are specifically encoded to bytes, maybe use babel?
+            dummy, format_time = self._get_date_formats()
+            result = tools.ustr(date.strftime(format_time))
+        else:
+            # Day number (1-31)
+            result = pycompat.text_type(date.day)
+        return result
 
 
 class Attendee(models.Model):

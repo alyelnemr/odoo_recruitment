@@ -119,7 +119,7 @@
                 <field name="job_id"/>
                 <field name="name" string="Subject/Application Name"/>
                 <field name="user_id" string="Recruiter Responsible"/>
-                <field name="display_start" string="Interview Date Time"/>
+                <field name="display_corrected_start_date" string="Interview Date Time"/>
                 <field name="display_partners"/>
                 <field name="last_stage_activity"/>
                 <field name="last_stage_result"/>
