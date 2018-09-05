@@ -158,5 +158,7 @@ class InterviewMailComposeMessage(models.Model):
         """Override this function to add Candidate CV as an attachment for interviewer mail"""
         super(InterviewMailComposeMessage, self).onchange_template_id_wrapper()
         real_ids, xml_ids = zip(*self.template_id.get_xml_id().items())
-        if xml_ids[0] == 'recruitment_ads.calendar_template_interview_invitation':
+        if 'recruitment_ads.calendar_template_interview_invitation' in xml_ids:
             self.attachment_ids |= self.application_id.get_resume()
+        else:
+            self.attachment_ids = False

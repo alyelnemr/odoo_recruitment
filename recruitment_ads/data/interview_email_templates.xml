@@ -15,13 +15,6 @@
 % set colors = {'needsAction': 'grey', 'accepted': 'green', 'tentative': '#FFFF00',  'declined': 'red'}
     <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
         <tbody><tr>
-            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                <img src="/web/image/res.company/1/logo" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
-            </td>
-        </tr></tbody>
-    </table>
-    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
-        <tbody><tr>
             <td valign="top" style="width:600px; padding:10px 10px 10px 5px;">
                 <div>
                     <hr width="100%" style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0;margin:15px auto;padding:0">
@@ -43,7 +36,7 @@
                         All
                     % endif
                     </strong>,<br /><br />
-                    Greetings , As discussed in our phone conversation today, we would like to invite you to attend an interview on ${object.job_id.name} with Applicant ${object.partner_name}.</p>
+                    Greetings , As discussed in our phone conversation today, we would like to invite you to attend an interview on ${object.job_id.name} with ${object.hr_applicant_id.partner_name}.</p>
                 <table style="margin-top: 20px;"><tr>
                     <td width="20px;"/>
                     <td width="20px;"/>
@@ -56,11 +49,11 @@
                             Time of Interview: ${object.get_interval('time', tz=object.user_id.tz) or ''}
                             </li>
                         % if not object.allday and object.duration
-                            <li>Duration: ${('%dH%02d' % (object.duration,(object.duration*60)%60))}</li>
+                            <li>Duration: ${('%d:%02d H' % (object.duration,(object.duration*60)%60))}</li>
                         % endif
                             <li>Location: The address is as below (Alex.): 32 Mohammed Safwat St, kafr abdo , Alexandria , Egypt .
                             <br/>
-                            Kindly find the Google map for your reference :(<a target="_blank" href="https://www.google.com.eg/maps/place/32+Mohammed+Safwat,+Abu+an+Nawatir,+Qism+Sidi+Gabir,+Alexandria+Governorate/@31.2227111,29.9489959,17z/data=!3m1!4b1!4m5!3m4!1s0x14f5c4c1d9b58c91:0xd99f7f42668d66bd!8m2!3d31.2227111!4d29.9511846">View Map</a>)
+                            Kindly find the Google map for your reference :(<u><a target="_blank" href="https://www.google.com.eg/maps/place/32+Mohammed+Safwat,+Abu+an+Nawatir,+Qism+Sidi+Gabir,+Alexandria+Governorate/@31.2227111,29.9489959,17z/data=!3m1!4b1!4m5!3m4!1s0x14f5c4c1d9b58c91:0xd99f7f42668d66bd!8m2!3d31.2227111!4d29.9511846">View Map</a></u>)
                             </li>
                     </td>
                 </tr></table>
@@ -84,13 +77,6 @@
             <field name="body_html"><![CDATA[
 <div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
 % set colors = {'needsAction': 'grey', 'accepted': 'green', 'tentative': '#FFFF00',  'declined': 'red'}
-    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
-        <tbody><tr>
-            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                <img src="/web/image/res.company/1/logo" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
-            </td>
-        </tr></tbody>
-    </table>
     <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
         <tbody><tr>
             <td valign="top" style="width:600px; padding:10px 10px 10px 5px;">
@@ -122,11 +108,11 @@
                             Time of Interview: ${object.get_interval('time', tz=object.user_id.tz) or ''}
                             </li>
                         % if not object.allday and object.duration
-                            <li>Duration: ${('%dH%02d' % (object.duration,(object.duration*60)%60))}</li>
+                            <li>Duration: ${('%d:%02d H' % (object.duration,(object.duration*60)%60))}</li>
                         % endif
                             <li>Location: The address is as below (Alex.): 32 Mohammed Safwat St, kafr abdo , Alexandria , Egypt .
                             <br/>
-                            Kindly find the Google map for your reference :(<a target="_blank" href="https://www.google.com.eg/maps/place/32+Mohammed+Safwat,+Abu+an+Nawatir,+Qism+Sidi+Gabir,+Alexandria+Governorate/@31.2227111,29.9489959,17z/data=!3m1!4b1!4m5!3m4!1s0x14f5c4c1d9b58c91:0xd99f7f42668d66bd!8m2!3d31.2227111!4d29.9511846">View Map</a>)
+                            Kindly find the Google map for your reference :(<u><a target="_blank" href="https://www.google.com.eg/maps/place/32+Mohammed+Safwat,+Abu+an+Nawatir,+Qism+Sidi+Gabir,+Alexandria+Governorate/@31.2227111,29.9489959,17z/data=!3m1!4b1!4m5!3m4!1s0x14f5c4c1d9b58c91:0xd99f7f42668d66bd!8m2!3d31.2227111!4d29.9511846">View Map</a></u>)
                             </li>
                     </td>
                 </tr></table>
@@ -151,13 +137,6 @@
             <field name="body_html"><![CDATA[
 <div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
 % set colors = {'needsAction': 'grey', 'accepted': 'green', 'tentative': '#FFFF00',  'declined': 'red'}
-    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
-        <tbody><tr>
-            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
-            </td>
-        </tr></tbody>
-    </table>
     <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
         <tbody><tr>
             <td valign="top" style="width:600px; padding:10px 10px 10px 5px;">
@@ -200,7 +179,7 @@
                             <li>Description: ${object.event_id.description}</li>
                         % endif
                         % if not object.event_id.allday and object.event_id.duration
-                            <li>Duration: ${('%dH%02d' % (object.event_id.duration,(object.event_id.duration*60)%60))}</li>
+                            <li>Duration: ${('%d:%02d H' % (object.event_id.duration,(object.event_id.duration*60)%60))}</li>
                         % endif
                         <li>Attendees
                         <ul>
@@ -236,13 +215,6 @@
             <field name="body_html"><![CDATA[
 <div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
 % set colors = {'needsAction': 'grey', 'accepted': 'green', 'tentative': '#FFFF00',  'declined': 'red'}
-    <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
-        <tbody><tr>
-            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${user.company_id.name}">
-            </td>
-        </tr></tbody>
-    </table>
     <table cellspacing="0" cellpadding="0" style="width:600px;border-collapse:collapse;background:inherit;color:inherit">
         <tbody><tr>
             <td valign="top" style="width:600px; padding:10px 10px 10px 5px;">
@@ -285,7 +257,7 @@
                             <li>Description: ${object.event_id.description}</li>
                         % endif
                         % if not object.event_id.allday and object.event_id.duration
-                            <li>Duration: ${('%dH%02d' % (object.event_id.duration,(object.event_id.duration*60)%60))}</li>
+                            <li>Duration: ${('%d:%02d H' % (object.event_id.duration,(object.event_id.duration*60)%60))}</li>
                         % endif
                         <li>Attendees
                         <ul>
