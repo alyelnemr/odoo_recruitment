@@ -14,7 +14,8 @@
                     <option value="Confirmation">Confirmation</option>
                     <option value="Not Qualified">Not Qualified</option>
                     <option value="Over Scale">Over Scale</option>
-                    <option value="Another Number">Another Number</option>
+                    <option value="Not Matching Criteria">Not Matching Criteria</option>
+                    <option value="Came Before">Came Before</option>
                 </select>
                 <b t-if="activity_category == 'interview'">Interview Result</b>
                 <select t-if="activity_category == 'interview'" type="text" name="interview" class="form-control o_required" rows="3" id="activity_interview_result" placeholder="interview Result">
