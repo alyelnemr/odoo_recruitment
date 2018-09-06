@@ -8,7 +8,7 @@ class Offer(models.Model):
     @api.depends('application_id', 'application_id.job_id', 'application_id.partner_id')
     def _offer_name(self):
         for offer in self:
-            name = offer.application_id.job_id.name + " / " + offer.application_id.partner_id.name
+            name = (offer.application_id.job_id.name or '') + " / " + (offer.application_id.partner_id.name or '')
             offer.name = name
             offer_name = "Create Offer / " + name
             offer.offer_name = offer_name
