@@ -123,7 +123,7 @@
                 <field name="display_partners"/>
                 <field name="last_stage_activity"/>
                 <field name="last_stage_result"/>
-                <button string="Send invitation Mail" icon="fa-envelope" type="object"
+                <button string="Send invitation Mail" type="object"
                         name="action_mail_compose_message"/>
                 <field name="type" invisible="1"/>
                 <field name="state" invisible="1"/>
