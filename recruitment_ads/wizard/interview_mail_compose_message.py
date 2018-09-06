@@ -12,9 +12,9 @@ class InterviewMailComposeMessage(models.Model):
     candidate_id = fields.Many2one('res.partner', string='Candidate', readonly=True)
     application_id = fields.Many2one('hr.applicant', string='Application', readonly=True)
     partner_ids = fields.Many2many('res.partner', 'interview_mail_compose_message_res_partner_rel', 'wizard_id',
-                                   'partner_id', string='Interviewers', domain=[('employee', '=', True)])
+                                   'partner_id', string='Interviewers', domain="[('applicant', '=', False)]")
     follower_ids = fields.Many2many('res.partner', 'interview_mail_compose_message_res_follower_rel', 'wizard_id',
-                                    'follower_id', string='Followers', domain=[('employee', '=', True)], )
+                                    'follower_id', string='Followers', domain="[('applicant', '=', False)]", )
     attachment_ids = fields.Many2many('ir.attachment', 'interview_mail_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
     candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count",compute='_get_count')
