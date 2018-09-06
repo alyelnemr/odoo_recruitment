@@ -29,12 +29,7 @@
             <td style="padding:10px 10px 10px 5px;font-size: 14px;">
                 <p style="font-size: 20px; text-align: center;">Invitation to <strong>${object.name}</strong></p>
                 <p>
-                    <strong>Dear
-                    % if object.partner_ids and len(object.partner_ids) == 1
-                        ${object.partner_ids[0].name}
-                    % else
-                        All
-                    % endif
+                    <strong>Dear All
                     </strong>,<br /><br />
                     Greetings , As discussed in our phone conversation today, we would like to invite you to attend an interview on ${object.job_id.name} with ${object.hr_applicant_id.partner_name}.</p>
                 <table style="margin-top: 20px;"><tr>
