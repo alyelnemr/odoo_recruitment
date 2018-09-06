@@ -18,6 +18,7 @@ class Applicant(models.Model):
     last_activity_date = fields.Date(compute='_get_activity')
     result = fields.Char(compute='_get_activity')
     source_id = fields.Many2one('utm.source', required=True)
+    offer_id = fields.Many2one('hr.offer', readonly=True)
 
     @api.multi
     def unlink(self):
@@ -83,20 +84,19 @@ class Applicant(models.Model):
     @api.multi
     def action_generate_offer(self):
         self.ensure_one()
-        if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') or\
+        if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') or \
                 self.job_id.user_id == self.env.user:
-            form_view_id = self.env.ref('recruitment_ads.job_offer_form_view').id
+            form_view_id = self.env.ref('recruitment_ads.job_offer_form_wizard_view').id
             action = {
                 'type': 'ir.actions.act_window',
                 'name': 'Offers',
-                'res_model': 'hr.offer',
+                'res_model': 'hr.offer.wizard',
                 'view_mode': 'form',
                 'view_type': 'form',
                 'view_id': form_view_id,
                 'target': 'new',
-
-                'flags': {'headless':True},
             }
         else:
             raise ValidationError(_("You cannot create offer to this applicant, you are't the recruitment responsible for the job nor the manager"))
         return action
+

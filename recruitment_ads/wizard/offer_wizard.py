@@ -1,9 +1,18 @@
-from odoo import models, fields, api
-from datetime import datetime
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
-class Offer(models.Model):
-    _name = 'hr.offer'
+class Offer(models.TransientModel):
+    _name = "hr.offer.wizard"
+    _inherits = {'hr.offer':'offer_id'}
+
+    offer_id = fields.Many2one('hr.offer',string="Offer",auto_join=True)
+
+    @api.multi
+    def action_save(self):
+        self.ensure_one()
+        self.application_id.offer_id = self.offer_id
+        return {'type': 'ir.actions.act_window_close'}
 
     @api.depends('application_id')
     def _offer_name(self):
@@ -24,15 +33,5 @@ class Offer(models.Model):
         self.total_package = total_package
 
     name = fields.Char(string="Name", compute='_offer_name')
-    application_id = fields.Many2one('hr.applicant')
-    application_name = fields.Char(related='application_id.partner_name')
-    job_id = fields.Many2one('hr.job', string='Applied Job', related='application_id.job_id')
-    fixed_salary = fields.Float(string='Fixed Salary')
-    variable_salary = fields.Float(string='Variable Salary')
-    housing_allowance = fields.Float(string='Housing Allowance')
-    travel_allowance = fields.Float(string='Travel Allowance')
-    mobile_allowance = fields.Float(string='Mobile Allowance')
-    issue_date = fields.Date(string='Issue Date', default=fields.Date.today)
-    currency_id = fields.Many2one('res.currency',default=lambda self:self.env.user.company_id.currency_id)
     offer_name = fields.Char(compute=_offer_name)
     total_package = fields.Float(string='Total Package', compute=_compute_total_package, store=True)

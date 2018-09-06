@@ -21,6 +21,7 @@ Handel recruitment Process
         'views/applicant_view.xml',
         'views/job_view.xml',
         'wizard/recrutier_activity_wizard_view.xml',
+        'wizard/offer_wizard_view.xml',
         'reports/reports.xml',
         'data/offer_data.xml',
         'views/offer_view.xml',

@@ -20,7 +20,7 @@
             <field name="model">hr.applicant</field>
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
-                 <xpath expr="//button[@name='action_makeMeeting']/div/span" position="replace">
+                <xpath expr="//button[@name='action_makeMeeting']/div/span" position="replace">
                     <span class="o_stat_text">Interviews</span>
                 </xpath>
                 <xpath expr="//button[@name='create_employee_from_applicant']" position="replace"/>
@@ -35,7 +35,8 @@
                 </xpath>
                 <xpath expr="//field[@name='description']" position="after">
                     <separator string="History"/>
-                    <field name="applicant_history_ids"  context="{'form_view_ref' : 'recruitment_ads.crm_case_form_view_job_inherit2'}">
+                    <field name="applicant_history_ids"
+                           context="{'form_view_ref' : 'recruitment_ads.crm_case_form_view_job_inherit2'}">
                         <tree create="false" edit="false" delete="false">
                             <field name="partner_id" string="Applicant Name"/>
                             <field name="job_id" string="Job Position"/>
@@ -51,8 +52,11 @@
                             name="action_generate_offer"
                             type="object"
                             context="{'default_application_id': id}"
-                            attrs="{'invisible': [('stage_id', '!=', %(recruitment_ads.application_stage_offer_cycle_data)d)]}"
+                            attrs="{'invisible': ['|', ('stage_id', '!=', %(recruitment_ads.application_stage_offer_cycle_data)d), ('offer_id', '!=', False)]}"
                     />
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="before">
+                    <field name="offer_id" string="Open Offer" attrs="{'invisible': [('offer_id', '=', False)]}"/>
                 </xpath>
             </field>
         </record>
