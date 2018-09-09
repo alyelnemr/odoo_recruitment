@@ -159,6 +159,7 @@ class InterviewMailComposeMessage(models.Model):
         super(InterviewMailComposeMessage, self).onchange_template_id_wrapper()
         real_ids, xml_ids = zip(*self.template_id.get_xml_id().items())
         if 'recruitment_ads.calendar_template_interview_invitation' in xml_ids:
+            self.attachment_ids = False
             self.attachment_ids |= self.application_id.get_resume()
         else:
             self.attachment_ids = False
