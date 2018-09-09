@@ -3,3 +3,4 @@ full_access_business_unit,full_access_business_unit,model_business_unit,hr.group
 public_access_business_unit,public_access_business_unit,model_business_unit,,1,0,0,0
 full_access_job_title,full_access_job_title,model_job_title,hr.group_hr_user,1,1,1,1
 public_access_job_title,public_access_job_title,model_job_title,,1,0,0,0
+officer_access_job_offer,officer_access_job_offer,model_hr_offer,hr_recruitment.group_hr_recruitment_user,1,1,1,0
