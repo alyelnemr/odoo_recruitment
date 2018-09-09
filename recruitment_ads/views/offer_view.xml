@@ -63,7 +63,8 @@
                                        attrs="{'required':[('state','=','pipeline')]}"/>
                                 <field name="reject_reason" states="not_join,reject"/>
                             </group>
-                            <field name="comment" states="hold,not_join,reject" nolabel="1" placeholder="Notes"/>
+                            <field name="comment" states="hold,not_join,reject" nolabel="1" placeholder="Notes"
+                                   attrs="{'required':[('state','=','hold')]}"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">

@@ -43,4 +43,10 @@ class Offer(models.Model):
          ('reject', 'Reject Offer')], default='offer', string="Hiring Status", track_visibility='onchange',
         required=True)
     comment = fields.Text(string='Notes')
-    reject_reason = fields.Selection([('1', 'r1')], string='Rejection Reason')
+    reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
+
+
+class RejectionReason(models.Model):
+    _name = 'reject.reason'
+
+    name = fields.Char(string='Name', required=True)
