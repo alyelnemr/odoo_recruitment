@@ -1,5 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+       <!-- Offer Form View-->
+        <record model="ir.ui.view" id="view_hr_offer_form">
+            <field name="name">Job - Offer Form</field>
+            <field name="model">hr.offer</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Offer">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Salary">
+                                <field name="fixed_salary"/>
+                                <field name="variable_salary"/>
+                                <field name="housing_allowance"/>
+                                <field name="travel_allowance"/>
+                                <field name="mobile_allowance"/>
+                                <field name="total_package" style="font-weight:900"/>
+                            </group>
+                            <group string="Currency">
+                                <field name="currency_id" nolabel="1" options="{'no_create':True,'no_open':True}"/>
+                                <div/>
+                            </group>
+                            <group string="General">
+                                <field name="state"/>
+                                <field name="issue_date"/>
+                                <field name="hiring_date" states="pipeline"
+                                       attrs="{'required':[('state','=','pipeline')]}"/>
+                                <field name="reject_reason" states="not_join,reject"/>
+                            </group>
+                            <field name="comment" states="hold,not_join,reject" nolabel="1" placeholder="Notes"
+                                   attrs="{'required':[('state','=','hold')]}"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!-- Menu action-->
+        <record model="ir.actions.act_window" id="action_hr_offer_menu">
+            <field name="name">Offers</field>
+            <field name="res_model">hr.offer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+        <menuitem id="hr_offer_menu"
+                  name="Offers"
+                  parent="hr_recruitment.menu_crm_case_categ0_act_job"
+                  sequence="25"
+                  action="action_hr_offer_menu"/>
     </data>
 </odoo>
