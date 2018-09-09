@@ -56,7 +56,7 @@
                     />
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="before">
-                    <field name="offer_id" string="Open Offer" attrs="{'invisible': [('offer_id', '=', False)]}"/>
+                    <field name="offer_id" attrs="{'invisible': [('offer_id', '=', False)]}"/>
                 </xpath>
             </field>
         </record>
