@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-       <!-- Offer Form View-->
+        <!-- Offer Form View-->
         <record model="ir.ui.view" id="view_hr_offer_form">
             <field name="name">Job - Offer Form</field>
             <field name="model">hr.offer</field>
@@ -9,11 +9,17 @@
             <field name="arch" type="xml">
                 <form string="Offer">
                     <sheet>
+                        <group  col="4">
+                            <field name="applicant_name"/>
+                            <newline/>
+                            <field name="department_id" options="{'no_create':True}"/>
+                            <field name="job_id" options="{'no_create':True}"/>
+                        </group>
                         <div class="oe_title">
-                            <label for="name" class="oe_edit_only"/>
-                            <h1>
+                            <h4>
+                                Offer/
                                 <field name="name"/>
-                            </h1>
+                            </h4>
                         </div>
                         <group>
                             <group string="Salary">
