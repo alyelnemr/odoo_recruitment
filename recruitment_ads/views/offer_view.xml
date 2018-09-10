@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-       <!-- Offer Form View-->
+        <!-- Offer Form View-->
         <record model="ir.ui.view" id="view_hr_offer_form">
             <field name="name">Job - Offer Form</field>
             <field name="model">hr.offer</field>
@@ -46,13 +46,58 @@
                 </form>
             </field>
         </record>
+        <!--Offer Tree view-->
+        <record model="ir.ui.view" id="view_hr_offer_tree_view">
+            <field name="name">Job - Offer Form</field>
+            <field name="model">hr.offer</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Offer list" default_order='issue_date desc' create="false" delete="false">
+                    <field name="issue_date" invisible="1"/>
+                    <field name="state" string="Status"/>
+                    <field name="applicant_name"/>
+                    <field name="job_id"/>
+                    <field name="department_id"/>
+                    <field name="business_unit_id"/>
+                    <field name="user_id"/>
+                    <field name="last_activity"/>
+                    <field name="last_activity_date"/>
+                    <field name="total_package"/>
+                    <field name="availability"/>
+                    <button name="action_open_application" string="View Application" type="object" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+        <!--Search view-->
+        <record id="view_hr_offer_filter" model="ir.ui.view">
+            <field name="name">hr.offer.view.search</field>
+            <field name="model">hr.offer</field>
+            <field name="arch" type="xml">
+                <search string="Search Offers">
+                    <field name="job_id"/>
+                    <field name="department_id"/>
+                    <field name="applicant_name"/>
+                    <field name="user_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_state" string="Status" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
         <!-- Menu action-->
         <record model="ir.actions.act_window" id="action_hr_offer_menu">
             <field name="name">Offers</field>
             <field name="res_model">hr.offer</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="recruitment_ads.view_hr_offer_tree_view"/>
+            <field name="search_view_id" ref="recruitment_ads.view_hr_offer_filter"/>
             <field name="target">current</field>
+            <field name="help" type="html">
+                <p>
+                    Here is the list of offers of the responsible recruiter.
+                </p>
+            </field>
         </record>
         <menuitem id="hr_offer_menu"
                   name="Offers"
