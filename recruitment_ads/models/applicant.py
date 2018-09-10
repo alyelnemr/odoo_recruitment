@@ -18,7 +18,7 @@ class Applicant(models.Model):
     last_activity_date = fields.Date(compute='_get_activity')
     result = fields.Char(compute='_get_activity')
     source_id = fields.Many2one('utm.source', required=True)
-    offer_id = fields.Many2one('hr.offer', readonly=True)
+    offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
 
     @api.multi
     def unlink(self):
@@ -97,9 +97,9 @@ class Applicant(models.Model):
                 'target': 'new',
             }
         else:
-            raise ValidationError(_("You cannot create offer to this applicant, you are't the recruitment responsible for the job nor the manager"))
+            raise ValidationError(_(
+                "You cannot create offer to this applicant, you are't the recruitment responsible for the job nor the manager"))
         return action
-
 
 
 class Stage(models.Model):
