@@ -70,7 +70,8 @@
                     <field name="last_activity_date"/>
                     <field name="total_package"/>
                     <field name="availability"/>
-                    <button name="action_open_application" string="View Application" type="object" class="oe_highlight"/>
+                    <button name="action_open_application" string="View Application" type="object"
+                            class="oe_highlight"/>
                 </tree>
             </field>
         </record>
