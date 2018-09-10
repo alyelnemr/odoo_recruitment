@@ -34,7 +34,13 @@ class Offer(models.Model):
     applicant_name = fields.Char(string='Applicant Name', related='application_id.partner_name')
     job_id = fields.Many2one('hr.job', string='Job position', related='application_id.job_id')
     department_id = fields.Many2one('hr.department', string='Department', related='application_id.department_id')
-
+    business_unit_id = fields.Many2one('business.unit', string='Business Unit',
+                                       related='application_id.job_id.business_unit_id')
+    user_id = fields.Many2one('res.users', string="Recruiter Responsible", related='application_id.user_id')
+    last_activity = fields.Many2one('mail.activity.type', string='Last Stage', related='application_id.last_activity')
+    last_activity_date = fields.Date(string='Last Stage Date', related='application_id.last_activity_date')
+    availability = fields.Date("Availability", related='application_id.availability',
+                               help="The date at which the applicant will be available to start working")
     fixed_salary = fields.Float(string='Fixed Salary', track_visibility='onchange')
     variable_salary = fields.Float(string='Variable Salary', track_visibility='onchange')
     housing_allowance = fields.Float(string='Housing Allowance', track_visibility='onchange')
@@ -55,6 +61,21 @@ class Offer(models.Model):
         required=True)
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
+
+    @api.multi
+    def action_open_application(self):
+        self.ensure_one()
+
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'application',
+            'res_model': 'hr.applicant',
+            'res_id': self.application_id.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
+        }
+        return action
 
 
 class RejectionReason(models.Model):
