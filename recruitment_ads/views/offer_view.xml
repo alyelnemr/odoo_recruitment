@@ -63,7 +63,7 @@
         <menuitem id="hr_offer_menu"
                   name="Offers"
                   parent="hr_recruitment.menu_crm_case_categ0_act_job"
-                  sequence="25"
+                  sequence="26"
                   action="action_hr_offer_menu"/>
     </data>
 </odoo>
