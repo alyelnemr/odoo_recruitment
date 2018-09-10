@@ -48,6 +48,13 @@ class Offer(models.Model):
                                     digits=dp.get_precision('Offer Salary'))
     total_package = fields.Float(string='Total Package', compute=_compute_total_package, store=True,
                                  digits=dp.get_precision('Offer Salary'))
+    business_unit_id = fields.Many2one('business.unit', string='Business Unit',
+                                       related='application_id.job_id.business_unit_id')
+    user_id = fields.Many2one('res.users', string="Recruiter Responsible", related='application_id.user_id')
+    last_activity = fields.Many2one('mail.activity.type', string='Last Stage', related='application_id.last_activity')
+    last_activity_date = fields.Date(string='Last Stage Date', related='application_id.last_activity_date')
+    availability = fields.Date("Availability", related='application_id.availability',
+                               help="The date at which the applicant will be available to start working")
 
     issue_date = fields.Date(string='Issue Date', default=fields.Date.today)
     hiring_date = fields.Date(string="Hiring Date", track_visibility='onchange')
@@ -62,6 +69,21 @@ class Offer(models.Model):
         required=True)
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
+
+    @api.multi
+    def action_open_application(self):
+        self.ensure_one()
+
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'application',
+            'res_model': 'hr.applicant',
+            'res_id': self.application_id.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
+        }
+        return action
 
 
 class RejectionReason(models.Model):
