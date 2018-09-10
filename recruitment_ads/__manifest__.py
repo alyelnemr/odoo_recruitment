@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 # noinspection PyStatementEffect
 {
-    'name' : 'Recruitment',
-    'version' : '1.0.5',
-    'summary': 'Recruitment Managment',
+    'name': 'Recruitment',
+    'version': '1.0.5',
+    'summary': 'Recruitment Management',
     'category': 'Employees',
-    'author':'AHBS Odoo Team',
+    'author': 'AHBS Odoo Team',
     'website': "http://www.andalusia.net",
     'sequence': 30,
     'description': """
 Handel recruitment Process
     """,
-    'depends': ['base', 'base_setup', 'bus', 'web_tour','hr_recruitment', 'mail','sync_ldap_ads','report_xlsx'],
+    'depends': ['base', 'base_setup', 'bus', 'web_tour', 'hr_recruitment', 'mail', 'sync_ldap_ads', 'report_xlsx',
+                'decimal_precision'],
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',

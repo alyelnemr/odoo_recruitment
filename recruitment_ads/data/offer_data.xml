@@ -4,5 +4,9 @@
         <record id="application_stage_offer_cycle_data" model="hr.recruitment.stage">
             <field name="name">Offer</field>
         </record>
+        <record forcecreate="True" id="decimal_offer_salary" model="decimal.precision">
+            <field name="name">Offer Salary</field>
+            <field name="digits">3</field>
+        </record>
     </data>
 </openerp>
