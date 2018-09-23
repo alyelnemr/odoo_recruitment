@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <form string="Offer">
                     <sheet>
-                        <group  col="4">
+                        <group col="4">
                             <field name="applicant_name"/>
                             <newline/>
                             <field name="department_id" options="{'no_create':True}"/>
@@ -37,8 +37,8 @@
                             <group string="General">
                                 <field name="state"/>
                                 <field name="issue_date"/>
-                                <field name="hiring_date" states="pipeline"
-                                       attrs="{'required':[('state','=','pipeline')]}"/>
+                                <field name="hiring_date" states="pipeline,hired"
+                                       attrs="{'required':[('state','in',['pipeline','hired'])]}"/>
                                 <field name="reject_reason" states="not_join,reject"/>
                             </group>
                             <field name="comment" states="hold,not_join,reject" nolabel="1" placeholder="Notes"

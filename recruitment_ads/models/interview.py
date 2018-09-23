@@ -15,11 +15,11 @@ class Interview(models.Model):
     hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
     job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant', store=True)
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
-    extra_followers_ids = fields.Many2many('res.partner', string="Followers", domain="[('applicant', '=', False)]",
+    extra_followers_ids = fields.Many2many('res.partner', string="Followers", domain=[('applicant', '=', False)],
                                            relation='interview_followers_interview_rel', column1='interview_id',
                                            column2='follower_id')
 
-    partner_ids = fields.Many2many('res.partner', string='Interviewers', domain="[('applicant', '=', False)]")
+    partner_ids = fields.Many2many('res.partner', string='Interviewers', domain=[('applicant', '=', False)])
     display_partners = fields.Html(string='Interviewers', compute='_display_partners')
     last_stage_activity = fields.Char('Last stage activity')
     last_stage_result = fields.Char('Last stage result')

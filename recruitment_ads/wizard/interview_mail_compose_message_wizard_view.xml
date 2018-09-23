@@ -23,7 +23,7 @@
                     </div>
                     <field name="template_id" widget="radio" options="{'no_create': True,'no_open':True}"
                            context="{'default_model': model, 'default_body_html': body, 'default_subject': subject}"/>
-                    <field name="candidate_id"
+                    <field name="candidate_id" readonly="1"
                            attrs="{'invisible':[('template_id','=',%(recruitment_ads.calendar_template_interview_invitation)d)]}"/>
                     <field name="partner_ids" string="Interviewers" widget="many2many_short_tags"
                            options="{'no_create':True}"
