@@ -58,7 +58,7 @@
             <field name="model">hr.offer</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Offer list" default_order='issue_date desc' create="false" delete="false">
+                <tree string="Offer list" default_order='create_date desc' create="false" delete="false">
                     <field name="issue_date" invisible="1"/>
                     <field name="state" string="Status"/>
                     <field name="applicant_name"/>
