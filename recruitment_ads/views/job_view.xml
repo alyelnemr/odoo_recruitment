@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="business_unit_id" invisible="1"/>
+                    <field name="business_unit_id" invisible="0"/>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="attributes">
                     <attribute name="domain">[('business_unit_id', '=', business_unit_id)]</attribute>
@@ -43,7 +43,7 @@
             <field name="inherit_id" ref="hr_recruitment.hr_job_simple_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="before">
-                    <field name="business_unit_id" class="oe_inline" invisible="1"/>
+                    <field name="business_unit_id" class="oe_inline" invisible="0" options="{'no_create':True,'no_open':True}"/>
                     <field name="department_id" class="oe_inline"
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
@@ -63,9 +63,9 @@
                 <xpath expr="//field[@name='department_id']" position="replace"/>
                 <xpath expr="//div[@class='oe_title']" position="replace">
                     <div class="oe_title">
-                        <label for="business_unit_id" invisible="1"/>
+                        <label for="business_unit_id" invisible="0"/>
                         <h3>
-                            <field name="business_unit_id" invisible="1"/>
+                            <field name="business_unit_id" invisible="0"/>
                         </h3>
                         <label for="department_id"/>
                         <h3>
