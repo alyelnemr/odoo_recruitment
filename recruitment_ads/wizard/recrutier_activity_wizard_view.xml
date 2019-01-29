@@ -20,6 +20,8 @@
                         <label for="calls"/>
                         <field name="interviews"/>
                         <label for="interviews"/>
+                        <field name="offer"/>
+                        <label for="offer"/>
                     </div>
                     <footer>
                         <button name="button_export_xlsx" type="object" string="Export (XLSX)" class="oe_highlight"/>
