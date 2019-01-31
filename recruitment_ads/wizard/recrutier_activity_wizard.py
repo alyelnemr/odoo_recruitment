@@ -109,10 +109,10 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ('issue_date', '<=', self.date_to),
             ]
             if self.recruiter_ids:
-                domain.append(('real_create_uid', 'in', self.recruiter_ids.ids))
-            offer = self.env['hr.offer'].search(domain, order='issue_date desc')
+                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             if self.job_ids:
-                offer = offer.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
+                domain.append(('job_id', 'in', self.job_ids.ids))
+            offer = self.env['hr.offer'].search(domain, order='issue_date desc')
             if offer:
                 no_records = False
             self.offer_ids = [(6, 0, offer.ids)]
