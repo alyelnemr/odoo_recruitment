@@ -50,6 +50,23 @@ class RecActivityXslx(models.AbstractModel):
                     7: {'header': _('Job Description'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                 }
             })
+        if report.offer:
+            sheets.append({
+                'Offers and Hired': {
+                    0: {'header': _('Candidate Name'), 'field': 'applicant_name', 'width': 20},
+                    1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                    2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    3: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    4: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    5: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
+                    6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    7: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
+                    8: {'header': _('Offer Amount'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
+                    9: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
+                    10: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
+                    11: {'header': _('Comments'), 'field': 'comment', 'width': 20}
+                }
+            })
         return sheets
 
     def _generate_report_content(self, workbook, report):
@@ -67,6 +84,11 @@ class RecActivityXslx(models.AbstractModel):
             self.write_array_header('Interviews')
             for interview in report.interview_ids.sorted('write_date', reverse=True):
                 self.write_line(InterviewLineWrapper(interview), 'Interviews')
+
+        if report.offer:
+            self.write_array_header('Offers and Hired')
+            for offer in report.offer_ids.sorted('issue_date', reverse=True):
+                self.write_line(offerLineWrapper(offer), 'Offers and Hired')
 
 
 class CallLineWrapper:
@@ -97,3 +119,19 @@ class InterviewLineWrapper:
         self.job_id = applicant.job_id
         self._context = interview._context
         self.env = interview.env
+
+
+class offerLineWrapper:
+    def __init__(self, offer):
+        self.applicant_name = offer.applicant_name
+        self.job_id = offer.job_id
+        self.email_from = offer.application_id.email_from
+        self.partner_mobile = offer.application_id.partner_mobile
+        self.create_uid = offer.application_id.create_uid
+        self.business_unit_id = offer.business_unit_id
+        self.department_id = offer.department_id
+        self.issue_date = offer.issue_date
+        self.total_package = offer.total_package
+        self.state = offer.state
+        self.hiring_date = offer.hiring_date
+        self.comment = offer.comment
