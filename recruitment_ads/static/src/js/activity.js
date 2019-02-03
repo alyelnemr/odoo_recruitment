@@ -120,6 +120,16 @@ MailActivity.include({
                                     }
                                 );
                             }
+                            else if (interview_result === "Rejected" && feedback === ""){
+                                Dialog.alert(
+                                    self,
+                                    _t("Please fill the rejection reason in feedback!"), {
+                                        confirm_callback: function () {
+                                            self._reload.bind(self, {activity: true});
+                                        },
+                                    }
+                                );
+                            }
                             else{
                                 self._markInterviewDone(activity_id,feedback,interview_result)
                                     .then(self.scheduleActivity.bind(self, previous_activity_type_id));
@@ -178,6 +188,16 @@ MailActivity.include({
                                 Dialog.alert(
                                     self,
                                     _t("Please select Interview result!"), {
+                                        confirm_callback: function () {
+                                            self._reload.bind(self, {activity: true});
+                                        },
+                                    }
+                                );
+                            }
+                            else if (interview_result === "Rejected" && feedback === ""){
+                                Dialog.alert(
+                                    self,
+                                    _t("Please fill the rejection reason in feedback!"), {
                                         confirm_callback: function () {
                                             self._reload.bind(self, {activity: true});
                                         },

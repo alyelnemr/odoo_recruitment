@@ -16,10 +16,12 @@ class RecruiterActivityReportWizard(models.TransientModel):
     cv_source = fields.Boolean('Cv Source')
     calls = fields.Boolean('Calls')
     interviews = fields.Boolean('Interviews')
+    offer = fields.Boolean('Offered and Hired')
 
     application_ids = fields.Many2many('hr.applicant')
     call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id',domain=[('active','=',False)])
     interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id',domain=[('active','=',False)])
+    offer_ids = fields.Many2many('hr.offer', 'offer_recruiter_report_rel', 'report_id', 'offer_id')
 
     @api.constrains('date_from','date_to')
     def check_dates(self):
@@ -50,7 +52,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
     @api.multi
     def button_export_xlsx(self):
         self.ensure_one()
-        if not (self.calls or self.cv_source or self.interviews):
+        if not (self.calls or self.cv_source or self.interviews or self.offer):
             raise ValidationError(_("Please Select at least one activity to export"))
         no_records = True
         if self.cv_source:
@@ -100,6 +102,20 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if interviews:
                 no_records = False
             self.interview_ids = [(6,0,interviews.ids)]
+
+        if self.offer:
+            domain = [
+                ('issue_date', '>=', self.date_from),
+                ('issue_date', '<=', self.date_to),
+            ]
+            if self.recruiter_ids:
+                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+            if self.job_ids:
+                domain.append(('job_id', 'in', self.job_ids.ids))
+            offer = self.env['hr.offer'].search(domain, order='issue_date desc')
+            if offer:
+                no_records = False
+            self.offer_ids = [(6, 0, offer.ids)]
 
         if no_records:
             raise ValidationError(_("No record to display"))

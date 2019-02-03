@@ -19,6 +19,7 @@ class Applicant(models.Model):
     result = fields.Char(compute='_get_activity')
     source_id = fields.Many2one('utm.source', required=True)
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
+    cv_matched = fields.Boolean('Matched', default=False)
 
     @api.multi
     def unlink(self):
@@ -92,7 +93,7 @@ class Applicant(models.Model):
     def action_generate_offer(self):
         self.ensure_one()
         if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') or \
-                self.job_id.user_id == self.env.user:
+                self.job_id.user_id == self.env.user or self.job_id.hr_responsible_id == self.env.user:
             form_view_id = self.env.ref('recruitment_ads.job_offer_form_wizard_view').id
             action = {
                 'type': 'ir.actions.act_window',

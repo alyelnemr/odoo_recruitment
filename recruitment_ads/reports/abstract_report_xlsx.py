@@ -55,6 +55,19 @@ class WorkBookSheet:
                 datetime_value = fields.Datetime.to_string(datetime_value)
                 self.sheet.write_string(
                     self.row_pos, col_pos, datetime_value or '')
+            elif cell_type == 'bool':
+                values = column.get('values', False)
+                if values:
+                    self.sheet.write_string(
+                        self.row_pos, col_pos, values[value])
+                else:
+                    if value:
+                        self.sheet.write_string(
+                            self.row_pos, col_pos, 'yes')
+                    else:
+                        self.sheet.write_string(
+                            self.row_pos, col_pos, 'no')
+
         self.row_pos += 1
 
 class AbstractReportXslx(models.AbstractModel):
