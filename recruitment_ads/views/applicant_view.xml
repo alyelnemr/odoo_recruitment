@@ -20,6 +20,10 @@
             <field name="model">hr.applicant</field>
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='priority']" position="after">
+                    <field name="cv_matched"/>
+                </xpath>
+                <xpath expr="//field[@name='priority']" position="replace"/>
                 <xpath expr="//button[@name='action_makeMeeting']/div/span" position="replace">
                     <span class="o_stat_text">Interviews</span>
                 </xpath>

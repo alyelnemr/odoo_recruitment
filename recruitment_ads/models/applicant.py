@@ -19,6 +19,7 @@ class Applicant(models.Model):
     result = fields.Char(compute='_get_activity')
     source_id = fields.Many2one('utm.source', required=True)
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
+    cv_matched = fields.Boolean('Matched', default=False)
 
     @api.multi
     def unlink(self):
