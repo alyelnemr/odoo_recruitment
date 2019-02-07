@@ -44,7 +44,7 @@ class RecActivityXslx(models.AbstractModel):
                     8: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
                     9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     10: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    11: {'header': _('Job Description'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    11: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                     12: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                     13: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
                     14: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
@@ -65,7 +65,7 @@ class RecActivityXslx(models.AbstractModel):
                     8: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
                     9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     10: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    11: {'header': _('Job Description'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    11: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                     12: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                     13: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
                     14: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
@@ -121,7 +121,7 @@ class CVSourceLineWrapper:
         self.partner_mobile = cv_source.partner_mobile
         self.source_id = cv_source.source_id
         self.create_date = cv_source.create_date
-        self.business_unit_id = cv_source.job_id.business_unit_id
+        self.business_unit_id = cv_source.department_id.business_unit_id
         self.department_id = cv_source.job_id.department_id
         self.job_id = cv_source.job_id
         self.salary_expected = cv_source.salary_expected

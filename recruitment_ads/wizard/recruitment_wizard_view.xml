@@ -82,5 +82,5 @@
               parent="report_hr_recruitment_general_report"
               sequence="2"
               action="general_sheet_wizard_action"
-              groups="group_view_recruiter_activities"/>
+              groups="group_view_general_sheet"/>
 </odoo>

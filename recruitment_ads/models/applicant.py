@@ -20,6 +20,14 @@ class Applicant(models.Model):
     source_id = fields.Many2one('utm.source', required=True)
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
     cv_matched = fields.Boolean('Matched', default=False)
+    count_done_interviews = fields.Integer('Done Interviews Count', compute='_get_count_done_interviews')
+
+    @api.one
+    def _get_count_done_interviews(self):
+        activity_type = self.env.ref('recruitment_ads.mail_activity_type_data_interview')
+        self.count_done_interviews = len(
+            self.activity_ids.filtered(lambda a: a.activity_type_id == activity_type and not a.active)
+        )
 
     @api.multi
     def unlink(self):

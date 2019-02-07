@@ -35,26 +35,38 @@ class WorkBookSheet:
 
     def write_line(self, line_object):
         for col_pos, column in self.columns.items():
-            value = getattr(line_object, column['field'])
+            value = getattr(line_object, column['field'], False)
             cell_type = column.get('type', 'string')
             if cell_type == 'many2one':
-                self.sheet.write_string(
-                    self.row_pos, col_pos, value.name or '')
+                if value:
+                    self.sheet.write_string(
+                        self.row_pos, col_pos, value.name or '')
+                else:
+                    self.sheet.write_string(self.row_pos, col_pos, '')
             elif cell_type == 'x2many':
-                self.sheet.write_string(
-                    self.row_pos, col_pos, '•'+'\r\n•'.join(value.mapped('name')) or '')
+                if value:
+                    self.sheet.write_string(
+                        self.row_pos, col_pos, '•' + '\r\n•'.join(value.mapped('name')) or '')
+                else:
+                    self.sheet.write_string(self.row_pos, col_pos, '')
             elif cell_type == 'string':
                 self.sheet.write_string(self.row_pos, col_pos, value or '')
             elif cell_type == 'amount':
-                self.sheet.write_number(
-                    self.row_pos, col_pos, float(value), self.parentcls.format_amount
-                )
+                if value:
+                    self.sheet.write_number(
+                        self.row_pos, col_pos, float(value), self.parentcls.format_amount
+                    )
+                else:
+                    self.sheet.write_string(self.row_pos, col_pos, '')
             elif cell_type == 'datetime':
-                datetime_value = fields.Datetime.from_string(value)
-                datetime_value = fields.Datetime.context_timestamp(line_object, datetime_value)
-                datetime_value = fields.Datetime.to_string(datetime_value)
-                self.sheet.write_string(
-                    self.row_pos, col_pos, datetime_value or '')
+                if value:
+                    datetime_value = fields.Datetime.from_string(value)
+                    datetime_value = fields.Datetime.context_timestamp(line_object, datetime_value)
+                    datetime_value = fields.Datetime.to_string(datetime_value)
+                    self.sheet.write_string(
+                        self.row_pos, col_pos, datetime_value or '')
+                else:
+                    self.sheet.write_string(self.row_pos, col_pos, '')
             elif cell_type == 'bool':
                 values = column.get('values', False)
                 if values:
