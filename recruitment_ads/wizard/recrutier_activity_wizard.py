@@ -3,9 +3,9 @@ from odoo.exceptions import ValidationError
 
 class RecruiterActivityReportWizard(models.TransientModel):
     """Recruiter Activity Report Wizard"""
+    _name = "recruiter.activity.report.wizard"
     _inherit = 'abstract.rec.report.wizard'
 
-    _name = "recruiter.activity.report.wizard"
     _description = "Recruiter Activity Report Wizard"
 
     recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible')

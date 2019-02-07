@@ -8,4 +8,12 @@
         <field name="report_type">xlsx</field>
         <field name="report_file">Recruiter Activity</field>
     </record>
+    <record id="action_report_general_sheet_xlsx" model="ir.actions.report">
+        <field name="name">General Sheet XLSX</field>
+        <field name="model">general.sheet.report.wizard</field>
+        <field name="type">ir.actions.report</field>
+        <field name="report_name">recruitment_ads.report_general_sheet_xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_file">General Sheet</field>
+    </record>
 </odoo>
