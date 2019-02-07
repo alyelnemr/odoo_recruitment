@@ -6,6 +6,9 @@
     <record id="group_view_recruiter_activities" model="res.groups">
         <field name="name">View Recruiter Activities</field>
     </record>
+    <record id="group_view_general_sheet" model="res.groups">
+        <field name="name">View General Sheet</field>
+    </record>
 
     <record id="hr_offer_own_offers" model="ir.rule">
         <field name="name">See My Own Offers</field>

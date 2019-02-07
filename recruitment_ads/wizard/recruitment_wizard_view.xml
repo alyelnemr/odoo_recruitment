@@ -31,10 +31,39 @@
             </form>
         </field>
     </record>
+
+    <record id="general_sheet_wizard_view" model="ir.ui.view">
+        <field name="name">general.sheet.wizard.view</field>
+        <field name="model">general.sheet.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form name="General Sheet">
+                <sheet>
+                    <group col="4">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="job_ids" widget="many2many_tags"
+                               options="{'no_create_edit': True,'no_create':True}"/>
+                    </group>
+                    <footer>
+                        <button name="button_export_xlsx" type="object" string="Export (XLSX)" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
     <record id="recruiter_activity_wizard_action" model="ir.actions.act_window">
         <field name="name">Recruiter Activity</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">recruiter.activity.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <record id="general_sheet_wizard_action" model="ir.actions.act_window">
+        <field name="name">General Sheet</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">general.sheet.report.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
@@ -48,4 +77,10 @@
               sequence="1"
               action="recruiter_activity_wizard_action"
               groups="group_view_recruiter_activities"/>
+    <menuitem id="report_hr_recruitment_general_sheet"
+              name="General Sheet"
+              parent="report_hr_recruitment_general_report"
+              sequence="2"
+              action="general_sheet_wizard_action"
+              groups="group_view_general_sheet"/>
 </odoo>
