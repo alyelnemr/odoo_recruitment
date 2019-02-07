@@ -106,7 +106,7 @@ class Applicant(models.Model):
             }
         else:
             raise ValidationError(_(
-                "You cannot create offer to this applicant, you are't the recruitment responsible for the job nor the manager"))
+                "You cannot create offer to this applicant, you are't the recruitment/hr responsible for the job nor the manager"))
         return action
 
 
