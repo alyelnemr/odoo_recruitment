@@ -108,7 +108,7 @@ class RecActivityXslx(models.AbstractModel):
 
         if report.offer:
             self.write_array_header('Offers and Hired')
-            for offer in report.offer_ids.sorted('issue_date', reverse=True):
+            for offer in report.offer_ids.sorted(lambda o: (o.issue_date, o.create_date), reverse=True):
                 self.write_line(offerLineWrapper(offer), 'Offers and Hired')
 
 
