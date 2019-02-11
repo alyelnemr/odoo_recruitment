@@ -85,7 +85,7 @@ class RecActivityXslx(models.AbstractModel):
                     8: {'header': _('Offer Amount'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
                     9: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
                     10: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                    11: {'header': _('Comments'), 'field': 'comment', 'width': 20}
+                    11: {'header': _('Comments'), 'field': 'comment', 'width': 40}
                 }
             })
         return sheets

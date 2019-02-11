@@ -156,6 +156,9 @@
             <field name="activity_type_id" position="attributes">
                 <attribute name="domain">[('category','!=','interview')]</attribute>
             </field>
+            <button name="action_done" position="attributes">
+                <attribute name="attrs">{'invisible':[('activity_type_id','=',%(mail.mail_activity_data_call)d)]}</attribute>
+            </button>
         </field>
     </record>
     <record id="action_interview_calendar_event" model="ir.actions.act_window">
