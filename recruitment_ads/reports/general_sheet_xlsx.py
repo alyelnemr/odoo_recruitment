@@ -105,9 +105,9 @@ class GeneralSheetWrapper:
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
 
-        self.offer_status = application.offer_id.state
-        self.offer_date = application.offer_id.issue_date
-        self.hiring_date = application.offer_id.hiring_date
+        self.offer_status = application.sudo().offer_id.state
+        self.offer_date = application.sudo().offer_id.issue_date
+        self.hiring_date = application.sudo().offer_id.hiring_date
 
         self.env = application.env
         self._context = application._context
