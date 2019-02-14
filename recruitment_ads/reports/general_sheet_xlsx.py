@@ -29,7 +29,7 @@ class GeneralSheetXslx(models.AbstractModel):
                 10: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
                 11: {'header': _('Comment'), 'field': 'call_comment', 'width': 18},
 
-                12: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18, 'type': 'datetime'},
+                12: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
                 13: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
                 14: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
                 15: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
@@ -41,8 +41,7 @@ class GeneralSheetXslx(models.AbstractModel):
                 sheets[0]['General Sheet'].update(
                     {
                         start: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
-                                'width': 18,
-                                'type': 'datetime'},
+                                'width': 18},
                         start + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
                                     'width': 30,
                                     'type': 'x2many'},
@@ -93,14 +92,14 @@ class GeneralSheetWrapper:
         interviews = self._get_activity('interview', application).sorted('write_date', reverse=False)
         first_interview = interviews[0] if interviews else False
         interview_feedback = first_interview.feedback if first_interview else False
-        self.interview_date = first_interview.write_date if first_interview else False
+        self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
         self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
         self.interview_result = first_interview.interview_result if first_interview else False
         self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
         for i in range(len(interviews)):
             if i == 0:
                 continue
-            setattr(self, 'interview_date' + str(i), interviews[i].write_date)
+            setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
             setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
             setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
             setattr(self, 'interview_comment' + str(i),
