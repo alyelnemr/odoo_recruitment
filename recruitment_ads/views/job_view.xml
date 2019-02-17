@@ -94,6 +94,8 @@
                         <group>
                             <field name="name"/>
                             <field name="department_ids" invisible="1"/>
+                            <field name="has_application" invisible="1"/>
+                            <field name="job_code" attrs="{'readonly':[('has_application','=',True)]}"/>
                         </group>
                     </sheet>
                 </form>

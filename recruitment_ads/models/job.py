@@ -6,6 +6,19 @@ class JobPosition(models.Model):
     _name = 'job.title'
     name = fields.Char(required=True)
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
+    job_code = fields.Char(string="Job Code", required=True)
+    has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
+
+    def _compute_has_application(self):
+        title_id = self.id
+        if self.env['hr.applicant'].search([('job_id.job_title_id.id', '=', title_id)], limit=1):
+            self.has_application = True
+
+    _sql_constraints = [
+        ('job_code_uniq',
+         'unique(job_code)',
+         'Job Code entered before, Job Code must be unique.'),
+    ]
 
 
 class BusinessUnit(models.Model):
