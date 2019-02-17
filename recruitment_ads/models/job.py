@@ -15,6 +15,9 @@ class JobPosition(models.Model):
             self.has_application = True
 
     _sql_constraints = [
+        ('job_title_uniq',
+         'unique(name)',
+         'Job title entered before, Job title must be unique.'),
         ('job_code_uniq',
          'unique(job_code)',
          'Job Code entered before, Job Code must be unique.'),
