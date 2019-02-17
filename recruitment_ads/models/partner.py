@@ -12,6 +12,7 @@ class PartnerInherit(models.Model):
 
     short_display = fields.Char("Short display name", compute='_compute_short_display_name', store=True)
     applicant = fields.Boolean(string='Applicant')
+    date_of_birth = fields.Date(string='Date of Birth')
 
     _sql_constraints = [
         ('mobile_uniq',
