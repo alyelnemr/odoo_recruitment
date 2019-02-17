@@ -487,3 +487,10 @@ class Attendee(models.Model):
                 res_interview = super(Attendee, interviews)._send_mail_to_attendees(
                     map_meeting_interview_template.get(template_xmlid, template_xmlid), force_send)
         return res_interview and res_meeting
+
+
+class InterviewType(models.Model):
+    _name = 'interview.type'
+    _description = 'Interview Type'
+
+    name = fields.Char('Name',required=True)

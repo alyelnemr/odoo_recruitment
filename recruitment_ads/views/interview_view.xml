@@ -157,7 +157,8 @@
                 <attribute name="domain">[('category','!=','interview')]</attribute>
             </field>
             <button name="action_done" position="attributes">
-                <attribute name="attrs">{'invisible':[('activity_type_id','=',%(mail.mail_activity_data_call)d)]}</attribute>
+                <attribute name="attrs">{'invisible':[('activity_type_id','=',%(mail.mail_activity_data_call)d)]}
+                </attribute>
             </button>
         </field>
     </record>
@@ -166,7 +167,9 @@
         <field name="res_model">calendar.event</field>
         <field name="view_mode">tree</field>
         <field name="domain">[('type','=','interview')]</field>
-        <field name="context">{'default_type': 'interview', 'default_duration': 0.5,'search_default_filter_my_interviews':1}</field>
+        <field name="context">{'default_type': 'interview', 'default_duration':
+            0.5,'search_default_filter_my_interviews':1}
+        </field>
         <field name="view_type">form</field>
         <field name="search_view_id" ref="view_calendar_event_interview_search"/>
     </record>
@@ -184,4 +187,26 @@
               sequence="21"
               action="action_interview_calendar_event"
               groups="recruitment_ads.group_view_interviews"/>
+    <!-- Interview Type -->
+    <record id="view_interview_type_tree" model="ir.ui.view">
+        <field name="name">view_interview_type_tree</field>
+        <field name="model">interview.type</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+    <act_window id="act_interview_type_menu"
+            name="Interview Type"
+            res_model="interview.type"
+            view_mode="tree"
+            view_type="form"/>
+
+    <menuitem id="menu_interview_type"
+              name="Interview Types"
+              parent="hr_recruitment.menu_hr_recruitment_configuration"
+              sequence="100"
+              action="act_interview_type_menu"/>
 </odoo>
