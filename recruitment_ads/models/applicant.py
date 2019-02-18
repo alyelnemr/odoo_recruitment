@@ -101,8 +101,9 @@ class Applicant(models.Model):
     @api.multi
     def action_generate_offer(self):
         self.ensure_one()
+        allowed_users = self.job_id.user_id | self.job_id.hr_responsible_id | self.job_id.other_recruiters_ids
         if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') or \
-                self.job_id.user_id == self.env.user or self.job_id.hr_responsible_id == self.env.user:
+                self.env.user in allowed_users:
             form_view_id = self.env.ref('recruitment_ads.job_offer_form_wizard_view').id
             action = {
                 'type': 'ir.actions.act_window',
@@ -115,7 +116,7 @@ class Applicant(models.Model):
             }
         else:
             raise ValidationError(_(
-                "You cannot create offer to this applicant, you are't the recruitment/hr responsible for the job nor the manager"))
+                "You cannot create offer to this applicant, you are't the recruitment/hr/other responsible for this job nor a manager"))
         return action
 
 

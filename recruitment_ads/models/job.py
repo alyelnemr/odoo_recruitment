@@ -62,6 +62,8 @@ class Job(models.Model):
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
     user_id = fields.Many2one('res.users', default=lambda self:self.env.user)
 
+    other_recruiters_ids = fields.Many2many('res.users',string="Other Recruiters")
+
     @api.onchange('job_title_id')
     def onchange_job_title_id(self):
         self.name = self.job_title_id.name
