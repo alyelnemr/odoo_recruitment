@@ -59,6 +59,13 @@
             <page name="page_details" position="attributes">
                 <attribute name="string">Details</attribute>
             </page>
+            <xpath expr="//page[@name='page_details']/group[2]" position="inside">
+                <group>
+                    <field name="interview_category" attrs="{'required':[('type','=','interview')]}"/>
+                    <field name="interview_type_id" attrs="{'required':[('type','=','interview')]}"/>
+                    <field name="type" invisible="1"/>
+                </group>
+            </xpath>
             <field name="categ_ids" position="replace"/>
             <page name="page_details" position="inside">
                 <field name="recurrency" invisible="1"/>
@@ -80,6 +87,7 @@
                       readonly_form_view_id="%(calendar.view_calendar_event_form_popup)d"
                       form_view_id="%(recruitment_ads.view_calendar_event_interview_form)d"
                       event_open_popup="true"
+                      quick_add="false"
                       event_limit="3"
                       color="partner_id">
                 <field name="name"/>

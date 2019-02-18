@@ -31,6 +31,12 @@ class Interview(models.Model):
 
     display_corrected_start_date = fields.Char('start Datetime', compute='_compute_display_corrected_start_date')
 
+    interview_category = fields.Selection(selection=[
+        ('Personal','Personal'),
+        ('Phone','Phone'),
+        ('Online','Online'),],string='Category')
+    interview_type_id = fields.Many2one('interview.type',string='Type')
+
     @api.multi
     @api.depends('allday', 'start_date', 'start_datetime')
     def _compute_display_corrected_start_date(self):
