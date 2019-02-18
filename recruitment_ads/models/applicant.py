@@ -21,6 +21,7 @@ class Applicant(models.Model):
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
     cv_matched = fields.Boolean('Matched', default=False)
     count_done_interviews = fields.Integer('Done Interviews Count', compute='_get_count_done_interviews')
+    salary_current = fields.Float("Current Salary", help="Current Salary of Applicant")
 
     @api.one
     def _get_count_done_interviews(self):
