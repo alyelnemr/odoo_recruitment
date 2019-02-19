@@ -59,6 +59,14 @@
             <page name="page_details" position="attributes">
                 <attribute name="string">Details</attribute>
             </page>
+            <xpath expr="//page[@name='page_details']/group" position="before">
+                <group col="4">
+                    <field name="interview_category" colspan="2" attrs="{'required':[('type','=','interview')]}" widget="radio"/>
+                    <field name="interview_type_id" colspan="2" attrs="{'required':[('type','=','interview')]}"/>
+                    <field name="type" invisible="1"/>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='page_details']/group[2]" position="replace"/>
             <field name="categ_ids" position="replace"/>
             <page name="page_details" position="inside">
                 <field name="recurrency" invisible="1"/>
@@ -80,6 +88,7 @@
                       readonly_form_view_id="%(calendar.view_calendar_event_form_popup)d"
                       form_view_id="%(recruitment_ads.view_calendar_event_interview_form)d"
                       event_open_popup="true"
+                      quick_add="false"
                       event_limit="3"
                       color="partner_id">
                 <field name="name"/>
@@ -199,10 +208,10 @@
         </field>
     </record>
     <act_window id="act_interview_type_menu"
-            name="Interview Type"
-            res_model="interview.type"
-            view_mode="tree"
-            view_type="form"/>
+                name="Interview Type"
+                res_model="interview.type"
+                view_mode="tree"
+                view_type="form"/>
 
     <menuitem id="menu_interview_type"
               name="Interview Types"
