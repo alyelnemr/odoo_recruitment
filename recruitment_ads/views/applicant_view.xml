@@ -131,5 +131,18 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="view_crm_case_jobs_filter_inherited" model="ir.ui.view">
+            <field name="name">hr.applicant.view.search</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.view_crm_case_jobs_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_name']" position="after">
+                    <field name="name"
+                           string="Application Code"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

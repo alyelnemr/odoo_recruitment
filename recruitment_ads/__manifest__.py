@@ -24,6 +24,7 @@ Handel recruitment Process
         'data/interview_email_templates.xml',
         'data/jobs_data.xml',
         'data/offer_data.xml',
+        'data/sequence.xml',
         'views/offer_view.xml',
         'views/applicant_view.xml',
         'views/job_view.xml',
