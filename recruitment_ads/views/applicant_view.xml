@@ -138,8 +138,7 @@
             <field name="inherit_id" ref="hr_recruitment.view_crm_case_jobs_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_name']" position="after">
-                    <field name="partner_name"
-                           filter_domain="[('name','ilike',self)]"
+                    <field name="name"
                            string="Application Code"/>
                 </xpath>
             </field>
