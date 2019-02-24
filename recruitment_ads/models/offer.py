@@ -1,5 +1,6 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
+from odoo.exceptions import ValidationError
 
 
 class Offer(models.Model):
@@ -22,12 +23,18 @@ class Offer(models.Model):
             offer.name = name
             offer.offer_name = "Create Offer / " + name
 
-    @api.depends('fixed_salary', 'variable_salary', 'housing_allowance', 'travel_allowance', 'mobile_allowance')
+    @api.depends('fixed_salary', 'variable_salary', 'housing_allowance', 'travel_allowance', 'mobile_allowance',
+                 'shifts_no', 'hour_rate', 'offer_type')
     def _compute_total_package(self):
         for offer in self:
-            total_package = offer.fixed_salary + offer.variable_salary + \
-                            offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
-            offer.total_package = total_package
+            if offer.offer_type == "normal_offer":
+                total_package = offer.fixed_salary + offer.variable_salary + \
+                                offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
+                offer.total_package = total_package
+            elif offer.offer_type == "nursing_offer":
+                total_package = offer.hour_rate * offer.shifts_no * offer.shift_hours + \
+                                offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
+                offer.total_package = total_package
 
     name = fields.Char(compute=_offer_name, string='Name')
     offer_name = fields.Char(compute=_offer_name)
@@ -69,6 +76,42 @@ class Offer(models.Model):
         required=True)
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
+    offer_type = fields.Selection([('normal_offer', 'Normal Offer'),
+                                   ('nursing_offer', 'Nursing Offer'), ],
+                                  string="Offer Type", default="normal_offer", required=True)
+    shifts_no = fields.Integer('No. of Shifts/Month', required=False)
+    shift_hours = fields.Float('No. of hours/Shift', required=False, default=12)
+    hour_rate = fields.Float('Hour Rate', required=False)
+
+    @api.constrains('hiring_date', 'issue_date')
+    def check_business_unit(self):
+        if self.issue_date and self.hiring_date:
+            if self.issue_date > self.hiring_date:
+                raise ValidationError(_("Hire date must be more than the Issue Date."))
+
+    @api.constrains('offer_type', 'shifts_no', 'hour_rate')
+    def check_shifts_no_hour_rate(self):
+        if self.offer_type == 'nursing_offer':
+            for offer in self:
+                if offer.shifts_no < 1:
+                    raise ValidationError(_("No. of Shifts/Month must be more than 0."))
+                if offer.hour_rate < 1:
+                    raise ValidationError(_("Hour Rate must be more than 0."))
+
+    @api.onchange('shifts_no')
+    def onchange_shifts_no(self):
+        self.hour_rate = False
+
+    @api.onchange('offer_type')
+    def onchange_offer_type(self):
+        self.hour_rate = False
+        self.fixed_salary = False
+        self.variable_salary = False
+        self.housing_allowance = False
+        self.travel_allowance = False
+        self.mobile_allowance = False
+        self.shifts_no = False
+
 
     @api.multi
     def action_open_application(self):

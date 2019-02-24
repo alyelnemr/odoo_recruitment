@@ -37,6 +37,12 @@
                            context="{'search_for_applicant': True, 'search_view_ref': 'recruitment_ads.view_create_new_applicant_search', 'tree_view_ref':'recruitment_ads.view_create_new_applicant_tree', 'form_view_ref':'recruitment_ads.view_partner_form_inherit','default_applicant': 'True'}"/>
                     <separator/>
                 </xpath>
+                <xpath expr="//label[@for='salary_expected']" position="before">
+                    <label for="salary_current"/>
+                    <div>
+                        <field name="salary_current" class="oe_inline"/>
+                    </div>
+                </xpath>
                 <xpath expr="//field[@name='description']" position="after">
                     <separator string="History"/>
                     <field name="applicant_history_ids"
@@ -120,7 +126,23 @@
                 <xpath expr="//field[@name='email']" position="attributes">
                     <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='function']" position="after">
+                    <field name="date_of_birth"/>
+                </xpath>
             </field>
         </record>
+
+        <record id="view_crm_case_jobs_filter_inherited" model="ir.ui.view">
+            <field name="name">hr.applicant.view.search</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.view_crm_case_jobs_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_name']" position="after">
+                    <field name="name"
+                           string="Application Code"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

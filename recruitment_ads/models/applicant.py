@@ -21,6 +21,29 @@ class Applicant(models.Model):
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
     cv_matched = fields.Boolean('Matched', default=False)
     count_done_interviews = fields.Integer('Done Interviews Count', compute='_get_count_done_interviews')
+    salary_current = fields.Float("Current Salary", help="Current Salary of Applicant")
+    name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
+                       store=True)
+    sequence = fields.Char('Sequence')
+
+    @api.one
+    @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'sequence')
+    def _compute_get_application_code(self):
+        job_code = self.job_id.job_title_id.job_code
+        date_of_birth = self.partner_id.date_of_birth if self.partner_id.date_of_birth else "0000"
+        initials = ''.join(
+            initial[0].upper() for initial in self.partner_name.split())[:4] if self.partner_name else False
+        applicant_name = initials
+        sequence = self.sequence
+        self.name = '-'.join(filter(lambda i: i, [job_code, date_of_birth, applicant_name, sequence]))
+
+    @api.model
+    def create(self, vals):
+        res = super(Applicant, self).create(vals)
+        sequence = self.env.ref('recruitment_ads.sequence_application')
+        number = sequence.next_by_id()
+        res.sequence = number
+        return res
 
     @api.one
     def _get_count_done_interviews(self):
