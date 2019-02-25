@@ -85,18 +85,19 @@ class Offer(models.Model):
 
     @api.constrains('hiring_date', 'issue_date')
     def check_business_unit(self):
-        if self.issue_date and self.hiring_date:
-            if self.issue_date > self.hiring_date:
-                raise ValidationError(_("Hire date must be more than the Issue Date."))
+        for offer in self:
+            if offer.issue_date and offer.hiring_date:
+                if offer.issue_date > offer.hiring_date:
+                    raise ValidationError(_("Hire date must be more than the Issue Date."))
 
     @api.constrains('offer_type', 'shifts_no', 'hour_rate')
     def check_shifts_no_hour_rate(self):
-        if self.offer_type == 'nursing_offer':
             for offer in self:
-                if offer.shifts_no < 1:
-                    raise ValidationError(_("No. of Shifts/Month must be more than 0."))
-                if offer.hour_rate < 1:
-                    raise ValidationError(_("Hour Rate must be more than 0."))
+                if offer.offer_type == 'nursing_offer':
+                    if offer.shifts_no < 1:
+                        raise ValidationError(_("No. of Shifts/Month must be more than 0."))
+                    if offer.hour_rate < 1:
+                        raise ValidationError(_("Hour Rate must be more than 0."))
 
     @api.onchange('shifts_no')
     def onchange_shifts_no(self):
