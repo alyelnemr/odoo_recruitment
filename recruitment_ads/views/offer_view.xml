@@ -9,12 +9,6 @@
             <field name="arch" type="xml">
                 <form string="Offer" create="false">
                     <sheet>
-                        <group col="4">
-                            <field name="applicant_name" readonly="1"/>
-                            <newline/>
-                            <field name="department_id" readonly="1" options="{'no_create':True}"/>
-                            <field name="job_id" readonly="1" options="{'no_create':True}"/>
-                        </group>
                         <div class="oe_title">
                             <h4>
                                 Offer/
@@ -22,21 +16,50 @@
                             </h4>
                         </div>
                         <group>
-                            <group string="Salary">
-                                <field name="fixed_salary"/>
-                                <field name="variable_salary"/>
+                            <group>
+                                <field name="applicant_name" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="offer_type" widget="radio"/>
+                            </group>
+                        </group>
+                        <newline/>
+                        <group>
+                            <group>
+                                <field name="business_unit_id" readonly="1" options="{'no_create':True}"/>
+                                <field name="job_id" readonly="1" options="{'no_create':True}"/>
+                            </group>
+                            <group>
+                                <field name="department_id" readonly="1" options="{'no_create':True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="fixed_salary"
+                                       attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
+                                <field name="variable_salary"
+                                       attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
+                                <field name="shifts_no"
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                                <field name="shift_hours"
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                                <field name="hour_rate"
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                                 <field name="housing_allowance"/>
                                 <field name="travel_allowance"/>
                                 <field name="mobile_allowance"/>
-                                <field name="total_package" style="font-weight:900"/>
                             </group>
                             <group string="Currency">
                                 <field name="currency_id" nolabel="1" options="{'no_create':True,'no_open':True}"/>
                                 <div/>
                             </group>
+                            <group string="Salary">
+                                <field name="total_package" style="font-weight:900" widget='monetary'
+                                       options="{'currency_field': 'currency_id'}"/>
+                            </group>
                             <group string="General">
+                                <field name="issue_date" readonly="1"/>
                                 <field name="state"/>
-                                <field name="issue_date"/>
                                 <field name="hiring_date" states="pipeline,hired"
                                        attrs="{'required':[('state','in',['pipeline','hired'])]}"/>
                                 <field name="reject_reason" states="not_join,reject"/>

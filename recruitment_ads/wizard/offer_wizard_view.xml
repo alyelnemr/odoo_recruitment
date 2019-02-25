@@ -6,21 +6,40 @@
         <field name="arch" type="xml">
             <form name="Job Offer">
                 <sheet>
-                    <field name="offer_name" style="font-weight:900" string="Name"/>
-                    <field name="application_id" invisible="1"/>
+                    <group col="6">
+                        <group colspan="3">
+                            <field name="offer_name" style="font-weight:900" string="Name" nolabel="1"/>
+                            <field name="application_id" invisible="1"/>
+                        </group>
+                        <group colspan="3">
+                            <field name="offer_type" widget="radio"/>
+                        </group>
+                    </group>
                     <group>
-                        <group string="Salary">
-                            <field name="fixed_salary"/>
-                            <field name="variable_salary"/>
+                        <group>
+                            <field name="fixed_salary" attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="variable_salary"
+                                   attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="shifts_no"
+                                   attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="shift_hours"
+                                   attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="hour_rate"
+                                   attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="housing_allowance"/>
                             <field name="travel_allowance"/>
                             <field name="mobile_allowance"/>
-                            <field name="total_package" style="font-weight:900"/>
-                            <field name="issue_date"/>
                         </group>
                         <group string="Currency">
                             <field name="currency_id" nolabel="1" options="{'no_create':True,'no_open':True}"/>
                             <div/>
+                        </group>
+                        <group string="Salary">
+                            <field name="total_package" style="font-weight:900" widget='monetary'
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                        <group string="General">
+                            <field name="issue_date"/>
                         </group>
                     </group>
                     <footer>
