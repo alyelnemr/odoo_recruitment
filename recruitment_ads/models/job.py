@@ -8,6 +8,7 @@ class JobPosition(models.Model):
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
     job_code = fields.Char(string="Job Code", required=True)
     has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
+    job_level_ids = fields.One2many('job.level', string="Job Levels")
 
     def _compute_has_application(self):
         title_id = self.id
@@ -27,6 +28,11 @@ class JobPosition(models.Model):
 class BusinessUnit(models.Model):
     _name = 'business.unit'
     name = fields.Char(required=True)
+    job_dep_ids = fields.One2many('hr.department', 'business_unit_id')
+
+    _sql_constraints = [('name_unique',
+                         'unique(name)',
+                         'The name of the Business unit must be unique!'), ]
 
 
 class Department(models.Model):
@@ -48,7 +54,26 @@ class Department(models.Model):
 
     _sql_constraints = [('name_business_unit_id_unique',
                          'unique(name,business_unit_id)',
-                         'The name of the department be unique per business unit!'),]
+                         'The name of the department must be unique per business unit!'), ]
+
+
+class JobLevel(models.Model):
+    _name = 'job.level'
+    name = fields.Char(required=True)
+    job_title_id = fields.Many2one('job.title', string="Job Title", required=True)
+
+    _sql_constraints = [('name_unique',
+                         'unique(name)',
+                         'The name of the Job Level must be unique! please select this Job Level in the Job Title.'), ]
+    # @api.multi
+    # def write(self, vals):
+    #     res = super(JobLevel, self).write(vals)
+    #     for level in self:
+    #         if 'name' in vals and level.job_title_ids:
+    #             job_positions =  self.env['hr.job'].search([('job_title_id','in',level.job_title_ids.ids),('job_level_id','!=',False)])
+    #             job_positions.update_name()
+    #     return res
+
 
 
 class Job(models.Model):
@@ -57,22 +82,48 @@ class Job(models.Model):
     def _get_default_bu(self):
         return self.env.ref('recruitment_ads.main_andalusia_bu',raise_if_not_found=False)
 
+    name = fields.Char(string='Job Position', required=True, index=True, translate=True, compute='_compute_job_name')
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
+    job_level_id = fields.Many2one('job.level', string='Job Level', required=True)
     user_id = fields.Many2one('res.users', default=lambda self:self.env.user)
-
     other_recruiters_ids = fields.Many2many('res.users',string="Other Recruiters")
+
+    # @api.multi
+    # def update_name(self):
+    #     for job in self:
+    #         job.name = self._update_name(job.job_title_id.id,job.job_level_id.id)
+    #
+    # def _update_name(self,title_id,level_id):
+    #     title_obj = self.env['job.title']
+    #     level_obj = self.env['job.level']
+    #     job_title_name = title_obj.browse(title_id).name
+    #     job_level_name = level_obj.browse(level_id).name
+    #     return  " - ".join([job_title_name,job_level_name])
+    #
+    #
+    # @api.model
+    # def create(self, vals):
+    #     vals['name'] = self._update_name(vals['job_title_id'],vals['job_level_id'])
+    #     return super(Job, self).create(vals)
+    @api.one
+    @api.depends('job_title_id.name', 'job_level_id.name')
+    def _compute_job_name(self):
+        self.name = " - ".join([self.job_title_id.name if self.job_title_id.name else "",
+                                self.job_level_id.name if self.job_level_id.name else ""])
 
     @api.onchange('job_title_id')
     def onchange_job_title_id(self):
-        self.name = self.job_title_id.name
+        self.job_level_id = False
 
     @api.onchange('business_unit_id')
     def onchange_business_unit(self):
         self.department_id = False
         self.job_title_id = False
+        self.job_level_id = False
 
     @api.onchange('department_id')
     def onchange_department_id(self):
         self.job_title_id = False
+        self.job_level_id = False
