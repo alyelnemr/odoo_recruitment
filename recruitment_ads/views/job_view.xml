@@ -50,8 +50,8 @@
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
                            context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"/>
-                    <field name="job_level_id" class="oe_inline" domain="[('job_title_ids', 'in', job_title_id)]"
-                           context="{'default_job_title_ids':[(4,job_title_id)]}" placeholder="e.g. Level 1"/>
+                    <field name="job_level_id" class="oe_inline" domain="[('job_title_id', '=', job_title_id)]"
+                           context="{'default_job_title_id':job_title_id}" placeholder="e.g. Level 1"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="attrs">{'invisible':True,'required':False}</attribute>
@@ -84,8 +84,8 @@
                         </h3>
                         <label for="job_level_id"/>
                         <h3>
-                            <field name="job_level_id" domain="[('job_title_ids', '=', job_title_id)]"
-                                   context="{'default_job_title_ids':[(4,job_title_id)]}"/>
+                            <field name="job_level_id" domain="[('job_title_id', '=', job_title_id)]"
+                                   context="{'default_job_title_id':job_title_id}"/>
                         </h3>
                         <field name="name" attrs="{'invisible':True,'required':False}"/>
                     </div>
@@ -110,7 +110,7 @@
                             <field name="name" string="Job Name"/>
                             <field name="job_code" attrs="{'readonly':[('has_application','=',True)]}"/>
                             <separator string="Job Levels"/>
-                            <field name="job_level_ids" readonly="0"/>
+                            <field name="job_level_ids" nolable="1"/>
                             <field name="has_application" invisible="1"/>
                         </group>
                     </sheet>
@@ -125,7 +125,6 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="job_title_ids" widget='many2many_tags' readonly="0"/>
                             <field name="name"/>
                         </group>
                     </sheet>

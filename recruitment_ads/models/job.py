@@ -8,7 +8,7 @@ class JobPosition(models.Model):
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
     job_code = fields.Char(string="Job Code", required=True)
     has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
-    job_level_ids = fields.One2many('job.level', string="Job Levels")
+    job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels")
 
     def _compute_has_application(self):
         title_id = self.id
@@ -39,7 +39,7 @@ class Department(models.Model):
     _inherit = "hr.department"
 
     def _get_default_bu(self):
-        return self.env.ref('recruitment_ads.main_andalusia_bu',raise_if_not_found=False)
+        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     job_title_ids = fields.Many2many('job.title', 'hr_dep_job_rel', 'dep_id', 'job_id', string='Job Titles')
@@ -60,53 +60,27 @@ class Department(models.Model):
 class JobLevel(models.Model):
     _name = 'job.level'
     name = fields.Char(required=True)
-    job_title_id = fields.Many2one('job.title', string="Job Title", required=True)
+    job_title_id = fields.Many2one('job.title', string="Job Title", required=True, ondelete='cascade')
 
-    _sql_constraints = [('name_unique',
-                         'unique(name)',
-                         'The name of the Job Level must be unique! please select this Job Level in the Job Title.'), ]
-    # @api.multi
-    # def write(self, vals):
-    #     res = super(JobLevel, self).write(vals)
-    #     for level in self:
-    #         if 'name' in vals and level.job_title_ids:
-    #             job_positions =  self.env['hr.job'].search([('job_title_id','in',level.job_title_ids.ids),('job_level_id','!=',False)])
-    #             job_positions.update_name()
-    #     return res
-
+    _sql_constraints = [('name_job_title_unique',
+                         'unique(name,job_title_id)',
+                         'The name of the Job Level must be unique! per Job Title.'), ]
 
 
 class Job(models.Model):
     _inherit = ['hr.job']
 
     def _get_default_bu(self):
-        return self.env.ref('recruitment_ads.main_andalusia_bu',raise_if_not_found=False)
+        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
     name = fields.Char(string='Job Position', required=True, index=True, translate=True, compute='_compute_job_name')
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
-    job_level_id = fields.Many2one('job.level', string='Job Level', required=True)
-    user_id = fields.Many2one('res.users', default=lambda self:self.env.user)
-    other_recruiters_ids = fields.Many2many('res.users',string="Other Recruiters")
+    job_level_id = fields.Many2one('job.level', string='Job Level', required=False)
+    user_id = fields.Many2one('res.users', default=lambda self: self.env.user)
+    other_recruiters_ids = fields.Many2many('res.users', string="Other Recruiters")
 
-    # @api.multi
-    # def update_name(self):
-    #     for job in self:
-    #         job.name = self._update_name(job.job_title_id.id,job.job_level_id.id)
-    #
-    # def _update_name(self,title_id,level_id):
-    #     title_obj = self.env['job.title']
-    #     level_obj = self.env['job.level']
-    #     job_title_name = title_obj.browse(title_id).name
-    #     job_level_name = level_obj.browse(level_id).name
-    #     return  " - ".join([job_title_name,job_level_name])
-    #
-    #
-    # @api.model
-    # def create(self, vals):
-    #     vals['name'] = self._update_name(vals['job_title_id'],vals['job_level_id'])
-    #     return super(Job, self).create(vals)
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
     def _compute_job_name(self):
