@@ -26,25 +26,22 @@
             <label for="name" position="attributes">
                 <attribute name="string">Interview Subject</attribute>
             </label>
+            <field name="name" position="attributes">
+                <attribute name="attrs">{'readonly':[('is_interview_done','=',True)]}</attribute>
+            </field>
             <label for="partner_ids" position="attributes">
                 <attribute name="string">Interviewers</attribute>
             </label>
             <field name="partner_ids" position="attributes">
                 <attribute name="placeholder">Select Interviewers...</attribute>
-            </field>
-            <field name="partner_ids" position="attributes">
                 <attribute name="required">1</attribute>
-            </field>
-            <field name="partner_ids" position="attributes">
                 <attribute name="widget">many2many_short_tags</attribute>
-            </field>
-            <field name="partner_ids" position="attributes">
                 <attribute name="context">
                     {'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}
                 </attribute>
-            </field>
-            <field name="partner_ids" position="attributes">
                 <attribute name="options">{'no_create_edit': True,'no_create':True}</attribute>
+                <attribute name="options">{'no_create_edit': True,'no_create':True}</attribute>
+                <attribute name="attrs">{'readonly':[('is_interview_done','=',True)]}</attribute>
             </field>
             <xpath expr="//div[@class='oe_title']/h2" position="after">
                 <label for="extra_followers_ids" string="Followers" class="oe_edit_only"/>
@@ -53,19 +50,55 @@
                            placeholder="Select followers..."
                            options="{'no_create_edit': True,'no_create':True}"
                            context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}"
-                           class="oe_inline"/>
+                           class="oe_inline" attrs="{'readonly':[('is_interview_done','=',True)]}"/>
                 </h2>
+                <field name="is_interview_done" invisible="1"/>
             </xpath>
             <page name="page_details" position="attributes">
                 <attribute name="string">Details</attribute>
             </page>
             <xpath expr="//page[@name='page_details']/group" position="before">
                 <group col="4">
-                    <field name="interview_category" colspan="2" attrs="{'required':[('type','=','interview')]}" widget="radio"/>
-                    <field name="interview_type_id" colspan="2" attrs="{'required':[('type','=','interview')]}"/>
+                    <field name="interview_category" colspan="2"
+                           attrs="{'required':[('type','=','interview')],'readonly':[('is_interview_done','=',True)]}"
+                           widget="radio"/>
+                    <field name="interview_type_id" colspan="2"
+                           attrs="{'required':[('type','=','interview')],'readonly':[('is_interview_done','=',True)]}"/>
                     <field name="type" invisible="1"/>
                 </group>
             </xpath>
+            <field name="start_date" position="attributes">
+                <attribute name="attrs">{'invisible': [('allday','=',False)],
+                    'readonly': [('is_interview_done','=',True)]}
+                </attribute>
+            </field>
+            <field name="stop_date" position="attributes">
+                <attribute name="attrs">{'invisible': [('allday','=',False)],
+                    'readonly': [('is_interview_done','=',True)]}
+                </attribute>
+            </field>
+            <field name="start_datetime" position="attributes">
+                <attribute name="attrs">{'invisible': [('allday','=',True)],
+                    'readonly': [('is_interview_done','=',True)]}
+                </attribute>
+            </field>
+            <field name="duration" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_interview_done','=',True)]}
+                </attribute>
+            </field>
+            <field name="allday" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_interview_done','=',True)]}
+                </attribute>
+            </field>
+            <field name="alarm_ids" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_interview_done','=',True)]}</attribute>
+            </field>
+            <field name="location" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_interview_done','=',True)]}</attribute>
+            </field>
+            <field name="description" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_interview_done','=',True)]}</attribute>
+            </field>
             <xpath expr="//page[@name='page_details']/group[2]" position="replace"/>
             <field name="categ_ids" position="replace"/>
             <page name="page_details" position="inside">
@@ -132,6 +165,8 @@
                 <field name="display_partners"/>
                 <field name="last_stage_activity"/>
                 <field name="last_stage_result"/>
+                <field name="interview_category"/>
+                <field name="interview_type_id"/>
                 <button string="Send invitation Mail" type="object"
                         name="action_mail_compose_message"/>
                 <field name="type" invisible="1"/>

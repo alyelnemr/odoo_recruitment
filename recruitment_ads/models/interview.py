@@ -34,7 +34,7 @@ class Interview(models.Model):
     interview_category = fields.Selection(selection=[
         ('Personal','Personal'),
         ('Phone','Phone'),
-        ('Online','Online'),],string='Category')
+        ('Online','Online'),],string='Category',default='Personal')
     interview_type_id = fields.Many2one('interview.type',string='Type')
 
     @api.multi
@@ -111,7 +111,9 @@ class Interview(models.Model):
     def write(self, values):
         """Override the write function to trigger create attendee function where there is a change in
         extra_followers_ids field"""
-
+        # Prevent updates for done interview but a leave a window for implementation team in case of any updates needs to be done
+        if any(self.mapped('is_interview_done')) and not values.get('is_interview_done',False):
+            raise ValidationError(_("You Can't change done interviews"))
         # compute duration, only if start and stop are modified
         if 'duration' not in values and 'start' in values and 'stop' in values:
             values['duration'] = self._get_duration(values['start'], values['stop'])
@@ -184,6 +186,12 @@ class Interview(models.Model):
                             current_meeting.candidate_sent_count > 0 or current_meeting.interviewer_sent_count > 0):
                         attendee_to_email._send_mail_to_attendees('calendar.calendar_template_meeting_changedate')
         return True
+
+    @api.multi
+    def unlink(self):
+        if any(self.mapped('is_interview_done')):
+            raise ValidationError(_("You Can't delete done interviews"))
+        return super(Interview, self).unlink()
 
     @api.model
     def create(self, values):

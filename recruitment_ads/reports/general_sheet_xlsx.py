@@ -32,7 +32,8 @@ class GeneralSheetXslx(models.AbstractModel):
                 12: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
                 13: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
                 14: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                15: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
+                15: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,'type': 'many2one'},
+                16: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             }
         })
         if max_interviews_count > 0:
@@ -48,7 +49,10 @@ class GeneralSheetXslx(models.AbstractModel):
                         start + 2: {'header': _('Interview result ' + str(i + 2)),
                                     'field': 'interview_result' + str(i + 1),
                                     'width': 20, },
-                        start + 3: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
+                        start + 3: {'header': _('Interview type ' + str(i + 2)),
+                                    'field': 'interview_type_id' + str(i + 1),
+                                    'width': 20,'type': 'many2one'},
+                        start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
                                     'width': 22},
                     }
                 )
@@ -102,6 +106,7 @@ class GeneralSheetWrapper:
             setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
             setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
             setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
+            setattr(self, 'interview_type_id' + str(i), interviews[i].calendar_event_id.interview_type_id)
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
 
