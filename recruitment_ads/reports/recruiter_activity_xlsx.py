@@ -61,14 +61,15 @@ class RecActivityXslx(models.AbstractModel):
                     4: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                     5: {'header': _('Interview Date'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
                     6: {'header': _('Interviewers'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
-                    7: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
-                    8: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    10: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    11: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    12: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    13: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
-                    14: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                    7: {'header': _('Interviewer Type'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
+                    8: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
+                    9: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
+                    10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    11: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    12: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    13: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                    14: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
+                    15: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
                 }
             })
         if report.offer:
@@ -163,6 +164,7 @@ class InterviewLineWrapper:
         self.partner_mobile = applicant.partner_mobile
         self.start_date = interview.calendar_event_id.start
         self.partner_ids = interview.calendar_event_id.partner_ids
+        self.interview_type_id = interview.calendar_event_id.interview_type_id
         self.interview_result = interview.interview_result
         self.feedback = re.sub(r"<.*?>",'',interview.feedback)
         self.business_unit_id = applicant.department_id.business_unit_id
