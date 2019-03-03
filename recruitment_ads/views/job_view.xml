@@ -16,10 +16,11 @@
                 </xpath>
                 <xpath expr="//group" position="after">
                     <separator string="Job Titles"/>
-                    <field name="job_title_ids"/>
+                    <field name="job_title_ids" nolable="0" readonly="0"/>
                 </xpath>
             </field>
         </record>
+
         <!--Department tree-->
         <record id="view_department_tree_inherit" model="ir.ui.view">
             <field name="name">hr.department.tree.inherit</field>
@@ -28,14 +29,15 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="replace"/>
                 <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="business_unit_id"/>
                     <field name="parent_id"/>
-                    <field name="business_unit_id" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='display_name']" position="attributes">
                     <attribute name="string">Department Name</attribute>
                 </xpath>
             </field>
         </record>
+
         <!--Create a Job Position popup form-->
         <record id="hr_job_simple_form_inherit" model="ir.ui.view">
             <field name="name">hr.job.simple.form.inherit</field>
@@ -48,12 +50,15 @@
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
                            context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"/>
+                    <field name="job_level_id" class="oe_inline" domain="[('job_title_id', '=', job_title_id)]"
+                           context="{'default_job_title_id':job_title_id}" placeholder="e.g. Level 1"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="attrs">{'invisible':True,'required':False}</attribute>
                 </xpath>
             </field>
         </record>
+
         <!--Create a Job Position form-->
         <record id="hr_job_form_inherit" model="ir.ui.view">
             <field name="name">hr.job.form.inherit</field>
@@ -77,6 +82,11 @@
                             <field name="job_title_id" domain="[('department_ids', '=', department_id)]"
                                    context="{'default_department_ids':[(4,department_id)]}"/>
                         </h3>
+                        <label for="job_level_id"/>
+                        <h3>
+                            <field name="job_level_id" domain="[('job_title_id', '=', job_title_id)]"
+                                   context="{'default_job_title_id':job_title_id}"/>
+                        </h3>
                         <field name="name" attrs="{'invisible':True,'required':False}"/>
                     </div>
                 </xpath>
@@ -88,6 +98,7 @@
                 </xpath>
             </field>
         </record>
+
         <record id="view_job_title_form" model="ir.ui.view">
             <field name="name">job.title.form</field>
             <field name="model">job.title</field>
@@ -95,15 +106,51 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="name"/>
-                            <field name="department_ids" invisible="1"/>
-                            <field name="has_application" invisible="1"/>
+                            <field name="department_ids" widget='many2many_tags' readonly="1"/>
+                            <field name="name" string="Job Name"/>
                             <field name="job_code" attrs="{'readonly':[('has_application','=',True)]}"/>
+                        </group>
+                        <separator string="Job Levels"/>
+                        <field name="job_level_ids" nolable="1"/>
+                        <field name="has_application" invisible="1"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_job_level_form" model="ir.ui.view">
+            <field name="name">job.level.form</field>
+            <field name="model">job.level</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
                         </group>
                     </sheet>
                 </form>
             </field>
-
         </record>
+
+        <record id="view_bu_form" model="ir.ui.view">
+            <field name="name">business.unit.form</field>
+            <field name="model">business.unit</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" string="Business Unit"/>
+                            <field name="id" invisible="1"/>
+                        </group>
+                        <separator string="Departments"/>
+                        <div>
+                            <field name="job_dep_ids" context="{'default_business_unit_id': id}" nolable="1"
+                                   readonly="1"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
     </data>
 </odoo>
