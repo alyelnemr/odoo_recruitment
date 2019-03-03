@@ -73,7 +73,8 @@ class Job(models.Model):
     def _get_default_bu(self):
         return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
-    name = fields.Char(string='Job Position', required=True, index=True, translate=True, compute='_compute_job_name')
+    name = fields.Char(string='Job Position', required=True, index=True, translate=True, compute='_compute_job_name',
+                       store=True)
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
@@ -84,8 +85,7 @@ class Job(models.Model):
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
     def _compute_job_name(self):
-        self.name = " - ".join([self.job_title_id.name if self.job_title_id.name else "",
-                                self.job_level_id.name if self.job_level_id.name else ""])
+        self.name = " - ".join([name for name in (self.job_title_id.name, self.job_level_id.name) if name])
 
     @api.onchange('job_title_id')
     def onchange_job_title_id(self):
