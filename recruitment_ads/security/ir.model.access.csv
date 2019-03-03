@@ -8,8 +8,8 @@ officer_access_job_offer,officer_access_job_offer,model_hr_offer,hr_recruitment.
 officer_access_rejection_reason,officer_access_rejection_reason,model_reject_reason,hr_recruitment.group_hr_recruitment_user,1,0,0,0
 manager_access_rejection_reason,manager_access_rejection_reason,model_reject_reason,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
 officer_access_interview_type,officer_access_interview_type,model_interview_type,hr_recruitment.group_hr_recruitment_user,1,0,0,0
-manager_access_interview_type  ,manager_access_interview_type  ,model_interview_type,hr_recruitment.group_hr_recruitment_manager,1        ,1         ,1          ,1
-officer_access_job_level       ,officer_access_job_level       ,model_job_level     ,hr_recruitment.group_hr_recruitment_user   ,1        ,0         ,0          ,0
-manager_access_job_level       ,manager_access_job_level       ,model_job_level     ,hr_recruitment.group_hr_recruitment_manager,1        ,1         ,1          ,1
+manager_access_interview_type,manager_access_interview_type,model_interview_type,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+officer_access_job_level,officer_access_job_level,model_job_level,hr_recruitment.group_hr_recruitment_user,1,0,0,0
+manager_access_job_level,manager_access_job_level,model_job_level,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
 hr.access_hr_job_user,hr.job user,hr.model_hr_job,hr.group_hr_user,1,0,0,0
 access_hr_job_manager,hr.job manager,hr.model_hr_job,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
