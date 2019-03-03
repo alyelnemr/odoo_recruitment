@@ -182,7 +182,7 @@ class offerLineWrapper:
         self.applicant_name = offer.applicant_name
         self.email_from = offer.application_id.email_from
         self.partner_mobile = offer.application_id.partner_mobile
-        self.create_uid = offer.application_id.create_uid
+        self.create_uid = offer.create_uid
         self.business_unit_id = offer.business_unit_id
         self.department_id = offer.department_id
         self.job_id = offer.job_id
