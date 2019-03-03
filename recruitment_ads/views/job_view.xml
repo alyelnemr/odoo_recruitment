@@ -16,7 +16,7 @@
                 </xpath>
                 <xpath expr="//group" position="after">
                     <separator string="Job Titles"/>
-                    <field name="job_title_ids" nolable="1" readonly="0"/>
+                    <field name="job_title_ids" nolable="0" readonly="0"/>
                 </xpath>
             </field>
         </record>
@@ -109,10 +109,10 @@
                             <field name="department_ids" widget='many2many_tags' readonly="1"/>
                             <field name="name" string="Job Name"/>
                             <field name="job_code" attrs="{'readonly':[('has_application','=',True)]}"/>
-                            <separator string="Job Levels"/>
-                            <field name="job_level_ids" nolable="1"/>
-                            <field name="has_application" invisible="1"/>
                         </group>
+                        <separator string="Job Levels"/>
+                        <field name="job_level_ids" nolable="1"/>
+                        <field name="has_application" invisible="1"/>
                     </sheet>
                 </form>
             </field>
@@ -141,10 +141,12 @@
                         <group>
                             <field name="name" string="Business Unit"/>
                             <field name="id" invisible="1"/>
-                            <separator string="Departments"/>
-                            <field name="job_dep_ids" context="{'default_business_unit_id': id}" nolable="1"
-                                   readonly="0"/>
                         </group>
+                        <separator string="Departments"/>
+                        <div>
+                            <field name="job_dep_ids" context="{'default_business_unit_id': id}" nolable="1"
+                                   readonly="1"/>
+                        </div>
                     </sheet>
                 </form>
             </field>
