@@ -15,18 +15,19 @@ class RecActivityXslx(models.AbstractModel):
             sheets.append({
                 'CV Source': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    3: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    4: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    5: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                    6: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
-                    7: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    8: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                    9: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    10: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    11: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
-                    12: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                    1: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    2: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                    3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    6: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                    7: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
+                    8: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    9: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    10: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    11: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                    12: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
+                    13: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
                 }
             })
         if report.calls:
@@ -34,35 +35,14 @@ class RecActivityXslx(models.AbstractModel):
                 'Calls': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
                         'type': 'many2one'},
-                    1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    3: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    4: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    5: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
-                    6: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
-                    7: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
-                    8: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    10: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    11: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    12: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    13: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
-                    14: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                }
-            })
-        if report.interviews:
-            sheets.append({
-                'Interviews': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
-                        'type': 'many2one'},
-                    1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    3: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    4: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    5: {'header': _('Interview Date'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
-                    6: {'header': _('Interviewers'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
-                    7: {'header': _('Interviewer Type'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
-                    8: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
+                    1: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    2: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                    3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    6: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
+                    7: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
+                    8: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
                     9: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
                     10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     11: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
@@ -72,22 +52,46 @@ class RecActivityXslx(models.AbstractModel):
                     15: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
                 }
             })
+        if report.interviews:
+            sheets.append({
+                'Interviews': {
+                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
+                        'type': 'many2one'},
+                    1: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    2: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                    3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    6: {'header': _('Interview Date'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
+                    7: {'header': _('Interviewers'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
+                    8: {'header': _('Interviewer Type'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
+                    9: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
+                    10: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
+                    11: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    12: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    13: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    14: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                    15: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
+                    16: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                }
+            })
         if report.offer:
             sheets.append({
                 'Offers and Hired': {
-                    0: {'header': _('Candidate Name'), 'field': 'applicant_name', 'width': 20},
-                    1: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    2: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    3: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    4: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
-                    5: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                    6: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
-                    7: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
-                    8: {'header': _('Offer Amount'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
-                    9: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
-                    10: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                    11: {'header': _('Comments'), 'field': 'comment', 'width': 40},
-                    12: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40}
+                    0: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    1: {'header': _('Candidate Name'), 'field': 'applicant_name', 'width': 20},
+                    2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    3: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    4: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    5: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
+                    6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    7: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                    8: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
+                    9: {'header': _('Offer Amount'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
+                    10: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
+                    11: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
+                    12: {'header': _('Comments'), 'field': 'comment', 'width': 40},
+                    13: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40}
                 }
             })
         return sheets
@@ -117,6 +121,7 @@ class RecActivityXslx(models.AbstractModel):
 class CVSourceLineWrapper:
     def __init__(self, cv_source):
         self.create_uid = cv_source.create_uid
+        self.application_code = cv_source.name
         self.partner_name = cv_source.partner_name
         self.email_from = cv_source.email_from
         self.partner_phone = cv_source.partner_phone
@@ -137,6 +142,7 @@ class CallLineWrapper:
     def __init__(self, call):
         applicant = call.env[call.res_model].browse(call.res_id)
         self.real_create_uid = call.real_create_uid
+        self.application_code = applicant.name
         self.partner_name = applicant.partner_name
         self.email_from = applicant.email_from
         self.partner_phone = applicant.partner_phone
@@ -159,6 +165,7 @@ class InterviewLineWrapper:
     def __init__(self, interview):
         applicant = interview.env[interview.res_model].browse(interview.res_id)
         self.real_create_uid = interview.real_create_uid
+        self.application_code = applicant.name
         self.partner_name = applicant.partner_name
         self.email_from = applicant.email_from
         self.partner_phone = applicant.partner_phone
@@ -180,6 +187,7 @@ class InterviewLineWrapper:
 
 class offerLineWrapper:
     def __init__(self, offer):
+        self.application_code = offer.application_id.name
         self.applicant_name = offer.applicant_name
         self.email_from = offer.application_id.email_from
         self.partner_mobile = offer.application_id.partner_mobile

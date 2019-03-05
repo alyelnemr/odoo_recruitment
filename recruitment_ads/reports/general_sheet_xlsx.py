@@ -15,24 +15,25 @@ class GeneralSheetXslx(models.AbstractModel):
             report.with_context({'active_test': False}).application_ids.mapped('count_done_interviews')) - 1
         sheets.append({
             'General Sheet': {
-                0: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                1: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                3: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                4: {'header': _('Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                5: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                7: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                0: {'header': _('Applicant Code'), 'field': 'application_code', 'width': 20},
+                1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                2: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                4: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                5: {'header': _('Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                6: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                7: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                8: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
 
-                8: {'header': _('Call Date'), 'field': 'call_date', 'width': 18, 'type': 'datetime'},
-                9: {'header': _('Called by'), 'field': 'called_by', 'width': 18, 'type': 'many2one'},
-                10: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
-                11: {'header': _('Comment'), 'field': 'call_comment', 'width': 18},
+                9: {'header': _('Call Date'), 'field': 'call_date', 'width': 18, 'type': 'datetime'},
+                10: {'header': _('Called by'), 'field': 'called_by', 'width': 18, 'type': 'many2one'},
+                11: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
+                12: {'header': _('Comment'), 'field': 'call_comment', 'width': 18},
 
-                12: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
-                13: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                14: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                15: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,'type': 'many2one'},
+                13: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
+                14: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
+                15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
+                16: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,'type': 'many2one'},
                 16: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             }
         })
@@ -77,6 +78,7 @@ class GeneralSheetXslx(models.AbstractModel):
 
 class GeneralSheetWrapper:
     def __init__(self, application):
+        self.application_code = application.name
         self.partner_name = application.partner_name
         self.partner_mobile = application.partner_mobile
         self.email_from = application.email_from
