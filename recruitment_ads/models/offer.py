@@ -8,11 +8,13 @@ class Offer(models.Model):
     _description = 'Offers'
     _inherit = ['mail.thread']
 
-    @api.depends('application_id', 'application_id.job_id', 'application_id.partner_name',
-                 'application_id.department_id')
+    @api.depends('application_id.department_id.business_unit_id', 'application_id', 'application_id.job_id',
+                 'application_id.partner_name', 'application_id.department_id')
     def _offer_name(self):
         for offer in self:
             name = []
+            if offer.application_id.department_id.business_unit_id.name:
+                name.append(offer.application_id.department_id.business_unit_id.name)
             if offer.application_id.department_id.name:
                 name.append(offer.application_id.department_id.name)
             if offer.application_id.job_id.name:
