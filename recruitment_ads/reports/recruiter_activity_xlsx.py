@@ -86,7 +86,8 @@ class RecActivityXslx(models.AbstractModel):
                     8: {'header': _('Offer Amount'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
                     9: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
                     10: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                    11: {'header': _('Comments'), 'field': 'comment', 'width': 40}
+                    11: {'header': _('Comments'), 'field': 'comment', 'width': 40},
+                    12: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40}
                 }
             })
         return sheets
@@ -191,3 +192,8 @@ class offerLineWrapper:
         self.state = offer.state
         self.hiring_date = offer.hiring_date
         self.comment = offer.comment
+        offer_dict = {'normal_offer':'Normal Offer','nursing_offer':'Nursing Offer'}
+        self.offer_type = offer_dict.get(offer.offer_type,'')
+        self._context = offer._context
+        self.env = offer.env
+

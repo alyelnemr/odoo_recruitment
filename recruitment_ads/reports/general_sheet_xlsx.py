@@ -63,6 +63,7 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 1: {'header': _('Offer Status'), 'field': 'offer_status', 'width': 22},
                 last_row + 2: {'header': _('Offer Date'), 'field': 'offer_date', 'width': 22},
                 last_row + 3: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 22},
+                last_row + 4: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 22},
             }
         )
         return sheets
@@ -113,6 +114,8 @@ class GeneralSheetWrapper:
         self.offer_status = application.offer_id.state
         self.offer_date = application.offer_id.issue_date
         self.hiring_date = application.offer_id.hiring_date
+        offer_dict = {'normal_offer':'Normal Offer','nursing_offer':'Nursing Offer'}
+        self.offer_type = offer_dict.get(application.offer_id.offer_type,'')
 
         self.env = application.env
         self._context = application._context
