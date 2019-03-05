@@ -14,10 +14,12 @@ class Offer(models.TransientModel):
         self.application_id.offer_id = self.offer_id
         return {'type': 'ir.actions.act_window_close'}
 
-    @api.depends('application_id', 'application_id.job_id', 'application_id.partner_id')
+    @api.depends('application_id.department_id.business_unit_id', 'application_id', 'application_id.job_id', 'application_id.partner_id')
     def _offer_name(self):
         for offer in self:
             name = []
+            if offer.application_id.department_id.business_unit_id.name:
+                name.append(offer.application_id.department_id.business_unit_id.name)
             if offer.application_id.department_id.name: name.append(offer.application_id.department_id.name)
             if offer.application_id.job_id.name: name.append(offer.application_id.job_id.name)
             if offer.application_id.partner_id.name: name.append(offer.application_id.partner_id.name)
