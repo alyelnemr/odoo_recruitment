@@ -62,7 +62,8 @@
                                 <field name="state"/>
                                 <field name="hiring_date" states="pipeline,hired"
                                        attrs="{'required':[('state','in',['pipeline','hired'])]}"/>
-                                <field name="reject_reason" states="not_join,reject"/>
+                                <field name="reject_reason" states="not_join,reject"
+                                       attrs="{'required':[('state','=','reject')]}"/>
                             </group>
                             <field name="comment" states="hold,not_join,reject" nolabel="1" placeholder="Notes"
                                    attrs="{'required':[('state','=','hold')]}"/>
