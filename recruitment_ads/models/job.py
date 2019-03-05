@@ -73,7 +73,7 @@ class Job(models.Model):
     def _get_default_bu(self):
         return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
-    name = fields.Char(string='Job Position', required=True, index=True, translate=True, compute='_compute_job_name',
+    name = fields.Char(string='Job Position', required=False, index=True, translate=True, compute='_compute_job_name',
                        store=True)
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     department_id = fields.Many2one('hr.department', string='Department', required=True)

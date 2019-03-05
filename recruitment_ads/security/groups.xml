@@ -14,10 +14,10 @@
         <field name="name">See My Own Offers</field>
         <field name="model_id" ref="model_hr_offer"/>
         <field name="domain_force">[('create_uid','=',user.id)]</field>
-        <field name="prem_read">1</field>
-        <field name="prem_write">1</field>
-        <field name="prem_create">1</field>
-        <field name="prem_unlink">0</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
         <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
     </record>
 
@@ -25,10 +25,10 @@
         <field name="name">See All Offers</field>
         <field name="model_id" ref="model_hr_offer"/>
         <field name="domain_force">[(1,'=',1)]</field>
-        <field name="prem_read">1</field>
-        <field name="prem_write">1</field>
-        <field name="prem_create">1</field>
-        <field name="prem_unlink">0</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
         <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
     </record>
 </odoo>
