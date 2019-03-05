@@ -13,6 +13,8 @@ class Offer(models.Model):
     def _offer_name(self):
         for offer in self:
             name = []
+            if offer.business_unit_id.name:
+                name.append(offer.business_unit_id.name)
             if offer.application_id.department_id.name:
                 name.append(offer.application_id.department_id.name)
             if offer.application_id.job_id.name:
