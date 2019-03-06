@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'Recruitment',
-    'version': '1.0.6',
+    'version': '2.1.0',
     'summary': 'Recruitment Management',
     'category': 'Employees',
     'author': 'AHBS Odoo Team',
