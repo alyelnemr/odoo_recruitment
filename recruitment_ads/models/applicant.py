@@ -24,25 +24,25 @@ class Applicant(models.Model):
     salary_current = fields.Float("Current Salary", help="Current Salary of Applicant")
     name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
                        store=True)
-    sequence = fields.Char('Sequence')
+    serial = fields.Char('serial',copy=False)
 
     @api.one
-    @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'sequence')
+    @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')
     def _compute_get_application_code(self):
         job_code = self.job_id.job_title_id.job_code
         date_of_birth = self.partner_id.date_of_birth if self.partner_id.date_of_birth else "0000"
         initials = ''.join(
             initial[0].upper() for initial in self.partner_name.split())[:4] if self.partner_name else False
         applicant_name = initials
-        sequence = self.sequence
-        self.name = '-'.join(filter(lambda i: i, [job_code, date_of_birth, applicant_name, sequence]))
+        serial = self.serial
+        self.name = '-'.join(filter(lambda i: i, [job_code, date_of_birth, applicant_name, serial]))
 
     @api.model
     def create(self, vals):
         res = super(Applicant, self).create(vals)
         sequence = self.env.ref('recruitment_ads.sequence_application')
         number = sequence.next_by_id()
-        res.sequence = number
+        res.serial = number
         return res
 
     @api.one
