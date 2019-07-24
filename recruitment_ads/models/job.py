@@ -1,5 +1,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from datetime import datetime
+
+
 
 
 class JobPosition(models.Model):
@@ -81,11 +85,44 @@ class Job(models.Model):
     job_level_id = fields.Many2one('job.level', string='Job Level', required=False)
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user)
     other_recruiters_ids = fields.Many2many('res.users', string="Other Recruiters")
+    remaining_vacancies = fields.Integer(string='Remaining Vacancies', compute='_compute_remaining_vacancies',
+                                         help='Number of vacancies needed during the recruitment phase.')
+    no_of_hired_applicants = fields.Integer(string='Hired Applicants', compute='_compute_remaining_vacancies',
+                                    help='Number of hired applicants for this job position during recruitment phase.')
+    last_launch_rec_date = fields.Date(string='Recruitment Launch Date',
+                                       help="Technical field to catch the starting date of the last recruitment phase")
 
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
     def _compute_job_name(self):
         self.name = " - ".join([name for name in (self.job_title_id.name, self.job_level_id.name) if name])
+
+    @api.multi
+    def set_recruit(self):
+        for record in self:
+            no_of_recruitment = 1 if record.no_of_recruitment == 0 else record.no_of_recruitment
+            record.write({'state': 'recruit', 'no_of_recruitment': no_of_recruitment})
+            if record.state == "recruit":
+                record.last_launch_rec_date = datetime.today()
+        return True
+
+    @api.multi
+    def _compute_remaining_vacancies(self):
+        hired_offer = self.env['hr.offer'].search([('job_id', 'in', self.ids), ('state', '=', 'hired')])
+        for job in self:
+            if job.state == 'recruit' and job.last_launch_rec_date:
+                filter_by = lambda d: datetime.strptime(d.hiring_date, DEFAULT_SERVER_DATE_FORMAT) >= datetime.strptime(
+                    job.last_launch_rec_date, DEFAULT_SERVER_DATE_FORMAT) and d.job_id == job
+                hired_count = len(hired_offer.filtered(filter_by))
+                job.no_of_hired_applicants = hired_count
+                rem_vac = job.no_of_recruitment - hired_count
+                if rem_vac < 0:
+                    job.remaining_vacancies = 0
+                else:
+                    job.remaining_vacancies = rem_vac
+            else:
+                job.no_of_hired_applicants = 0
+                job.remaining_vacancies = 0
 
     @api.onchange('job_title_id')
     def onchange_job_title_id(self):
