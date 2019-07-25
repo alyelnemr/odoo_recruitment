@@ -152,5 +152,18 @@
             </field>
         </record>
 
+        <record id="view_hr_job_tree_inherited" model="ir.ui.view">
+            <field name="name">view.hr.job.tree.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_tree" />
+            <field name="arch" type="xml">
+                <field name="no_of_hired_employee" position="replace"/>
+                <field name="no_of_recruitment" position="after">
+                    <field name="no_of_hired_applicants"/>
+                    <field name="remaining_vacancies"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </odoo>
