@@ -96,6 +96,18 @@
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="other_recruiters_ids" widget="many2many_tags"/>
                 </xpath>
+                <xpath expr="//group[@name='offer']" position="replace"/>
+                <xpath expr="//group[@name='recruitment']" position="after">
+                    <group>
+                        <group string="Offer" name="offer">
+                            <field name="hr_responsible_id"/>
+                        </group>
+                        <group string="Salary Scale" name="scale">
+                            <field name="scale_from" string="Min"/>
+                            <field name="scale_to" string="Max"/>
+                        </group>
+                    </group>
+                </xpath>
             </field>
         </record>
 

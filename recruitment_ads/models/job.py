@@ -91,6 +91,8 @@ class Job(models.Model):
                                     help='Number of hired applicants for this job position during recruitment phase.')
     last_launch_rec_date = fields.Date(string='Recruitment Launch Date',
                                        help="Technical field to catch the starting date of the last recruitment phase")
+    scale_from = fields.Float(string='Salary Scale From')
+    scale_to = fields.Float(string='Salary Scale To')
 
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
