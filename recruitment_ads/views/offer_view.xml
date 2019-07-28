@@ -46,6 +46,7 @@
                                 <field name="hour_rate"
                                        attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                                 <field name="housing_allowance"/>
+                                <field name="medical_insurance"/>
                                 <field name="travel_allowance"/>
                                 <field name="mobile_allowance"/>
                             </group>
@@ -92,6 +93,7 @@
                     <field name="user_id"/>
                     <field name="last_activity"/>
                     <field name="last_activity_date"/>
+                    <field name="fixed_salary"/>
                     <field name="total_package"/>
                     <field name="availability"/>
                     <button name="action_open_application" string="View Application" type="object"

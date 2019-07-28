@@ -25,17 +25,17 @@ class Offer(models.Model):
             offer.name = name
             offer.offer_name = "Create Offer / " + name
 
-    @api.depends('fixed_salary', 'variable_salary', 'housing_allowance', 'travel_allowance', 'mobile_allowance',
-                 'shifts_no', 'hour_rate', 'offer_type')
+    @api.depends('fixed_salary', 'variable_salary', 'housing_allowance', 'medical_insurance', 'travel_allowance',
+                 'mobile_allowance', 'shifts_no', 'hour_rate', 'offer_type')
     def _compute_total_package(self):
         for offer in self:
             if offer.offer_type == "normal_offer":
-                total_package = offer.fixed_salary + offer.variable_salary + \
-                                offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
+                total_package = offer.fixed_salary + offer.variable_salary + offer.housing_allowance + \
+                                offer.medical_insurance + offer.travel_allowance + offer.mobile_allowance
                 offer.total_package = total_package
             elif offer.offer_type == "nursing_offer":
-                total_package = offer.hour_rate * offer.shifts_no * offer.shift_hours + \
-                                offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
+                total_package = offer.hour_rate * offer.shifts_no * offer.shift_hours + offer.housing_allowance + \
+                                offer.medical_insurance + offer.travel_allowance + offer.mobile_allowance
                 offer.total_package = total_package
 
     name = fields.Char(compute=_offer_name, string='Name')
@@ -50,6 +50,8 @@ class Offer(models.Model):
     variable_salary = fields.Float(string='Variable Salary', track_visibility='onchange',
                                    digits=dp.get_precision('Offer Salary'))
     housing_allowance = fields.Float(string='Housing Allowance', track_visibility='onchange',
+                                     digits=dp.get_precision('Offer Salary'))
+    medical_insurance = fields.Float(string='Medical Insurance', track_visibility='onchange',
                                      digits=dp.get_precision('Offer Salary'))
     travel_allowance = fields.Float(string='Travel Allowance', track_visibility='onchange',
                                     digits=dp.get_precision('Offer Salary'))
@@ -79,7 +81,7 @@ class Offer(models.Model):
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
     offer_type = fields.Selection([('normal_offer', 'Normal Offer'),
-                                   ('nursing_offer', 'Nursing Offer'), ],
+                                   ('nursing_offer', 'Medical/Nursing Offer'), ],
                                   string="Offer Type", default="normal_offer", required=True)
     shifts_no = fields.Integer('No. of Shifts/Month', required=False)
     shift_hours = fields.Float('No. of hours/Shift', required=False, default=12)
