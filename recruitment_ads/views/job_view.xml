@@ -98,7 +98,7 @@
                 </xpath>
                 <xpath expr="//group[@name='offer']" position="replace"/>
                 <xpath expr="//group[@name='recruitment']" position="after">
-                    <group>
+                    <div>
                         <group string="Offer" name="offer">
                             <field name="hr_responsible_id"/>
                         </group>
@@ -106,7 +106,7 @@
                             <field name="scale_from" string="Min"/>
                             <field name="scale_to" string="Max"/>
                         </group>
-                    </group>
+                    </div>
                 </xpath>
             </field>
         </record>
