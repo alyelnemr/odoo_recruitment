@@ -45,7 +45,8 @@
             <field name="inherit_id" ref="hr_recruitment.hr_job_simple_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="before">
-                    <field name="business_unit_id" class="oe_inline" invisible="0" options="{'no_create':True,'no_open':True}"/>
+                    <field name="business_unit_id" class="oe_inline" invisible="0"
+                           options="{'no_create':True,'no_open':True}"/>
                     <field name="department_id" class="oe_inline"
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
@@ -111,6 +112,23 @@
             </field>
         </record>
 
+        <record id="hr_job_kanban_inherit" model="ir.ui.view">
+            <field name="name">hr.job.kanban.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment.view_hr_job_kanban"/>
+            <field name="arch" type="xml">
+                <field name="no_of_hired_employee" position="after">
+                    <field name="no_of_hired_applicants"/>
+                </field>
+                <xpath expr="//div[@class='col-xs-12 o_kanban_primary_bottom bottom_block']/field[@name='no_of_hired_employee']"
+                       position="replace">
+                    <field name="no_of_hired_applicants" widget="progressbar" title="Hired Employees"
+                           options="{'current_value': 'no_of_hired_applicants', 'max_value': 'no_of_recruitment', 'editable': true, 'edit_max_value': true}"/>
+
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_job_title_form" model="ir.ui.view">
             <field name="name">job.title.form</field>
             <field name="model">job.title</field>
@@ -167,7 +185,7 @@
         <record id="view_hr_job_tree_inherited" model="ir.ui.view">
             <field name="name">view.hr.job.tree.inherit</field>
             <field name="model">hr.job</field>
-            <field name="inherit_id" ref="hr.view_hr_job_tree" />
+            <field name="inherit_id" ref="hr.view_hr_job_tree"/>
             <field name="arch" type="xml">
                 <field name="no_of_hired_employee" position="replace"/>
                 <field name="no_of_recruitment" position="after">
