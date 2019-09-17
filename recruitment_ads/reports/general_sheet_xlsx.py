@@ -28,17 +28,17 @@ class GeneralSheetXslx(models.AbstractModel):
                 9: {'header': _('Call Date'), 'field': 'call_date', 'width': 18, 'type': 'datetime'},
                 10: {'header': _('Called by'), 'field': 'called_by', 'width': 18, 'type': 'many2one'},
                 11: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
-                12: {'header': _('Comment'), 'field': 'call_comment', 'width': 18},
+                12: {'header': _('Call Comment'), 'field': 'call_comment', 'width': 18},
 
                 13: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
                 14: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
                 15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                16: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,'type': 'many2one'},
-                16: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
+                16: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20, 'type': 'many2one'},
+                17: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
             }
         })
         if max_interviews_count > 0:
-            start = 16
+            start = 18
             for i in range(max_interviews_count):
                 sheets[0]['General Sheet'].update(
                     {
@@ -52,12 +52,12 @@ class GeneralSheetXslx(models.AbstractModel):
                                     'width': 20, },
                         start + 3: {'header': _('Interview type ' + str(i + 2)),
                                     'field': 'interview_type_id' + str(i + 1),
-                                    'width': 20,'type': 'many2one'},
-                        start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
+                                    'width': 20, 'type': 'many2one'},
+                        start + 4: {'header': _('Interview Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
                                     'width': 22},
                     }
                 )
-                start = start + 4
+                start = start + 5
         last_row = max(sheets[0]['General Sheet'])
         sheets[0]['General Sheet'].update(
             {
