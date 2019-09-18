@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- User Form View-->
+        <record id="view_users_simple_form_inherit" model="ir.ui.view">
+            <field name="name">view.users.simple.form.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_simple_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <label for="business_unit_id"/>
+                    <field name="business_unit_id"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_users_form_inherit" model="ir.ui.view">
+            <field name="name">view.users.form.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="business_unit_id"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_users_simple_modif_inherit" model="ir.ui.view">
+            <field name="name">view.users.simple.modif.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="business_unit_id"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
