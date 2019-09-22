@@ -31,6 +31,7 @@
                             </group>
                             <group>
                                 <field name="department_id" readonly="1" options="{'no_create':True}"/>
+                                <field name="generated_by_bu_id" readonly="1" options="{'no_create':True}"/>
                             </group>
                         </group>
                         <group>
@@ -45,6 +46,10 @@
                                        attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                                 <field name="hour_rate"
                                        attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                                <field name="years_of_exp"
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                                <field name="amount_per_year"
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                                 <field name="housing_allowance"/>
                                 <field name="medical_insurance"/>
                                 <field name="travel_allowance"/>
@@ -55,6 +60,11 @@
                                 <div/>
                             </group>
                             <group string="Salary">
+                                <field name="total_amount" style="font-weight:900" widget='monetary'
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')]}"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_salary" style="font-weight:900" widget='monetary'
+                                       options="{'currency_field': 'currency_id'}"/>
                                 <field name="total_package" style="font-weight:900" widget='monetary'
                                        options="{'currency_field': 'currency_id'}"/>
                             </group>
