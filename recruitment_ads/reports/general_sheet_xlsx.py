@@ -34,7 +34,7 @@ class GeneralSheetXslx(models.AbstractModel):
                 14: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
                 15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
                 16: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,'type': 'many2one'},
-                16: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
+                17: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             }
         })
         if max_interviews_count > 0:

@@ -1,5 +1,6 @@
 from odoo import _, models
 import re
+from .general_sheet_xlsx import GeneralSheetWrapper
 
 
 class RecActivityXslx(models.AbstractModel):
@@ -62,19 +63,40 @@ class RecActivityXslx(models.AbstractModel):
                     3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                     4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
                     5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    6: {'header': _('Interview Date'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
-                    7: {'header': _('Interviewers'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
-                    8: {'header': _('Interviewer Type'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
-                    9: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
-                    10: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    11: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    12: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    13: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    14: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    15: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
-                    16: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                    6: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    7: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    8: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    9: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                    10: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
+                    11: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                    12: {'header': _('Interview Date 1'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
+                    13: {'header': _('Interviewers 1'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
+                    14: {'header': _('Interviewer Type 1'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
+                    15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
+                    16: {'header': _('Comment 1'), 'field': 'feedback', 'width': 22},
                 }
             })
+            if len(report.interview_ids) - 1 > 0:
+                start = 17
+                for i in range(len(report.interview_ids) - 1):
+                    sheets[-1]['Interviews'].update(
+                        {
+                            start: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
+                                    'width': 18},
+                            start + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
+                                        'width': 30,
+                                        'type': 'x2many'},
+                            start + 2: {'header': _('Interview result ' + str(i + 2)),
+                                        'field': 'interview_result' + str(i + 1),
+                                        'width': 20, },
+                            start + 3: {'header': _('Interview type ' + str(i + 2)),
+                                        'field': 'interview_type_id' + str(i + 1),
+                                        'width': 20, 'type': 'many2one'},
+                            start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
+                                        'width': 22},
+                        }
+                    )
+                    start = start + 5
         if report.offer:
             sheets.append({
                 'Offers and Hired': {
@@ -87,11 +109,13 @@ class RecActivityXslx(models.AbstractModel):
                     6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                     7: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
                     8: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
-                    9: {'header': _('Offer Amount'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
-                    10: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
-                    11: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                    12: {'header': _('Comments'), 'field': 'comment', 'width': 40},
-                    13: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40}
+                    9: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20},
+                    10: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
+                    11: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
+                    12: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
+                    13: {'header': _('Comments'), 'field': 'comment', 'width': 40},
+                    14: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
+                    15: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40,'type': 'many2one'}
                 }
             })
         return sheets
@@ -109,8 +133,9 @@ class RecActivityXslx(models.AbstractModel):
 
         if report.interviews:
             self.write_array_header('Interviews')
-            for interview in report.interview_ids.sorted('write_date', reverse=True):
-                self.write_line(InterviewLineWrapper(interview), 'Interviews')
+            applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
+            for application in applications.sorted('write_date', reverse=True):
+                self.write_line(InterviewsPerApplicationWrapper(application), 'Interviews')
 
         if report.offer:
             self.write_array_header('Offers and Hired')
@@ -184,6 +209,40 @@ class InterviewLineWrapper:
         self._context = interview._context
         self.env = interview.env
 
+class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
+    def __init__(self, application):
+        self.real_create_uid = application.create_uid
+        self.application_code = application.name
+        self.partner_name = application.partner_name
+        self.email_from = application.email_from
+        self.partner_phone = application.partner_phone
+        self.partner_mobile = application.partner_mobile
+        interviews = self._get_activity('interview', application).sorted('write_date', reverse=False)
+        first_interview = interviews[0] if interviews else False
+        interview_feedback = first_interview.feedback if first_interview else False
+        self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
+        self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
+        self.interview_result = first_interview.interview_result if first_interview else False
+        self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
+        for i in range(len(interviews)):
+            if i == 0:
+                continue
+            setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
+            setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
+            setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
+            setattr(self, 'interview_type_id' + str(i), interviews[i].calendar_event_id.interview_type_id)
+            setattr(self, 'interview_comment' + str(i),
+                    re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
+        self.business_unit_id = application.department_id.business_unit_id
+        self.department_id = application.department_id
+        self.job_id = application.job_id
+        self.salary_expected = application.salary_expected
+        self.salary_proposed = application.salary_proposed
+        self.cv_matched = application.cv_matched
+        self._context = application._context
+        self.env = application.env
+
+
 
 class offerLineWrapper:
     def __init__(self, offer):
@@ -197,6 +256,8 @@ class offerLineWrapper:
         self.job_id = offer.job_id
         self.issue_date = offer.issue_date
         self.total_package = offer.total_package
+        self.total_salary = offer.total_salary
+        self.generated_by_bu_id = offer.generated_by_bu_id
         self.state = offer.state
         self.hiring_date = offer.hiring_date
         self.comment = offer.comment
