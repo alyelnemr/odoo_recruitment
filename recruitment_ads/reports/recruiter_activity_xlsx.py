@@ -54,6 +54,9 @@ class RecActivityXslx(models.AbstractModel):
                 }
             })
         if report.interviews:
+            applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
+            max_interviews_count = max(
+                applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
             sheets.append({
                 'Interviews': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
@@ -69,29 +72,29 @@ class RecActivityXslx(models.AbstractModel):
                     9: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                     10: {'header': _('Current  Salary'), 'field': 'salary_proposed', 'width': 18, 'type': 'amount'},
                     11: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                    12: {'header': _('Interview Date 1'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
+                    12: {'header': _('Interview date 1'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
                     13: {'header': _('Interviewers 1'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
-                    14: {'header': _('Interviewer Type 1'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
+                    14: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30, 'type': 'many2one'},
                     15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
                     16: {'header': _('Comment 1'), 'field': 'feedback', 'width': 22},
                 }
             })
-            if len(report.interview_ids) - 1 > 0:
+            if max_interviews_count > 0:
                 start = 17
-                for i in range(len(report.interview_ids) - 1):
+                for i in range(max_interviews_count):
                     sheets[-1]['Interviews'].update(
                         {
-                            start: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
+                            start: {'header': _('Interview date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
                                     'width': 18},
                             start + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
                                         'width': 30,
                                         'type': 'x2many'},
-                            start + 2: {'header': _('Interview result ' + str(i + 2)),
-                                        'field': 'interview_result' + str(i + 1),
-                                        'width': 20, },
-                            start + 3: {'header': _('Interview type ' + str(i + 2)),
+                            start + 2: {'header': _('Interview type ' + str(i + 2)),
                                         'field': 'interview_type_id' + str(i + 1),
                                         'width': 20, 'type': 'many2one'},
+                            start + 3: {'header': _('Interview result ' + str(i + 2)),
+                                        'field': 'interview_result' + str(i + 1),
+                                        'width': 20, },
                             start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
                                         'width': 22},
                         }
@@ -109,7 +112,7 @@ class RecActivityXslx(models.AbstractModel):
                     6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                     7: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
                     8: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
-                    9: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20},
+                    9: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20,'type': 'amount'},
                     10: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
                     11: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
                     12: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
