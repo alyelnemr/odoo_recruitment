@@ -169,7 +169,7 @@ class CVSourceLineWrapper:
         self.department_id = cv_source.job_id.department_id
         self.job_id = cv_source.job_id
         self.salary_expected = cv_source.salary_expected
-        self.salary_current = cv_source.salary_proposed
+        self.salary_current = cv_source.salary_current
         self.cv_matched = cv_source.cv_matched
         self.reason_of_rejection = cv_source.reason_of_rejection
         self._context = cv_source._context
@@ -194,7 +194,7 @@ class CallLineWrapper:
         self.department_id = applicant.department_id
         self.job_id = applicant.job_id
         self.salary_expected = applicant.salary_expected
-        self.salary_proposed = applicant.salary_proposed
+        self.salary_current = applicant.salary_current
         self.cv_matched = applicant.cv_matched
         self._context = call._context
         self.env = call.env
@@ -219,7 +219,7 @@ class InterviewLineWrapper:
         self.department_id = applicant.department_id
         self.job_id = applicant.job_id
         self.salary_expected = applicant.salary_expected
-        self.salary_proposed = applicant.salary_proposed
+        self.salary_current = applicant.salary_current
         self.cv_matched = applicant.cv_matched
         self._context = interview._context
         self.env = interview.env
@@ -254,7 +254,7 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.department_id = application.department_id
         self.job_id = application.job_id
         self.salary_expected = application.salary_expected
-        self.salary_proposed = application.salary_proposed
+        self.salary_current = application.salary_current
         self.cv_matched = application.cv_matched
         self._context = application._context
         self.env = application.env
