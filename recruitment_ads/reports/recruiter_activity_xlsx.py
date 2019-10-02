@@ -61,8 +61,6 @@ class RecActivityXslx(models.AbstractModel):
             })
         if report.interviews:
             applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
-            max_interviews_count = max(
-                applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
             sheets.append({
                 'Interviews': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
@@ -86,27 +84,30 @@ class RecActivityXslx(models.AbstractModel):
                     16: {'header': _('Comment 1'), 'field': 'feedback', 'width': 22},
                 }
             })
-            if max_interviews_count > 0:
-                start = 17
-                for i in range(max_interviews_count):
-                    sheets[-1]['Interviews'].update(
-                        {
-                            start: {'header': _('Interview date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
-                                    'width': 18},
-                            start + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
-                                        'width': 30,
-                                        'type': 'x2many'},
-                            start + 2: {'header': _('Interview type ' + str(i + 2)),
-                                        'field': 'interview_type_id' + str(i + 1),
-                                        'width': 20, 'type': 'many2one'},
-                            start + 3: {'header': _('Interview result ' + str(i + 2)),
-                                        'field': 'interview_result' + str(i + 1),
-                                        'width': 20, },
-                            start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
-                                        'width': 22},
-                        }
-                    )
-                    start = start + 5
+            if applications:
+                max_interviews_count = max(
+                    applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
+                if max_interviews_count > 0:
+                    start = 17
+                    for i in range(max_interviews_count):
+                        sheets[-1]['Interviews'].update(
+                            {
+                                start: {'header': _('Interview date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
+                                        'width': 18},
+                                start + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
+                                            'width': 30,
+                                            'type': 'x2many'},
+                                start + 2: {'header': _('Interview type ' + str(i + 2)),
+                                            'field': 'interview_type_id' + str(i + 1),
+                                            'width': 20, 'type': 'many2one'},
+                                start + 3: {'header': _('Interview result ' + str(i + 2)),
+                                            'field': 'interview_result' + str(i + 1),
+                                            'width': 20, },
+                                start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
+                                            'width': 22},
+                            }
+                        )
+                        start = start + 5
         if report.offer:
             sheets.append({
                 'Offers and Hired': {
@@ -168,7 +169,7 @@ class CVSourceLineWrapper:
         self.department_id = cv_source.job_id.department_id
         self.job_id = cv_source.job_id
         self.salary_expected = cv_source.salary_expected
-        self.salary_proposed = cv_source.salary_proposed
+        self.salary_current = cv_source.salary_proposed
         self.cv_matched = cv_source.cv_matched
         self.reason_of_rejection = cv_source.reason_of_rejection
         self._context = cv_source._context
