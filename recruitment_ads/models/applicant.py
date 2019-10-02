@@ -20,6 +20,7 @@ class Applicant(models.Model):
     source_id = fields.Many2one('utm.source', required=True)
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
     cv_matched = fields.Boolean('Matched', default=False)
+    reason_of_rejection = fields.Char('Reason of Rejection',help="Reason why this is applicant not matched")
     count_done_interviews = fields.Integer('Done Interviews Count', compute='_get_count_done_interviews')
     salary_current = fields.Float("Current Salary", help="Current Salary of Applicant")
     name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
@@ -81,6 +82,10 @@ class Applicant(models.Model):
     def onchange_hr_applicant(self):
         history = self._get_history_data(self.partner_id.id)
         self.applicant_history_ids = [(6, 0, history.ids)]
+
+    @api.onchange('cv_matched')
+    def onchange_cv_matched(self):
+        self.reason_of_rejection = False
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
