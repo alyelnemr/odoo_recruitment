@@ -34,7 +34,7 @@ class RecActivityXslx(models.AbstractModel):
                     11: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                     12: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
                     13: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                    14: {'header': _('Reason of Rejection'), 'field': 'reason_of_rejection', 'width': 10,},
+                    14: {'header': _('Reason of Rejection'), 'field': 'reason_of_rejection', 'width': 10, },
                 }
             })
         if report.calls:
@@ -76,12 +76,12 @@ class RecActivityXslx(models.AbstractModel):
                     9: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                     10: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
                     11: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                    12: {'header': _('Interview date 1'), 'field': 'start_date', 'width': 18, 'type': 'datetime'},
-                    13: {'header': _('Interviewers 1'), 'field': 'partner_ids', 'width': 30, 'type': 'x2many'},
+                    12: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
+                    13: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
                     14: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30,
                          'type': 'many2one'},
                     15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                    16: {'header': _('Comment 1'), 'field': 'feedback', 'width': 22},
+                    16: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
                 }
             })
             if applications:
@@ -92,9 +92,11 @@ class RecActivityXslx(models.AbstractModel):
                     for i in range(max_interviews_count):
                         sheets[-1]['Interviews'].update(
                             {
-                                start: {'header': _('Interview date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
+                                start: {'header': _('Interview date ' + str(i + 2)),
+                                        'field': 'interview_date' + str(i + 1),
                                         'width': 18},
-                                start + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
+                                start + 1: {'header': _('Interviewers ' + str(i + 2)),
+                                            'field': 'interviewers' + str(i + 1),
                                             'width': 30,
                                             'type': 'x2many'},
                                 start + 2: {'header': _('Interview type ' + str(i + 2)),
@@ -103,7 +105,8 @@ class RecActivityXslx(models.AbstractModel):
                                 start + 3: {'header': _('Interview result ' + str(i + 2)),
                                             'field': 'interview_result' + str(i + 1),
                                             'width': 20, },
-                                start + 4: {'header': _('Comment ' + str(i + 2)), 'field': 'interview_comment' + str(i + 1),
+                                start + 4: {'header': _('Comment ' + str(i + 2)),
+                                            'field': 'interview_comment' + str(i + 1),
                                             'width': 22},
                             }
                         )
@@ -240,6 +243,7 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
         self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
         self.interview_result = first_interview.interview_result if first_interview else False
+        self.interview_type_id = first_interview.calendar_event_id.interview_type_id if first_interview else False
         self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
         for i in range(len(interviews)):
             if i == 0:
