@@ -27,22 +27,29 @@ class Offer(models.TransientModel):
             offer.name = name
             offer.offer_name = "Create Offer / " + name
 
-    @api.depends('fixed_salary', 'variable_salary', 'housing_allowance', 'travel_allowance', 'mobile_allowance',
-                 'shifts_no', 'hour_rate', 'offer_type')
+    @api.depends('fixed_salary', 'variable_salary', 'housing_allowance', 'medical_insurance', 'travel_allowance',
+                 'mobile_allowance', 'shifts_no', 'hour_rate', 'offer_type', 'years_of_exp', 'amount_per_year')
     def _compute_total_package(self):
         for offer in self:
             if offer.offer_type == "normal_offer":
-                total_package = offer.fixed_salary + offer.variable_salary + \
-                                offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
+                total_salary = offer.fixed_salary + offer.variable_salary
+                total_package = total_salary + offer.housing_allowance + offer.medical_insurance + \
+                                offer.travel_allowance + offer.mobile_allowance
+                offer.total_salary = total_salary
                 offer.total_package = total_package
             elif offer.offer_type == "nursing_offer":
-                total_package = offer.hour_rate * offer.shifts_no * offer.shift_hours + \
-                                offer.housing_allowance + offer.travel_allowance + offer.mobile_allowance
+                total_amount = offer.years_of_exp * offer.amount_per_year
+                total_salary = (offer.hour_rate * offer.shifts_no * offer.shift_hours) + total_amount
+                total_package = total_salary + offer.housing_allowance + \
+                                offer.medical_insurance + offer.travel_allowance + offer.mobile_allowance
+                offer.total_amount = total_amount
+                offer.total_salary = total_salary
                 offer.total_package = total_package
 
     name = fields.Char(string="Name", compute='_offer_name')
-    offer_name = fields.Char(compute=_offer_name)
-    total_package = fields.Float(string='Total Package', compute=_compute_total_package, store=True)
+    offer_name = fields.Char(compute='_offer_name')
+    total_package = fields.Float(string='Total Package', compute='_compute_total_package', store=True)
+    total_salary = fields.Float(string='Total Salary', compute='_compute_total_package', store=True)
 
     @api.onchange('shifts_no')
     def onchange_shifts_no(self):
@@ -56,4 +63,6 @@ class Offer(models.TransientModel):
         self.housing_allowance = False
         self.travel_allowance = False
         self.mobile_allowance = False
+        self.years_of_exp = False
+        self.amount_per_year = False
         self.shifts_no = False

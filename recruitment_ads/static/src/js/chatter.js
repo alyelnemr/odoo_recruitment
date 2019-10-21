@@ -132,6 +132,10 @@ Chatter.include({
             "kwargs": {}
             });
         $.when(get_calendar_view,get_form_view).then(function(calendar_view_id,form_view_id){
+            var name = self.record.data.partner_name+"'s interview";
+            if (self.record.data.job_id){
+                name = self.record.data.job_id.data.display_name + " - " + name;
+            }
             var action = {
                     type: 'ir.actions.act_window',
                     name: 'Schedule Interview',
@@ -143,7 +147,7 @@ Chatter.include({
                     target: 'current',
                     domain: [['type','=','interview']],
                     context: {
-                        default_name: self.record.data.partner_name+"'s interview",
+                        default_name: name,
                         default_res_id: self.record.res_id,
                         default_res_model: self.record.model,
                         default_type: 'interview',

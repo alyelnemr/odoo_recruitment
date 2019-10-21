@@ -17,7 +17,8 @@
                     </group>
                     <group>
                         <group>
-                            <field name="fixed_salary" attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="fixed_salary"
+                                       attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="variable_salary"
                                    attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="shifts_no"
@@ -26,7 +27,12 @@
                                    attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="hour_rate"
                                    attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="years_of_exp"
+                                   attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
+                            <field name="amount_per_year"
+                                   attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')], 'required': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="housing_allowance"/>
+                            <field name="medical_insurance"/>
                             <field name="travel_allowance"/>
                             <field name="mobile_allowance"/>
                         </group>
@@ -35,6 +41,11 @@
                             <div/>
                         </group>
                         <group string="Salary">
+                            <field name="total_amount" style="font-weight:900" widget='monetary'
+                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')]}"
+                                       options="{'currency_field': 'currency_id'}"/>
+                            <field name="total_salary" style="font-weight:900" widget='monetary'
+                                   options="{'currency_field': 'currency_id'}"/>
                             <field name="total_package" style="font-weight:900" widget='monetary'
                                    options="{'currency_field': 'currency_id'}"/>
                         </group>

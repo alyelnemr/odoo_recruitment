@@ -22,6 +22,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='priority']" position="after">
                     <field name="cv_matched"/>
+                    <field name="reason_of_rejection"
+                           attrs="{'required':[('cv_matched','=',False)],'invisible':[('cv_matched','=',True)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='priority']" position="replace"/>
                 <xpath expr="//button[@name='action_makeMeeting']/div/span" position="replace">
