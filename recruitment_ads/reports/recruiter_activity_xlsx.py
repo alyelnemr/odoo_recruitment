@@ -30,12 +30,47 @@ class RecActivityXslx(models.AbstractModel):
                     7: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
                     8: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     9: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                    10: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    11: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    12: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
-                    13: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                    14: {'header': _('Reason of Rejection'), 'field': 'reason_of_rejection', 'width': 10, },
                 }
+            })
+
+            # getting the department_id of each job of the application.
+            if report.job_ids:
+                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+            else:
+                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
+            max_sections_count = 0
+            for department in departments:
+                if department.parent_id:
+                    department_list = []
+                    while department:
+                        department_list.append(department.id)
+                        department = department.parent_id
+                    if len(department_list) > max_sections_count:
+                        max_sections_count = len(department_list)
+            start = 9
+            if max_sections_count > 1:
+                sheets[0]['CV Source'].update({
+                    start + 1: {'header': _('Section'),
+                                'field': 'section_id',
+                                'width': 20,
+                                'type': 'many2one', }})
+                # start = 11
+                for i in range(max_sections_count):
+                    if i <= 1:
+                        continue
+                    sheets[0]['CV Source'].update({
+                        start + i: {'header': _('Section' + str(i)),
+                                    'field': 'section_id' + str(i),
+                                    'width': 20,
+                                    'type': 'many2one', }})
+                start = start + i
+
+            sheets[0]['CV Source'].update({
+                start + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
+                start + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                start + 5: {'header': _('Reason of Rejection'), 'field': 'reason_of_rejection', 'width': 10, },
             })
         if report.calls:
             sheets.append({
@@ -169,7 +204,25 @@ class CVSourceLineWrapper:
         self.source_id = cv_source.source_id
         self.create_date = cv_source.create_date
         self.business_unit_id = cv_source.department_id.business_unit_id
-        self.department_id = cv_source.job_id.department_id
+        if cv_source.job_id.department_id.parent_id:
+            department = cv_source.job_id.department_id
+            department_list = []
+            while department:
+                department_list.append(department)
+                department = department.parent_id
+            department_list.reverse()
+            # self.department_list = list(filter(None, department_list))
+            self.department_id = department_list[0]
+            self.section_id = department_list[1]
+            if len(department_list) > 2:
+                for i in range(len(department_list)):
+                    if i <= 1:
+                        continue
+                    setattr(self, 'section_id' + str(i), department_list[i])
+
+        else:
+            self.department_id = cv_source.job_id.department_id
+
         self.job_id = cv_source.job_id
         self.salary_expected = cv_source.salary_expected
         self.salary_current = cv_source.salary_current
