@@ -1,3 +1,4 @@
+import re
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -145,6 +146,13 @@ class Applicant(models.Model):
             raise ValidationError(_(
                 "You cannot create offer to this applicant, you are't the recruitment/hr/other responsible for this job nor a manager"))
         return action
+
+    @api.onchange('email_from')
+    def validate_mail(self):
+        if self.email_from:
+            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email_from)
+            if match == None:
+                raise ValidationError('Not a valid E-mail ID')
 
 
 class Stage(models.Model):
