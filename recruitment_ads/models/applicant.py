@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
-    email_from = fields.Char(required=True)
+    email_from = fields.Char(required=False)
     partner_phone = fields.Char(required=True)
     partner_mobile = fields.Char(required=True)
     partner_name = fields.Char(required=True)
