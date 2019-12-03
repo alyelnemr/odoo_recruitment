@@ -88,11 +88,45 @@ class RecActivityXslx(models.AbstractModel):
                     9: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
                     10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     11: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    12: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    13: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    14: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
-                    15: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
                 }
+            })
+
+            # getting the department_id of each job of the application.
+            if report.job_ids:
+                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+            else:
+                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
+            max_sections_count = 0
+            for department in departments:
+                if department.parent_id:
+                    department_list = []
+                    while department:
+                        department_list.append(department.id)
+                        department = department.parent_id
+                    if len(department_list) > max_sections_count:
+                        max_sections_count = len(department_list)
+            start = 11
+            if max_sections_count > 1:
+                sheets[1]['Calls'].update({
+                    start + 1: {'header': _('Section'),
+                                'field': 'section_id',
+                                'width': 20,
+                                'type': 'many2one', }})
+                # start = 11
+                for i in range(max_sections_count):
+                    if i <= 1:
+                        continue
+                    sheets[1]['Calls'].update({
+                        start + i: {'header': _('Section' + str(i)),
+                                    'field': 'section_id' + str(i),
+                                    'width': 20,
+                                    'type': 'many2one', }})
+                start = start + i
+            sheets[1]['Calls'].update({
+                start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
+                start + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
             })
         if report.interviews:
             applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
@@ -107,17 +141,51 @@ class RecActivityXslx(models.AbstractModel):
                     5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                     6: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     7: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
-                    8: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                    9: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                    10: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
-                    11: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                    12: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
-                    13: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                    14: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30,
-                         'type': 'many2one'},
-                    15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                    16: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
                 }
+            })
+
+            # getting the department_id of each job of the application.
+            if report.job_ids:
+                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+            else:
+                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
+            max_sections_count = 0
+            for department in departments:
+                if department.parent_id:
+                    department_list = []
+                    while department:
+                        department_list.append(department.id)
+                        department = department.parent_id
+                    if len(department_list) > max_sections_count:
+                        max_sections_count = len(department_list)
+            start = 7
+            if max_sections_count > 1:
+                sheets[2]['Interviews'].update({
+                    start + 1: {'header': _('Section'),
+                                'field': 'section_id',
+                                'width': 20,
+                                'type': 'many2one', }})
+                # start = 11
+                for i in range(max_sections_count):
+                    if i <= 1:
+                        continue
+                    sheets[2]['Interviews'].update({
+                        start + i: {'header': _('Section' + str(i)),
+                                    'field': 'section_id' + str(i),
+                                    'width': 20,
+                                    'type': 'many2one', }})
+                start = start + i
+            sheets[2]['Interviews'].update({
+                    start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                    start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
+                    start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
+                    start + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                    start + 5: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
+                    start + 6: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
+                    start + 7: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30,
+                         'type': 'many2one'},
+                    start + 8: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
+                    start + 9: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
             if applications:
                 max_interviews_count = max(
@@ -156,16 +224,50 @@ class RecActivityXslx(models.AbstractModel):
                     4: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
                     5: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
                     6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                    7: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
-                    8: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
-                    9: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
-                    10: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
-                    11: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
-                    12: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                    13: {'header': _('Comments'), 'field': 'comment', 'width': 40},
-                    14: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
-                    15: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40, 'type': 'many2one'}
                 }
+            })
+
+            # getting the department_id of each job of the application.
+            if report.job_ids:
+                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+            else:
+                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
+            max_sections_count = 0
+            for department in departments:
+                if department.parent_id:
+                    department_list = []
+                    while department:
+                        department_list.append(department.id)
+                        department = department.parent_id
+                    if len(department_list) > max_sections_count:
+                        max_sections_count = len(department_list)
+            start = 6
+            if max_sections_count > 1:
+                sheets[3]['Offers and Hired'].update({
+                    start + 1: {'header': _('Section'),
+                                'field': 'section_id',
+                                'width': 20,
+                                'type': 'many2one', }})
+                # start = 11
+                for i in range(max_sections_count):
+                    if i <= 1:
+                        continue
+                    sheets[3]['Offers and Hired'].update({
+                        start + i: {'header': _('Section' + str(i)),
+                                    'field': 'section_id' + str(i),
+                                    'width': 20,
+                                    'type': 'many2one', }})
+                start = start + i
+            sheets[3]['Offers and Hired'].update({
+                    start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                    start + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
+                    start + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
+                    start + 4: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
+                    start + 5: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
+                    start + 6: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
+                    start + 7: {'header': _('Comments'), 'field': 'comment', 'width': 40},
+                    start + 8: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
+                    start + 9: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40, 'type': 'many2one'}
             })
         return sheets
 
@@ -247,7 +349,25 @@ class CallLineWrapper:
         self.call_result_id = call.call_result_id
         self.feedback = re.sub(r"<.*?>", '', call.feedback)
         self.business_unit_id = applicant.department_id.business_unit_id
-        self.department_id = applicant.department_id
+        if applicant.job_id.department_id.parent_id:
+            department = applicant.job_id.department_id
+            department_list = []
+            while department:
+                department_list.append(department)
+                department = department.parent_id
+            department_list.reverse()
+            # self.department_list = list(filter(None, department_list))
+            self.department_id = department_list[0]
+            self.section_id = department_list[1]
+            if len(department_list) > 2:
+                for i in range(len(department_list)):
+                    if i <= 1:
+                        continue
+                    setattr(self, 'section_id' + str(i), department_list[i])
+
+        else:
+            self.department_id = applicant.job_id.department_id
+
         self.job_id = applicant.job_id
         self.salary_expected = applicant.salary_expected
         self.salary_current = applicant.salary_current
@@ -272,7 +392,26 @@ class InterviewLineWrapper:
         self.interview_result = interview.interview_result
         self.feedback = re.sub(r"<.*?>", '', interview.feedback)
         self.business_unit_id = applicant.department_id.business_unit_id
-        self.department_id = applicant.department_id
+
+        if applicant.job_id.department_id.parent_id:
+            department = applicant.job_id.department_id
+            department_list = []
+            while department:
+                department_list.append(department)
+                department = department.parent_id
+            department_list.reverse()
+            # self.department_list = list(filter(None, department_list))
+            self.department_id = department_list[0]
+            self.section_id = department_list[1]
+            if len(department_list) > 2:
+                for i in range(len(department_list)):
+                    if i <= 1:
+                        continue
+                    setattr(self, 'section_id' + str(i), department_list[i])
+
+        else:
+            self.department_id = applicant.job_id.department_id
+
         self.job_id = applicant.job_id
         self.salary_expected = applicant.salary_expected
         self.salary_current = applicant.salary_current
@@ -308,7 +447,26 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
         self.business_unit_id = application.department_id.business_unit_id
-        self.department_id = application.department_id
+
+        if application.job_id.department_id.parent_id:
+            department = application.job_id.department_id
+            department_list = []
+            while department:
+                department_list.append(department)
+                department = department.parent_id
+            department_list.reverse()
+            # self.department_list = list(filter(None, department_list))
+            self.department_id = department_list[0]
+            self.section_id = department_list[1]
+            if len(department_list) > 2:
+                for i in range(len(department_list)):
+                    if i <= 1:
+                        continue
+                    setattr(self, 'section_id' + str(i), department_list[i])
+
+        else:
+            self.department_id = application.job_id.department_id
+
         self.job_id = application.job_id
         self.salary_expected = application.salary_expected
         self.salary_current = application.salary_current
@@ -326,7 +484,26 @@ class offerLineWrapper:
         self.partner_mobile = offer.application_id.partner_mobile
         self.create_uid = offer.create_uid
         self.business_unit_id = offer.business_unit_id
-        self.department_id = offer.department_id
+
+        if offer.job_id.department_id.parent_id:
+            department = offer.job_id.department_id
+            department_list = []
+            while department:
+                department_list.append(department)
+                department = department.parent_id
+            department_list.reverse()
+            # self.department_list = list(filter(None, department_list))
+            self.department_id = department_list[0]
+            self.section_id = department_list[1]
+            if len(department_list) > 2:
+                for i in range(len(department_list)):
+                    if i <= 1:
+                        continue
+                    setattr(self, 'section_id' + str(i), department_list[i])
+
+        else:
+            self.department_id = offer.job_id.department_id
+
         self.job_id = offer.job_id
         self.issue_date = offer.issue_date
         self.total_package = offer.total_package
