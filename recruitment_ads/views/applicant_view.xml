@@ -125,9 +125,9 @@
                 <xpath expr="//field[@name='mobile']" position="attributes">
                     <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>
                 </xpath>
-                <xpath expr="//field[@name='email']" position="attributes">
-                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>
-                </xpath>
+<!--                <xpath expr="//field[@name='email']" position="attributes">-->
+<!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='function']" position="after">
                     <field name="date_of_birth"/>
                 </xpath>
