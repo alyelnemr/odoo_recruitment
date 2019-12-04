@@ -150,7 +150,8 @@ class Applicant(models.Model):
     @api.onchange('email_from')
     def validate_mail(self):
         if self.email_from:
-            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email_from)
+            # I add 'A-Z' to allow capital letters in email format
+            match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email_from)
             if match == None:
                 raise ValidationError('Not a valid E-mail ID')
 
