@@ -7,8 +7,8 @@ class Applicant(models.Model):
     _inherit = "hr.applicant"
 
     email_from = fields.Char(required=False)
-    partner_phone = fields.Char(required=True)
-    partner_mobile = fields.Char(required=True)
+    partner_phone = fields.Char()
+    partner_mobile = fields.Char()
     partner_name = fields.Char(required=True)
     job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
 
@@ -154,6 +154,12 @@ class Applicant(models.Model):
             match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email_from)
             if match == None:
                 raise ValidationError('Not a valid E-mail ID')
+
+    @api.constrains('email_form','partner_mobile')
+    def constrain_email_mobile(self):
+        for applicant in self:
+            if not applicant.email_from and not applicant.partner_mobile:
+                raise ValidationError (_('Please insert Applicant Mobile or Email '))
 
 
 class Stage(models.Model):
