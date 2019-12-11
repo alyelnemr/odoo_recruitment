@@ -35,7 +35,7 @@ class RecActivityXslx(models.AbstractModel):
 
             # getting the department_id of each job of the application.
             if report.job_ids:
-                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+                departments = list(set(report.job_ids.mapped('department_id')))
             else:
                 departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
             max_sections_count = 0
@@ -48,22 +48,23 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 9
-            if max_sections_count > 1:
+            if max_sections_count >= 1:
                 sheets[0]['CV Source'].update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
                                 'type': 'many2one', }})
+                start = start + 1
                 # start = 11
-                for i in range(max_sections_count):
-                    if i <= 1:
-                        continue
-                    sheets[0]['CV Source'].update({
-                        start + i: {'header': _('Section' + str(i)),
-                                    'field': 'section_id' + str(i),
-                                    'width': 20,
-                                    'type': 'many2one', }})
-                start = start + i
+                # for i in range(max_sections_count):
+                #     if i <= 1:
+                #         continue
+                #     sheets[0]['CV Source'].update({
+                #         start + i: {'header': _('Section' + str(i)),
+                #                     'field': 'section_id' + str(i),
+                #                     'width': 20,
+                #                     'type': 'many2one', }})
+                # start = start + i
 
             sheets[0]['CV Source'].update({
                 start + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
@@ -93,7 +94,7 @@ class RecActivityXslx(models.AbstractModel):
 
             # getting the department_id of each job of the application.
             if report.job_ids:
-                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+                departments = list(set(report.job_ids.mapped('department_id')))
             else:
                 departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
             max_sections_count = 0
@@ -106,22 +107,23 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 11
-            if max_sections_count > 1:
+            if max_sections_count >= 1:
                 sheets[1]['Calls'].update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
                                 'type': 'many2one', }})
+                start = start + 1
                 # start = 11
-                for i in range(max_sections_count):
-                    if i <= 1:
-                        continue
-                    sheets[1]['Calls'].update({
-                        start + i: {'header': _('Section' + str(i)),
-                                    'field': 'section_id' + str(i),
-                                    'width': 20,
-                                    'type': 'many2one', }})
-                start = start + i
+                # for i in range(max_sections_count):
+                #     if i <= 1:
+                #         continue
+                #     sheets[1]['Calls'].update({
+                #         start + i: {'header': _('Section' + str(i)),
+                #                     'field': 'section_id' + str(i),
+                #                     'width': 20,
+                #                     'type': 'many2one', }})
+                # start = start + i
             sheets[1]['Calls'].update({
                 start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                 start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
@@ -146,7 +148,7 @@ class RecActivityXslx(models.AbstractModel):
 
             # getting the department_id of each job of the application.
             if report.job_ids:
-                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+                departments = list(set(report.job_ids.mapped('department_id')))
             else:
                 departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
             max_sections_count = 0
@@ -159,22 +161,23 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 7
-            if max_sections_count > 1:
+            if max_sections_count >= 1:
                 sheets[2]['Interviews'].update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
                                 'type': 'many2one', }})
+                start = start + 1
                 # start = 11
-                for i in range(max_sections_count):
-                    if i <= 1:
-                        continue
-                    sheets[2]['Interviews'].update({
-                        start + i: {'header': _('Section' + str(i)),
-                                    'field': 'section_id' + str(i),
-                                    'width': 20,
-                                    'type': 'many2one', }})
-                start = start + i
+                # for i in range(max_sections_count):
+                #     if i <= 1:
+                #         continue
+                #     sheets[2]['Interviews'].update({
+                #         start + i: {'header': _('Section' + str(i)),
+                #                     'field': 'section_id' + str(i),
+                #                     'width': 20,
+                #                     'type': 'many2one', }})
+                # start = start + i
             sheets[2]['Interviews'].update({
                     start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                     start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
@@ -191,7 +194,10 @@ class RecActivityXslx(models.AbstractModel):
                 max_interviews_count = max(
                     applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
                 if max_interviews_count > 0:
-                    start = 17
+                    if max_sections_count:
+                        start = 18
+                    else:
+                        start = 17
                     for i in range(max_interviews_count):
                         sheets[-1]['Interviews'].update(
                             {
@@ -229,7 +235,7 @@ class RecActivityXslx(models.AbstractModel):
 
             # getting the department_id of each job of the application.
             if report.job_ids:
-                departments = self.env['hr.applicant'].browse(list(set(report.job_ids.mapped('department_id'))))
+                departments = list(set(report.job_ids.mapped('department_id')))
             else:
                 departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
             max_sections_count = 0
@@ -242,22 +248,23 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 6
-            if max_sections_count > 1:
+            if max_sections_count >= 1:
                 sheets[3]['Offers and Hired'].update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
                                 'type': 'many2one', }})
+                start = start + 1
                 # start = 11
-                for i in range(max_sections_count):
-                    if i <= 1:
-                        continue
-                    sheets[3]['Offers and Hired'].update({
-                        start + i: {'header': _('Section' + str(i)),
-                                    'field': 'section_id' + str(i),
-                                    'width': 20,
-                                    'type': 'many2one', }})
-                start = start + i
+                # for i in range(max_sections_count):
+                #     if i <= 1:
+                #         continue
+                #     sheets[3]['Offers and Hired'].update({
+                #         start + i: {'header': _('Section' + str(i)),
+                #                     'field': 'section_id' + str(i),
+                #                     'width': 20,
+                #                     'type': 'many2one', }})
+                # start = start + i
             sheets[3]['Offers and Hired'].update({
                     start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
                     start + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
@@ -316,11 +323,12 @@ class CVSourceLineWrapper:
             # self.department_list = list(filter(None, department_list))
             self.department_id = department_list[0]
             self.section_id = department_list[1]
-            if len(department_list) > 2:
-                for i in range(len(department_list)):
-                    if i <= 1:
-                        continue
-                    setattr(self, 'section_id' + str(i), department_list[i])
+            setattr(self, 'section_id' , department_list[1])
+            # if len(department_list) > 2:
+            #     for i in range(len(department_list)):
+            #         if i <= 1:
+            #             continue
+            #         setattr(self, 'section_id' + str(i), department_list[i])
 
         else:
             self.department_id = cv_source.job_id.department_id
@@ -359,11 +367,13 @@ class CallLineWrapper:
             # self.department_list = list(filter(None, department_list))
             self.department_id = department_list[0]
             self.section_id = department_list[1]
-            if len(department_list) > 2:
-                for i in range(len(department_list)):
-                    if i <= 1:
-                        continue
-                    setattr(self, 'section_id' + str(i), department_list[i])
+            setattr(self, 'section_id' , department_list[1])
+
+            # if len(department_list) > 2:
+            #     for i in range(len(department_list)):
+            #         if i <= 1:
+            #             continue
+            #         setattr(self, 'section_id' + str(i), department_list[i])
 
         else:
             self.department_id = applicant.job_id.department_id
@@ -403,11 +413,12 @@ class InterviewLineWrapper:
             # self.department_list = list(filter(None, department_list))
             self.department_id = department_list[0]
             self.section_id = department_list[1]
-            if len(department_list) > 2:
-                for i in range(len(department_list)):
-                    if i <= 1:
-                        continue
-                    setattr(self, 'section_id' + str(i), department_list[i])
+            setattr(self, 'section_id' , department_list[1])
+            # if len(department_list) > 2:
+            #     for i in range(len(department_list)):
+            #         if i <= 1:
+            #             continue
+            #         setattr(self, 'section_id' + str(i), department_list[i])
 
         else:
             self.department_id = applicant.job_id.department_id
@@ -458,11 +469,12 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
             # self.department_list = list(filter(None, department_list))
             self.department_id = department_list[0]
             self.section_id = department_list[1]
-            if len(department_list) > 2:
-                for i in range(len(department_list)):
-                    if i <= 1:
-                        continue
-                    setattr(self, 'section_id' + str(i), department_list[i])
+            setattr(self, 'section_id' , department_list[1])
+            # if len(department_list) > 2:
+            #     for i in range(len(department_list)):
+            #         if i <= 1:
+            #             continue
+            #         setattr(self, 'section_id' + str(i), department_list[i])
 
         else:
             self.department_id = application.job_id.department_id
@@ -495,11 +507,12 @@ class offerLineWrapper:
             # self.department_list = list(filter(None, department_list))
             self.department_id = department_list[0]
             self.section_id = department_list[1]
-            if len(department_list) > 2:
-                for i in range(len(department_list)):
-                    if i <= 1:
-                        continue
-                    setattr(self, 'section_id' + str(i), department_list[i])
+            setattr(self, 'section_id' , department_list[1])
+            # if len(department_list) > 2:
+            #     for i in range(len(department_list)):
+            #         if i <= 1:
+            #             continue
+            #         setattr(self, 'section_id' + str(i), department_list[i])
 
         else:
             self.department_id = offer.job_id.department_id
