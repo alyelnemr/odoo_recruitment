@@ -23,22 +23,53 @@ class GeneralSheetXslx(models.AbstractModel):
                 5: {'header': _('Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
                 6: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                 7: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
-                8: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
 
-                9: {'header': _('Call Date'), 'field': 'call_date', 'width': 18, 'type': 'datetime'},
-                10: {'header': _('Called by'), 'field': 'called_by', 'width': 18, 'type': 'many2one'},
-                11: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
-                12: {'header': _('Call Comment'), 'field': 'call_comment', 'width': 18},
-
-                13: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
-                14: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                15: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                16: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20, 'type': 'many2one'},
-                17: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
             }
         })
+
+        if report.job_ids:
+            departments = list(set(report.job_ids.mapped('department_id')))
+        else:
+            departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
+        max_sections_count = 0
+        for department in departments:
+            if department.parent_id:
+                department_list = []
+                while department:
+                    department_list.append(department.id)
+                    department = department.parent_id
+                if len(department_list) > max_sections_count:
+                    max_sections_count = len(department_list)
+        start = 7
+        if max_sections_count >= 1:
+            sheets[0]['General Sheet'].update({
+                start + 1: {'header': _('Section'),
+                            'field': 'section_id',
+                            'width': 20,
+                            'type': 'many2one', }})
+            start = start + 1
+
+        sheets[0]['General Sheet'].update(
+            {
+                start + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+
+                start + 2: {'header': _('Call Date'), 'field': 'call_date', 'width': 18, 'type': 'datetime'},
+                start + 3: {'header': _('Called by'), 'field': 'called_by', 'width': 18, 'type': 'many2one'},
+                start + 4: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
+                start + 5: {'header': _('Call Comment'), 'field': 'call_comment', 'width': 18},
+
+                start + 6: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
+                start + 7: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
+                start + 8: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
+                start + 9: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20, 'type': 'many2one'},
+                start + 10: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
+
+        })
         if max_interviews_count > 0:
-            start = 18
+            if max_sections_count:
+                start = 19
+            else:
+                start= 18
             for i in range(max_interviews_count):
                 sheets[0]['General Sheet'].update(
                     {
@@ -85,7 +116,27 @@ class GeneralSheetWrapper:
         self.cv_matched = application.cv_matched
         self.source_id = application.source_id
         self.business_unit_id = application.department_id.business_unit_id
-        self.department_id = application.department_id
+        if application.job_id.department_id.parent_id:
+            department = application.job_id.department_id
+            department_list = []
+            while department:
+                department_list.append(department)
+                department = department.parent_id
+            department_list.reverse()
+            # self.department_list = list(filter(None, department_list))
+            self.department_id = department_list[0]
+            self.section_id = department_list[1]
+            setattr(self, 'section_id' , department_list[1])
+            # if len(department_list) > 2:
+            #     for i in range(len(department_list)):
+            #         if i <= 1:
+            #             continue
+            #         setattr(self, 'section_id' + str(i), department_list[i])
+
+        else:
+            self.department_id = application.job_id.department_id
+
+
         self.job_id = application.job_id
 
         calls = self._get_activity('call', application).sorted('write_date', reverse=False)
@@ -102,6 +153,7 @@ class GeneralSheetWrapper:
         self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
         self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
         self.interview_result = first_interview.interview_result if first_interview else False
+        self.interview_type_id = first_interview.calendar_event_id.interview_type_id if first_interview else False
         self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
         for i in range(len(interviews)):
             if i == 0:

@@ -7,8 +7,11 @@ class RecruiterActivityReportWizard(models.TransientModel):
     _inherit = 'abstract.rec.report.wizard'
 
     _description = "Recruiter Activity Report Wizard"
+    @api.model
+    def _get_current_login_user(self):
+     return [self.env.user.id]
 
-    recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible')
+    recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible',default=_get_current_login_user  )
 
     cv_source = fields.Boolean('Cv Source')
     calls = fields.Boolean('Calls')
@@ -19,6 +22,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
     call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id',domain=[('active','=',False)])
     interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id',domain=[('active','=',False)])
     offer_ids = fields.Many2many('hr.offer', 'offer_recruiter_report_rel', 'report_id', 'offer_id')
+
 
     @api.multi
     def button_export_xlsx(self):
