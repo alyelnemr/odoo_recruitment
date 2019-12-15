@@ -11,7 +11,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
     def _get_current_login_user(self):
      return [self.env.user.id]
 
-    recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible',default=_get_current_login_user  )
+    recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible')
 
     cv_source = fields.Boolean('Cv Source')
     calls = fields.Boolean('Calls')
