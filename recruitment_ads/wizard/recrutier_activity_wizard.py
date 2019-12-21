@@ -7,11 +7,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
     _inherit = 'abstract.rec.report.wizard'
 
     _description = "Recruiter Activity Report Wizard"
-    @api.model
-    def _get_current_login_user(self):
-     return [self.env.user.id]
 
-    recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible')
 
     cv_source = fields.Boolean('Cv Source')
     calls = fields.Boolean('Calls')
@@ -22,7 +18,6 @@ class RecruiterActivityReportWizard(models.TransientModel):
     call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id',domain=[('active','=',False)])
     interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id',domain=[('active','=',False)])
     offer_ids = fields.Many2many('hr.offer', 'offer_recruiter_report_rel', 'report_id', 'offer_id')
-
 
     @api.multi
     def button_export_xlsx(self):
@@ -35,14 +30,31 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ('create_date', '>=', self.date_from + ' 00:00:00'),
                 ('create_date', '<=', self.date_to + ' 23:59:59'),
             ]
-            if self.recruiter_ids:
-                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
-            if self.job_ids:
-                domain.append(('job_id', 'in', self.job_ids.ids))
+            if self.bu_ids:
+                if self.job_ids:
+                    domain.append(('job_id', 'in', self.job_ids.ids))
+                    domain.append(('create_uid', 'in',self.recruiter_ids.ids))
+                else:
+                    if self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                        domain.append(('job_id', 'in', bu_jobs.ids))
+                        if self.recruiter_ids:
+                            domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+                        else:
+                            recruiters = self.env['res.users'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                            domain.append(('create_uid', 'in', recruiters.ids))
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                        domain.append(('job_id', 'in', bu_jobs.ids))
+                        domain.append(('create_uid','in',self.recruiter_ids.ids))
+
             applications = self.env['hr.applicant'].search(domain, order='create_date desc')
             if applications:
                 no_records = False
             self.application_ids = [(6,0,applications.ids)]
+
 
         if self.calls:
             domain = [
