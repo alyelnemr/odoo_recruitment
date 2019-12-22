@@ -99,6 +99,22 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             if self.job_ids:
                 domain.append(('job_id', 'in', self.job_ids.ids))
+            else:
+                if self.bu_ids:
+                    if self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                        domain.append(('job_id', 'in', bu_jobs.ids))
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                        domain.append(('job_id', 'in', bu_jobs.ids))
+                else:
+                    if not self.check_rec_manager:
+                        rec_jobs = self.env['hr.job'].search(
+                            ['|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                        domain.append(('job_id', 'in', rec_jobs.ids))
             offer = self.env['hr.offer'].search(domain, order='issue_date desc')
             if offer:
                 no_records = False
