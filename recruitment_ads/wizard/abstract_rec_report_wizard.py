@@ -35,6 +35,10 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
             if r.date_to < r.date_from:
                 raise ValidationError(_("You can't select start date greater than end date"))
 
+    @api.onchange('bu_ids')
+    def onchange_bu_ids(self):
+        self.job_ids = False
+        
 
     @api.onchange('date_from', 'date_to','bu_ids')
     def onchange_job_ids(self):
