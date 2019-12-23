@@ -38,7 +38,7 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
     @api.onchange('bu_ids')
     def onchange_bu_ids(self):
         self.job_ids = False
-        
+
 
     @api.onchange('date_from', 'date_to','bu_ids')
     def onchange_job_ids(self):
