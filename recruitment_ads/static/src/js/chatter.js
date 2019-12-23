@@ -157,6 +157,17 @@ Chatter.include({
         });
 
     },
+    _onScheduleActivity: function () {
+
+        if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
+            this.fields.activity.scheduleActivity(false);
+        }else{
+            console.log('elseeee')
+            alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
+
+        }
+    },
 
     });
-});
+ });
+

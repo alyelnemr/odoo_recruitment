@@ -72,7 +72,7 @@
                                 <field name="issue_date" readonly="1"/>
                                 <field name="state"/>
                                 <field name="hiring_date" states="pipeline,hired"
-                                       attrs="{'required':[('state','in',['pipeline','hired'])]}"/>
+                                       attrs="{'required':[('state','in',['pipeline','hired'])],'readonly':[('state','=','hired')]}" />
                                 <field name="reject_reason" states="not_join,reject"
                                        attrs="{'required':[('state','=','reject')]}"/>
                             </group>

@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import ValidationError
-
+from datetime import date
 
 class Offer(models.Model):
     _name = 'hr.offer'
@@ -94,6 +94,19 @@ class Offer(models.Model):
          ('not_join', 'Not Join'),
          ('reject', 'Reject Offer')], default='offer', string="Hiring Status", track_visibility='onchange',
         required=True)
+    @api.onchange('state')
+    def _get_hiring_date(self):
+        for offer in self:
+            if offer.state == 'hired':
+                offer.hiring_date = date.today()
+    @api.constrains('hiring_date', 'state')
+    def check_hiring_date(self):
+        for offer in self:
+            if offer.state == 'pipeline':
+                today = date.today()
+                if offer.hiring_date < str(today) :
+                    raise ValidationError(_("Hire date mustn't be less than today Date."))
+
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
     offer_type = fields.Selection([('normal_offer', 'Normal Offer'),
@@ -110,7 +123,6 @@ class Offer(models.Model):
             if offer.issue_date and offer.hiring_date:
                 if offer.issue_date > offer.hiring_date:
                     raise ValidationError(_("Hire date must be more than the Issue Date."))
-
     @api.constrains('offer_type', 'shifts_no', 'hour_rate')
     def check_shifts_no_hour_rate(self):
         for offer in self:
