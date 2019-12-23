@@ -1,3 +1,4 @@
+
 from odoo import api, fields, models,_
 from odoo.exceptions import ValidationError
 
@@ -38,7 +39,21 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if self.recruiter_ids:
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             if self.job_ids:
-                domain.append(('job_id', 'in', self.job_ids.ids))
+                 domain.append(('job_id', 'in', self.job_ids.ids))
+            else:
+                if self.bu_ids:
+                    if self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                    domain.append(('job_id', 'in', bu_jobs.ids))
+                else:
+                    if not self.check_rec_manager:
+                        rec_jobs = self.env['hr.job'].search(
+                            ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
+                        domain.append(('job_id', 'in', rec_jobs.ids))
             applications = self.env['hr.applicant'].search(domain, order='create_date desc')
             if applications:
                 no_records = False
@@ -57,6 +72,20 @@ class RecruiterActivityReportWizard(models.TransientModel):
             calls = self.env['mail.activity'].search(domain, order='write_date desc')
             if self.job_ids:
                 calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in self.job_ids)
+            else:
+                if self.bu_ids:
+                    if self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                    calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs)
+                else:
+                    if not self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search(
+                            ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
+                        calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs)
             if calls:
                 no_records = False
             self.call_ids = [(6,0,calls.ids)]
@@ -74,6 +103,22 @@ class RecruiterActivityReportWizard(models.TransientModel):
             interviews = self.env['mail.activity'].search(domain, order='write_date desc')
             if self.job_ids:
                 interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
+            else:
+                if self.bu_ids:
+                    if self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                    interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in bu_jobs)
+
+                else:
+                    if not self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search(
+                            ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
+
+                        interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in bu_jobs)
             if interviews:
                 no_records = False
             self.interview_ids = [(6,0,interviews.ids)]
@@ -87,6 +132,22 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
             if self.job_ids:
                 domain.append(('job_id', 'in', self.job_ids.ids))
+            else:
+                if self.bu_ids:
+                    if self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                    domain.append(('job_id', 'in', bu_jobs.ids))
+
+                else:
+                    if not self.check_rec_manager:
+                        bu_jobs = self.env['hr.job'].search(
+                            ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
+
+                        domain.append(('job_id', 'in', bu_jobs.ids))
             offer = self.env['hr.offer'].search(domain, order='issue_date desc')
             if offer:
                 no_records = False

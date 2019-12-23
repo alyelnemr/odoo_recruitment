@@ -107,8 +107,12 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 11
+            if not report.cv_source:
+                sheet= sheets[0]['Calls']
+            else:
+                sheet = sheets[1]['Calls']
             if max_sections_count >= 1:
-                sheets[1]['Calls'].update({
+                sheet.update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
@@ -124,7 +128,7 @@ class RecActivityXslx(models.AbstractModel):
                 #                     'width': 20,
                 #                     'type': 'many2one', }})
                 # start = start + i
-            sheets[1]['Calls'].update({
+            sheet.update({
                 start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                 start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                 start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
@@ -161,8 +165,15 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 7
+            if not report.calls and not report.cv_source:
+                sheet= sheets[0]['Interviews']
+            if (not report.calls and  report.cv_source) or (report.calls and  not report.cv_source):
+                sheet= sheets[1]['Interviews']
+            if  report.calls and  report.cv_source:
+                sheet= sheets[2]['Interviews']
+
             if max_sections_count >= 1:
-                sheets[2]['Interviews'].update({
+                sheet.update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
@@ -178,7 +189,7 @@ class RecActivityXslx(models.AbstractModel):
                 #                     'width': 20,
                 #                     'type': 'many2one', }})
                 # start = start + i
-            sheets[2]['Interviews'].update({
+            sheet.update({
                     start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
                     start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
                     start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
@@ -248,8 +259,19 @@ class RecActivityXslx(models.AbstractModel):
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
             start = 6
+            if not report.calls and not report.cv_source and not report.interviews:
+                sheet= sheets[0]['Offers and Hired']
+
+            if  report.calls and  report.cv_source and report.interviews:
+                sheet= sheets[3]['Offers and Hired']
+
+            if (not report.calls and  report.cv_source and report.interviews) or(report.calls and not report.cv_source and report.interviews) or (report.calls and report.cv_source and not report.interviews):
+                sheet= sheets[2]['Offers and Hired']
+            if (not report.calls and not report.cv_source and report.interviews) or (report.calls and not report.cv_source and not report.interviews) or(not report.calls and  report.cv_source and not report.interviews):
+                sheet = sheets[1]['Offers and Hired']
+
             if max_sections_count >= 1:
-                sheets[3]['Offers and Hired'].update({
+                sheet.update({
                     start + 1: {'header': _('Section'),
                                 'field': 'section_id',
                                 'width': 20,
@@ -265,7 +287,7 @@ class RecActivityXslx(models.AbstractModel):
                 #                     'width': 20,
                 #                     'type': 'many2one', }})
                 # start = start + i
-            sheets[3]['Offers and Hired'].update({
+            sheet.update({
                     start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
                     start + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
                     start + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
