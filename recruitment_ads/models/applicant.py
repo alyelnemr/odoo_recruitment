@@ -2,6 +2,19 @@ import re
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
+class IrAttachmentInherit(models.Model):
+    _inherit = 'ir.attachment'
+
+    @api.depends('res_model', 'res_id')
+    def _compute_res_name(self):
+        res = super(IrAttachmentInherit, self). _compute_res_name()
+        for attachment in self:
+            if attachment.res_model and attachment.res_id:
+                if attachment.res_model == 'hr.applicant':
+                    record = self.env[attachment.res_model].browse(attachment.res_id)
+                    attachment.res_name = record.display_name
+                    attachment.name = record.display_name
+        return res
 
 class Applicant(models.Model):
     _inherit = "hr.applicant"
@@ -9,6 +22,7 @@ class Applicant(models.Model):
     email_from = fields.Char(required=False)
     partner_phone = fields.Char()
     partner_mobile = fields.Char()
+
     partner_name = fields.Char(required=True)
     job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
 
@@ -161,6 +175,22 @@ class Applicant(models.Model):
             if not applicant.email_from and not applicant.partner_mobile:
                 raise ValidationError (_('Please insert Applicant Mobile or Email '))
 
+    @api.constrains('partner_mobile')
+    def constrain_partner_mobile(self):
+        # pattern =re.compile("[0-9]")
+        # pattern = re.compile("[@_!#$%^&*()<>?/\|}{~:]")
+        # match= pattern.match(self.partner_mobile)
+        # if match == None:
+        for applicant in self:
+            if applicant.partner_mobile:
+                if applicant.partner_mobile.isnumeric() == False or len(applicant.partner_mobile) > 15 :
+                    raise ValidationError (_('Mobile number must be digits only and not greater than 15 digit. '))
+            if applicant.partner_phone:
+                if applicant.partner_phone.isnumeric() == False or len(applicant.partner_phone) > 15:
+                    raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
+            if applicant.partner_name:
+                if applicant.partner_name.isalpha() == False:
+                    raise ValidationError(_('Applicant Name must be Characters only . '))
 
 class Stage(models.Model):
     _inherit = 'hr.recruitment.stage'
