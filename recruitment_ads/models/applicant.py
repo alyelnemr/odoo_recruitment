@@ -189,7 +189,12 @@ class Applicant(models.Model):
                 if applicant.partner_phone.isnumeric() == False or len(applicant.partner_phone) > 15:
                     raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
             if applicant.partner_name:
-                if applicant.partner_name.isalpha() == False:
+                # pattern = re.compile("[0-9]")
+                pattern = re.compile("^[a-zA-Z ]*$")
+                match = pattern.match(self.partner_name)
+                if match :
+                # if applicant.partner_name.isalpha() == False :
+
                     raise ValidationError(_('Applicant Name must be Characters only . '))
 
 class Stage(models.Model):
