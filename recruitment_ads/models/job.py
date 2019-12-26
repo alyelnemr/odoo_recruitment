@@ -110,9 +110,9 @@ class Job(models.Model):
 
     @api.multi
     def _compute_remaining_vacancies(self):
-        hired_offer = self.env['hr.offer'].search([('job_id', 'in', self.ids), ('state', '=', 'hired')])
+        hired_offer = self.env['hr.offer'].search([('job_id', 'in', self.ids), ('state', '=', 'hired'),('hiring_date','!=',False)])
         for job in self:
-            if job.state == 'recruit' and job.last_launch_rec_date and job.hiring_date:
+            if job.state == 'recruit' and job.last_launch_rec_date :
                 filter_by = lambda d: datetime.strptime(d.hiring_date, DEFAULT_SERVER_DATE_FORMAT) >= datetime.strptime(
                     job.last_launch_rec_date, DEFAULT_SERVER_DATE_FORMAT) and d.job_id == job
                 hired_count = len(hired_offer.filtered(filter_by))
