@@ -175,7 +175,7 @@ class Applicant(models.Model):
             if not applicant.email_from and not applicant.partner_mobile:
                 raise ValidationError (_('Please insert Applicant Mobile or Email '))
 
-    @api.constrains('partner_mobile')
+    @api.constrains('partner_mobile','partner_name','partner_phone')
     def constrain_partner_mobile(self):
         # pattern =re.compile("[0-9]")
         # pattern = re.compile("[@_!#$%^&*()<>?/\|}{~:]")
@@ -189,7 +189,13 @@ class Applicant(models.Model):
                 if applicant.partner_phone.isnumeric() == False or len(applicant.partner_phone) > 15:
                     raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
             if applicant.partner_name:
-                if applicant.partner_name.isalpha() == False:
+                # pattern = re.compile("[0-9]")
+                # pattern = ('^([^~+&@!#$%]*)$')
+                # match = re.search('^([{}\[\]\^~+&@!#)=\'"/|$%(*!+_\-]*)$',applicant.partner_name)
+                if all(x.isalpha() or x.isspace() for x in applicant.partner_name ):
+                    pass
+                else:
+                # if applicant.partner_name.isalpha() == False :
                     raise ValidationError(_('Applicant Name must be Characters only . '))
 
 class Stage(models.Model):
