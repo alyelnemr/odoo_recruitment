@@ -1,14 +1,29 @@
 import logging
 
-from odoo import models, api, fields,tools
+from odoo import models, api, fields,tools, _
 from odoo.addons.base.res.res_partner import Partner
 from odoo.osv.expression import get_unaccent_wrapper
-
+from odoo.exceptions import ValidationError
 _schema = logging.getLogger('odoo.schema')
 
 
 class PartnerInherit(models.Model):
     _inherit = 'res.partner'
+
+    @api.constrains('mobile','name','phone')
+    def constrain_partner_mobile(self):
+        for applicant in self:
+            if applicant.phone:
+                if applicant.phone.isnumeric() == False or len(applicant.phone) > 15 :
+                    raise ValidationError (_('Mobile number must be digits only and not greater than 15 digit. '))
+            if applicant.mobile:
+                if applicant.mobile.isnumeric() == False or len(applicant.mobile) > 15:
+                    raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
+            if applicant.name:
+                if all(x.isalpha() or x.isspace() for x in applicant.name):
+                    pass
+                else:
+                    raise ValidationError(_('Applicant Name must be Characters only . '))
 
     short_display = fields.Char("Short display name", compute='_compute_short_display_name', store=True)
     applicant = fields.Boolean(string='Applicant')
