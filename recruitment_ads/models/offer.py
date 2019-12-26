@@ -84,7 +84,7 @@ class Offer(models.Model):
                                help="The date at which the applicant will be available to start working")
 
     issue_date = fields.Date(string='Issue Date', default=fields.Date.today)
-    hiring_date = fields.Date(string="Hiring Date", track_visibility='onchange', store= True)
+    hiring_date = fields.Date(string="Hiring Date", track_visibility='onchange')
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.user.company_id.currency_id)
     state = fields.Selection(
         [('offer', 'Offer'),
@@ -94,18 +94,19 @@ class Offer(models.Model):
          ('not_join', 'Not Join'),
          ('reject', 'Reject Offer')], default='offer', string="Hiring Status", track_visibility='onchange',
         required=True)
+
     @api.onchange('state','hiring_date')
     def _get_hiring_date(self):
         for offer in self:
             if offer.state == 'hired':
                 offer.hiring_date = date.today()
 
-    @api.constrains('hiring_date', 'state')
+    @api.constrains('hiring_date','state')
     def check_hiring_date(self):
         for offer in self:
             if offer.state == 'pipeline':
                 today = date.today()
-                if offer.hiring_date < str(today) :
+                if offer.hiring_date < str(today):
                     raise ValidationError(_("Hire date mustn't be less than today Date."))
 
     comment = fields.Text(string='Notes')
