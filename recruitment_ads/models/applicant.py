@@ -5,6 +5,16 @@ from odoo.exceptions import ValidationError
 class IrAttachmentInherit(models.Model):
     _inherit = 'ir.attachment'
 
+    @api.onchange('datas_fname')
+    def _get_attach_name(self):
+        if self.datas_fname and self.res_model == 'hr.applicant':
+            extension= self.datas_fname.split(".")
+            if extension:
+                last_item=len(extension)-1
+                extension = extension[last_item]
+                if self.name:
+                    self.datas_fname = self.name+'.'+extension
+
     @api.depends('res_model', 'res_id')
     def _compute_res_name(self):
         res = super(IrAttachmentInherit, self). _compute_res_name()

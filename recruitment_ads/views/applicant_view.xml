@@ -157,6 +157,7 @@
                 <attribute name="attrs">{'readonly': [('res_model','=','hr.applicant')]}</attribute>
                 <attribute name='force_save'>1</attribute>
             </xpath>
+<!---->
         </field>
     </record>
     </data>
