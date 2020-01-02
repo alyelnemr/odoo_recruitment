@@ -157,6 +157,12 @@
                 <attribute name="attrs">{'readonly': [('res_model','=','hr.applicant')]}</attribute>
                 <attribute name='force_save'>1</attribute>
             </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="file_name_seq" invisible = "1"/>
+            </xpath>
+            <xpath expr="//field[@name='datas']" position="replace">
+                <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}" required="1"/>
+            </xpath>
 <!---->
         </field>
     </record>

@@ -4,17 +4,27 @@ from odoo.exceptions import ValidationError
 
 class IrAttachmentInherit(models.Model):
     _inherit = 'ir.attachment'
+    # attach_name_seq = fields.Char()
+    file_name_seq = fields.Char()
 
     @api.onchange('datas_fname')
     def _get_attach_name(self):
         if self.datas_fname and self.res_model == 'hr.applicant':
+            no_attach= self.env['ir.attachment'].search([('res_id', '=', self.res_id)],order='create_date asc')
             extension= self.datas_fname.split(".")
             if extension:
-                last_item=len(extension)-1
+                last_item = len(extension) - 1
                 extension = extension[last_item]
-                if self.name:
-                    self.datas_fname = self.name+'.'+extension
 
+                if no_attach:
+                    last_attach_index = len(no_attach) - 1
+                    last_attach_obj = no_attach[last_attach_index]
+                    self.file_name_seq = int(last_attach_obj.file_name_seq) + 1
+                else:
+                    self.file_name_seq = str(1)
+                if self.name:
+                    self.datas_fname = self.name + '(' + self.file_name_seq + ')' + '.' + extension
+                    self.name = self.name + '(' + self.file_name_seq  + ')'
     @api.depends('res_model', 'res_id')
     def _compute_res_name(self):
         res = super(IrAttachmentInherit, self). _compute_res_name()
