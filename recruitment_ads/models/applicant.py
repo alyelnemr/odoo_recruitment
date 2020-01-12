@@ -145,7 +145,7 @@ class Applicant(models.Model):
             'target': 'current',
             'domain': [['type', '=', 'interview']],
             'context': {
-                'default_name': self.name + "'s interview",
+                'default_name': self.job_id.name+"-"+self.partner_name + "'s interview",
                 'default_res_id': self.id,
                 'default_res_model': self._name,
                 'default_type': 'interview',

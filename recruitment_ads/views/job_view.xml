@@ -50,7 +50,8 @@
                     <field name="department_id" class="oe_inline"
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
-                           context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"/>
+                           context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"
+                           options="{'no_create':True,'no_create_edit':True}"/>
                     <field name="job_level_id" class="oe_inline" domain="[('job_title_id', '=', job_title_id)]"
                            context="{'default_job_title_id':job_title_id}" placeholder="e.g. Level 1"/>
                 </xpath>

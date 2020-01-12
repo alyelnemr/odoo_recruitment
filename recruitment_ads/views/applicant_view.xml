@@ -20,6 +20,9 @@
             <field name="model">hr.applicant</field>
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='source_id']" position="attributes">
+                    <attribute name="options">{'no_create': '1', 'no_create_edit': '1'}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='priority']" position="after">
                     <field name="cv_matched"/>
                     <field name="reason_of_rejection"
