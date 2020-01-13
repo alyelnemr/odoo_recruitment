@@ -86,7 +86,7 @@ class InterviewMailComposeMessage(models.Model):
                 'email_cc': email_cc,
                 'attachment_ids': [attach.id for attach in self.attachment_ids],
                 'author_id': self.author_id.id,
-                'email_from': self.email_from,
+                'email_from': self.template_id.email_from,
                 'record_name': self.record_name,
                 'no_auto_thread': self.no_auto_thread,
                 'mail_server_id': self.mail_server_id.id,
