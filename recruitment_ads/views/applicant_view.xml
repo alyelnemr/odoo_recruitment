@@ -21,7 +21,8 @@
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='source_id']" position="attributes">
-                    <attribute name="options">{'no_create': '1', 'no_create_edit': '1'}</attribute>
+                    <attribute name="options">{'no_create': '1', 'no_create_edit': '1'} </attribute>
+
                 </xpath>
                 <xpath expr="//field[@name='priority']" position="after">
                     <field name="cv_matched"/>
@@ -169,5 +170,7 @@
 <!---->
         </field>
     </record>
+   <menuitem action="utm.utm_source_action" id="menu_utm_source" parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="4" groups="recruitment_ads.group_view_source_menu" />
+
     </data>
 </odoo>
