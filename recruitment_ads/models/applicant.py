@@ -114,6 +114,10 @@ class Applicant(models.Model):
         self.ensure_one()
         calendar_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_calender').id
         form_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_form').id
+        if  self.job_id.name and self.partner_name:
+            name= self.job_id.name+"-"+self.partner_name + "'s interview"
+        else:
+            name=''
         action = {
             'type': 'ir.actions.act_window',
             'name': 'Schedule Interview',
@@ -125,7 +129,7 @@ class Applicant(models.Model):
             'target': 'current',
             'domain': [['type', '=', 'interview']],
             'context': {
-                'default_name': self.job_id.name+"-"+self.partner_name + "'s interview",
+                'default_name': name,
                 'default_res_id': self.id,
                 'default_res_model': self._name,
                 'default_type': 'interview',
