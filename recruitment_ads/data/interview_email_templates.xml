@@ -3,7 +3,7 @@
     <data>
         <record id="calendar_template_interview_invitation" model="mail.template">
             <field name="name">Interview &amp; Followers Invitation</field>
-            <field name="email_from">${object.user_id.email or ''}</field>
+<!--            <field name="email_from">${object.user_id.email or ''}</field>-->
             <field name="subject">${object.name}</field>
             <field name="model_id" ref="calendar.model_calendar_event"/>
             <field name="email_to" >${ctx and ctx['email_to']}</field>
@@ -62,7 +62,7 @@
         </record>
         <record id="calendar_template_interview_invitation_for_candidate" model="mail.template">
             <field name="name">Candidate Invitation</field>
-            <field name="email_from">${object.user_id.email or ''}</field>
+<!--            <field name="email_from">${object.user_id.email or ''}</field>-->
             <field name="subject">${object.name}</field>
             <field name="model_id" ref="calendar.model_calendar_event"/>
             <field name="email_to" >${(object.hr_applicant_id.email_from) | safe}</field>
