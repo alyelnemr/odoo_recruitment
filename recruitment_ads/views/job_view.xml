@@ -46,7 +46,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="before">
                     <field name="business_unit_id" class="oe_inline" invisible="0"
-                           options="{'no_create':True,'no_open':True}"/>
+                           options="{'no_create':True,'no_open':True}"
+                    />
                     <field name="department_id" class="oe_inline"
                            domain="[('business_unit_id', '=', business_unit_id)]"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"

@@ -74,12 +74,20 @@ class JobLevel(models.Model):
 class Job(models.Model):
     _inherit = ['hr.job']
 
-    def _get_default_bu(self):
-        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
+    # def _get_default_bu(self):
+    #        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
+    def _get_bu_domain(self):
+        if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+            domain=['|',('id', '=', self.env.user.business_unit_id.id), ('id','in',self.env.user.multi_business_unit_id.ids)
+                 ]
+
+        else:
+            domain=[]
+        return domain
     name = fields.Char(string='Job Position', required=False, index=True, translate=True, compute='_compute_job_name',
                        store=True)
-    business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
+    business_unit_id = fields.Many2one('business.unit', required=True, domain=lambda self: self._get_bu_domain())
     department_id = fields.Many2one('hr.department', string='Department', required=True)
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
     job_level_id = fields.Many2one('job.level', string='Job Level', required=False)
@@ -93,6 +101,7 @@ class Job(models.Model):
                                        help="Technical field to catch the starting date of the last recruitment phase")
     scale_from = fields.Float(string='Salary Scale From')
     scale_to = fields.Float(string='Salary Scale To')
+
 
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
