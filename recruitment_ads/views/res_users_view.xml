@@ -20,6 +20,8 @@
             <field name="arch" type="xml">
                 <field name="partner_id" position="after">
                     <field name="business_unit_id"/>
+                    <field name="multi_business_unit_id" widget="many2many_tags"
+                    domain="[('id','!=',business_unit_id)]"/>
                 </field>
             </field>
         </record>
@@ -29,7 +31,8 @@
             <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
             <field name="arch" type="xml">
                 <field name="company_id" position="after">
-                    <field name="business_unit_id"/>
+                    <field name="business_unit_id"  />
+
                 </field>
             </field>
         </record>
