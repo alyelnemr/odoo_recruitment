@@ -5,29 +5,25 @@ from odoo.exceptions import ValidationError
 class AbstractRecruitmentReportWizard(models.AbstractModel):
     _name = 'abstract.rec.report.wizard'
 
+    @api.model
+    def _get_current_login_user(self):
+        return [self.env.user.id]
+
+    @api.model
+    def get_user(self):
+        res_user = self.env.user
+        if res_user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+            return True
+        else:
+            return False
+
     date_from = fields.Date(string='Start Date', required=True, default=fields.Date.today)
     date_to = fields.Date(string='End Date', required=True, default=fields.Date.today)
 
     job_ids = fields.Many2many('hr.job', string='Job Position')
     bu_ids = fields.Many2many('business.unit', string='Business Unit',default = lambda self : self.env.user.business_unit_id)
-
-    @api.model
-    def _get_current_login_user(self):
-     return [self.env.user.id]
-
     recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible',default=_get_current_login_user)
-
-
-    @api.model
-    def get_user(self):
-        res_user = self.env.user
-        if res_user.has_group ('hr_recruitment.group_hr_recruitment_manager'):
-            return True
-        else:
-            return False
-
     check_rec_manager = fields.Boolean(string="check field",default = get_user)
-
 
     @api.constrains('date_from', 'date_to')
     def check_dates(self):
@@ -38,7 +34,6 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
     @api.onchange('bu_ids')
     def onchange_bu_ids(self):
         self.job_ids = False
-
 
     @api.onchange('date_from', 'date_to','bu_ids')
     def onchange_job_ids(self):
