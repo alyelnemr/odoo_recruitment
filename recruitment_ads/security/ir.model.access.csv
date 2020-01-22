@@ -16,4 +16,11 @@ hr.access_hr_job_user,hr.job user,hr.model_hr_job,hr.group_hr_user,1,0,0,0
 access_hr_job_manager,hr.job manager,hr.model_hr_job,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
 hr.access_hr_department_user,hr.department.user,hr.model_hr_department,hr.group_hr_user,1,0,0,0
 access_hr_department_manager,hr.department manager,hr.model_hr_department,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
-access_hr_job_coordinator,hr.job coordinator,hr.model_hr_job,recruitment_ads.group_hr_recruitment_coordinator,1,1,1,1
+access_hr_job_coordinator,hr_job_coordinator,hr.model_hr_job,recruitment_ads.group_hr_recruitment_coordinator,1,1,1,1
+coordinator_access_job_offer,coordinator_access_job_offer,model_hr_offer,recruitment_ads.group_hr_recruitment_coordinator,1,1,1,0
+coordinator_access_utm_source,coordinator_access_utm_source,utm.model_utm_source,recruitment_ads.group_hr_recruitment_coordinator,1,1,0,0
+coordinator_access_job_level,coordinator_access_job_level,model_job_level,recruitment_ads.group_hr_recruitment_coordinator,1,0,0,0
+coordinator_access_rejection_reason,coordinator_access_rejection_reason,model_reject_reason,recruitment_ads.group_hr_recruitment_coordinator,1,0,0,0
+coordinator_access_interview_type,coordinator_access_interview_type,model_interview_type,recruitment_ads.group_hr_recruitment_coordinator,1,0,0,0
+officer_access_utm_source,officer_access_utm_source,utm.model_utm_source,hr_recruitment.group_hr_recruitment_user,1,1,0,0
+off_manager_access_utm_source,manager_access_utm_source,utm.model_utm_source,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
