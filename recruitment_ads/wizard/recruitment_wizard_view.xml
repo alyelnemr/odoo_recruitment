@@ -10,10 +10,15 @@
                     <group col="4">
                         <field name="date_from"/>
                         <field name="date_to"/>
-                        <field name="recruiter_ids" widget="many2many_tags" options="{'no_create_edit': True,'no_create':True}" attrs = "{'readonly': [('check_rec_manager', '=','officer')]}" />
                         <field name="bu_ids" widget="many2many_tags"
-                               options="{'no_create_edit': True,'no_create':True}"/>
-                        <field name="job_ids" widget="many2many_tags" options="{'no_create_edit': True,'no_create':True}"/>
+                               options="{'no_create_edit': True,'no_create':True}"
+                               help="Leave it empty to retrieve all the activates done under the BU/s assigned to the current user"/>
+                        <field name="recruiter_ids" widget="many2many_tags"
+                               options="{'no_create_edit': True,'no_create':True}"
+                               attrs="{'readonly': [('check_rec_manager', '=','officer')]}"
+                               help="Leave it empty to retrieve all the activities of all the recruiters responsible under the selected BU/s assigned to the current user"/>
+                        <field name="job_ids" widget="many2many_tags" options="{'no_create_edit': True,'no_create':True}"
+                               help="Leave it empty to retrieve all the activities of the Jobs under the selected BU/s"/>
                         <field name="check_rec_manager" invisible="1" />
                     </group>
                     <div>
@@ -46,9 +51,15 @@
                         <field name="date_from"/>
                         <field name="date_to"/>
                         <field name="bu_ids" widget="many2many_tags"
-                               options="{'no_create_edit': True,'no_create':True}"/>
+                               options="{'no_create_edit': True,'no_create':True}"
+                               help="Leave it empty to retrieve all the activates done under the BU/s assigned to the current user"/>
+                        <field name="recruiter_ids" widget="many2many_tags"
+                               options="{'no_create_edit': True,'no_create':True}"
+                               attrs="{'readonly': [('check_rec_manager', '=','officer')]}"
+                               help="Leave it empty to retrieve all the activities of all the recruiters responsible under the selected BU/s assigned to the current user"/>
                         <field name="job_ids" widget="many2many_tags"
-                               options="{'no_create_edit': True,'no_create':True}"/>
+                               options="{'no_create_edit': True,'no_create':True}"
+                               help="Leave it empty to retrieve all the activities of the Jobs under the selected BU/s"/>
                         <field name="check_rec_manager" invisible="1" />
                     </group>
                     <footer>
