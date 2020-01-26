@@ -16,7 +16,46 @@ var Dialog = require('web.Dialog');
 
 
 MailActivity.include({
+    _onScheduleInterview: function () {
+        self = this;
+        var get_calendar_view = Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+            "model": "ir.ui.view",
+            "method": "get_view_id",
+            "args": ['recruitment_ads.view_calendar_event_interview_calender'],
+            "kwargs": {}
+            });
+        var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+            "model": "ir.ui.view",
+            "method": "get_view_id",
+            "args": ['recruitment_ads.view_calendar_event_interview_form'],
+            "kwargs": {}
+            });
+        $.when(get_calendar_view,get_form_view).then(function(calendar_view_id,form_view_id){
+            var name = self.record.data.partner_name+"'s interview";
+            if (self.record.data.job_id){
+                name = self.record.data.job_id.data.display_name + " - " + name;
+            }
+            var action = {
+                    type: 'ir.actions.act_window',
+                    name: 'Schedule Interview',
+                    res_model: 'calendar.event',
+                    view_mode: 'calendar,form',
+                    view_type: 'form',
+                    view_id: false || form_view_id,
+                    views: [[false || calendar_view_id, 'calendar'],[false || form_view_id ,'form']],
+                    target: 'current',
+                    domain: [['type','=','interview']],
+                    context: {
+                        default_name: name,
+                        default_res_id: self.record.res_id,
+                        default_res_model: self.record.model,
+                        default_type: 'interview',
+                    },
+                };
+            return self.do_action(action);
+        });
 
+    },
     _onEditActivity: function (event, options) {
         var self = this;
         var _super = this._super.bind(this);
@@ -145,6 +184,11 @@ MailActivity.include({
                                         },
                                     }
                                 );
+                            }
+                            else if (call_result_id ==="Invited") {
+                                self._markActivityDDDone(activity_id, feedback,call_result_id )
+                                    .then(self._onScheduleInterview(self));
+
                             }
                             else{
                                 self._markActivityDDDone(activity_id, feedback,call_result_id )
