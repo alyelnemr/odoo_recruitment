@@ -1,4 +1,5 @@
 import logging
+import re
 
 from odoo import models, api, fields,tools, _
 from odoo.addons.base.res.res_partner import Partner
@@ -140,3 +141,11 @@ class PartnerInherit(models.Model):
             return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
 
         return super(PartnerInherit, self).name_search(name=name, args=args, operator=operator, limit=limit)
+
+    @api.onchange('email')
+    def validate_mail(self):
+        if self.email:
+            # I add 'A-Z' to allow capital letters in email format
+            match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email)
+            if match == None:
+                raise ValidationError('Not a valid E-mail ID')
