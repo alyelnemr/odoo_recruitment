@@ -1,6 +1,7 @@
 from . import mail
 from . import interview
 from . import partner
+from . import applicant_history
 from . import applicant
 from . import job
 from . import offer

@@ -47,8 +47,10 @@ class Applicant(models.Model):
     job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
 
     partner_id = fields.Many2one('res.partner', "Applicant", required=True)
-    applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
-                                             string='History', readonly=False)
+    # applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
+    #                                          string='History', readonly=False)
+    applicant_history_ids = fields.Many2many('hr.applicant.history', 'applicant_history_relation', 'applicant_id', 'history_id',
+                                             string='History', readonly=False,compute='onchange_hr_applicant')
     last_activity = fields.Many2one('mail.activity.type', compute='_get_activity')
     last_activity_date = fields.Date(compute='_get_activity')
     result = fields.Char(compute='_get_activity')
@@ -109,9 +111,9 @@ class Applicant(models.Model):
 
     def _get_history_data(self, applicant_id):
         if applicant_id == False:
-            return self.env['hr.applicant']
+            return self.env['hr.applicant.history']
         domain = [('partner_id', '=', applicant_id)]
-        return self.search(domain)
+        return self.env['hr.applicant.history'].search(domain)
 
     @api.onchange('partner_id')
     def onchange_hr_applicant(self):
