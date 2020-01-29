@@ -15,9 +15,11 @@ class Applicant(models.Model):
     _auto = False
 
     # survey_id = fields.Many2one('survey.survey', string="Survey")
-    categ_ids = fields.Many2many('hr.applicant.category', 'hr_applicant_category_hr_applicant_history_rel',
-                                 'hr_applicant_id', 'hr_applicant_category_id',
-                                 string="Tags", readonly=True)
+    # categ_ids = fields.Many2many('hr.applicant.category', 'hr_applicant_category_hr_applicant_history_rel',
+    #                              'hr_applicant_id', 'hr_applicant_category_id',
+    #                              string="Tags", readonly=True)
+    # tag_ids = fields.Many2many('hr.applicant.category','hr_applicant_category_hr_applicant_history_rel' ,'hr_applicant_id', 'hr_applicant_category_id',  'History',readonly=True)
+    # categ_ids = fields.Many2many('hr.applicant.category',readonly=True)
     response_id = fields.Many2one('survey.user_input', "Response", ondelete="set null", oldname="response",
                                   readonly=True)
     campaign_id = fields.Many2one('utm.campaign', string='Campaign', readonly=True)
@@ -111,3 +113,11 @@ class Applicant(models.Model):
         self.env.cr.execute("""CREATE or REPLACE VIEW hr_applicant_history as (
             %s
             )""" % (self._select()))
+
+
+class HrApplicantCategoryHrApplicantHistoryRel(models.Model):
+    _name = "hr.applicant.category.hr_applicant.history.rel"
+
+    hr_applicant_category_id = fields.Integer()
+    hr_applicant_history_id = fields.Integer()
+
