@@ -92,6 +92,11 @@ class Job(models.Model):
     last_launch_rec_date = fields.Date(string='Recruitment Launch Date',
                                        help="Technical field to catch the starting date of the last recruitment phase")
 
+    @api.model
+    def create(self, vals):
+        vals['last_launch_rec_date'] = datetime.today()
+        return super(Job, self).create(vals)
+
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
     def _compute_job_name(self):
