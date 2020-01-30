@@ -103,6 +103,11 @@ class Job(models.Model):
     scale_to = fields.Float(string='Salary Scale To')
 
 
+    @api.model
+    def create(self, vals):
+        vals['last_launch_rec_date'] = datetime.today()
+        return super(Job, self).create(vals)
+
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
     def _compute_job_name(self):
