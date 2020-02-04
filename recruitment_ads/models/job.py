@@ -19,10 +19,16 @@ class JobPosition(models.Model):
         if self.env['hr.applicant'].search([('job_id.job_title_id.id', '=', title_id)], limit=1):
             self.has_application = True
 
+    # _sql_constraints = [
+    #     ('job_title_uniq',
+    #      'unique(name)',
+    #      'Job title entered before, Job title must be unique.'),
+    #     ('job_code_uniq',
+    #      'unique(job_code)',
+    #      'Job Code entered before, Job Code must be unique.'),
+    # ]
+
     _sql_constraints = [
-        ('job_title_uniq',
-         'unique(name)',
-         'Job title entered before, Job title must be unique.'),
         ('job_code_uniq',
          'unique(job_code)',
          'Job Code entered before, Job Code must be unique.'),
