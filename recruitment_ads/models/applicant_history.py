@@ -40,8 +40,9 @@ class Applicant(models.Model):
     # partner_id = fields.Many2one('res.partner', "Applicant", readonly=True)
     # # applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
     # #                                          string='History', readonly=False)
-    # last_activity = fields.Many2one('mail.activity.type', readonly=True)
-    # # last_activity_date = fields.Date(readonly=True)
+    # hr_applicant_ids= fields.Many2one('hr.applicant')
+    # last_activity = fields.Many2one('mail.activity.type', readonly=True, related ='hr_applicant_ids.last_activity' )
+    # last_activity_date = fields.Date(readonly=True)
     # # result = fields.Char(readonly=True)
     # source_id = fields.Many2one('utm.source', readonly=True)
     # offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
@@ -102,7 +103,8 @@ class Applicant(models.Model):
              write_date,stage_id,last_stage_id,company_id,user_id,date_closed,date_open,
              date_last_stage_update,priority,salary_proposed_extra,salary_expected_extra,salary_proposed,
              salary_expected,availability,type_id,department_id,reference,delay_close,
-             color ,emp_id,response_id,campaign_id ,medium_id , message_last_post ,activity_date_deadline  from hr_applicant
+             color ,emp_id,response_id,campaign_id ,medium_id , message_last_post ,activity_date_deadline, 
+              last_activity ,last_activity_date , result from hr_applicant
         """
         return select_str
 
