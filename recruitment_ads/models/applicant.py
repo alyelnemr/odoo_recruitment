@@ -50,8 +50,8 @@ class Applicant(models.Model):
     # applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
     #                                          string='History', readonly=False)
     applicant_history_ids = fields.Many2many('hr.applicant.history', 'applicant_history_relation', 'applicant_id', 'history_id',
-                                             string='History', readonly=False,compute='onchange_hr_applicant')
-    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity',store =True)
+                                             string='History',compute='onchange_hr_applicant')
+    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity',store=True)
     last_activity_date = fields.Date(compute='_get_activity',store=True)
     result = fields.Char(compute='_get_activity',store=True)
     source_id = fields.Many2one('utm.source', required=True)
@@ -95,28 +95,47 @@ class Applicant(models.Model):
         if self.with_context({'active_test': False}).activity_ids:
             raise ValidationError(_("Can't delete application that has activities"))
         return super(Applicant, self).unlink()
+    # @api.onchange('partner_id')
 
-    @api.depends('activity_ids')
+    @api.depends('activity_ids','partner_id')
     def _get_activity(self):
         for applicant in self:
             activities = applicant.with_context({'active_test': False}).activity_ids
             if activities:
-                last_activity = activities.sorted('create_date')[-1]
-                applicant.last_activity = last_activity.activity_type_id
-                applicant.last_activity_date = last_activity.date_deadline
-                if last_activity.activity_category == 'interview':
-                    applicant.result = last_activity.interview_result
-                else:
-                    applicant.result = last_activity.call_result_id
 
+                last_activity = activities.sorted('create_date')[-1]
+                # applicant.last_activity = last_activity.activity_type_id
+                # applicant.last_activity_date = last_activity.date_deadline
+                # if last_activity.activity_category == 'interview':
+                #     applicant.result = last_activity.interview_result
+                # else:
+                #     applicant.result = last_activity.call_result_id
+                applicant._write({'last_activity':last_activity.activity_type_id.id ,
+                                  'last_activity_date' : last_activity.date_deadline ,
+
+                                  })
+                if last_activity.activity_category == 'interview':
+                    applicant._write({'result': last_activity.interview_result
+
+                                      })
+                else:
+                    applicant._write({'result': last_activity.call_result_id
+
+                                      })
     def _get_history_data(self, applicant_id):
         if applicant_id == False:
             return self.env['hr.applicant.history']
-        domain = [('partner_id', '=', applicant_id)]
+        domain = [('partner_id', '=', applicant_id), ('id', 'not in', self.ids)]
+        apps=self.env['hr.applicant'].search(domain)
+        for app in apps:
+            if app:
+                app._get_activity()
+
         return self.env['hr.applicant.history'].search(domain)
 
     @api.onchange('partner_id')
     def onchange_hr_applicant(self):
+
         history = self._get_history_data(self.partner_id.id)
         self.applicant_history_ids = [(6, 0, history.ids)]
 

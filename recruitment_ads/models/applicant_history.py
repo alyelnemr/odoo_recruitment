@@ -29,6 +29,9 @@ class Applicant(models.Model):
         'Next Activity Deadline', related='activity_ids.date_deadline',
         readonly=True,
     )
+    last_activity = fields.Many2one('mail.activity.type', store=True, readonly=True , compute=False)
+    last_activity_date = fields.Date( store=True, readonly=True , compute=False)
+    result = fields.Char(store=True, readonly=True , compute=False)
 
     # email_from = fields.Char(required=False, readonly=True)
     # partner_phone = fields.Char(readonly=True)
