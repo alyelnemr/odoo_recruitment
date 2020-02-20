@@ -98,6 +98,7 @@ class Applicant(models.Model):
     # employee_name = fields.Char(string="Employee Name", readonly=True)
     # attachment_ids = fields.One2many('ir.attachment', 'res_id', domain=[('res_model', '=', 'hr.applicant')],
     #                                  string='Attachments', readonly=True)
+    # 11 = 11
 
     def _select(self):
         select_str = """
