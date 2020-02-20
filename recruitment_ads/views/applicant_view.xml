@@ -56,9 +56,9 @@
                         <tree create="false" edit="false" delete="false">
                             <field name="partner_id" string="Applicant Name"/>
                             <field name="job_id" string="Job Position"/>
-                            <field name="last_activity" string="Last Activity"/>
-                            <field name="last_activity_date" string="Last Activity Date"/>
-                            <field name="result" string="Result"/>
+<!--                            <field name="last_activity" string="Last Activity"/>-->
+<!--                            <field name="last_activity_date" string="Last Activity Date"/>-->
+<!--                            <field name="result" string="Result"/>-->
                             <field name="stage_id" string="Last Stage"/>
                         </tree>
                     </field>
