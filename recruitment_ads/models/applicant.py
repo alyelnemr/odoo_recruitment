@@ -51,9 +51,9 @@ class Applicant(models.Model):
     #                                          string='History', readonly=False)
     applicant_history_ids = fields.Many2many('hr.applicant.history', 'applicant_history_relation', 'applicant_id', 'history_id',
                                              string='History',compute='onchange_hr_applicant')
-    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity',store=True)
-    last_activity_date = fields.Date(compute='_get_activity',store=True)
-    result = fields.Char(compute='_get_activity',store=True)
+    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity') # ,store=True
+    last_activity_date = fields.Date(compute='_get_activity') # ,store=True
+    result = fields.Char(compute='_get_activity') # ,store=True
     source_id = fields.Many2one('utm.source', required=True)
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
     cv_matched = fields.Boolean('Matched', default=False)
