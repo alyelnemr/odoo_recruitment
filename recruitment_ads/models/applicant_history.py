@@ -20,6 +20,10 @@ class Applicant(models.Model):
     #                              string="Tags", readonly=True)
     # tag_ids = fields.Many2many('hr.applicant.category','hr_applicant_category_hr_applicant_history_rel' ,'hr_applicant_id', 'hr_applicant_category_id',  'History',readonly=True)
     # categ_ids = fields.Many2many('hr.applicant.category',readonly=True)
+
+    last_activity = fields.Many2one('mail.activity.type', store=True, readonly=True, compute=False)
+    last_activity_date = fields.Date( store=True, readonly=True, compute=False)
+    result = fields.Char(store=True, readonly=True, compute=False)
     response_id = fields.Many2one('survey.user_input', "Response", ondelete="set null", oldname="response",
                                   readonly=True)
     campaign_id = fields.Many2one('utm.campaign', string='Campaign', readonly=True)
@@ -29,9 +33,6 @@ class Applicant(models.Model):
         'Next Activity Deadline', related='activity_ids.date_deadline',
         readonly=True,
     )
-    last_activity = fields.Many2one('mail.activity.type', store=True, readonly=True , compute=False)
-    last_activity_date = fields.Date( store=True, readonly=True , compute=False)
-    result = fields.Char(store=True, readonly=True , compute=False)
 
     # email_from = fields.Char(required=False, readonly=True)
     # partner_phone = fields.Char(readonly=True)

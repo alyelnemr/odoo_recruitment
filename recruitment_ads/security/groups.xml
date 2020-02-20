@@ -41,7 +41,7 @@
             <field ref="model_hr_job" name="model_id"/>
             <field name="domain_force">[(1,'=',1)]</field>
             <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
-        </record>
+        </record>applicant_history
         <record id="hr_offer_own_offers" model="ir.rule">
             <field name="name">See My Own Offers</field>
             <field name="model_id" ref="model_hr_offer"/>
