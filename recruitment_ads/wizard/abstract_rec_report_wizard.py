@@ -58,41 +58,41 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
     def onchange_bu_ids(self):
         self.job_ids = False
 
-    @api.onchange('date_from', 'date_to', 'bu_ids')
+    @api.onchange('bu_ids')
     def onchange_job_ids(self):
         if self.date_from and self.date_to:
-            changed_domain = [
-                '|',
-                '&',
-                ('create_date', '>=', self.date_from + ' 00:00:00'),
-                ('create_date', '<=', self.date_to + ' 23:59:59'),
-                '&',
-                ('write_date', '>=', self.date_from + ' 00:00:00'),
-                ('write_date', '<=', self.date_to + ' 23:59:59'),
-            ]
-            changed_applicants = self.env['hr.applicant'].search(changed_domain)
-            jobs = changed_applicants.mapped('job_id')
-            changed_activity_domain = ['&'] + changed_domain + [('res_model', '=', 'hr.applicant')]
-            changed_activity = self.env['mail.activity'].search(changed_activity_domain)
-            jobs |= self.env['hr.applicant'].browse(changed_activity.mapped('res_id')).mapped('job_id')
-
+            # changed_domain = [
+            #     '|',
+            #     '&',
+            #     ('create_date', '>=', self.date_from + ' 00:00:00'),
+            #     ('create_date', '<=', self.date_to + ' 23:59:59'),
+            #     '&',
+            #     ('write_date', '>=', self.date_from + ' 00:00:00'),
+            #     ('write_date', '<=', self.date_to + ' 23:59:59'),
+            # ]
+            # jobs = self.env['hr.applicant'].search(changed_domain).mapped('job_id')
+            # jobs = self.env['hr.applicant'].mapped('job_id')
+            # changed_activity_domain = ['&'] + changed_domain + [('res_model', '=', 'hr.applicant')]
+            # changed_activity = self.env['mail.activity'].search(changed_activity_domain)
+            # jobs |= self.env['hr.applicant'].browse(changed_activity.mapped('res_id')).mapped('job_id')
+            # jobs = self.env['hr.job'].search(changed_domain)
             if self.bu_ids:
                 if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager':
                     bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
                     recruiters = self.env['res.users'].search([('business_unit_id', 'in', self.bu_ids.ids)])
-                    return {'domain': {'job_ids': [('id', 'in', jobs.ids), ('id', 'in', bu_jobs.ids)],
+                    return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids), ('id', 'in', bu_jobs.ids)],
                                        'recruiter_ids': [('id', 'in', recruiters.ids)]}}
 
                 else:
                     bu_jobs = self.env['hr.job'].search(
                         [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
                          ('other_recruiters_ids', 'in', self.env.user.id)])
-                    return {'domain': {'job_ids': [('id', 'in', jobs.ids), ('id', 'in', bu_jobs.ids)]}}
+                    return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids), ('id', 'in', bu_jobs.ids)]}}
             else:
+                all_jobs = self.env['hr.job'].search([])
                 if self.check_rec_manager == 'manager':
                     recruiters = self.env['res.users'].search([])
-                    return {'domain': {'job_ids': [('id', 'in', jobs.ids)],
-                                       'recruiter_ids': [('id', 'in', recruiters.ids)]}}
+                    return {'domain': {'job_ids': [('id', 'in',all_jobs.ids)],'recruiter_ids': [('id', 'in', recruiters.ids)]}}
 
                 elif self.check_rec_manager == 'coordinator':
                     recruiters = self.env['res.users'].search(
@@ -101,9 +101,9 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
                     bu_jobs = self.env['hr.job'].search(
                         ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
-                    return {'domain': {'job_ids': [('id', 'in', jobs.ids), ('id', 'in', bu_jobs.ids)],
+                    return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids)],
                                        'recruiter_ids': [('id', 'in', recruiters.ids)]}}
                 else:
                     rec_jobs = self.env['hr.job'].search(
                         ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
-                    return {'domain': {'job_ids': [('id', 'in', jobs.ids), ('id', 'in', rec_jobs.ids)]}}
+                    return {'domain': {'job_ids': [('id', 'in', rec_jobs.ids)]}}
