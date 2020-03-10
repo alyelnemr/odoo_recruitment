@@ -21,15 +21,16 @@ class RecActivityXslx(models.AbstractModel):
             sheets.append({
                 'CV Source': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    1: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
-                    2: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    6: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                    7: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
-                    8: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    9: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                    2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                    4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    7: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                    8: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
+                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    10: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                 }
             })
 
@@ -47,7 +48,7 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 9
+            start = 10
             if max_sections_count >= 1:
                 sheets[0]['CV Source'].update({
                     start + 1: {'header': _('Section'),
@@ -78,17 +79,18 @@ class RecActivityXslx(models.AbstractModel):
                 'Calls': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
                         'type': 'many2one'},
-                    1: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
-                    2: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    6: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
-                    7: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
-                    8: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
-                    9: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    11: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                    2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                    4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    7: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
+                    8: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
+                    9: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
+                    10: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
+                    11: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    12: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
                 }
             })
 
@@ -106,7 +108,7 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 11
+            start = 12
             if not report.cv_source:
                 sheet= sheets[0]['Calls']
             else:
@@ -140,13 +142,14 @@ class RecActivityXslx(models.AbstractModel):
                 'Interviews': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
                         'type': 'many2one'},
-                    1: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
-                    2: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    4: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    6: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    7: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                    2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
+                    3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                    4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    7: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    8: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
                 }
             })
 
@@ -327,6 +330,7 @@ class RecActivityXslx(models.AbstractModel):
 class CVSourceLineWrapper:
     def __init__(self, cv_source):
         self.create_uid = cv_source.create_uid
+        self.generated_by_bu_id = cv_source.create_uid.business_unit_id
         self.application_code = cv_source.name
         self.partner_name = cv_source.partner_name
         self.email_from = cv_source.email_from
@@ -369,6 +373,7 @@ class CallLineWrapper:
     def __init__(self, call):
         applicant = call.env[call.res_model].browse(call.res_id)
         self.real_create_uid = call.real_create_uid
+        self.generated_by_bu_id = call.real_create_uid.business_unit_id
         self.application_code = applicant.name
         self.partner_name = applicant.partner_name
         self.email_from = applicant.email_from
@@ -457,6 +462,7 @@ class InterviewLineWrapper:
 class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
     def __init__(self, application):
         self.real_create_uid = application.create_uid
+        self.generated_by_bu_id = application.create_uid.business_unit_id
         self.application_code = application.name
         self.partner_name = application.partner_name
         self.email_from = application.email_from
