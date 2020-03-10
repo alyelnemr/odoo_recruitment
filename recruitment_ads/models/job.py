@@ -48,6 +48,7 @@ class BusinessUnit(models.Model):
 class Department(models.Model):
     _inherit = "hr.department"
 
+    allow_call= fields.Boolean(string='Allow Online Call')
     def _get_default_bu(self):
         return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
@@ -66,6 +67,22 @@ class Department(models.Model):
                          'unique(name,business_unit_id)',
                          'The name of the department must be unique per business unit!'), ]
 
+    @api.onchange('allow_call')
+    def _get_allow_call(self):
+        if not self.parent_id:
+            child_department= self.env['hr.department'].search([('parent_id','=',self._origin.id),('parent_id','!=',False)])
+            if child_department:
+               for child in child_department:
+                child.write({'allow_call': self.allow_call})
+
+    @api.model
+    def create(self, vals):
+        if vals['parent_id']:
+            parent_department = self.env['hr.department'].search([('id', '=', vals['parent_id'])])
+            if parent_department:
+                vals['allow_call'] = parent_department.allow_call
+
+        return super(Department, self).create(vals)
 
 class JobLevel(models.Model):
     _name = 'job.level'
