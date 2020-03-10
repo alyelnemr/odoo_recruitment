@@ -5,5 +5,9 @@
             <field name="name">Interview</field>
             <field name="category">interview</field>
         </record>
+        <record id="mail_activity_type_data_online_call" model="mail.activity.type">
+            <field name="name">Online Call/Message</field>
+            <field name="category">online_call</field>
+        </record>
     </data>
 </openerp>

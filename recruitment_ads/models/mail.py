@@ -4,7 +4,7 @@ from odoo import fields, models, api
 class MailActivityType(models.Model):
     _inherit = "mail.activity.type"
 
-    category = fields.Selection(selection_add=[('interview', 'Interview')])
+    category = fields.Selection(selection_add=[('interview', 'Interview'), ('online_call', 'Online Call/Message')])
 
 
 class MailActivity(models.Model):
