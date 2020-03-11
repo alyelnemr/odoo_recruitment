@@ -25,6 +25,8 @@
 
                 </xpath>
                 <xpath expr="//field[@name='priority']" position="after">
+                    <!--"allow_call" is a related filed, called in this view to allow the javascript to read its value to apply a certain condition-->
+                    <field name="allow_call" invisible="1"/>
                     <field name="cv_matched"/>
                     <field name="reason_of_rejection"
                            attrs="{'required':[('cv_matched','=',False)],'invisible':[('cv_matched','=',True)]}"/>
@@ -73,6 +75,10 @@
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="before">
                     <field name="offer_id" attrs="{'invisible': [('offer_id', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_mobile']" position="after">
+                    <field name="linkedin" widget ="url"/>
+                    <field name="facebook" widget ="url"/>
                 </xpath>
             </field>
         </record>
