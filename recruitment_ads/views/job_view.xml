@@ -19,7 +19,8 @@
                     <field name="job_title_ids" nolable="0" readonly="0"/>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="allow_call"/>
+                    <field name="allow_call" attrs="{'invisible': [('uid','!=',1)]}"/>
+
                 </xpath>
 
             </field>

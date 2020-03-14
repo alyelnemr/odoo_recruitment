@@ -47,8 +47,9 @@ class BusinessUnit(models.Model):
 
 class Department(models.Model):
     _inherit = "hr.department"
-
+    # current_user=fields.Many2one('res.users',default=lambda self: self.env.uid)
     allow_call= fields.Boolean(string='Allow Online Call')
+
     def _get_default_bu(self):
         return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
