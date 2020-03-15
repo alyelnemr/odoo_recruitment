@@ -16,20 +16,25 @@ class GeneralSheetReportWizard(models.TransientModel):
         self.ensure_one()
 
         no_records = True
+        if self.recruiter_ids:
+            responsible = self.recruiter_ids.ids
+        else:
+            responsible = self.env['hr.applicant'].search([]).mapped('user_id').ids
         domain = [
             ('create_date', '>=', self.date_from + ' 00:00:00'),
             ('create_date', '<=', self.date_to + ' 23:59:59'),
+            ('user_id', 'in', responsible),
         ]
 
         if self.job_ids:
-            if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager' :
-                domain.append(('job_id','in',self.job_ids.ids))
+            if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager':
+                domain.append(('job_id', 'in', self.job_ids.ids))
             else:
-                domain.append(('job_id','in',self.job_ids.ids))
+                domain.append(('job_id', 'in', self.job_ids.ids))
                 domain.append(('create_uid', '=', self.env.user.id))
         else:
             if self.bu_ids:
-                if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager' :
+                if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager':
                     bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
                     domain.append(('job_id', 'in', bu_jobs.ids))
 
@@ -42,7 +47,8 @@ class GeneralSheetReportWizard(models.TransientModel):
             else:
                 if self.check_rec_manager == 'coordinator':
                     bu_jobs = self.env['hr.job'].search(
-                        ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                        ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
                     domain.append(('job_id', 'in', bu_jobs.ids))
 
                 if self.check_rec_manager == 'officer':
@@ -51,7 +57,7 @@ class GeneralSheetReportWizard(models.TransientModel):
                     domain.append(('job_id', 'in', rec_jobs.ids))
                     domain.append(('create_uid', '=', self.env.user.id))
 
-        applications = self.env['hr.applicant'].search(domain , order='create_date desc')
+        applications = self.env['hr.applicant'].search(domain, order='create_date desc')
         if applications:
             no_records = False
             self.application_ids = [(6, 0, applications.ids)]
