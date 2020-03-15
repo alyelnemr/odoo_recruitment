@@ -72,7 +72,14 @@
                     />
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="before">
-                    <field name="offer_id" attrs="{'invisible': [('offer_id', '=', False)]}"/>
+                    <field name="offer_id" attrs="{'invisible': [('offer_id', '=', False)]}" />
+                </xpath>
+                  <xpath expr="//field[@name='source_id']" position="after">
+                    <field name="face_book"/>
+                    <field name="linkedin"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                 <attribute name="readonly">1</attribute>
                 </xpath>
             </field>
         </record>
@@ -126,6 +133,7 @@
                 <xpath expr="//notebook" position="attributes">
                     <attribute name="attrs">{'invisible': [('applicant','=', True)]}</attribute>
                 </xpath>
+
 <!--                <xpath expr="//field[@name='mobile']" position="attributes">-->
 <!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
 <!--                </xpath>-->
@@ -168,6 +176,18 @@
                 <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}" required="1"/>
             </xpath>
 <!---->
+        </field>
+    </record>
+<!-- make field responsible readonly for officer  -->
+    <record model="ir.ui.view"  id="view_id">
+        <field name="name">view.id</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
+        <field name="groups_id" eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </field>
         </field>
     </record>
    <menuitem action="utm.utm_source_action" id="menu_utm_source" parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="4" groups="recruitment_ads.group_view_source_menu" />

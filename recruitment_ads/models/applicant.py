@@ -2,6 +2,7 @@ import re
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
+
 class IrAttachmentInherit(models.Model):
     _inherit = 'ir.attachment'
     # attach_name_seq = fields.Char()
@@ -10,8 +11,8 @@ class IrAttachmentInherit(models.Model):
     @api.onchange('datas_fname')
     def _get_attach_name(self):
         if self.datas_fname and self.res_model == 'hr.applicant':
-            no_attach= self.env['ir.attachment'].search([('res_id', '=', self.res_id)],order='create_date asc')
-            extension= self.datas_fname.split(".")
+            no_attach = self.env['ir.attachment'].search([('res_id', '=', self.res_id)], order='create_date asc')
+            extension = self.datas_fname.split(".")
             if extension:
                 last_item = len(extension) - 1
                 extension = extension[last_item]
@@ -24,10 +25,11 @@ class IrAttachmentInherit(models.Model):
                     self.file_name_seq = str(1)
                 if self.name:
                     self.datas_fname = self.name + '(' + self.file_name_seq + ')' + '.' + extension
-                    self.name = self.name + '(' + self.file_name_seq  + ')'
+                    self.name = self.name + '(' + self.file_name_seq + ')'
+
     @api.depends('res_model', 'res_id')
     def _compute_res_name(self):
-        res = super(IrAttachmentInherit, self). _compute_res_name()
+        res = super(IrAttachmentInherit, self)._compute_res_name()
         for attachment in self:
             if attachment.res_model and attachment.res_id:
                 if attachment.res_model == 'hr.applicant':
@@ -36,9 +38,11 @@ class IrAttachmentInherit(models.Model):
                     attachment.name = record.display_name
         return res
 
+
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
+    # user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=lambda self: self.env.user.id)
     email_from = fields.Char(required=False)
     partner_phone = fields.Char()
     partner_mobile = fields.Char()
@@ -64,6 +68,8 @@ class Applicant(models.Model):
     name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
                        store=True)
     serial = fields.Char('serial', copy=False)
+    face_book = fields.Char(string='Facebook Link ',readonly=True)
+    linkedin = fields.Char(string='LinkedIn Link',readonly=True)
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')
@@ -96,6 +102,7 @@ class Applicant(models.Model):
         if self.with_context({'active_test': False}).activity_ids:
             raise ValidationError(_("Can't delete application that has activities"))
         return super(Applicant, self).unlink()
+
     # @api.onchange('partner_id')
 
     # @api.depends('activity_ids')
@@ -128,6 +135,19 @@ class Applicant(models.Model):
                                           })
                     else:
                         applicant.result = last_activity.call_result_id
+    #
+    # @api.onchange('job_id')
+    # def onchange_job_id(self):
+    #     result=super(Applicant, self).onchange_job_id()
+    #     if self.user_id == False:
+    #         self.user_id = self.env.user.id
+    #     return result
+    @api.onchange('job_id')
+    def onchange_job_id(self):
+        vals = self._onchange_job_id_internal(self.job_id.id)
+        self.department_id = vals['value']['department_id']
+        # self.user_id = vals['value']['user_id']
+        self.stage_id = vals['value']['stage_id']
 
     def _get_history_data(self, applicant_id):
         if applicant_id == False:
@@ -162,10 +182,10 @@ class Applicant(models.Model):
         self.ensure_one()
         calendar_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_calender').id
         form_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_form').id
-        if  self.job_id.name and self.partner_name:
-            name= self.job_id.name+"-"+self.partner_name + "'s interview"
+        if self.job_id.name and self.partner_name:
+            name = self.job_id.name + "-" + self.partner_name + "'s interview"
         else:
-            name=''
+            name = ''
         action = {
             'type': 'ir.actions.act_window',
             'name': 'Schedule Interview',
@@ -217,17 +237,18 @@ class Applicant(models.Model):
     def validate_mail(self):
         if self.email_from:
             # I add 'A-Z' to allow capital letters in email format
-            match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email_from)
+            match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+                             self.email_from)
             if match == None:
                 raise ValidationError('Not a valid E-mail ID')
 
-    @api.constrains('email_form','partner_mobile')
+    @api.constrains('email_form', 'partner_mobile')
     def constrain_email_mobile(self):
         for applicant in self:
             if not applicant.email_from and not applicant.partner_mobile:
-                raise ValidationError (_('Please insert Applicant Mobile or Email '))
+                raise ValidationError(_('Please insert Applicant Mobile or Email '))
 
-    @api.constrains('partner_mobile','partner_name','partner_phone')
+    @api.constrains('partner_mobile', 'partner_name', 'partner_phone')
     def constrain_partner_mobile(self):
         # pattern =re.compile("[0-9]")
         # pattern = re.compile("[@_!#$%^&*()<>?/\|}{~:]")
@@ -235,8 +256,8 @@ class Applicant(models.Model):
         # if match == None:
         for applicant in self:
             if applicant.partner_mobile:
-                if applicant.partner_mobile.isnumeric() == False or len(applicant.partner_mobile) > 15 :
-                    raise ValidationError (_('Mobile number must be digits only and not greater than 15 digit. '))
+                if applicant.partner_mobile.isnumeric() == False or len(applicant.partner_mobile) > 15:
+                    raise ValidationError(_('Mobile number must be digits only and not greater than 15 digit. '))
             if applicant.partner_phone:
                 if applicant.partner_phone.isnumeric() == False or len(applicant.partner_phone) > 15:
                     raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
@@ -244,11 +265,12 @@ class Applicant(models.Model):
                 # pattern = re.compile("[0-9]")
                 # pattern = ('^([^~+&@!#$%]*)$')
                 # match = re.search('^([{}\[\]\^~+&@!#)=\'"/|$%(*!+_\-]*)$',applicant.partner_name)
-                if all(x.isalpha() or x.isspace() for x in applicant.partner_name ):
+                if all(x.isalpha() or x.isspace() for x in applicant.partner_name):
                     pass
                 else:
-                # if applicant.partner_name.isalpha() == False :
+                    # if applicant.partner_name.isalpha() == False :
                     raise ValidationError(_('Applicant Name must be Characters only . '))
+
 
 class Stage(models.Model):
     _inherit = 'hr.recruitment.stage'
