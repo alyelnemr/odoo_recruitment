@@ -83,10 +83,6 @@
                 <xpath expr="//field[@name='user_id']" position="attributes">
                  <attribute name="readonly">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='partner_mobile']" position="after">
-                    <field name="linkedin" widget ="url"/>
-                    <field name="facebook" widget ="url"/>
-                </xpath>
             </field>
         </record>
 
