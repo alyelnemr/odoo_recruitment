@@ -68,6 +68,7 @@ class Applicant(models.Model):
     name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
                        store=True)
     serial = fields.Char('serial', copy=False)
+    allow_call = fields.Boolean(string="Allow Online Call", related="department_id.allow_call")
     face_book = fields.Char(string='Facebook Link ',readonly=True)
     linkedin = fields.Char(string='LinkedIn Link',readonly=True)
 

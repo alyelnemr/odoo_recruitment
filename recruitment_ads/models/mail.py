@@ -1,10 +1,12 @@
-from odoo import fields, models, api
+from odoo import fields, models, api, _
+from odoo.exceptions import ValidationError
 
 
 class MailActivityType(models.Model):
     _inherit = "mail.activity.type"
 
-    category = fields.Selection(selection_add=[('interview', 'Interview')])
+    category = fields.Selection(selection_add=[('interview', 'Interview'), ('facebook_call', 'Facebook Call'),
+                                               ('linkedIn_call', 'LinkedIn Call')])
 
 
 class MailActivity(models.Model):
@@ -93,6 +95,21 @@ class MailActivity(models.Model):
         self.write({'active': False})
         self.update_calendar_event()
         return message.ids and message.ids[0] or False
+
+    @api.multi
+    def action_close_dialog(self):
+        if self.res_model == 'hr.applicant':
+            hr_applicant_id = self.env['hr.applicant'].browse([self.res_id])
+            if self.activity_type_id.name == "Call":
+                if not hr_applicant_id.partner_phone and not hr_applicant_id.partner_mobile:
+                    raise ValidationError(_("Please insert Applicant Mobile /Phone in order to schedule Call?"))
+            if self.activity_type_id.name == "Facebook Call":
+                if not hr_applicant_id.facebook:
+                    raise ValidationError(_("Please insert Applicant Facebook in order to schedule Facebook Call?"))
+            if self.activity_type_id.name == "LinkedIn Call":
+                if not hr_applicant_id.facebook:
+                    raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
+        return {'type': 'ir.actions.act_window_close'}
 
 
 class CallResult(models.Model):

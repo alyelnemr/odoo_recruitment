@@ -163,13 +163,25 @@ Chatter.include({
         }
     },
     _onScheduleActivity: function () {
-
-        if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
-            this.fields.activity.scheduleActivity(false);
+    debugger;
+        if (this.record.data.job_id){
+            if (this.record.data.allow_call){
+                this.fields.activity.scheduleActivity(false);
+            }else{
+                if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
+                    this.fields.activity.scheduleActivity(false);
+                }else{
+                    console.log('elseeee')
+                    alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
+                }
+            }
         }else{
-            console.log('elseeee')
-            alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
-
+            if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
+                this.fields.activity.scheduleActivity(false);
+            }else{
+                console.log('elseeee')
+                alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
+            }
         }
     },
 
