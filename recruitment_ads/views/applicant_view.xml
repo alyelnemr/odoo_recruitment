@@ -76,10 +76,6 @@
                 <xpath expr="//field[@name='user_id']" position="before">
                     <field name="offer_id" attrs="{'invisible': [('offer_id', '=', False)]}" />
                 </xpath>
-                  <xpath expr="//field[@name='source_id']" position="after">
-                    <field name="face_book"/>
-                    <field name="linkedin"/>
-                </xpath>
                 <xpath expr="//field[@name='user_id']" position="attributes">
                  <attribute name="readonly">1</attribute>
                 </xpath>
