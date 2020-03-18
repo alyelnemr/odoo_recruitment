@@ -83,6 +83,10 @@
                 <xpath expr="//field[@name='user_id']" position="attributes">
                  <attribute name="readonly">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='partner_mobile']" position="after">
+                    <field name="linkedin" widget ="url"/>
+                    <field name="face_book" widget ="url"/>
+                </xpath>
             </field>
         </record>
 
@@ -135,7 +139,10 @@
                 <xpath expr="//notebook" position="attributes">
                     <attribute name="attrs">{'invisible': [('applicant','=', True)]}</attribute>
                 </xpath>
-
+                <xpath expr="//field[@name='email']" position="after">
+                    <field name="face_book" widget ="url"/>
+                    <field name="linkedin" widget ="url"/>
+                </xpath>
 <!--                <xpath expr="//field[@name='mobile']" position="attributes">-->
 <!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
 <!--                </xpath>-->

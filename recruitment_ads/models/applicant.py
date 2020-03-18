@@ -69,8 +69,8 @@ class Applicant(models.Model):
                        store=True)
     serial = fields.Char('serial', copy=False)
     allow_call = fields.Boolean(string="Allow Online Call", related="department_id.allow_call")
-    face_book = fields.Char(string='Facebook Link ',readonly=True)
-    linkedin = fields.Char(string='LinkedIn Link',readonly=True)
+    face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=True)
+    linkedin = fields.Char(string='LinkedIn Link',  related="partner_id.linkedin", readonly=True)
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')
@@ -177,6 +177,8 @@ class Applicant(models.Model):
         self.partner_mobile = self.partner_id.mobile
         self.email_from = self.partner_id.email
         self.partner_name = self.partner_id.name
+        self.face_book = self.partner_id.face_book
+        self.linkedin = self.partner_id.linkedin
 
     @api.multi
     def action_makeMeeting(self):
