@@ -143,6 +143,28 @@ class Applicant(models.Model):
     #     if self.user_id == False:
     #         self.user_id = self.env.user.id
     #     return result
+    def _onchange_job_id_internal(self, job_id):
+        department_id = False
+        user_id = False
+        stage_id = self.stage_id.id
+        if job_id:
+            job = self.env['hr.job'].browse(job_id)
+            department_id = job.department_id.id
+            # user_id = job.user_id.id
+            if not self.stage_id:
+                stage_ids = self.env['hr.recruitment.stage'].search([
+                    '|',
+                    ('job_id', '=', False),
+                    ('job_id', '=', job.id),
+                    ('fold', '=', False)
+                ], order='sequence asc', limit=1).ids
+                stage_id = stage_ids[0] if stage_ids else False
+
+        return {'value': {
+            'department_id': department_id,
+            'stage_id': stage_id
+        }}
+
     @api.onchange('job_id')
     def onchange_job_id(self):
         vals = self._onchange_job_id_internal(self.job_id.id)
