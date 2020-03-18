@@ -267,11 +267,12 @@ class Applicant(models.Model):
             if match == None:
                 raise ValidationError('Not a valid E-mail ID')
 
-    @api.constrains('email_form', 'partner_mobile')
+    @api.constrains('email_form', 'partner_mobile', 'partner_phone', 'face_book', 'linkedin')
     def constrain_email_mobile(self):
         for applicant in self:
-            if not applicant.email_from and not applicant.partner_mobile:
-                raise ValidationError(_('Please insert Applicant Mobile or Email '))
+            if not applicant.email_from and not applicant.partner_mobile and not applicant.partner_phone and \
+                    not applicant.face_book and not applicant.linkedin:
+                raise ValidationError(_('Please insert at least one Applicant info.'))
 
     @api.constrains('partner_mobile', 'partner_name', 'partner_phone')
     def constrain_partner_mobile(self):

@@ -6,7 +6,7 @@ class Offer(models.TransientModel):
     _name = "hr.offer.wizard"
     _inherits = {'hr.offer':'offer_id'}
 
-    offer_id = fields.Many2one('hr.offer',string="Offer",auto_join=True)
+    offer_id = fields.Many2one('hr.offer', string="Offer", auto_join=True, required=True, ondelete='restrict')
 
     @api.multi
     def action_save(self):

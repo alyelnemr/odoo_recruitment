@@ -151,3 +151,10 @@ class PartnerInherit(models.Model):
             match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email)
             if match == None:
                 raise ValidationError('Not a valid E-mail ID')
+
+    @api.constrains('email', 'mobile', 'phone', 'face_book', 'linkedin')
+    def constrain_email_mobile(self):
+        for applicant in self:
+            if not applicant.email and not applicant.mobile and not applicant.phone and not applicant.face_book and \
+                    not applicant.linkedin:
+                raise ValidationError(_('Please insert at least one Applicant info.'))
