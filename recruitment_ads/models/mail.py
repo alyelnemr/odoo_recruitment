@@ -96,20 +96,20 @@ class MailActivity(models.Model):
         self.update_calendar_event()
         return message.ids and message.ids[0] or False
 
-    @api.multi
-    def action_close_dialog(self):
-        if self.res_model == 'hr.applicant':
-            hr_applicant_id = self.env['hr.applicant'].browse([self.res_id])
-            if self.activity_type_id.name == "Call":
+    @api.model
+    def create(self, values):
+        if self._context.get('default_res_model', False) == 'hr.applicant':
+            hr_applicant_id = self.env['hr.applicant'].browse([values.get('res_id', False)])
+            if values.get('activity_type_id', False) == 2:
                 if not hr_applicant_id.partner_phone and not hr_applicant_id.partner_mobile:
                     raise ValidationError(_("Please insert Applicant Mobile /Phone in order to schedule Call?"))
-            if self.activity_type_id.name == "Facebook Call":
+            if values.get('activity_type_id', False) == 6:
                 if not hr_applicant_id.face_book:
                     raise ValidationError(_("Please insert Applicant Facebook in order to schedule Facebook Call?"))
-            if self.activity_type_id.name == "LinkedIn Call":
+            if values.get('activity_type_id', False) == 7:
                 if not hr_applicant_id.linkedin:
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
-        return {'type': 'ir.actions.act_window_close'}
+        return super(MailActivity, self).create(values)
 
 
 class CallResult(models.Model):
