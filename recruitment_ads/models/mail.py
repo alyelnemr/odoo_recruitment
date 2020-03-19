@@ -104,10 +104,10 @@ class MailActivity(models.Model):
                 if not hr_applicant_id.partner_phone and not hr_applicant_id.partner_mobile:
                     raise ValidationError(_("Please insert Applicant Mobile /Phone in order to schedule Call?"))
             if self.activity_type_id.name == "Facebook Call":
-                if not hr_applicant_id.facebook:
+                if not hr_applicant_id.face_book:
                     raise ValidationError(_("Please insert Applicant Facebook in order to schedule Facebook Call?"))
             if self.activity_type_id.name == "LinkedIn Call":
-                if not hr_applicant_id.facebook:
+                if not hr_applicant_id.linkedin:
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
         return {'type': 'ir.actions.act_window_close'}
 

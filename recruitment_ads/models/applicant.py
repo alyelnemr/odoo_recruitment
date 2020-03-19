@@ -42,10 +42,9 @@ class IrAttachmentInherit(models.Model):
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
-    # user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=lambda self: self.env.user.id)
-    email_from = fields.Char(required=False)
-    partner_phone = fields.Char()
-    partner_mobile = fields.Char()
+    email_from = fields.Char(related="partner_id.email")
+    partner_phone = fields.Char(related="partner_id.phone")
+    partner_mobile = fields.Char(related="partner_id.mobile")
 
     partner_name = fields.Char(required=True)
     job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
@@ -69,8 +68,8 @@ class Applicant(models.Model):
                        store=True)
     serial = fields.Char('serial', copy=False)
     allow_call = fields.Boolean(string="Allow Online Call", related="department_id.allow_call")
-    face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=True)
-    linkedin = fields.Char(string='LinkedIn Link',  related="partner_id.linkedin", readonly=True)
+    face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
+    linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')

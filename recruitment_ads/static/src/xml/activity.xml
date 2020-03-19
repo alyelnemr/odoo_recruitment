@@ -3,8 +3,10 @@
     <t t-extend="mail.activity_feedback_form">
         <t t-jquery="div" t-operation="replace">
             <div>
-                <b t-if="previous_activity_type_id == 2">Call Result</b>
-                <select t-if="previous_activity_type_id == 2" type="text" name="delivery_time" class="form-control o_required" rows="3" id="activity_call_result" placeholder="Call Result">
+                <b t-if="previous_activity_type_id == 2 or previous_activity_type_id == 6 or previous_activity_type_id == 7">Call Result</b>
+                <select t-if="previous_activity_type_id == 2 or previous_activity_type_id == 6 or previous_activity_type_id == 7"
+                        type="text" name="delivery_time" class="form-control o_required" rows="3"
+                        id="activity_call_result" placeholder="Call Result">
                     <option value=""></option>
                     <option value="Interested">Interested</option>
                     <option value="Not interested">Not interested</option>
