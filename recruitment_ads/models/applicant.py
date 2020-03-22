@@ -68,8 +68,8 @@ class Applicant(models.Model):
                        store=True)
     serial = fields.Char('serial', copy=False)
     allow_call = fields.Boolean(string="Allow Online Call", related="department_id.allow_call")
-    face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
-    linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
+    # face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
+    # linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')
