@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
+        <record id="crm_case_tree_view_job_inherit2" model="ir.ui.view">
+            <field name="name">hr.applicant.tree.inherit2</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.crm_case_tree_view_job"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="last_activity"/>
+                    <field name="last_activity_date"/>
+                    <field name="result"/>
+                </xpath>
+            </field>
+        </record>
         <record model="ir.ui.view" id="crm_case_form_view_job_inherit2">
             <field name="name">Jobs - Recruitment Form</field>
             <field name="model">hr.applicant</field>
