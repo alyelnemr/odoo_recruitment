@@ -181,8 +181,8 @@ class RecruiterActivityReportWizard(models.TransientModel):
 
         if self.hired:
             domain = [
-                ('issue_date', '>=', self.date_from),
-                ('issue_date', '<=', self.date_to),
+                ('hiring_date', '>=', self.date_from),
+                ('hiring_date', '<=', self.date_to),
             ]
             if self.recruiter_ids:
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))

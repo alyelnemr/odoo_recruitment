@@ -438,8 +438,8 @@ class RecActivityXslx(models.AbstractModel):
 
         if report.hired:
             self.write_array_header('Hired')
-            for offer in report.offer_ids.sorted(lambda o: (o.issue_date, o.create_date), reverse=True):
-                self.write_line(offerLineWrapper(offer), 'Hired')
+            for hired in report.hired_ids.sorted(lambda o: (o.issue_date, o.create_date), reverse=True):
+                self.write_line(offerLineWrapper(hired), 'Hired')
 
 
 # noinspection PyProtectedMember
