@@ -18,17 +18,21 @@ class RecruiterActivityReportWizard(models.TransientModel):
     cv_source = fields.Boolean('Cv Source')
     calls = fields.Boolean('Calls')
     interviews = fields.Boolean('Interviews')
-    offer = fields.Boolean('Offered and Hired')
+    offer = fields.Boolean('Offered')
+    hired = fields.Boolean('Hired')
 
     application_ids = fields.Many2many('hr.applicant')
-    call_ids = fields.Many2many('mail.activity','call_recruiter_report_rel','report_id','call_id',domain=[('active','=',False)])
-    interview_ids = fields.Many2many('mail.activity','interview_recruiter_report_rel','report_id','interview_id',domain=[('active','=',False)])
+    call_ids = fields.Many2many('mail.activity', 'call_recruiter_report_rel', 'report_id', 'call_id',
+                                domain=[('active', '=', False)])
+    interview_ids = fields.Many2many('mail.activity', 'interview_recruiter_report_rel', 'report_id', 'interview_id',
+                                     domain=[('active', '=', False)])
     offer_ids = fields.Many2many('hr.offer', 'offer_recruiter_report_rel', 'report_id', 'offer_id')
+    hired_ids = fields.Many2many('hr.offer', 'hired_recruiter_report_rel', 'report_id', 'offer_id')
 
     @api.multi
     def button_export_xlsx(self):
         self.ensure_one()
-        if not (self.calls or self.cv_source or self.interviews or self.offer):
+        if not (self.calls or self.cv_source or self.interviews or self.offer or self.hired):
             raise ValidationError(_("Please Select at least one activity to export"))
         no_records = True
         if self.cv_source:
@@ -174,6 +178,41 @@ class RecruiterActivityReportWizard(models.TransientModel):
             if offer:
                 no_records = False
             self.offer_ids = [(6, 0, offer.ids)]
+
+        if self.hired:
+            domain = [
+                ('issue_date', '>=', self.date_from),
+                ('issue_date', '<=', self.date_to),
+            ]
+            if self.recruiter_ids:
+                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+            if self.job_ids:
+                domain.append(('job_id', 'in', self.job_ids.ids))
+            else:
+                if self.bu_ids:
+                    if self.check_rec_manager == 'manager' or self.check_rec_manager == 'coordinator':
+                        bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                    else:
+                        bu_jobs = self.env['hr.job'].search(
+                            [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
+                             ('other_recruiters_ids', 'in', self.env.user.id)])
+                    domain.append(('job_id', 'in', bu_jobs.ids))
+
+                else:
+                    if self.check_rec_manager == 'coordinator':
+                        bu_jobs = self.env['hr.job'].search(
+                            ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                             ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                        domain.append(('job_id', 'in', bu_jobs.ids))
+                    if self.check_rec_manager == 'officer':
+                        bu_jobs = self.env['hr.job'].search(
+                            ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
+                        domain.append(('job_id', 'in', bu_jobs.ids))
+            domain.append(('state', '=', 'hired'))
+            hired = self.env['hr.offer'].search(domain, order='issue_date desc')
+            if hired:
+                no_records = False
+            self.hired_ids = [(6, 0, hired.ids)]
 
         if no_records:
             raise ValidationError(_("No record to display"))
