@@ -126,12 +126,14 @@
             <field name="arch" type="xml">
                 <field name="name" position="before">
                     <field name="business_unit_id"/>
+                    <field name="department_id"/>
                 </field>
                 <field name="no_of_hired_employee" position="after">
                     <field name="no_of_hired_applicants"/>
                 </field>
                 <xpath expr="//div[@class='o_primary']" position="before">
                    <div class="o_primary"><t t-esc="record.business_unit_id.value"/></div>
+                   <div class="o_primary"><t t-esc="record.department_id.value"/></div>
                 </xpath>
 
                 <xpath expr="//div[@class='col-xs-12 o_kanban_primary_bottom bottom_block']/field[@name='no_of_hired_employee']"
