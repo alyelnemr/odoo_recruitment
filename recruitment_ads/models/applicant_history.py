@@ -43,8 +43,8 @@ class Applicant(models.Model):
     def column_exists(self):
         """ Return whether the given column exists. """
         query = """ SELECT column_name FROM information_schema.columns
-                            WHERE table_name=%s AND  (column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s) """
-        result=self.env.cr.execute(query, ('hr_applicant', 'last_activity','last_activity_date','result','face_book','linkedin'))
+                            WHERE table_name=%s AND  (column_name = %s AND column_name = %s AND column_name = %s AND column_name = %s AND column_name = %s AND column_name = %s) """
+        result=self.env.cr.execute(query, ('hr_applicant', 'last_activity','last_activity_date','result','face_book','linkedin','response_id'))
         # return result
         return {row['column_name']: row for row in self.env.cr.dictfetchall()}
     @api.model_cr
