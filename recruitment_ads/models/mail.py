@@ -1,6 +1,6 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError
-
+from datetime import date, datetime, timedelta
 
 class MailActivityType(models.Model):
     _inherit = "mail.activity.type"
@@ -111,6 +111,14 @@ class MailActivity(models.Model):
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
         return super(MailActivity, self).create(values)
 
+    # override the method to change due date when select call take the current date not after two days
+    @api.onchange('activity_type_id')
+    def _onchange_activity_type_id(self):
+        res=super(MailActivity, self)._onchange_activity_type_id()
+        if self.activity_type_id:
+            self.summary = self.activity_type_id.summary
+            self.date_deadline = datetime.now()
+        return res
 
 class CallResult(models.Model):
     _name = 'call.result'
