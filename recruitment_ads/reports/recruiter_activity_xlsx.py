@@ -24,13 +24,14 @@ class RecActivityXslx(models.AbstractModel):
                     1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
                     3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                    4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    7: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                    8: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
-                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    10: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    4: {'header': _('Have CV'), 'field': 'have_cv', 'width': 20, 'type': 'bool'},
+                    5: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    6: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    7: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    8: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                    9: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
+                    10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    11: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                 }
             })
 
@@ -48,7 +49,7 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 10
+            start = 11
             if max_sections_count >= 1:
                 sheets[0]['CV Source'].update({
                     start + 1: {'header': _('Section'),
@@ -449,6 +450,7 @@ class CVSourceLineWrapper:
         self.generated_by_bu_id = cv_source.create_uid.business_unit_id
         self.application_code = cv_source.name
         self.partner_name = cv_source.partner_name
+        self.have_cv = cv_source.have_cv
         self.email_from = cv_source.email_from
         self.partner_phone = cv_source.partner_phone
         self.partner_mobile = cv_source.partner_mobile

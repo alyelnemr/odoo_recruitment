@@ -72,6 +72,15 @@ class Applicant(models.Model):
     # linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
     face_book = fields.Char(string='Facebook Link ', readonly=False)
     linkedin = fields.Char(string='LinkedIn Link', readonly=False)
+    have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
+
+    @api.one
+    @api.depends('attachment_ids')
+    def _get_attachment(self):
+        if self.attachment_ids:
+            self.have_cv = True
+        else:
+            self.have_cv = False
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')
