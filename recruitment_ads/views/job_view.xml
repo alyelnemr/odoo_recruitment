@@ -153,7 +153,7 @@
                         <group>
                             <field name="department_ids" widget='many2many_tags' readonly="1"/>
                             <field name="name" string="Job Name"/>
-                            <field name="job_code" attrs="{'readonly':[('has_application','=',True)]}"/>
+                            <field name="job_code" />
                         </group>
                         <separator string="Job Levels"/>
                         <field name="job_level_ids" nolable="1"/>

@@ -10,9 +10,34 @@ class JobPosition(models.Model):
     _name = 'job.title'
     name = fields.Char(required=True)
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
-    job_code = fields.Char(string="Job Code", required=True)
+    job_code = fields.Char(string="Job Code", required=True ,compute='_compute_get_job_code',store=True )
     has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
-    job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels")
+    job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels" )
+
+    #  Method to generate job code to take first two letter and if it repated add number
+    #""" get first two letters of first two words then check if this code found before or not
+     # if no then  save the code if  yes the add  "_" and the seq number of code
+    # """
+    @api.one
+    @api.depends('name')
+    def _compute_get_job_code(self):
+         initials = []
+         if self.name:
+             job_name= self.name.split()[:2]
+             for initial in job_name:
+                 initials.append(initial[:2].upper())
+             job_code="".join(initial for initial in initials)if initials else False
+             self._cr.execute("select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",(job_code,str(job_code)+'\_%',))
+             results = self.env.cr.fetchall()
+             if results:
+                if len(results)> 1:
+                    last_code = list(results[len(results) - 1])
+                    last_index=str(last_code[0])[-1:]
+                    self.job_code=job_code+'_'+str(int(last_index)+1)
+                else :
+                     self.job_code = job_code + '_' + str(1)
+             else:
+                  self.job_code = job_code
 
     def _compute_has_application(self):
         title_id = self.id
