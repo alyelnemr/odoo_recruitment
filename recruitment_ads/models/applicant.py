@@ -83,15 +83,15 @@ class Applicant(models.Model):
             self.have_cv = False
 
     @api.one
-    @api.depends('job_id.job_title_id.job_code', 'partner_id.date_of_birth', 'partner_name', 'serial')
+    @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
     def _compute_get_application_code(self):
         job_code = self.job_id.job_title_id.job_code
-        date_of_birth = self.partner_id.date_of_birth if self.partner_id.date_of_birth else "0000"
+        applicant_mobile = self.partner_id.mobile[-3:] if self.partner_mobile else "N/A"
         initials = ''.join(
-            initial[0].upper() for initial in self.partner_name.split())[:4] if self.partner_name else False
+            initial[:2].upper() for initial in self.partner_name.split())[:4] if self.partner_name else False
         applicant_name = initials
         serial = self.serial
-        self.name = '-'.join(filter(lambda i: i, [job_code, date_of_birth, applicant_name, serial]))
+        self.name = '-'.join(filter(lambda i: i, [applicant_name, job_code, applicant_mobile, serial]))
 
     @api.model
     def create(self, vals):
