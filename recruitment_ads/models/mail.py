@@ -109,6 +109,7 @@ class MailActivity(models.Model):
             if values.get('activity_type_id', False) == 7:
                 if not hr_applicant_id.linkedin:
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
+            hr_applicant_id.write({'user_id':self.env.user.id})
         return super(MailActivity, self).create(values)
 
     # override the method to change due date when select call take the current date not after two days
@@ -119,7 +120,11 @@ class MailActivity(models.Model):
             self.summary = self.activity_type_id.summary
             self.date_deadline = datetime.now()
         return res
-
+    # override method to close wizard and refresh page
+    def action_close_dialog(self):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload', }
 class CallResult(models.Model):
     _name = 'call.result'
 

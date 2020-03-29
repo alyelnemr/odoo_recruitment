@@ -208,6 +208,11 @@ class Interview(models.Model):
                 defaults = self.default_get(['activity_ids', 'res_model_id', 'res_id', 'user_id'])
                 res_model_id = values.get('res_model_id', defaults.get('res_model_id'))
                 res_id = values.get('res_id', defaults.get('res_id'))
+                # get applicant id then get object of applicant to update resposible recruiter by current user
+                applicant_id = values.get('applicant_id', defaults.get('applicant_id'))
+                applicant_obj=self.env['hr.applicant'].sudo().browse(applicant_id)
+                applicant_obj.write({'user_id': self.env.user.id})
+                #
                 user_id = values.get('user_id', defaults.get('user_id'))
                 if not defaults.get('activity_ids') and res_model_id and res_id:
                     if hasattr(self.env[self.env['ir.model'].sudo().browse(res_model_id).model], 'activity_ids'):

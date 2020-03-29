@@ -73,6 +73,8 @@ class Applicant(models.Model):
     face_book = fields.Char(string='Facebook Link ', readonly=False)
     linkedin = fields.Char(string='LinkedIn Link', readonly=False)
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
+    user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=False)
+    source_resp= fields.Many2one('res.users', "Source Responsible", track_visibility="onchange")
 
     @api.multi
     @api.depends('attachment_ids.res_id')
@@ -97,6 +99,8 @@ class Applicant(models.Model):
     @api.model
     def create(self, vals):
         res = super(Applicant, self).create(vals)
+        if not res.source_resp :
+            res.source_resp = self.env.user.id
         sequence = self.env.ref('recruitment_ads.sequence_application')
         number = sequence.next_by_id()
         res.serial = number
