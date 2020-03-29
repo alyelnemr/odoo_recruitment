@@ -74,14 +74,13 @@ class Applicant(models.Model):
     linkedin = fields.Char(string='LinkedIn Link', readonly=False)
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
 
-    @api.multi
-    @api.depends('attachment_ids.res_id')
+    @api.one
+    @api.depends('attachment_ids')
     def _get_attachment(self):
-        for record in self:
-            if record.attachment_ids:
-                    record.have_cv = True
-            else:
-                    record.have_cv = False
+        if self.attachment_ids:
+            self.have_cv = True
+        else:
+            self.have_cv = False
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
