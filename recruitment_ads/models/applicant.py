@@ -216,6 +216,7 @@ class Applicant(models.Model):
         self.partner_name = self.partner_id.name
         self.face_book = self.partner_id.face_book
         self.linkedin = self.partner_id.linkedin
+        # self.linkedin = self.partner_id.linkedin
 
     @api.multi
     def action_makeMeeting(self):
