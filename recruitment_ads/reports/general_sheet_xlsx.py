@@ -15,14 +15,17 @@ class GeneralSheetXslx(models.AbstractModel):
             report.with_context({'active_test': False}).application_ids.mapped('count_done_interviews')) - 1
         sheets.append({
             'General Sheet': {
-                0: {'header': _('Applicant Code'), 'field': 'application_code', 'width': 20},
-                1: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
-                2: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                3: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                4: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                5: {'header': _('Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                6: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                7: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                2: {'header': _('Applicant Code'), 'field': 'application_code', 'width': 20},
+                3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
+                4: {'header': _('Have CV'), 'field': 'have_cv', 'width': 20, 'type': 'bool'},
+                5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                6: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                7: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                8: {'header': _('Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                10: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
 
             }
         })
@@ -40,7 +43,7 @@ class GeneralSheetXslx(models.AbstractModel):
                     department = department.parent_id
                 if len(department_list) > max_sections_count:
                     max_sections_count = len(department_list)
-        start = 7
+        start = 10
         if max_sections_count >= 1:
             sheets[0]['General Sheet'].update({
                 start + 1: {'header': _('Section'),
@@ -113,8 +116,11 @@ class GeneralSheetXslx(models.AbstractModel):
 
 class GeneralSheetWrapper:
     def __init__(self, application):
+        self.create_uid = application.create_uid
+        self.generated_by_bu_id = application.create_uid.business_unit_id
         self.application_code = application.name
         self.partner_name = application.partner_name
+        self.have_cv = application.have_cv
         self.partner_mobile = application.partner_mobile
         self.email_from = application.email_from
         self.cv_matched = application.cv_matched
