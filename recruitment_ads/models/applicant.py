@@ -42,7 +42,7 @@ class IrAttachmentInherit(models.Model):
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
-    email_from = fields.Char()
+    email_from = fields.Char(related="partner_id.email")
     partner_phone = fields.Char(related="partner_id.phone")
     partner_mobile = fields.Char(related="partner_id.mobile")
 
@@ -73,14 +73,17 @@ class Applicant(models.Model):
     face_book = fields.Char(string='Facebook Link ', readonly=False)
     linkedin = fields.Char(string='LinkedIn Link', readonly=False)
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
+    user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=False)
+    source_resp= fields.Many2one('res.users', "Source Responsible", track_visibility="onchange")
 
-    @api.one
-    @api.depends('attachment_ids')
+    @api.multi
+    @api.depends('attachment_ids.res_id')
     def _get_attachment(self):
-        if self.attachment_ids:
-            self.have_cv = True
-        else:
-            self.have_cv = False
+        for record in self:
+            if record.attachment_ids:
+                record.have_cv = True
+            else:
+                record.have_cv = False
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
@@ -96,6 +99,8 @@ class Applicant(models.Model):
     @api.model
     def create(self, vals):
         res = super(Applicant, self).create(vals)
+        if not res.source_resp :
+            res.source_resp = self.env.user.id
         sequence = self.env.ref('recruitment_ads.sequence_application')
         number = sequence.next_by_id()
         res.serial = number
