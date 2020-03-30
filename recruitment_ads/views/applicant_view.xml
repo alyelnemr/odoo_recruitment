@@ -210,17 +210,17 @@
             </field>
         </field>
     </record>
-    <record model="ir.ui.view"  id="source_rec_view_id">
-        <field name="name">source responsible</field>
-        <field name="model">hr.applicant</field>
-        <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
-        <field name="groups_id" eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
-        <field name="arch" type="xml">
-            <field name="source_resp" position="attributes">
-                <attribute name="readonly">0</attribute>
-            </field>
-        </field>
-    </record>
+<!--    <record model="ir.ui.view"  id="source_rec_view_id">-->
+<!--        <field name="name">source responsible</field>-->
+<!--        <field name="model">hr.applicant</field>-->
+<!--        <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>-->
+<!--        <field name="groups_id" eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <field name="source_resp" position="attributes">-->
+<!--                <attribute name="readonly">0</attribute>-->
+<!--            </field>-->
+<!--        </field>-->
+<!--    </record>-->
 <!---->
    <menuitem action="utm.utm_source_action" id="menu_utm_source" parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="4" groups="recruitment_ads.group_view_source_menu" />
 
