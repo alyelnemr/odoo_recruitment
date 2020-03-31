@@ -42,7 +42,7 @@ class IrAttachmentInherit(models.Model):
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
-    email_from = fields.Char(related="partner_id.email")
+    email_from = fields.Char()
     partner_phone = fields.Char(related="partner_id.phone")
     partner_mobile = fields.Char(related="partner_id.mobile")
 
