@@ -125,7 +125,7 @@ class GeneralSheetWrapper:
         self.email_from = application.email_from
         self.cv_matched = application.cv_matched
         self.source_id = application.source_id
-        self.business_unit_id = application.department_id.business_unit_id
+        self.business_unit_id = application.job_id.business_unit_id
         if application.job_id.department_id.parent_id:
             department = application.job_id.department_id
             department_list = []
