@@ -53,7 +53,7 @@ class MailActivity(models.Model):
                 mail_activity_type_id=activity.activity_type_id.id,
             )
             message |= record.message_ids[0]
-
+            record.write({'result': interview_result})
         self.write({'active': False})
         self.mapped('calendar_event_id').write({'is_interview_done': True})
         self.update_calendar_event(interview_result)
@@ -73,7 +73,7 @@ class MailActivity(models.Model):
                 mail_activity_type_id=activity.activity_type_id.id,
             )
             message |= record.message_ids[0]
-
+            record.write({'result':call_result_id})
         self.write({'active': False})
         self.update_calendar_event(call_result_id)
         return message.ids and message.ids[0] or False
@@ -109,7 +109,10 @@ class MailActivity(models.Model):
             if values.get('activity_type_id', False) == 7:
                 if not hr_applicant_id.linkedin:
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
-            hr_applicant_id.write({'user_id':self.env.user.id})
+            hr_applicant_id.write({'last_activity':values['activity_type_id'],
+                                   'last_activity_date':values['date_deadline'],
+                                  })
+
         return super(MailActivity, self).create(values)
 
     # override the method to change due date when select call take the current date not after two days
