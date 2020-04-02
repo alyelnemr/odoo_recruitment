@@ -10,7 +10,7 @@ class JobPosition(models.Model):
     _name = 'job.title'
     name = fields.Char(required=True)
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
-    job_code = fields.Char(string="Job Code", required=True ,compute='_compute_get_job_code',store=True )
+    job_code = fields.Char(string="Job Code", required=True ,readonly=True ,store=True )
     has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
     job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels" )
 
@@ -18,8 +18,8 @@ class JobPosition(models.Model):
     #""" get first two letters of first two words then check if this code found before or not
      # if no then  save the code if  yes the add  "_" and the seq number of code
     # """
-    @api.one
-    @api.depends('name')
+    # @api.one
+    @api.onchange('name')
     def _compute_get_job_code(self):
          initials = []
          if self.name:
