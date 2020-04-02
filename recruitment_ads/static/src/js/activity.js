@@ -180,7 +180,7 @@ MailActivity.include({
                                     .then(self.scheduleActivity.bind(self, previous_activity_type_id));
                             }
                         }
-                        else if (previous_activity_type_id == 2){
+                        else if (previous_activity_type_id == 2 || previous_activity_type_id == 6 || previous_activity_type_id == 7){
                             if (call_result_id === "") {
                                 Dialog.alert(
                                     self,
@@ -220,7 +220,7 @@ MailActivity.include({
 //                            .then(self._reload.bind(self, {activity: true, thread: true}));
 //
 //                        }
-                        if (previous_activity_type_id == 2){
+                        if (previous_activity_type_id == 2 || previous_activity_type_id == 6 || previous_activity_type_id == 7){
                             var call_result_id = _.escape($popover.find('#activity_call_result').val());
                                if (call_result_id === "") {
                                     Dialog.alert(

@@ -456,7 +456,7 @@ class CVSourceLineWrapper:
         self.partner_mobile = cv_source.partner_mobile
         self.source_id = cv_source.source_id
         self.create_date = cv_source.create_date
-        self.business_unit_id = cv_source.department_id.business_unit_id
+        self.business_unit_id = cv_source.job_id.business_unit_id
         if cv_source.job_id.department_id.parent_id:
             department = cv_source.job_id.department_id
             department_list = []

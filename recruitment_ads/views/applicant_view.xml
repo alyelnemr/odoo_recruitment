@@ -202,7 +202,7 @@
     <record model="ir.ui.view"  id="user_view_id">
         <field name="name">recruiter responsible</field>
         <field name="model">hr.applicant</field>
-        <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
+        <field name="inherit_id" ref="crm_case_form_view_job_inherited"/>
         <field name="groups_id" eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
         <field name="arch" type="xml">
             <field name="user_id" position="attributes">

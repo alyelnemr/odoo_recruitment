@@ -42,7 +42,7 @@ class IrAttachmentInherit(models.Model):
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
-    email_from = fields.Char(related="partner_id.email")
+    email_from = fields.Char()
     partner_phone = fields.Char(related="partner_id.phone")
     partner_mobile = fields.Char(related="partner_id.mobile")
 
@@ -221,30 +221,33 @@ class Applicant(models.Model):
     @api.multi
     def action_makeMeeting(self):
         self.ensure_one()
-        calendar_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_calender').id
-        form_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_form').id
-        if self.job_id.name and self.partner_name:
-            name = self.job_id.name + "-" + self.partner_name + "'s interview"
+        if not self.partner_phone or not self.partner_mobile or not self.email_from:
+            raise ValidationError('Please insert Applicant Mobile /Email /Phone in order to schedule activity .')
         else:
-            name = ''
-        action = {
-            'type': 'ir.actions.act_window',
-            'name': 'Schedule Interview',
-            'res_model': 'calendar.event',
-            'view_mode': 'calendar,form',
-            'view_type': 'form',
-            'view_id': form_view_id,
-            'views': [[calendar_view_id, 'calendar'], [form_view_id, 'form']],
-            'target': 'current',
-            'domain': [['type', '=', 'interview']],
-            'context': {
-                'default_name': name,
-                'default_res_id': self.id,
-                'default_res_model': self._name,
-                'default_type': 'interview',
-            },
-        }
-        return action
+            calendar_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_calender').id
+            form_view_id = self.env.ref('recruitment_ads.view_calendar_event_interview_form').id
+            if self.job_id.name and self.partner_name:
+                name = self.job_id.name + "-" + self.partner_name + "'s interview"
+            else:
+                name = ''
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': 'Schedule Interview',
+                'res_model': 'calendar.event',
+                'view_mode': 'calendar,form',
+                'view_type': 'form',
+                'view_id': form_view_id,
+                'views': [[calendar_view_id, 'calendar'], [form_view_id, 'form']],
+                'target': 'current',
+                'domain': [['type', '=', 'interview']],
+                'context': {
+                    'default_name': name,
+                    'default_res_id': self.id,
+                    'default_res_model': self._name,
+                    'default_type': 'interview',
+                },
+            }
+            return action
 
     @api.multi
     @api.returns('ir.attachment')
