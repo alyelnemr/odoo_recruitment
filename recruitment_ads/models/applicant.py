@@ -89,7 +89,7 @@ class Applicant(models.Model):
     @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
     def _compute_get_application_code(self):
         job_code = self.job_id.job_title_id.job_code
-        applicant_mobile = self.partner_id.mobile[-3:] if self.partner_mobile else "N/A"
+        applicant_mobile = self.partner_mobile[-3:] if self.partner_mobile else "N/A"
         initials = ''.join(
             initial[:2].upper() for initial in self.partner_name.split())[:4] if self.partner_name else False
         applicant_name = initials
