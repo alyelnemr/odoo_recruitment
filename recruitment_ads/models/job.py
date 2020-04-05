@@ -10,34 +10,61 @@ class JobPosition(models.Model):
     _name = 'job.title'
     name = fields.Char(required=True)
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
-    job_code = fields.Char(string="Job Code", required=True ,readonly=True ,store=True )
+    job_code = fields.Char(string="Job Code",readonly=True ,store=True )
     has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
     job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels" )
 
-    #  Method to generate job code to take first two letter and if it repated add number
+    #  override create to generate job code to take first two letter and if it repated add number specific for each code
     #""" get first two letters of first two words then check if this code found before or not
      # if no then  save the code if  yes the add  "_" and the seq number of code
     # """
-    # @api.one
-    @api.onchange('name')
-    def _compute_get_job_code(self):
+    @api.model
+    def create(self, vals):
          initials = []
-         if self.name:
-             job_name= self.name.split()[:2]
+         if vals['name']:
+             job_name = vals['name'].split()[:2]
              for initial in job_name:
                  initials.append(initial[:2].upper())
-             job_code="".join(initial for initial in initials)if initials else False
-             self._cr.execute("select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",(job_code,str(job_code)+'\_%',))
+             job_code = "".join(initial for initial in initials) if initials else False
+             self._cr.execute(
+                 "select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",
+                 (job_code, str(job_code) + '\_%',))
              results = self.env.cr.fetchall()
              if results:
+                 if len(results) > 1:
+                     last_code = list(results[len(results) - 1])  # convert to list and get last item
+                     last_index = str(last_code[0])[-1:]  # convert to string then get last charcter
+                     vals['job_code'] = job_code + '_' + str(int(last_index) + 1)
+                 else:
+                     vals['job_code'] = job_code + '_' + str(1)
+             else:
+                 vals['job_code'] = job_code
+         return super(JobPosition, self).create(vals)
+
+
+    @api.multi
+    def write(self, vals):
+        initials = []
+        if vals['name']:
+            job_name =  vals['name'].split()[:2]
+            for initial in job_name:
+                initials.append(initial[:2].upper())
+            job_code = "".join(initial for initial in initials) if initials else False
+            # update the old value by null to not get as a result for secound query
+            self._cr.execute(" update job_title set job_code = '---' where id =  %s " ,(self.id,) )
+            self._cr.execute(
+                "select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",(job_code,str(job_code)+'\_%',))
+            results = self.env.cr.fetchall()
+            if results:
                 if len(results)> 1:
                     last_code = list(results[len(results) - 1]) # convert to list and get last item
                     last_index=str(last_code[0])[-1:] # convert to string then get last charcter
-                    self.job_code=job_code+'_'+str(int(last_index)+1)
+                    vals['job_code']=job_code+'_'+str(int(last_index)+1)
                 else :
-                     self.job_code = job_code + '_' + str(1)
-             else:
-                  self.job_code = job_code
+                    vals['job_code'] = job_code + '_' + str(1)
+            else:
+                vals['job_code'] = job_code
+        return super(JobPosition, self).write(vals)
 
     def _compute_has_application(self):
         title_id = self.id
