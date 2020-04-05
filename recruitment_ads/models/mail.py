@@ -111,6 +111,7 @@ class MailActivity(models.Model):
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
             hr_applicant_id.write({'last_activity':values['activity_type_id'],
                                    'last_activity_date':values['date_deadline'],
+                                   'user_id': self.env.user.id,
                                   })
 
         return super(MailActivity, self).create(values)

@@ -74,7 +74,7 @@ class Applicant(models.Model):
     linkedin = fields.Char(string='LinkedIn Link', readonly=False)
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
     user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=False)
-    source_resp= fields.Many2one('res.users', "Source Responsible", track_visibility="onchange")
+    source_resp= fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",default=lambda self: self.env.user.id )
 
     @api.multi
     @api.depends('attachment_ids.res_id')
