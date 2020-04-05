@@ -194,8 +194,17 @@ class GeneralSheetWrapper:
         :param data:
         :return:
         """
+        activity_type = ""
         if activity == 'call':
-            activity_type = data.env.ref('mail.mail_activity_data_call')
+            if data.with_context({'active_test': False}).activity_ids.filtered(
+                    lambda r: r.activity_type_id.name == "Call"):
+                activity_type = data.env.ref('mail.mail_activity_data_call')
+            if data.with_context({'active_test': False}).activity_ids.filtered(
+                    lambda r: r.activity_type_id.name == "LinkedIn Call"):
+                activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_linkedIn_call')
+            if data.with_context({'active_test': False}).activity_ids.filtered(
+                    lambda r: r.activity_type_id.name == "Facebook Call"):
+                activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_facebook_call')
         if activity == 'interview':
             activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_interview')
         return data.with_context({'active_test': False}).activity_ids.filtered(

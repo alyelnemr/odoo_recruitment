@@ -7,7 +7,7 @@ from odoo import tools
 from odoo.addons.calendar.models.calendar import Meeting, is_calendar_id, calendar_id2real_id
 from odoo.exceptions import ValidationError
 from odoo.tools import pycompat
-
+from datetime import datetime
 
 class Interview(models.Model):
     _inherit = 'calendar.event'
@@ -210,8 +210,9 @@ class Interview(models.Model):
                 res_id = values.get('res_id', defaults.get('res_id'))
                 # get applicant id then get object of applicant to update resposible recruiter by current user
                 applicant_id = values.get('applicant_id', defaults.get('applicant_id'))
-                applicant_obj=self.env['hr.applicant'].sudo().browse(applicant_id)
-                applicant_obj.write({'user_id': self.env.user.id})
+                if applicant_id:
+                    applicant_obj=self.env['hr.applicant'].sudo().browse(applicant_id)
+                    applicant_obj.write({'user_id': self.env.user.id})
                 #
                 user_id = values.get('user_id', defaults.get('user_id'))
                 if not defaults.get('activity_ids') and res_model_id and res_id:
@@ -224,6 +225,10 @@ class Interview(models.Model):
                                 'res_id': res_id,
                                 'activity_type_id': meeting_activity_type.id,
                             }
+                            if applicant_obj:
+                                applicant_obj.write({'last_activity': meeting_activity_type.id,
+                                                     'last_activity_date': datetime.strptime(values['start'], "%Y-%m-%d %H:%M:%S").date(),
+                                                     })
                             if user_id:
                                 activity_vals['user_id'] = user_id
                             values['activity_ids'] = [(0, 0, activity_vals)]
