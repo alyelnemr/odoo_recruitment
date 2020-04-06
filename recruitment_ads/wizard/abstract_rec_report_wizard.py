@@ -80,19 +80,22 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
                 if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager':
                     bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
                     recruiters = self.env['res.users'].search([('business_unit_id', 'in', self.bu_ids.ids)])
-                    return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids), ('id', 'in', bu_jobs.ids)],
+                    return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids)],
                                        'recruiter_ids': [('id', 'in', recruiters.ids)]}}
 
                 else:
+                    applications = self.env['hr.applicant'].search(
+                        ['|', ('source_resp', '=', self.env.user.id),('user_id', '=', self.env.user.id)])
                     bu_jobs = self.env['hr.job'].search(
                         [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
                          ('other_recruiters_ids', 'in', self.env.user.id)])
-                    return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids), ('id', 'in', bu_jobs.ids)]}}
+                    return {'domain': {'job_ids': ['|',('id', 'in', bu_jobs.ids),('id', 'in', applications.mapped('job_id.id'))]}}
             else:
                 all_jobs = self.env['hr.job'].search([])
                 if self.check_rec_manager == 'manager':
                     recruiters = self.env['res.users'].search([])
-                    return {'domain': {'job_ids': [('id', 'in',all_jobs.ids)],'recruiter_ids': [('id', 'in', recruiters.ids)]}}
+                    return {'domain': {'job_ids': [('id', 'in', all_jobs.ids)],
+                                       'recruiter_ids': [('id', 'in', recruiters.ids)]}}
 
                 elif self.check_rec_manager == 'coordinator':
                     recruiters = self.env['res.users'].search(
@@ -104,6 +107,9 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
                     return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids)],
                                        'recruiter_ids': [('id', 'in', recruiters.ids)]}}
                 else:
+                    applications = self.env['hr.applicant'].search(
+                        ['|', ('source_resp', '=', self.env.user.id), ('user_id', '=', self.env.user.id)])
                     rec_jobs = self.env['hr.job'].search(
                         ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
-                    return {'domain': {'job_ids': [('id', 'in', rec_jobs.ids)]}}
+                    return {'domain': {
+                        'job_ids': ['|', ('id', 'in', rec_jobs.ids), ('id', 'in', applications.mapped('job_id.id'))]}}

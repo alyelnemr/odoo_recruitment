@@ -1,5 +1,4 @@
-
-from odoo import api, fields, models,_
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -40,34 +39,46 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ('create_date', '>=', self.date_from + ' 00:00:00'),
                 ('create_date', '<=', self.date_to + ' 23:59:59'),
             ]
-            if self.recruiter_ids:
-                domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+
             if self.job_ids:
-                 domain.append(('job_id', 'in', self.job_ids.ids))
+                domain.append(('job_id', 'in', self.job_ids.ids))
+                if self.recruiter_ids:
+                    domain += [('create_uid', 'in', self.recruiter_ids.ids)]
             else:
                 if self.bu_ids:
-                    if self.check_rec_manager == 'manager' or  self.check_rec_manager == 'coordinator':
+                    if self.check_rec_manager == 'manager' or self.check_rec_manager == 'coordinator':
+                        if self.recruiter_ids:
+                            domain += [('create_uid', 'in', self.recruiter_ids.ids),
+                                       ('job_id.business_unit_id', 'in', self.bu_ids.ids)]
                         bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
                     else:
+                        if self.recruiter_ids:
+                            domain += ['|', '&', ('create_uid', 'in', self.recruiter_ids.ids),
+                                       ('job_id.business_unit_id', 'in', self.bu_ids.ids)]
                         bu_jobs = self.env['hr.job'].search(
                             [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
                              ('other_recruiters_ids', 'in', self.env.user.id)])
-                    domain.append(('job_id','in', bu_jobs.ids))
+                    domain.append(('job_id', 'in', bu_jobs.ids))
                 else:
+
                     if self.check_rec_manager == 'coordinator':
+                        if self.recruiter_ids:
+                            domain += [('create_uid', 'in', self.recruiter_ids.ids)]
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                              ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
                         domain.append(('job_id', 'in', bu_jobs.ids))
 
-                    if  self.check_rec_manager == 'officer':
+                    if self.check_rec_manager == 'officer':
+                        if self.recruiter_ids:
+                            domain += ['|', ('create_uid', 'in', self.recruiter_ids.ids)]
                         rec_jobs = self.env['hr.job'].search(
                             ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
-                        domain.append(('job_id', 'in', rec_jobs.ids))
+                        domain+=[('job_id', 'in', rec_jobs.ids)]
             applications = self.env['hr.applicant'].search(domain, order='create_date desc')
             if applications:
                 no_records = False
-            self.application_ids = [(6,0,applications.ids)]
+            self.application_ids = [(6, 0, applications.ids)]
 
         if self.calls:
             domain = [
@@ -90,7 +101,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
                         bu_jobs = self.env['hr.job'].search(
                             [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
                              ('other_recruiters_ids', 'in', self.env.user.id)])
-                    calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs)
+                    calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs )
                 else:
                     if self.check_rec_manager == 'coordinator':
                         bu_jobs = self.env['hr.job'].search(
@@ -103,7 +114,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
                         calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs)
             if calls:
                 no_records = False
-            self.call_ids = [(6,0,calls.ids)]
+            self.call_ids = [(6, 0, calls.ids)]
 
         if self.interviews:
             domain = [
@@ -133,16 +144,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                              ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
-                        interviews = interviews.filtered(
-                            lambda c: c.calendar_event_id.hr_applicant_id.job_id in bu_jobs)
-                    if  self.check_rec_manager == 'officer':
+                    if self.check_rec_manager == 'officer':
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
-
-                        interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in bu_jobs)
+                    interviews = interviews.filtered(
+                        lambda c: c.calendar_event_id.hr_applicant_id.job_id in bu_jobs)
             if interviews:
                 no_records = False
-            self.interview_ids = [(6,0,interviews.ids)]
+            self.interview_ids = [(6, 0, interviews.ids)]
 
         if self.offer:
             domain = [
@@ -157,6 +166,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 if self.bu_ids:
                     if self.check_rec_manager == 'manager' or self.check_rec_manager == 'coordinator':
                         bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+
                     else:
                         bu_jobs = self.env['hr.job'].search(
                             [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
@@ -168,12 +178,11 @@ class RecruiterActivityReportWizard(models.TransientModel):
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                              ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
-                        domain.append(('job_id', 'in', bu_jobs.ids))
                     if self.check_rec_manager == 'officer':
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
 
-                        domain.append(('job_id', 'in', bu_jobs.ids))
+                    domain.append(('job_id', 'in', bu_jobs.ids))
             offer = self.env['hr.offer'].search(domain, order='issue_date desc')
             if offer:
                 no_records = False
@@ -203,11 +212,11 @@ class RecruiterActivityReportWizard(models.TransientModel):
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                              ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
-                        domain.append(('job_id', 'in', bu_jobs.ids))
                     if self.check_rec_manager == 'officer':
                         bu_jobs = self.env['hr.job'].search(
                             ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
-                        domain.append(('job_id', 'in', bu_jobs.ids))
+                    domain.append(('job_id', 'in', bu_jobs.ids))
+
             domain.append(('state', '=', 'hired'))
             hired = self.env['hr.offer'].search(domain, order='issue_date desc')
             if hired:
