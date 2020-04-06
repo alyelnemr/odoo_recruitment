@@ -101,7 +101,7 @@ Chatter.include({
     },
     start: function () {
         //override to add interview button
-        this._super.apply(this, arguments);
+        var res = this._super.apply(this, arguments);
 
         this.$topbar = this.$('.o_chatter_topbar');
 
@@ -111,11 +111,11 @@ Chatter.include({
         }));
 
         // start and append the widgets
-//        var fieldDefs = _.invoke(this.fields, 'appendTo', $('<div>'));
-//        var def = this.dp.add($.when.apply($, fieldDefs));
-//        this._render(def).then(this._updateMentionSuggestions.bind(this));
+        var fieldDefs = _.invoke(this.fields, 'appendTo', $('<div>'));
+        var def = this.dp.add($.when.apply($, fieldDefs));
+        this._render(def).then(this._updateMentionSuggestions.bind(this));
 
-//        return this._super.apply(this, arguments);;
+        return res;
     },
     _onScheduleInterview: function () {
         if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
