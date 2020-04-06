@@ -85,14 +85,14 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
 
                 else:
                     applications = self.env['hr.applicant'].search(
-                        ['|', ('source_resp', '=', self.env.user.id),('user_id', '=', self.env.user.id)])
+                        [('job_id.business_unit_id', 'in', self.bu_ids.ids),'|', ('source_resp', '=', self.env.user.id),('user_id', '=', self.env.user.id)])
                     bu_jobs = self.env['hr.job'].search(
                         [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
                          ('other_recruiters_ids', 'in', self.env.user.id)])
                     return {'domain': {'job_ids': ['|',('id', 'in', bu_jobs.ids),('id', 'in', applications.mapped('job_id.id'))]}}
             else:
-                all_jobs = self.env['hr.job'].search([])
                 if self.check_rec_manager == 'manager':
+                    all_jobs = self.env['hr.job'].search([])
                     recruiters = self.env['res.users'].search([])
                     return {'domain': {'job_ids': [('id', 'in', all_jobs.ids)],
                                        'recruiter_ids': [('id', 'in', recruiters.ids)]}}

@@ -75,6 +75,11 @@ class RecruiterActivityReportWizard(models.TransientModel):
                         rec_jobs = self.env['hr.job'].search(
                             ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
                         domain+=[('job_id', 'in', rec_jobs.ids)]
+
+                    if self.check_rec_manager == 'manager':
+                        if self.recruiter_ids:
+                            domain += [('create_uid', 'in', self.recruiter_ids.ids)]
+
             applications = self.env['hr.applicant'].search(domain, order='create_date desc')
             if applications:
                 no_records = False
