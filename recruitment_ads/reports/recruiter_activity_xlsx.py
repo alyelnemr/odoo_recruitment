@@ -29,7 +29,7 @@ class RecActivityXslx(models.AbstractModel):
                     6: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
                     7: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                     8: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                    9: {'header': _('Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
+                    9: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
                     10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
                     11: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                 }
