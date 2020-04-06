@@ -86,12 +86,13 @@ class RecActivityXslx(models.AbstractModel):
                     4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                     5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
                     6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    7: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
-                    8: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
-                    9: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
-                    10: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    11: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    12: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    7: {'header': _('Call Type'), 'field': 'call_type', 'width': 18},
+                    8: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
+                    9: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
+                    10: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
+                    11: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
+                    12: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    13: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
                 }
             })
 
@@ -109,7 +110,7 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 12
+            start = 13
             # if not report.cv_source:
             #     sheet= sheets[0]['Calls']
             # else:
@@ -497,6 +498,7 @@ class CallLineWrapper:
         self.email_from = applicant.email_from
         self.partner_phone = applicant.partner_phone
         self.partner_mobile = applicant.partner_mobile
+        self.call_type = call.activity_type_id.name
         self.write_date = call.write_date
         self.user_id = call.user_id
         self.call_result_id = call.call_result_id
