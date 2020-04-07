@@ -50,7 +50,7 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 11
+            start = 12
             if max_sections_count >= 1:
                 sheets[0]['CV Source'].update({
                     start + 1: {'header': _('Section'),
