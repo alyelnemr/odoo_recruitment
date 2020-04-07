@@ -23,9 +23,10 @@ class GeneralSheetXslx(models.AbstractModel):
                 5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                 6: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                 7: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                8: {'header': _('Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                10: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                8: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                9: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,'type': 'many2one'},
+                10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                11: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
 
             }
         })
@@ -127,6 +128,7 @@ class GeneralSheetWrapper:
         self.email_from = application.email_from
         self.cv_matched = application.cv_matched
         self.source_id = application.source_id
+        self.source_resp = application.source_resp
         self.business_unit_id = application.job_id.business_unit_id
         if application.job_id.department_id.parent_id:
             department = application.job_id.department_id
