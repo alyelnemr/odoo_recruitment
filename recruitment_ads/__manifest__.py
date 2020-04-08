@@ -12,7 +12,7 @@
 Handel recruitment Process
     """,
     'depends': ['base', 'base_setup', 'bus', 'web_tour', 'hr_recruitment', 'mail', 'sync_ldap_ads', 'report_xlsx',
-                'decimal_precision'],
+                'decimal_precision', 'base_partner_merge'],
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
