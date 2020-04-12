@@ -31,6 +31,12 @@ class PartnerInherit(models.Model):
     date_of_birth = fields.Date(string='Date of Birth')
     face_book = fields.Char(string='Facebook')
     linkedin = fields.Char(string='LinkedIn')
+    applications_ids = fields.One2many('hr.applicant', 'partner_id', string="Applications")
+    last_app_job_id = fields.Many2one('hr.job', string="Last Application Job", compute='_get_last_application')
+    last_app_last_activity_id = fields.Many2one('mail.activity.type', string="Last Application Last Activity",
+                                                compute='_get_last_application')
+    last_app_last_activity_date = fields.Date(string="Last Application Last Activity Date",
+                                              compute='_get_last_application')
 
     _sql_constraints = [
         ('mobile_uniq',
@@ -40,6 +46,16 @@ class PartnerInherit(models.Model):
          'CHECK (1=1)',
          'Data entered before.')
     ]
+
+    @api.multi
+    def _get_last_application(self):
+        for contact in self:
+            if contact.applications_ids:
+                last_application = \
+                    [application for application in contact.applications_ids.sorted(lambda a: a.id)][-1]
+                contact.last_app_job_id = last_application.job_id
+                contact.last_app_last_activity_id = last_application.last_activity
+                contact.last_app_last_activity_date = last_application.last_activity_date
 
     @api.model_cr_context
     def _auto_init(self):

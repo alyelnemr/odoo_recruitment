@@ -11,7 +11,8 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
-        'mail'
+        'mail',
+        'recruitment_ads',
     ],
     'data': [
         'views/base_partner_merge.xml',

@@ -99,7 +99,7 @@ class Applicant(models.Model):
     @api.model
     def create(self, vals):
         res = super(Applicant, self).create(vals)
-        if not res.source_resp :
+        if not res.source_resp:
             res.source_resp = self.env.user.id
         sequence = self.env.ref('recruitment_ads.sequence_application')
         number = sequence.next_by_id()
