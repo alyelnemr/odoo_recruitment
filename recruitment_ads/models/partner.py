@@ -1,22 +1,23 @@
 import logging
 import re
 
-from odoo import models, api, fields,tools, _
+from odoo import models, api, fields, tools, _
 from odoo.addons.base.res.res_partner import Partner
 from odoo.osv.expression import get_unaccent_wrapper
 from odoo.exceptions import ValidationError
+
 _schema = logging.getLogger('odoo.schema')
 
 
 class PartnerInherit(models.Model):
     _inherit = 'res.partner'
 
-    @api.constrains('mobile','name','phone')
+    @api.constrains('mobile', 'name', 'phone')
     def constrain_partner_mobile(self):
         for applicant in self:
             if applicant.phone:
-                if applicant.phone.isnumeric() == False or len(applicant.phone) > 15 :
-                    raise ValidationError (_('Mobile number must be digits only and not greater than 15 digit. '))
+                if applicant.phone.isnumeric() == False or len(applicant.phone) > 15:
+                    raise ValidationError(_('Mobile number must be digits only and not greater than 15 digit. '))
             if applicant.mobile:
                 if applicant.mobile.isnumeric() == False or len(applicant.mobile) > 15:
                     raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
@@ -41,10 +42,10 @@ class PartnerInherit(models.Model):
     _sql_constraints = [
         ('mobile_uniq',
          'CHECK (1=1)',
-         'Data entered before.'),
+         'Mobile has been entered before.'),
         ('email_uniq',
          'CHECK (1=1)',
-         'Data entered before.')
+         'Email has been entered before.')
     ]
 
     @api.multi
@@ -174,3 +175,53 @@ class PartnerInherit(models.Model):
             if not applicant.email and not applicant.mobile and not applicant.phone and not applicant.face_book and \
                     not applicant.linkedin:
                 raise ValidationError(_('Please insert at least one Applicant info.'))
+
+    @api.multi
+    def action_open_partner_merge(self):
+        view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
+        # merge_contact_id = self.env['base.partner.merge.automatic.wizard'].create(
+        #     {'state': 'option', 'dst_partner_id': res_id})
+        self.ensure_one()
+        action = {
+            'name': _('merge'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'base.partner.merge.automatic.wizard',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': 14,
+            'context': self._context,
+        }
+        return action
+
+    @api.multi
+    def write(self, vals):
+        contact_obj = self.env['res.partner']
+        duplicated_contact = []
+        if self.email:
+            duplicated_email = contact_obj.search([('email', '=', self.email)])
+            duplicated_contact.append(duplicated_email) if duplicated_email not in duplicated_contact and len(
+                duplicated_email) > 1 else False
+        if self.mobile:
+            duplicated_mobile = contact_obj.search([('mobile', '=', self.mobile)])
+            duplicated_contact.append(duplicated_mobile) if duplicated_mobile not in duplicated_contact and len(
+                duplicated_mobile) > 1 else False
+        if self.phone:
+            duplicated_phone = contact_obj.search([('phone', '=', self.phone)])
+            duplicated_contact.append(duplicated_phone) if duplicated_phone not in duplicated_contact and len(
+                duplicated_phone) > 1 else False
+        if self.face_book:
+            duplicated_face_book = contact_obj.search([('face_book', '=', self.face_book)])
+            duplicated_contact.append(duplicated_face_book) if duplicated_face_book not in duplicated_contact and len(
+                duplicated_face_book) > 1 else False
+        if self.linkedin:
+            duplicated_linkedin = contact_obj.search([('linkedin', '=', self.linkedin)])
+            duplicated_contact.append(duplicated_linkedin) if duplicated_linkedin not in duplicated_contact and len(
+                duplicated_linkedin) > 1 else False
+        if duplicated_contact:
+            raise ValidationError(_('There is a duplication in applicant contact, Please press "Check Duplication".'))
+        # return self.action_open_partner_merge()
+        res = super(PartnerInherit, self).write(vals)
+        return res

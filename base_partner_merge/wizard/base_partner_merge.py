@@ -3,6 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from odoo.addons.crm.wizard.base_partner_merge import MergePartnerLine, \
     MergePartnerAutomatic
+# from odoo import api, fields, models
+# from odoo.exceptions import ValidationError, UserError
 
 
 class NoCRMMergePartnerLine(MergePartnerLine):  # noqa

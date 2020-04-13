@@ -316,6 +316,27 @@ class Applicant(models.Model):
                     # if applicant.partner_name.isalpha() == False :
                     raise ValidationError(_('Applicant Name must be Characters only . '))
 
+    @api.multi
+    def action_open_partner_merge(self):
+        view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
+        # merge_contact_id = self.env['base.partner.merge.automatic.wizard'].create(
+        #     {'state': 'option', 'dst_partner_id': res_id})
+        self.ensure_one()
+        action = {
+            'name': _('merge'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'base.partner.merge.automatic.wizard',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': 14,
+            'context': self._context,
+        }
+
+        return action
+
 
 class Stage(models.Model):
     _inherit = 'hr.recruitment.stage'
