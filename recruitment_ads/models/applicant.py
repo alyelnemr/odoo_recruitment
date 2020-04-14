@@ -42,6 +42,8 @@ class IrAttachmentInherit(models.Model):
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
+    user_group_flag = fields.Boolean()
+    user_group= fields.Char(compute='_get_current_user_group' ,store =True)
     email_from = fields.Char()
     partner_phone = fields.Char(related="partner_id.phone")
     partner_mobile = fields.Char(related="partner_id.mobile")
@@ -75,6 +77,14 @@ class Applicant(models.Model):
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
     user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=False)
     source_resp= fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",default=lambda self: self.env.user.id )
+
+
+    def get_current_user_group(self):
+        res_user = self.env.user
+        if res_user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+            return  'manager'
+        else :
+            return "not manager"
 
     @api.multi
     @api.depends('attachment_ids.res_id')
@@ -315,7 +325,16 @@ class Applicant(models.Model):
                 else:
                     # if applicant.partner_name.isalpha() == False :
                     raise ValidationError(_('Applicant Name must be Characters only . '))
-
+    #oveeride  method to prevent current user to change state if is not recruiter responsible for application
+    @api.onchange('stage_id')
+    def onchange_stage_id(self):
+        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
+            raise ValidationError('This Application is owned by another Recruiter')
+        else:
+            vals = self._onchange_stage_id_internal(self.stage_id.id)
+            if vals['value'].get('date_closed'):
+                self.date_closed = vals['value']['date_closed']
+        return super(Applicant, self).onchange_stage_id()
 
 class Stage(models.Model):
     _inherit = 'hr.recruitment.stage'

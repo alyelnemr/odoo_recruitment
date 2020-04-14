@@ -13,14 +13,32 @@ var session = require('web.session');
 var _t = core._t;
 var QWeb = core.qweb;
 var RecordQuickCreate = kanban_quick_create.RecordQuickCreate;
-
+var rpc = require('web.rpc')
+var manager;
 KanbanColumn.include({
+    current_user_group: function (id){
+        return this._rpc({
+                model: 'hr.applicant',
+                method: 'get_current_user_group',
+                args: [[id]],
+            }).then(function (result) {
+                if (result.length > 0) {
+                    window.manager = result;
+                    return result;
+//
+                }
+            });
+      },
+
     start: function () {
         this._super.apply(this, arguments);
+        var flag ;
+        var  responsible ;
+        var  x= this.current_user_group();
         var self = this;
         var defs = [this._super.apply(this, arguments)];
-        this.$header = this.$('.o_kanban_header');
 
+        this.$header = this.$('.o_kanban_header');
         for (var i = 0; i < this.data_records.length; i++) {
             this._addRecord(this.data_records[i]);
         }
@@ -38,18 +56,29 @@ KanbanColumn.include({
                 helper: 'clone',
                 cursor: 'move',
                 over: function () {
-                    console.log(self);
+                    flag = 'over';
                     self.$el.addClass('o_kanban_hover');
                 },
                 out: function () {
+                    flag = 'out';
                     self.$el.removeClass('o_kanban_hover');
                 },
                 update: function (event, ui) {
-                debugger;
                     var record = ui.item.data('record');
-                    if(record.modelName === 'hr.applicant' && record.recordData.user_id.data.id !== session.uid){
+                    var checkmanager = window.manager;
+                    if (record.recordData.user_id !== false){
+                        if(record.recordData.user_id.data.id !== session.uid){
+                            responsible = 'false';
+                    }
+
+                    }else{
+                        responsible = 'false';
+                    }
+
+                    if(record.modelName === 'hr.applicant' && responsible === 'false' && checkmanager !== 'manager'){
                          event.preventDefault();
-                        return alert('sorry you cant');
+                         if(flag === 'over'){
+                            return alert('This Application is owned by another Recruiter');}
                     }else{
                         var index = self.records.indexOf(record);
                         record.$el.removeAttr('style');  // jqueryui sortable add display:block inline
