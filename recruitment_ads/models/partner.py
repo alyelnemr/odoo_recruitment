@@ -176,52 +176,59 @@ class PartnerInherit(models.Model):
                     not applicant.linkedin:
                 raise ValidationError(_('Please insert at least one Applicant info.'))
 
-    @api.multi
-    def action_open_partner_merge(self):
-        view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
-        # merge_contact_id = self.env['base.partner.merge.automatic.wizard'].create(
-        #     {'state': 'option', 'dst_partner_id': res_id})
-        self.ensure_one()
-        action = {
-            'name': _('merge'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'base.partner.merge.automatic.wizard',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': 14,
-            'context': self._context,
-        }
-        return action
-
-    @api.multi
-    def write(self, vals):
+    def check_contact_duplication(self):
         contact_obj = self.env['res.partner']
         duplicated_contact = []
-        if self.email:
-            duplicated_email = contact_obj.search([('email', '=', self.email)])
-            duplicated_contact.append(duplicated_email) if duplicated_email not in duplicated_contact and len(
-                duplicated_email) > 1 else False
-        if self.mobile:
-            duplicated_mobile = contact_obj.search([('mobile', '=', self.mobile)])
-            duplicated_contact.append(duplicated_mobile) if duplicated_mobile not in duplicated_contact and len(
-                duplicated_mobile) > 1 else False
         if self.phone:
-            duplicated_phone = contact_obj.search([('phone', '=', self.phone)])
-            duplicated_contact.append(duplicated_phone) if duplicated_phone not in duplicated_contact and len(
-                duplicated_phone) > 1 else False
-        if self.face_book:
-            duplicated_face_book = contact_obj.search([('face_book', '=', self.face_book)])
-            duplicated_contact.append(duplicated_face_book) if duplicated_face_book not in duplicated_contact and len(
-                duplicated_face_book) > 1 else False
+            duplicated_phones = contact_obj.search([('phone', '=', self.phone)]).ids
+            if len(duplicated_phones) > 1:
+                for dup_phone in duplicated_phones:
+                    if dup_phone not in duplicated_contact:
+                        duplicated_contact.append(dup_phone)
         if self.linkedin:
-            duplicated_linkedin = contact_obj.search([('linkedin', '=', self.linkedin)])
-            duplicated_contact.append(duplicated_linkedin) if duplicated_linkedin not in duplicated_contact and len(
-                duplicated_linkedin) > 1 else False
+            duplicated_linkedins = contact_obj.search([('linkedin', '=', self.linkedin)]).ids
+            if len(duplicated_linkedins) > 1:
+                for dup_linkedin in duplicated_linkedins:
+                    if dup_linkedin not in duplicated_contact:
+                        duplicated_contact.append(dup_linkedin)
+        if self.face_book:
+            duplicated_face_books = contact_obj.search([('face_book', '=', self.face_book)]).ids
+            if len(duplicated_face_books) > 1:
+                for dup_face_book in duplicated_face_books:
+                    if dup_face_book not in duplicated_contact:
+                        duplicated_contact.append(dup_face_book)
+
         if duplicated_contact:
-            raise ValidationError(_('There is a duplication in applicant contact, Please press "Check Duplication".'))
-        # return self.action_open_partner_merge()
-        res = super(PartnerInherit, self).write(vals)
-        return res
+            return duplicated_contact
+
+    # @api.multi
+    # def action_open_partner_merge(self):
+    #     self.ensure_one()
+    #     partner_ids = self.check_duplication()
+    #     view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
+    #
+    #     action = {
+    #         'name': _('Merge Selected Contacts'),
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'base.partner.merge.automatic.wizard',
+    #         'views': [(view.id, 'form')],
+    #         'view_id': view.id,
+    #         'target': 'new',
+    #         'context': {'state': 'selection',
+    #                     'dst_partner_id': self.id,
+    #                     'partner_ids': partner_ids,
+    #                     'group_by_is_company': False,
+    #                     'maximum_group': 0,
+    #                     'group_by_parent_id': False,
+    #                     'exclude_contact': False,
+    #                     'group_by_email': False,
+    #                     'exclude_journal_item': False,
+    #                     'display_name': 'False',
+    #                     'number_group': 0,
+    #                     'group_by_vat': False,
+    #                     },
+    #     }
+    #     return action
+

@@ -8,6 +8,7 @@
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/activity.js"/>
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/chatter.js"/>
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/fields.js"/>
+                <script type="text/javascript" src="/recruitment_ads/static/src/js/form_controller.js"/>
             </xpath>
         </template>
 
