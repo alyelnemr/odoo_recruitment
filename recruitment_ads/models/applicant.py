@@ -42,8 +42,6 @@ class IrAttachmentInherit(models.Model):
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
-    user_group_flag = fields.Boolean()
-    user_group= fields.Char(compute='_get_current_user_group' ,store =True)
     email_from = fields.Char()
     partner_phone = fields.Char(related="partner_id.phone")
     partner_mobile = fields.Char(related="partner_id.mobile")
@@ -328,7 +326,8 @@ class Applicant(models.Model):
     #oveeride  method to prevent current user to change state if is not recruiter responsible for application
     @api.onchange('stage_id')
     def onchange_stage_id(self):
-        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
+        # res=super(Applicant, self).onchange_stage_id()
+        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self.partner_id:
             raise ValidationError('This Application is owned by another Recruiter')
         else:
             vals = self._onchange_stage_id_internal(self.stage_id.id)
