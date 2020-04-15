@@ -41,7 +41,7 @@
             <field ref="model_hr_job" name="model_id"/>
             <field name="domain_force">[(1,'=',1)]</field>
             <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
-        </record>applicant_history
+        </record>
         <record id="hr_offer_own_offers" model="ir.rule">
             <field name="name">See My Own Offers</field>
             <field name="model_id" ref="model_hr_offer"/>
@@ -75,6 +75,28 @@
             <field name="groups" eval="[(4, ref('recruitment_ads.group_hr_recruitment_coordinator'))]"/>
         </record>
 
-
-
+            <!--Application accesee record rules for officer coordinator manager -->
+        <record id="recruitment_ads_application_rule_officer" model="ir.rule">
+            <field name="name">Recruitment Applications for officer</field>
+            <field ref="model_hr_applicant" name="model_id"/>
+            <field name="domain_force">['|','|','|',('job_id.business_unit_id', '=',
+                user.business_unit_id.id),('job_id.business_unit_id','in', user.multi_business_unit_id.ids),('job_id.user_id','=',user.id),('job_id.other_recruiters_ids','in',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
+        </record>
+        <record id="recruitment_ads_application_rule_coordinator" model="ir.rule">
+            <field name="name">Recruitment Applications for coordinator</field>
+            <field ref="model_hr_applicant" name="model_id"/>
+            <field name="domain_force">['|',('job_id.business_unit_id', '=', user.business_unit_id.id),('job_id.business_unit_id',
+                'in', user.multi_business_unit_id.ids) ]
+            </field>
+            <field name="groups" eval="[(4, ref('recruitment_ads.group_hr_recruitment_coordinator'))]"/>
+        </record>
+        <record id="recruitment_ads_application_rule_manager" model="ir.rule">
+            <field name="name">Recruitment Applications for manager</field>
+            <field ref="model_hr_applicant" name="model_id"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
+        </record>
+        <!---->
 </odoo>
