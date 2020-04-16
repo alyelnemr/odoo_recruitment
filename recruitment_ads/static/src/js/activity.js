@@ -66,7 +66,7 @@ MailActivity.include({
             if(has_group){window.manager =  true; }
         });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{
             var self = this;
             var _super = this._super.bind(this);
@@ -101,7 +101,7 @@ MailActivity.include({
             if(has_group){window.manager =  true; }
          });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{
             event.preventDefault();
             var self = this;
@@ -151,7 +151,7 @@ MailActivity.include({
             if(has_group){window.manager =  true; }
          });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{
            event.preventDefault();
            var record = this.record.data;

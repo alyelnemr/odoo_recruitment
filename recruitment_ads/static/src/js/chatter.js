@@ -131,7 +131,7 @@ Chatter.include({
          });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
             console.log(window.manager);
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{
 
             if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
@@ -187,7 +187,7 @@ Chatter.include({
 
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
             console.log(window.manager);
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{
 
         if (this.record.data.job_id){
@@ -216,7 +216,7 @@ Chatter.include({
             if(has_group){window.manager =  true; }
          });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{this._super.apply(this, arguments);}
     },
 
@@ -225,7 +225,7 @@ Chatter.include({
             if(has_group){window.manager =  true; }
          });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-           alert('This Application is Owned by another Recruiter.');
+           alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
         }else{this._super.apply(this, arguments);}
     },
 
