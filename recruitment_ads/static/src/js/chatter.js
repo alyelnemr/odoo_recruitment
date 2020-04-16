@@ -14,6 +14,7 @@ var core = require('web.core');
 var Widget = require('web.Widget');
 var Chatter = require('mail.Chatter');
 var Session = require('web.session');
+var manager ;
 
 //To Fix A bug in it
 var CalendarController = require('web.CalendarController');
@@ -102,6 +103,11 @@ Chatter.include({
     start: function () {
         //override to add interview button
         var res = this._super.apply(this, arguments);
+        this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
+            if(has_group) {
+             window.manager =  true;
+            }
+         });
 
         this.$topbar = this.$('.o_chatter_topbar');
 
@@ -118,52 +124,72 @@ Chatter.include({
         return res;
     },
     _onScheduleInterview: function () {
-        if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
-            self = this;
-            var get_calendar_view = Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
-                "model": "ir.ui.view",
-                "method": "get_view_id",
-                "args": ['recruitment_ads.view_calendar_event_interview_calender'],
-                "kwargs": {}
-                });
-            var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
-                "model": "ir.ui.view",
-                "method": "get_view_id",
-                "args": ['recruitment_ads.view_calendar_event_interview_form'],
-                "kwargs": {}
-                });
-            $.when(get_calendar_view,get_form_view).then(function(calendar_view_id,form_view_id){
-                var name = self.record.data.partner_name+"'s interview";
-                if (self.record.data.job_id){
-                    name = self.record.data.job_id.data.display_name + " - " + name;
-                }
-                var action = {
-                        type: 'ir.actions.act_window',
-                        name: 'Schedule Interview',
-                        res_model: 'calendar.event',
-                        view_mode: 'calendar,form',
-                        view_type: 'form',
-                        view_id: false || form_view_id,
-                        views: [[false || calendar_view_id, 'calendar'],[false || form_view_id ,'form']],
-                        target: 'current',
-                        domain: [['type','=','interview']],
-                        context: {
-                            default_name: name,
-                            default_res_id: self.record.res_id,
-                            default_res_model: self.record.model,
-                            default_type: 'interview',
-                        },
-                    };
-                return self.do_action(action);
-            });
+        this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
+            if(has_group) {
+             window.manager =  true;
+            }
+         });
+        if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
+            console.log(window.manager);
+           alert('This Application is Owned by another Recruiter.');
         }else{
-            console.log('elseeee')
-            alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
 
-        }
+            if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
+                self = this;
+                var get_calendar_view = Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+                    "model": "ir.ui.view",
+                    "method": "get_view_id",
+                    "args": ['recruitment_ads.view_calendar_event_interview_calender'],
+                    "kwargs": {}
+                    });
+                var get_form_view =  Session.rpc('/web/dataset/call_kw/ir.ui.view/get_view_id', {
+                    "model": "ir.ui.view",
+                    "method": "get_view_id",
+                    "args": ['recruitment_ads.view_calendar_event_interview_form'],
+                    "kwargs": {}
+                    });
+                $.when(get_calendar_view,get_form_view).then(function(calendar_view_id,form_view_id){
+                    var name = self.record.data.partner_name+"'s interview";
+                    if (self.record.data.job_id){
+                        name = self.record.data.job_id.data.display_name + " - " + name;
+                    }
+                    var action = {
+                            type: 'ir.actions.act_window',
+                            name: 'Schedule Interview',
+                            res_model: 'calendar.event',
+                            view_mode: 'calendar,form',
+                            view_type: 'form',
+                            view_id: false || form_view_id,
+                            views: [[false || calendar_view_id, 'calendar'],[false || form_view_id ,'form']],
+                            target: 'current',
+                            domain: [['type','=','interview']],
+                            context: {
+                                default_name: name,
+                                default_res_id: self.record.res_id,
+                                default_res_model: self.record.model,
+                                default_type: 'interview',
+                            },
+                        };
+                    return self.do_action(action);
+                });
+            }else{
+                console.log('elseeee')
+                alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
+
+            }}
     },
     _onScheduleActivity: function () {
-    debugger;
+        this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
+            if(has_group) {
+             window.manager =  true;
+            }
+         });
+
+        if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
+            console.log(window.manager);
+           alert('This Application is Owned by another Recruiter.');
+        }else{
+
         if (this.record.data.job_id){
             if (this.record.data.allow_call){
                 this.fields.activity.scheduleActivity(false);
@@ -183,6 +209,24 @@ Chatter.include({
                 alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
             }
         }
+        }
+    },
+    _onOpenComposerMessage: function () {
+      this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
+            if(has_group){window.manager =  true; }
+         });
+        if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
+           alert('This Application is Owned by another Recruiter.');
+        }else{this._super.apply(this, arguments);}
+    },
+
+    _onOpenComposerNote: function () {
+        this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
+            if(has_group){window.manager =  true; }
+         });
+        if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
+           alert('This Application is Owned by another Recruiter.');
+        }else{this._super.apply(this, arguments);}
     },
 
     });

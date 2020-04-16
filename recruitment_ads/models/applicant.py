@@ -229,6 +229,8 @@ class Applicant(models.Model):
     @api.multi
     def action_makeMeeting(self):
         self.ensure_one()
+        if self.user_id.id != self.env.user.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
+            raise ValidationError('This Application is Owned by another Recruiter.')
         if not self.partner_phone or not self.partner_mobile or not self.email_from:
             raise ValidationError('Please insert Applicant Mobile /Email /Phone in order to schedule activity .')
         else:

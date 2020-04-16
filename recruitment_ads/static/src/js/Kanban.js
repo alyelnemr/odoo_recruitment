@@ -36,25 +36,12 @@ KanbanColumn.include({
         var  responsible ;
         var  x= this.current_user_group();
         var self = this;
-//        var defs = [this._super.apply(this, arguments)];
 
-//        this.$header = this.$('.o_kanban_header');
-//        for (var i = 0; i < this.data_records.length; i++) {
-//            this._addRecord(this.data_records[i]);
-//        }
-//        this.$header.find('.o_kanban_header_title').tooltip();
         if (!config.device.isMobile) {
             // deactivate sortable in mobile mode.  It does not work anyway,
             // and it breaks horizontal scrolling in kanban views.  Someday, we
             // should find a way to use the touch events to make sortable work.
              this.$el.sortable({
-//                connectWith: '.o_kanban_group',
-//                containment: this.draggable ? '.o_kanban_view' : 'parent',
-//                revert: 0,
-//                delay: 0,
-//                items: '> .o_kanban_record:not(.o_updating)',
-//                helper: 'clone',
-//                cursor: 'move',
                 over: function () {
                     flag = 'over';
                     self.$el.addClass('o_kanban_hover');

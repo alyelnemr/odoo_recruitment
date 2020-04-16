@@ -212,7 +212,8 @@ class Interview(models.Model):
                 applicant_id = values.get('applicant_id', defaults.get('applicant_id'))
                 if applicant_id:
                     applicant_obj=self.env['hr.applicant'].sudo().browse(applicant_id)
-                    applicant_obj.write({'user_id': self.env.user.id})
+                    if not applicant_obj.user_id :
+                        applicant_obj.write({'user_id': self.env.user.id})
                 #
                 user_id = values.get('user_id', defaults.get('user_id'))
                 if not defaults.get('activity_ids') and res_model_id and res_id:
