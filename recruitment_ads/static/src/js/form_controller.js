@@ -13,15 +13,18 @@ var Session = require('web.session');
 FormController.include({
 
     _onEdit: function () {
-        var data = this.renderer.state.data;
-        this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
-            if(has_group) {
-             window.manager =  true;
-            }
-         });
-        if (data.user_id != false && data.user_id.data.id !== Session.uid && window.manager !== true){
-             alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
-        }else{this._super.apply(this, arguments);}
+        console.log(this);
+        if(this.modelName === 'hr.applicant'){
+            var data = this.renderer.state.data;
+            this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
+                if(has_group) {
+                 window.manager =  true;
+                }
+             });
+            if (data.user_id != false && data.user_id.data.id !== Session.uid && window.manager !== true){
+                 alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
+            }else{this._super.apply(this, arguments);}}
+        else{this._super.apply(this, arguments);}
 }
 });
 });
