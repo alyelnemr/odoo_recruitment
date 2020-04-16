@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
+
         <record id="crm_case_tree_view_job_inherit2" model="ir.ui.view">
             <field name="name">hr.applicant.tree.inherit2</field>
             <field name="model">hr.applicant</field>

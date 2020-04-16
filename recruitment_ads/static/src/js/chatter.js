@@ -102,7 +102,7 @@ Chatter.include({
     },
     start: function () {
         //override to add interview button
-        var res = this._super.apply(this, arguments);
+        this._super.apply(this, arguments);
         this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group) {
              window.manager =  true;
@@ -117,11 +117,11 @@ Chatter.include({
         }));
 
         // start and append the widgets
-        var fieldDefs = _.invoke(this.fields, 'appendTo', $('<div>'));
-        var def = this.dp.add($.when.apply($, fieldDefs));
-        this._render(def).then(this._updateMentionSuggestions.bind(this));
+//        var fieldDefs = _.invoke(this.fields, 'appendTo', $('<div>'));
+//        var def = this.dp.add($.when.apply($, fieldDefs));
+//        this._render(def).then(this._updateMentionSuggestions.bind(this));
 
-        return res;
+//        return this._super.apply(this, arguments);;
     },
     _onScheduleInterview: function () {
         this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
