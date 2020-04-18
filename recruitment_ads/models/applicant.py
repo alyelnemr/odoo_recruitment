@@ -342,8 +342,24 @@ class Stage(models.Model):
 
     @api.multi
     def unlink(self):
-        """Prevent deleting offer stage"""
+        """Prevent deleting offer call cv_source hired interview  stage"""
         real_ids, xml_ids = zip(*self.get_xml_id().items())
-        if 'recruitment_ads.application_stage_offer_cycle_data' in xml_ids:
-            raise ValidationError(_("You can't delete offer stage"))
+        if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or ('recruitment_ads.application_stage_cvsource_cycle_data' ) in xml_ids\
+                or  ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or  ('recruitment_ads.application_stage_interview_cycle_data') in xml_ids\
+                or  ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
+            raise ValidationError(_("You are not allowed to delete this Stage"))
+
+
         return super(Stage, self).unlink()
+
+    @api.multi
+    def write(self,vals):
+        """Prevent edit  offer call cv_source hired interview  stage"""
+        real_ids, xml_ids = zip(*self.get_xml_id().items())
+        if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or ('recruitment_ads.application_stage_cvsource_cycle_data' ) in xml_ids\
+                or  ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or  ('recruitment_ads.application_stage_interview_cycle_data') in xml_ids\
+                or  ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
+            raise ValidationError(_("You are not allowed to edit this Stage"))
+
+
+        return super(Stage, self).write(vals)

@@ -4,6 +4,18 @@
         <record id="application_stage_offer_cycle_data" model="hr.recruitment.stage">
             <field name="name">Offer</field>
         </record>
+        <record id="application_stage_cvsource_cycle_data" model="hr.recruitment.stage">
+            <field name="name">Sourced CV</field>
+        </record>
+        <record id="application_stage_call_cycle_data" model="hr.recruitment.stage">
+            <field name="name">Call</field>
+        </record>
+        <record id="application_stage_hired_cycle_data" model="hr.recruitment.stage">
+            <field name="name"> Hired</field>
+        </record>
+        <record id="application_stage_interview_cycle_data" model="hr.recruitment.stage">
+            <field name="name"> Interview</field>
+        </record>
         <record forcecreate="True" id="decimal_offer_salary" model="decimal.precision">
             <field name="name">Offer Salary</field>
             <field name="digits">3</field>
