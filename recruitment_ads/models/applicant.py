@@ -329,7 +329,7 @@ class Applicant(models.Model):
     @api.onchange('stage_id')
     def onchange_stage_id(self):
         # res=super(Applicant, self).onchange_stage_id()
-        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self.serial:
+        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
             raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any on.')
         else:
             vals = self._onchange_stage_id_internal(self.stage_id.id)
