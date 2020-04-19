@@ -25,7 +25,7 @@ FormController.include({
                  alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
             }else{this._super.apply(this, arguments);}}
         else{this._super.apply(this, arguments);}
-}
+},
 	 _onSave: function (ev) {
         var self = this;
         var record = this.model.get(this.handle, {raw: true});
