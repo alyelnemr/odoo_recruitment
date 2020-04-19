@@ -40,9 +40,6 @@ class PartnerInherit(models.Model):
                                               compute='_get_last_application')
 
     _sql_constraints = [
-        ('mobile_uniq',
-         'CHECK (1=1)',
-         'Mobile has been entered before.'),
         ('email_uniq',
          'CHECK (1=1)',
          'Email has been entered before.')
@@ -62,8 +59,8 @@ class PartnerInherit(models.Model):
     def _auto_init(self):
         res = super(PartnerInherit, self)._auto_init()
         if not tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
-            self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
-                                                                          '(mobile) WHERE (applicant is TRUE)'))
+            # self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
+            #                                                               '(mobile) WHERE (applicant is TRUE)'))
             _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_mobile_uniq_index',
                           '(mobile) WHERE (applicant is TRUE)')
         if not tools.index_exists(self._cr, 'res_partner_email_uniq_index'):
@@ -179,6 +176,12 @@ class PartnerInherit(models.Model):
     def check_contact_duplication(self):
         contact_obj = self.env['res.partner']
         duplicated_contact = []
+        if self.mobile:
+            duplicated_mobiles = contact_obj.search([('mobile', '=', self.mobile)]).ids
+            if len(duplicated_mobiles) > 1:
+                for dup_mobile in duplicated_mobiles:
+                    if dup_mobile not in duplicated_contact:
+                        duplicated_contact.append(dup_mobile)
         if self.phone:
             duplicated_phones = contact_obj.search([('phone', '=', self.phone)]).ids
             if len(duplicated_phones) > 1:

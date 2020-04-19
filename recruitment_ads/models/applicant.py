@@ -321,6 +321,12 @@ class Applicant(models.Model):
     def check_application_duplication(self):
         contact_obj = self.env['res.partner']
         duplicated_contact = []
+        if self.partner_mobile:
+            duplicated_partner_mobiles = contact_obj.search([('mobile', '=', self.partner_mobile)]).ids
+            if len(duplicated_partner_mobiles) > 1:
+                for dup_partner_mobile in duplicated_partner_mobiles:
+                    if dup_partner_mobile not in duplicated_contact:
+                        duplicated_contact.append(dup_partner_mobile)
         if self.partner_phone:
             duplicated_partner_phones = contact_obj.search([('phone', '=', self.partner_phone)]).ids
             if len(duplicated_partner_phones) > 1:
