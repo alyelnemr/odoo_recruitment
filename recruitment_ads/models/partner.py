@@ -1,22 +1,23 @@
 import logging
 import re
 
-from odoo import models, api, fields,tools, _
+from odoo import models, api, fields, tools, _
 from odoo.addons.base.res.res_partner import Partner
 from odoo.osv.expression import get_unaccent_wrapper
 from odoo.exceptions import ValidationError
+
 _schema = logging.getLogger('odoo.schema')
 
 
 class PartnerInherit(models.Model):
     _inherit = 'res.partner'
 
-    @api.constrains('mobile','name','phone')
+    @api.constrains('mobile', 'name', 'phone')
     def constrain_partner_mobile(self):
         for applicant in self:
             if applicant.phone:
-                if applicant.phone.isnumeric() == False or len(applicant.phone) > 15 :
-                    raise ValidationError (_('Mobile number must be digits only and not greater than 15 digit. '))
+                if applicant.phone.isnumeric() == False or len(applicant.phone) > 15:
+                    raise ValidationError(_('Mobile number must be digits only and not greater than 15 digit. '))
             if applicant.mobile:
                 if applicant.mobile.isnumeric() == False or len(applicant.mobile) > 15:
                     raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
@@ -31,22 +32,35 @@ class PartnerInherit(models.Model):
     date_of_birth = fields.Date(string='Date of Birth')
     face_book = fields.Char(string='Facebook')
     linkedin = fields.Char(string='LinkedIn')
+    applications_ids = fields.One2many('hr.applicant', 'partner_id', string="Applications")
+    last_app_job_id = fields.Many2one('hr.job', string="Last Application Job", compute='_get_last_application')
+    last_app_last_activity_id = fields.Many2one('mail.activity.type', string="Last Application Last Activity",
+                                                compute='_get_last_application')
+    last_app_last_activity_date = fields.Date(string="Last Application Last Activity Date",
+                                              compute='_get_last_application')
 
     _sql_constraints = [
-        ('mobile_uniq',
-         'CHECK (1=1)',
-         'Data entered before.'),
         ('email_uniq',
          'CHECK (1=1)',
-         'Data entered before.')
+         'Email has been entered before.')
     ]
+
+    @api.multi
+    def _get_last_application(self):
+        for contact in self:
+            if contact.applications_ids:
+                last_application = \
+                    [application for application in contact.applications_ids.sorted(lambda a: a.id)][-1]
+                contact.last_app_job_id = last_application.job_id
+                contact.last_app_last_activity_id = last_application.last_activity
+                contact.last_app_last_activity_date = last_application.last_activity_date
 
     @api.model_cr_context
     def _auto_init(self):
         res = super(PartnerInherit, self)._auto_init()
         if not tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
-            self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
-                                                                          '(mobile) WHERE (applicant is TRUE)'))
+            # self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
+            #                                                               '(mobile) WHERE (applicant is TRUE)'))
             _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_mobile_uniq_index',
                           '(mobile) WHERE (applicant is TRUE)')
         if not tools.index_exists(self._cr, 'res_partner_email_uniq_index'):
@@ -158,3 +172,66 @@ class PartnerInherit(models.Model):
             if not applicant.email and not applicant.mobile and not applicant.phone and not applicant.face_book and \
                     not applicant.linkedin:
                 raise ValidationError(_('Please insert at least one Applicant info.'))
+
+    def check_contact_duplication(self):
+        contact_obj = self.env['res.partner']
+        duplicated_contact = []
+        if self.mobile:
+            duplicated_mobiles = contact_obj.search([('mobile', '=', self.mobile)]).ids
+            if len(duplicated_mobiles) > 1:
+                for dup_mobile in duplicated_mobiles:
+                    if dup_mobile not in duplicated_contact:
+                        duplicated_contact.append(dup_mobile)
+        if self.phone:
+            duplicated_phones = contact_obj.search([('phone', '=', self.phone)]).ids
+            if len(duplicated_phones) > 1:
+                for dup_phone in duplicated_phones:
+                    if dup_phone not in duplicated_contact:
+                        duplicated_contact.append(dup_phone)
+        if self.linkedin:
+            duplicated_linkedins = contact_obj.search([('linkedin', '=', self.linkedin)]).ids
+            if len(duplicated_linkedins) > 1:
+                for dup_linkedin in duplicated_linkedins:
+                    if dup_linkedin not in duplicated_contact:
+                        duplicated_contact.append(dup_linkedin)
+        if self.face_book:
+            duplicated_face_books = contact_obj.search([('face_book', '=', self.face_book)]).ids
+            if len(duplicated_face_books) > 1:
+                for dup_face_book in duplicated_face_books:
+                    if dup_face_book not in duplicated_contact:
+                        duplicated_contact.append(dup_face_book)
+
+        if duplicated_contact:
+            return duplicated_contact
+
+    # @api.multi
+    # def action_open_partner_merge(self):
+    #     self.ensure_one()
+    #     partner_ids = self.check_duplication()
+    #     view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
+    #
+    #     action = {
+    #         'name': _('Merge Selected Contacts'),
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'base.partner.merge.automatic.wizard',
+    #         'views': [(view.id, 'form')],
+    #         'view_id': view.id,
+    #         'target': 'new',
+    #         'context': {'state': 'selection',
+    #                     'dst_partner_id': self.id,
+    #                     'partner_ids': partner_ids,
+    #                     'group_by_is_company': False,
+    #                     'maximum_group': 0,
+    #                     'group_by_parent_id': False,
+    #                     'exclude_contact': False,
+    #                     'group_by_email': False,
+    #                     'exclude_journal_item': False,
+    #                     'display_name': 'False',
+    #                     'number_group': 0,
+    #                     'group_by_vat': False,
+    #                     },
+    #     }
+    #     return action
+

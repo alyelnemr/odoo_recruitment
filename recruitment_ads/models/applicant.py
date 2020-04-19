@@ -55,9 +55,9 @@ class Applicant(models.Model):
     applicant_history_ids = fields.Many2many('hr.applicant.history', 'applicant_history_relation', 'applicant_id',
                                              'history_id',
                                              string='History', compute='onchange_hr_applicant')
-    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity',store=True)
-    last_activity_date = fields.Date(compute='_get_activity',store=True)
-    result = fields.Char(compute='_get_activity',store=True)
+    last_activity = fields.Many2one('mail.activity.type', compute='_get_activity', store=True)
+    last_activity_date = fields.Date(compute='_get_activity', store=True)
+    result = fields.Char(compute='_get_activity', store=True)
     source_id = fields.Many2one('utm.source', required=True)
     offer_id = fields.Many2one('hr.offer', string='Offer', readonly=True)
     cv_matched = fields.Boolean('Matched', default=False)
@@ -70,11 +70,12 @@ class Applicant(models.Model):
     allow_call = fields.Boolean(string="Allow Online Call", related="department_id.allow_call")
     # face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
     # linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
-    face_book = fields.Char(string='Facebook Link ', readonly=False)
-    linkedin = fields.Char(string='LinkedIn Link', readonly=False)
+    face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book")
+    linkedin = fields.Char(string='LinkedIn Link', readonly=False, related="partner_id.linkedin")
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
-    user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange",default=False)
-    source_resp= fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",default=lambda self: self.env.user.id )
+    user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange", default=False)
+    source_resp = fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",
+                                  default=lambda self: self.env.user.id)
 
 
     def get_current_user_group(self):
@@ -107,7 +108,7 @@ class Applicant(models.Model):
     @api.model
     def create(self, vals):
         res = super(Applicant, self).create(vals)
-        if not res.source_resp :
+        if not res.source_resp:
             res.source_resp = self.env.user.id
         sequence = self.env.ref('recruitment_ads.sequence_application')
         number = sequence.next_by_id()
@@ -159,6 +160,7 @@ class Applicant(models.Model):
                                           })
                     else:
                         applicant.result = last_activity.call_result_id
+
     #
     # @api.onchange('job_id')
     # def onchange_job_id(self):
@@ -336,6 +338,69 @@ class Applicant(models.Model):
             if vals['value'].get('date_closed'):
                 self.date_closed = vals['value']['date_closed']
         return super(Applicant, self).onchange_stage_id()
+
+    def check_application_duplication(self):
+        contact_obj = self.env['res.partner']
+        duplicated_contact = []
+        if self.partner_mobile:
+            duplicated_partner_mobiles = contact_obj.search([('mobile', '=', self.partner_mobile)]).ids
+            if len(duplicated_partner_mobiles) > 1:
+                for dup_partner_mobile in duplicated_partner_mobiles:
+                    if dup_partner_mobile not in duplicated_contact:
+                        duplicated_contact.append(dup_partner_mobile)
+        if self.partner_phone:
+            duplicated_partner_phones = contact_obj.search([('phone', '=', self.partner_phone)]).ids
+            if len(duplicated_partner_phones) > 1:
+                for dup_partner_phone in duplicated_partner_phones:
+                    if dup_partner_phone not in duplicated_contact:
+                        duplicated_contact.append(dup_partner_phone)
+        if self.linkedin:
+            duplicated_linkedins = contact_obj.search([('linkedin', '=', self.linkedin)]).ids
+            if len(duplicated_linkedins) > 1:
+                for dup_linkedin in duplicated_linkedins:
+                    if dup_linkedin not in duplicated_contact:
+                        duplicated_contact.append(dup_linkedin)
+        if self.face_book:
+            duplicated_face_books = contact_obj.search([('face_book', '=', self.face_book)]).ids
+            if len(duplicated_face_books) > 1:
+                for dup_face_book in duplicated_face_books:
+                    if dup_face_book not in duplicated_contact:
+                        duplicated_contact.append(dup_face_book)
+
+        if duplicated_contact:
+            return duplicated_contact
+
+    # @api.multi
+    # def action_open_partner_merge(self):
+    #     view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
+    #     self.ensure_one()
+    #     partner_ids = self.partner_id.check_duplication()
+    #     action = {
+    #         'name': _('Merge Selected Contacts'),
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'base.partner.merge.automatic.wizard',
+    #         'views': [(view.id, 'form')],
+    #         'view_id': view.id,
+    #         'target': 'new',
+    #         'context': {'state': 'selection',
+    #                     'dst_partner_id': self.partner_id.id,
+    #                     'partner_ids': partner_ids,
+    #                     'group_by_is_company': False,
+    #                     'maximum_group': 0,
+    #                     'group_by_parent_id': False,
+    #                     'exclude_contact': False,
+    #                     'group_by_email': False,
+    #                     'exclude_journal_item': False,
+    #                     'display_name': 'False',
+    #                     'number_group': 0,
+    #                     'group_by_vat': False,
+    #                     },
+    #     }
+    #
+    #     return action
+
 
 class Stage(models.Model):
     _inherit = 'hr.recruitment.stage'
