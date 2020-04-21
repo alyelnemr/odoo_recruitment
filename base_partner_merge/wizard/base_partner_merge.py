@@ -11,6 +11,7 @@ from odoo.exceptions import UserError
 
 _logger = logging.getLogger('base.partner.merge')
 
+
 class NoCRMMergePartnerLine(MergePartnerLine):  # noqa
     _module = 'base_partner_merge'
 

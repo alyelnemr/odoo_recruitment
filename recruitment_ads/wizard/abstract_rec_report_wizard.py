@@ -6,12 +6,8 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
     _name = 'abstract.rec.report.wizard'
 
     def _get_bu_domain(self):
-        if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager'):
-            domain = ['|', ('id', '=', self.env.user.business_unit_id.id),
-                      ('id', 'in', self.env.user.multi_business_unit_id.ids)]
-        else:
-            domain = []
+        domain = ['|', ('id', '=', self.env.user.business_unit_id.id),
+                  ('id', 'in', self.env.user.multi_business_unit_id.ids)]
         return domain
 
     def _get_bu_default(self):
@@ -85,11 +81,13 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
 
                 else:
                     applications = self.env['hr.applicant'].search(
-                        [('job_id.business_unit_id', 'in', self.bu_ids.ids),'|', ('source_resp', '=', self.env.user.id),('user_id', '=', self.env.user.id)])
+                        [('job_id.business_unit_id', 'in', self.bu_ids.ids), '|',
+                         ('source_resp', '=', self.env.user.id), ('user_id', '=', self.env.user.id)])
                     bu_jobs = self.env['hr.job'].search(
                         [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
                          ('other_recruiters_ids', 'in', self.env.user.id)])
-                    return {'domain': {'job_ids': ['|',('id', 'in', bu_jobs.ids),('id', 'in', applications.mapped('job_id.id'))]}}
+                    return {'domain': {
+                        'job_ids': ['|', ('id', 'in', bu_jobs.ids), ('id', 'in', applications.mapped('job_id.id'))]}}
             else:
                 if self.check_rec_manager == 'manager':
                     all_jobs = self.env['hr.job'].search([])

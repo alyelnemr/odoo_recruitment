@@ -20,7 +20,7 @@ class RecActivityXslx(models.AbstractModel):
         if report.cv_source:
             sheets.append({
                 'CV Source': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
                     1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
                     3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
@@ -79,7 +79,7 @@ class RecActivityXslx(models.AbstractModel):
         if report.calls:
             sheets.append({
                 'Calls': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
+                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20,
                         'type': 'many2one'},
                     1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
@@ -148,7 +148,7 @@ class RecActivityXslx(models.AbstractModel):
             applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
             sheets.append({
                 'Interviews': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'real_create_uid', 'width': 20,
+                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20,
                         'type': 'many2one'},
                     1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
@@ -452,7 +452,7 @@ class RecActivityXslx(models.AbstractModel):
 # noinspection PyProtectedMember
 class CVSourceLineWrapper:
     def __init__(self, cv_source):
-        self.create_uid = cv_source.create_uid
+        self.user_id = cv_source.user_id
         self.generated_by_bu_id = cv_source.create_uid.business_unit_id
         self.application_code = cv_source.name
         self.partner_name = cv_source.partner_name
@@ -497,7 +497,7 @@ class CVSourceLineWrapper:
 class CallLineWrapper:
     def __init__(self, call):
         applicant = call.env[call.res_model].browse(call.res_id)
-        self.real_create_uid = call.real_create_uid
+        self.user_id = call.user_id
         self.generated_by_bu_id = call.real_create_uid.business_unit_id
         self.application_code = applicant.name
         self.partner_name = applicant.partner_name
@@ -544,7 +544,7 @@ class CallLineWrapper:
 class InterviewLineWrapper:
     def __init__(self, interview):
         applicant = interview.env[interview.res_model].browse(interview.res_id)
-        self.real_create_uid = interview.real_create_uid
+        self.user_id = interview.user_id
         self.application_code = applicant.name
         self.partner_name = applicant.partner_name
         self.email_from = applicant.email_from
@@ -589,7 +589,7 @@ class InterviewLineWrapper:
 # noinspection PyUnresolvedReferences,PyMissingConstructor,PyProtectedMember
 class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
     def __init__(self, application):
-        self.real_create_uid = application.create_uid
+        self.user_id = application.user_id
         self.generated_by_bu_id = application.create_uid.business_unit_id
         self.application_code = application.name
         self.partner_name = application.partner_name
