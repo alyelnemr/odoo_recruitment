@@ -232,7 +232,7 @@ class Applicant(models.Model):
     def action_makeMeeting(self):
         self.ensure_one()
         if self.user_id.id != self.env.user.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
-            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any on.')
+            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         if not self.partner_phone or not self.partner_mobile or not self.email_from:
             raise ValidationError('Please insert Applicant Mobile /Email /Phone in order to schedule activity .')
         else:
@@ -332,7 +332,7 @@ class Applicant(models.Model):
     def onchange_stage_id(self):
         # res=super(Applicant, self).onchange_stage_id()
         if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
-            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any on.')
+            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         else:
             vals = self._onchange_stage_id_internal(self.stage_id.id)
             if vals['value'].get('date_closed'):
