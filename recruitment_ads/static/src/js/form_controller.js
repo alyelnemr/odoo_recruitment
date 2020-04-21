@@ -22,7 +22,7 @@ FormController.include({
                 }
              });
             if (data.user_id != false && data.user_id.data.id !== Session.uid && window.manager !== true){
-                 alert('This Application is Owned by another Recruiter , you are not allowed to take any on.');
+                 alert('This Application is Owned by another Recruiter , you are not allowed to take any action on.');
             }else{this._super.apply(this, arguments);}}
         else{this._super.apply(this, arguments);}
 },
