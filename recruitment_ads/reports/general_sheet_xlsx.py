@@ -15,7 +15,7 @@ class GeneralSheetXslx(models.AbstractModel):
             report.with_context({'active_test': False}).application_ids.mapped('count_done_interviews')) - 1
         sheets.append({
             'General Sheet': {
-                0: {'header': _('Recruiter Responsible'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
                 1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
                 2: {'header': _('Applicant Code'), 'field': 'application_code', 'width': 20},
                 3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
@@ -119,7 +119,7 @@ class GeneralSheetXslx(models.AbstractModel):
 
 class GeneralSheetWrapper:
     def __init__(self, application):
-        self.create_uid = application.create_uid
+        self.user_id = application.user_id
         self.generated_by_bu_id = application.create_uid.business_unit_id
         self.application_code = application.name
         self.partner_name = application.partner_name
