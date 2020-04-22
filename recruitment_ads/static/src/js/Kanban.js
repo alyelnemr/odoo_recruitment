@@ -29,7 +29,6 @@ KanbanColumn.include({
                 }
             });
       },
-
     start: function () {
         this._super.apply(this, arguments);
         var flag ;
@@ -51,7 +50,12 @@ KanbanColumn.include({
                     self.$el.removeClass('o_kanban_hover');
                 },
                 update: function (event, ui) {
-                    var record = ui.item.data('record');
+                var record = ui.item.data('record');
+                if(record.recordData.activity_ids.res_ids != false){
+                 event.preventDefault();
+                 if(flag === 'over'){
+                    console.log(record.recordData.activity_ids.res_ids)
+                    alert('Please insert Activity Result in order to be transferred to another stage');}}else{
                     var checkmanager = window.manager;
                     if (record.recordData.user_id !== false){
                         if(record.recordData.user_id.data.id !== session.uid){
@@ -80,7 +84,7 @@ KanbanColumn.include({
                             self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
                         }
                       }
-                }
+                }}
             });
         }
 //        this.$el.click(function (event) {

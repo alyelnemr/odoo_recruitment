@@ -115,6 +115,10 @@ class MailActivity(models.Model):
             if not hr_applicant_id.user_id:
                 hr_applicant_id.write({'user_id': self.env.user.id,
                                        })
+            if values.get('activity_type_id', False) == 7 or values.get('activity_type_id', False) == 6 or values.get('activity_type_id', False) == 2 :
+                  activity= self.env['hr.recruitment.stage'].search([('name','=','Call')], limit=1)
+                  if activity:
+                     hr_applicant_id.write({'stage_id': activity.id})
 
         return super(MailActivity, self).create(values)
 

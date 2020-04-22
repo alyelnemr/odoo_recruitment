@@ -124,6 +124,9 @@ Chatter.include({
 //        return this._super.apply(this, arguments);;
     },
     _onScheduleInterview: function () {
+         if (this.record.data.activity_ids.res_ids != false){
+            alert('Please insert Activity Result in order to be transferred to another stage');
+        }else{
         this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group) {
              window.manager =  true;
@@ -176,15 +179,18 @@ Chatter.include({
                 console.log('elseeee')
                 alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
 
-            }}
+            }}}
     },
     _onScheduleActivity: function () {
+        if (this.record.data.activity_ids.res_ids != false){
+            alert('Please insert Activity Result in order to be transferred to another stage');
+        }else{
         this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group) {
              window.manager =  true;
             }
          });
-
+        console.log(this.record.data);
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
             console.log(window.manager);
            alert('This Application is Owned by another Recruiter , you are not allowed to take any action on.');
@@ -210,7 +216,7 @@ Chatter.include({
             }
         }
         }
-    },
+    }},
     _onOpenComposerMessage: function () {
       this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group){window.manager =  true; }

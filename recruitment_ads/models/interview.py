@@ -230,6 +230,9 @@ class Interview(models.Model):
                                 applicant_obj.write({'last_activity': meeting_activity_type.id,
                                                      'last_activity_date': datetime.strptime(values['start'], "%Y-%m-%d %H:%M:%S").date(),
                                                      })
+                                activity = self.env['hr.recruitment.stage'].search([('name', '=', ' Interview')], limit=1)
+                                if activity:
+                                    applicant_obj.write({'stage_id': activity.id})
                             if user_id:
                                 activity_vals['user_id'] = user_id
                             values['activity_ids'] = [(0, 0, activity_vals)]

@@ -85,6 +85,7 @@ class Applicant(models.Model):
         else :
             return "not manager"
 
+
     @api.multi
     @api.depends('attachment_ids.res_id')
     def _get_attachment(self):
@@ -231,6 +232,11 @@ class Applicant(models.Model):
     @api.multi
     def action_makeMeeting(self):
         self.ensure_one()
+        activity_result = self.env['mail.activity'].search([('res_id', '=',self.id)])
+        if activity_result:
+            for activity in activity_result:
+                if not activity.call_result_id and not activity.interview_result:
+                    raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
         if self.user_id.id != self.env.user.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
             raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         if not self.partner_phone or not self.partner_mobile or not self.email_from:
@@ -330,7 +336,12 @@ class Applicant(models.Model):
     #oveeride  method to prevent current user to change state if is not recruiter responsible for application
     @api.onchange('stage_id')
     def onchange_stage_id(self):
-        # res=super(Applicant, self).onchange_stage_id()
+        # res=super(Applicant, self).onchange_stage_id
+        activity_result = self.env['mail.activity'].search([('res_id', '=', self._origin.id)])
+        if activity_result:
+            for activity in activity_result:
+                if not activity.call_result_id and not activity.interview_result:
+                    raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
         if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
             raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         else:
