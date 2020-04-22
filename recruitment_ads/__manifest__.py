@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # noinspection PyStatementEffect
 {
-    'name': 'Recruitment',
+    'name': 'Recruitment ADS',
     'version': '2.1.0',
     'summary': 'Recruitment Management',
     'category': 'Employees',
@@ -9,7 +9,7 @@
     'website': "http://www.andalusia.net",
     'sequence': 30,
     'description': """
-Handel recruitment Process
+Handle recruitment Process for Andalusia
     """,
     'depends': ['base', 'base_setup', 'bus', 'web_tour', 'hr_recruitment', 'mail', 'sync_ldap_ads', 'report_xlsx',
                 'decimal_precision'],
