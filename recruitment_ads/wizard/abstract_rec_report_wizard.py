@@ -6,8 +6,11 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
     _name = 'abstract.rec.report.wizard'
 
     def _get_bu_domain(self):
-        domain = ['|', ('id', '=', self.env.user.business_unit_id.id),
-                  ('id', 'in', self.env.user.multi_business_unit_id.ids)]
+        if not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+            domain = ['|', ('id', '=', self.env.user.business_unit_id.id),
+                      ('id', 'in', self.env.user.multi_business_unit_id.ids)]
+        else:
+            domain = []
         return domain
 
     def _get_bu_default(self):
