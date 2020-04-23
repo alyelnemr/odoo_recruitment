@@ -14,11 +14,11 @@
              <field name="sequence">2</field>
         </record>
         <record id="application_stage_hired_cycle_data" model="hr.recruitment.stage">
-            <field name="name"> Hired</field>
+            <field name="name">Hired</field>
              <field name="sequence">9</field>
         </record>
         <record id="application_stage_interview_cycle_data" model="hr.recruitment.stage">
-            <field name="name"> Interview</field>
+            <field name="name">Interview</field>
              <field name="sequence">3</field>
         </record>
         <record forcecreate="True" id="decimal_offer_salary" model="decimal.precision">
