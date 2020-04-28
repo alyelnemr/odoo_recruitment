@@ -60,7 +60,7 @@ view_dialogs.FormViewDialog.include({
                                     }).then(function (res) {
                                         if (res){
                                             return self.do_action({
-                                            name: ("Merge Selected Contacts"),
+                                            name: ("This Contact would be duplicated."),
                                             type: 'ir.actions.act_window',
                                             res_model: 'base.partner.merge.automatic.wizard',
                                             view_mode: 'form',
@@ -107,7 +107,7 @@ view_dialogs.FormViewDialog.include({
                                     }).then(function (res) {
                                         if(res){
                                             $.when(self.do_action({
-                                            name: ("Merge Selected Contacts"),
+                                            name: ("This Contact would be duplicated."),
                                             type: 'ir.actions.act_window',
                                             res_model: 'base.partner.merge.automatic.wizard',
                                             view_mode: 'form',
@@ -182,7 +182,7 @@ view_dialogs.FormViewDialog.include({
 //                        }).then(function (res) {
 //                            if (res){
 //                                return self.do_action({
-//                                name: ("Merge Selected Contacts"),
+//                                name: ("This Contact would be duplicated."),
 //                                type: 'ir.actions.act_window',
 //                                res_model: 'base.partner.merge.automatic.wizard',
 //                                view_mode: 'form',
@@ -246,7 +246,7 @@ view_dialogs.FormViewDialog.include({
 //                            if(res){
 //                                console.log(res)
 //                                return self.do_action({
-//                                name: ("Merge Selected Contacts"),
+//                                name: ("This Contact would be duplicated."),
 //                                type: 'ir.actions.act_window',
 //                                res_model: 'base.partner.merge.automatic.wizard',
 //                                view_mode: 'form',

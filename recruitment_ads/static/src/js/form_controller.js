@@ -47,7 +47,7 @@ FormController.include({
                     }).then(function (res) {
                         if (res){
                             return self.do_action({
-                            name: ("Merge Selected Contacts"),
+                            name: ("This Contact would be duplicated."),
                             type: 'ir.actions.act_window',
                             res_model: 'base.partner.merge.automatic.wizard',
                             view_mode: 'form',
@@ -96,7 +96,7 @@ FormController.include({
                     }).then(function (res) {
                          if (res){
                             return self.do_action({
-                                name: ("Merge Selected Contacts"),
+                                name: ("This Contact would be duplicated."),
                                 type: 'ir.actions.act_window',
                                 res_model: 'base.partner.merge.automatic.wizard',
                                 view_mode: 'form',
@@ -152,7 +152,7 @@ FormController.include({
                     }).then(function (res) {
                         if (res){
                             return self.do_action({
-                            name: ("Merge Selected Contacts"),
+                            name: ("This Contact would be duplicated."),
                             type: 'ir.actions.act_window',
                             res_model: 'base.partner.merge.automatic.wizard',
                             view_mode: 'form',
@@ -203,7 +203,7 @@ FormController.include({
                     }).then(function (res) {
                         if(res){
                             return self.do_action({
-                            name: ("Merge Selected Contacts"),
+                            name: ("This Contact would be duplicated."),
                             type: 'ir.actions.act_window',
                             res_model: 'base.partner.merge.automatic.wizard',
                             view_mode: 'form',
