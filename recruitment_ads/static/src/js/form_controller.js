@@ -26,6 +26,7 @@ FormController.include({
         else{this._super.apply(this, arguments);}
 },
 	_onSave: function (ev) {
+	    var self = this;
         var record = self.model.get(self.handle, {raw: true});
         if (record.model ==='hr.applicant'){
             if (typeof(record.data.id) == 'undefined'){
