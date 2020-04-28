@@ -66,8 +66,8 @@ class PartnerInherit(models.Model):
         if tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
             self._cr.execute('DROP INDEX "{}"'.format('res_partner_mobile_uniq_index'))
         if not tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
-            self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
-                                                                          '(mobile,active) WHERE (applicant is TRUE) and (active is TRUE)'))
+            # self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
+            #                                                               '(mobile,active) WHERE (applicant is TRUE) and (active is TRUE)'))
             _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_mobile_uniq_index',
                           '(mobile) WHERE (applicant is TRUE) and (active is TRUE)')
         if tools.index_exists(self._cr, 'res_partner_email_uniq_index'):
