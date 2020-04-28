@@ -1,5 +1,6 @@
 import logging
 import re
+import json
 
 from odoo import models, api, fields, tools, _
 from odoo.addons.base.res.res_partner import Partner
@@ -17,10 +18,10 @@ class PartnerInherit(models.Model):
         for applicant in self:
             if applicant.phone:
                 if applicant.phone.isnumeric() == False or len(applicant.phone) > 15:
-                    raise ValidationError(_('Mobile number must be digits only and not greater than 15 digit. '))
+                    raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
             if applicant.mobile:
                 if applicant.mobile.isnumeric() == False or len(applicant.mobile) > 15:
-                    raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
+                    raise ValidationError(_('Mobile number must be digits only and not greater than 15 digit. '))
             if applicant.name:
                 if all(x.isalpha() or x.isspace() for x in applicant.name):
                     pass
@@ -30,20 +31,24 @@ class PartnerInherit(models.Model):
     short_display = fields.Char("Short display name", compute='_compute_short_display_name', store=True)
     applicant = fields.Boolean(string='Applicant')
     date_of_birth = fields.Date(string='Date of Birth')
-    face_book = fields.Char(string='Facebook')
-    linkedin = fields.Char(string='LinkedIn')
+    face_book = fields.Char(string='Facebook', track_visibility='always')
+    email = fields.Char(string='Email', track_visibility='always')
+    phone = fields.Char(string='Phone', track_visibility='always')
+    # mobile = fields.Char(string='Mobile', track_visibility='always')
+    linkedin = fields.Char(string='LinkedIn', track_visibility='always')
     applications_ids = fields.One2many('hr.applicant', 'partner_id', string="Applications")
     last_app_job_id = fields.Many2one('hr.job', string="Last Application Job", compute='_get_last_application')
     last_app_last_activity_id = fields.Many2one('mail.activity.type', string="Last Application Last Activity",
                                                 compute='_get_last_application')
     last_app_last_activity_date = fields.Date(string="Last Application Last Activity Date",
                                               compute='_get_last_application')
+    old_data = fields.Text('Last Updated Data')
 
-    _sql_constraints = [
-        ('email_uniq',
-         'CHECK (1=1)',
-         'Email has been entered before.')
-    ]
+    # _sql_constraints = [
+    #     ('email_uniq',
+    #      'unique(email, active)',
+    #      'Email has been entered before.')
+    # ]
 
     @api.multi
     def _get_last_application(self):
@@ -58,16 +63,20 @@ class PartnerInherit(models.Model):
     @api.model_cr_context
     def _auto_init(self):
         res = super(PartnerInherit, self)._auto_init()
+        if tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
+            self._cr.execute('DROP INDEX "{}"'.format('res_partner_mobile_uniq_index'))
         if not tools.index_exists(self._cr, 'res_partner_mobile_uniq_index'):
-            # self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
-            #                                                               '(mobile) WHERE (applicant is TRUE)'))
+            self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_mobile_uniq_index', self._table,
+                                                                          '(mobile,active) WHERE (applicant is TRUE) and (active is TRUE)'))
             _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_mobile_uniq_index',
-                          '(mobile) WHERE (applicant is TRUE)')
+                          '(mobile) WHERE (applicant is TRUE) and (active is TRUE)')
+        if tools.index_exists(self._cr, 'res_partner_email_uniq_index'):
+            self._cr.execute('DROP INDEX "{}"'.format('res_partner_email_uniq_index'))
         if not tools.index_exists(self._cr, 'res_partner_email_uniq_index'):
             self._cr.execute('CREATE UNIQUE INDEX "{}" ON "{}" {}'.format('res_partner_email_uniq_index', self._table,
-                                                                          '(email) WHERE (applicant is TRUE)'))
+                                                                          '(email,active) WHERE (applicant is TRUE) and (active is TRUE)'))
             _schema.debug("Table %r: created index %r (%s)", self._table, 'res_partner_email_uniq_index',
-                          '(email) WHERE (applicant is TRUE)')
+                          '(email,active) WHERE (applicant is TRUE) and (active is TRUE)')
         return res
 
     @api.depends('name')
@@ -204,34 +213,15 @@ class PartnerInherit(models.Model):
         if duplicated_contact:
             return duplicated_contact
 
-    # @api.multi
-    # def action_open_partner_merge(self):
-    #     self.ensure_one()
-    #     partner_ids = self.check_duplication()
-    #     view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
-    #
-    #     action = {
-    #         'name': _('Merge Selected Contacts'),
-    #         'type': 'ir.actions.act_window',
-    #         'view_type': 'form',
-    #         'view_mode': 'form',
-    #         'res_model': 'base.partner.merge.automatic.wizard',
-    #         'views': [(view.id, 'form')],
-    #         'view_id': view.id,
-    #         'target': 'new',
-    #         'context': {'state': 'selection',
-    #                     'dst_partner_id': self.id,
-    #                     'partner_ids': partner_ids,
-    #                     'group_by_is_company': False,
-    #                     'maximum_group': 0,
-    #                     'group_by_parent_id': False,
-    #                     'exclude_contact': False,
-    #                     'group_by_email': False,
-    #                     'exclude_journal_item': False,
-    #                     'display_name': 'False',
-    #                     'number_group': 0,
-    #                     'group_by_vat': False,
-    #                     },
-    #     }
-    #     return action
-
+    @api.multi
+    def write(self, vals):
+        ctx = self._context.copy()
+        for partner in self:
+            if not ctx.get('edit_contact', False):
+                old_dict = {}
+                for key, val in vals.items():
+                    if key in ('email', 'phone', 'mobile', 'face_book', 'linkdin'):
+                        old_dict[key] = partner[key]
+                if old_dict:
+                    vals['old_data'] = json.dumps(old_dict)
+        return super(PartnerInherit, self).write(vals)

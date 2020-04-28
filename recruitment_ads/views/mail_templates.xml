@@ -10,6 +10,7 @@
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/fields.js"/>
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/kanban.js"/>
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/form_controller.js"/>
+                <script type="text/javascript" src="/recruitment_ads/static/src/js/view_dialogs.js"/>
             </xpath>
         </template>
 

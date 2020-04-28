@@ -1,4 +1,5 @@
 import re
+import json
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -76,7 +77,20 @@ class Applicant(models.Model):
     user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange", default=False)
     source_resp = fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",
                                   default=lambda self: self.env.user.id)
+    old_data = fields.Text('Last Updated Data')
 
+    @api.multi
+    def write(self, vals):
+        ctx = self._context.copy()
+        for applicant in self:
+            if not ctx.get('edit_contact', False):
+                old_dict = {}
+                for key, val in vals.items():
+                    if key in ('email_form', 'partner_mobile', 'partner_phone', 'face_book', 'linkedin'):
+                        old_dict[key] = applicant[key]
+                if old_dict:
+                    vals['old_data'] = json.dumps(old_dict)
+        return super(Applicant, self).write(vals)
 
     def get_current_user_group(self):
         res_user = self.env.user
@@ -129,9 +143,6 @@ class Applicant(models.Model):
             raise ValidationError(_("Can't delete application that has activities"))
         return super(Applicant, self).unlink()
 
-    # @api.onchange('partner_id')
-
-    # @api.depends('activity_ids')
     def _get_activity(self, update=False):
         for applicant in self:
             activities = applicant.with_context({'active_test': False}).activity_ids
@@ -162,13 +173,6 @@ class Applicant(models.Model):
                     else:
                         applicant.result = last_activity.call_result_id
 
-    #
-    # @api.onchange('job_id')
-    # def onchange_job_id(self):
-    #     result=super(Applicant, self).onchange_job_id()
-    #     if self.user_id == False:
-    #         self.user_id = self.env.user.id
-    #     return result
     def _onchange_job_id_internal(self, job_id):
         department_id = False
         user_id = False
@@ -232,13 +236,10 @@ class Applicant(models.Model):
     @api.multi
     def action_makeMeeting(self):
         self.ensure_one()
-        activity_result = self.env['mail.activity'].search([('res_id', '=',self.id)])
-        if activity_result:
-            for activity in activity_result:
-                if not activity.call_result_id and not activity.interview_result:
-                    raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
-        if self.user_id.id != self.env.user.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
-            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
+        if self.user_id.id != self.env.user.id and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager'):
+            raise ValidationError(
+                'This Application is Owned by another Recruiter , you are not allowed to take any on.')
         if not self.partner_phone or not self.partner_mobile or not self.email_from:
             raise ValidationError('Please insert Applicant Mobile /Email /Phone in order to schedule activity .')
         else:
@@ -336,14 +337,11 @@ class Applicant(models.Model):
     #oveeride  method to prevent current user to change state if is not recruiter responsible for application
     @api.onchange('stage_id')
     def onchange_stage_id(self):
-        # res=super(Applicant, self).onchange_stage_id
-        activity_result = self.env['mail.activity'].search([('res_id', '=', self._origin.id)])
-        if activity_result:
-            for activity in activity_result:
-                if not activity.call_result_id and not activity.interview_result:
-                    raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
-        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
-            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
+        # res=super(Applicant, self).onchange_stage_id()
+        if self.env.user.id != self.user_id.id and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
+            raise ValidationError(
+                'This Application is Owned by another Recruiter , you are not allowed to take any on.')
         else:
             vals = self._onchange_stage_id_internal(self.stage_id.id)
             if vals['value'].get('date_closed'):
@@ -380,37 +378,6 @@ class Applicant(models.Model):
 
         if duplicated_contact:
             return duplicated_contact
-
-    # @api.multi
-    # def action_open_partner_merge(self):
-    #     view = self.env.ref('base_partner_merge.base_partner_merge_automatic_wizard_form')
-    #     self.ensure_one()
-    #     partner_ids = self.partner_id.check_duplication()
-    #     action = {
-    #         'name': _('Merge Selected Contacts'),
-    #         'type': 'ir.actions.act_window',
-    #         'view_type': 'form',
-    #         'view_mode': 'form',
-    #         'res_model': 'base.partner.merge.automatic.wizard',
-    #         'views': [(view.id, 'form')],
-    #         'view_id': view.id,
-    #         'target': 'new',
-    #         'context': {'state': 'selection',
-    #                     'dst_partner_id': self.partner_id.id,
-    #                     'partner_ids': partner_ids,
-    #                     'group_by_is_company': False,
-    #                     'maximum_group': 0,
-    #                     'group_by_parent_id': False,
-    #                     'exclude_contact': False,
-    #                     'group_by_email': False,
-    #                     'exclude_journal_item': False,
-    #                     'display_name': 'False',
-    #                     'number_group': 0,
-    #                     'group_by_vat': False,
-    #                     },
-    #     }
-    #
-    #     return action
 
 
 class Stage(models.Model):

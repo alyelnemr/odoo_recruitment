@@ -36,7 +36,7 @@ class Applicant(models.Model):
              date_last_stage_update,priority,salary_proposed_extra,salary_expected_extra,salary_proposed,
              salary_expected,availability,type_id,department_id,reference,delay_close,
              color ,emp_id,response_id,campaign_id ,medium_id , message_last_post ,activity_date_deadline
-              ,last_activity, last_activity_date, result , face_book ,linkedin,have_cv ,source_resp  from hr_applicant
+              ,last_activity, last_activity_date, result , face_book ,linkedin,have_cv ,source_resp,old_data  from hr_applicant
         """
         return select_str
 

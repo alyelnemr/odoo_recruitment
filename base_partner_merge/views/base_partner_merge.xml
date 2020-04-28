@@ -16,39 +16,12 @@
             <form string="Automatic Merge Wizard">
                 <sheet>
                     <separator string="Contacts has been merged" attrs="{'invisible': [('state', '!=', 'finished')]}"/>
-                    <!--                    <group name="deduplicate" attrs="{'invisible': [('state', '!=', 'finished')]}" col="1">-->
-                    <!--                        <h2>There is no more contacts to merge for this request...</h2>-->
-                    <!--                        <button name="%(action_partner_deduplicate)d" string="Deduplicate the other Contacts"-->
-                    <!--                                class="oe_highlight"-->
-                    <!--                                type="action"/>-->
-                    <!--                    </group>-->
-                    <!--                    <p class="oe_grey" attrs="{'invisible': [('state', '!=', 'option')]}">-->
-                    <!--                        Select the list of fields used to search for duplicated records. If you select several fields,-->
-                    <!--                        Odoo will propose you to merge only those having all these fields in common. (not one of the-->
-                    <!--                        fields).-->
-                    <!--                    </p>-->
                     <group name="deduplicate_open"
                            attrs="{'invisible': ['|', ('state', 'not in', ('selection', 'finished')), ('number_group', '=', 0)]}">
                         <field name="state" invisible="1"/>
                         <field name="number_group"/>
                     </group>
-                    <!--                    <group name="deduplicate_data" string="Search duplicates based on duplicated data in"-->
-                    <!--                           attrs="{'invisible': [('state', 'not in', ('option',))]}">-->
-                    <!--                        <field name="group_by_email"/>-->
-                    <!--                        <field name="group_by_name"/>-->
-                    <!--                        <field name="group_by_is_company"/>-->
-                    <!--                        <field name="group_by_vat"/>-->
-                    <!--                        <field name="group_by_parent_id"/>-->
-                    <!--                    </group>-->
-                    <!--                    <group name="deduplicate_exclude_contacts" string="Exclude contacts having"-->
-                    <!--                           attrs="{'invisible': [('state', 'not in', ('option',))]}">-->
-                    <!--                        <field name="exclude_contact"/>-->
-                    <!--                        <field name="exclude_journal_item"/>-->
-                    <!--                    </group>-->
-                    <!--                    <separator string="Options" attrs="{'invisible': [('state', 'not in', ('option',))]}"/>-->
-                    <!--                    <group name="deduplicate_max" attrs="{'invisible': [('state', 'not in', ('option','finished'))]}">-->
-                    <!--                        <field name="maximum_group" attrs="{'readonly': [('state', 'in', ('finished'))]}"/>-->
-                    <!--                    </group>-->
+
                     <separator string="Merge the following contacts"
                                attrs="{'invisible': [('state', 'in', ('option', 'finished'))]}"/>
                     <group name="deduplicate_contacts" attrs="{'invisible': [('state', 'in', ('option', 'finished'))]}"
@@ -101,7 +74,7 @@
                             type="object"
                             confirm="Are you sure to execute the list of automatic merges of your contacts ?"
                             attrs="{'invisible': [('state', '!=', 'option')]}"/>
-                    <button special="cancel" string="Cancel" type="object" class="btn btn-default oe_inline"
+                    <button string="Cancel" type="object" class="btn btn-default oe_inline" name="cancel_merge"
                             attrs="{'invisible': [('state', '=', 'finished')]}"/>
                     <button special="cancel" string="Close" type="object" class="btn btn-default oe_inline"
                             attrs="{'invisible': [('state', '!=', 'finished')]}"/>
