@@ -113,6 +113,11 @@ class NoCRMMergePartnerAutomatic(MergePartnerAutomatic):  # noqa
             self.env[active_model].browse(ctx.get('dst_partner_id')).unlink()
             if not ctx.get('form_dialog'):
                 action = self.env.ref('contacts.action_contacts').read()[0]
+            else:
+                action = {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                }
         elif ctx.get('edit_contact', False) and active_model == 'res.partner':
             edited_contact = self.env[active_model].browse(ctx.get('edit_contact'))
             vals = json.loads(edited_contact.old_data)

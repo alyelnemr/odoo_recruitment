@@ -38,6 +38,7 @@ Handle recruitment Process for Andalusia
     'qweb': [
         'static/src/xml/activity.xml',
         'static/src/xml/fields.xml',
+        'static/src/xml/dialog.xml',
     ],
 
     'installable': True,
