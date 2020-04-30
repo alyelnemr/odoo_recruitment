@@ -78,6 +78,36 @@ class Applicant(models.Model):
     source_resp = fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",
                                   default=lambda self: self.env.user.id)
     old_data = fields.Text('Last Updated Data')
+    tooltip_icon = fields.Char(string='Info.')
+
+    def get_last_activity(self):
+        activity={}
+        self._cr.execute(
+            "select MAT.name , to_char(MA.date_deadline, 'DD-MM-YYYY') , MA.call_result_id, MA.interview_result , MAT.id  from mail_activity MA INNER JOIN mail_activity_type MAT ON MA.activity_type_id = MAT.id"
+            " where MA.res_model =  %s and  MA.res_id =  %s AND (MAT.id not in (%s ,%s ,%s,%s))  order by MA.create_date desc limit 1 ",
+            ('hr.applicant',self.id,1,3,4,5))
+        results =self.env.cr.fetchone()
+
+        if results:
+            if not results[2] and not results[3]:
+                activity = {
+                    'Activity_Result':'No result added.'}
+            else:
+                if results[4] != 5 :
+                    activity = {
+                        'Activity_type' : 'Type = ' + results[0],
+                        'Activity_Date' : 'Date = ' + results[1],
+                        'Activity_Result':'Result = ' + results[2]}
+                else:
+                    activity = {
+                        'Activity_type' :  'Type = ' + results[0],
+                        'Activity_Date' :  'Date = ' + results[1],
+                        'Activity_Result': 'Result = ' + results[3]}
+            return activity
+        else:
+            activity = {
+                'Activity_Result': 'There is no activity added.'}
+            return activity
 
     @api.multi
     def write(self, vals):

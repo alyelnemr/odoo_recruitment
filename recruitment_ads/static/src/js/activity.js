@@ -13,6 +13,112 @@ var _t = core._t;
 var MailActivity = require('mail.Activity');
 var Session = require('web.session');
 var Dialog = require('web.Dialog');
+var fieldRegistry = require('web.field_registry');
+var AbstractField = require('web.AbstractField');
+var test;
+var rpc = require('web.rpc');
+//
+
+//var AbstractActivityField = AbstractField.extend({
+//    // inherited
+//    init: function () {
+//        this._super.apply(this, arguments);
+//        this.activities = [];
+//    },
+//
+//    // private
+//    _markActivityDone: function (id, feedback) {
+//        return this._rpc({
+//                model: 'mail.activity',
+//                method: 'action_feedback',
+//                args: [[id]],
+//                kwargs: {feedback: feedback},
+//            });
+//    },
+//    _readActivities: function () {
+//        var self = this;
+//        var missing_ids = _.difference(this.value.res_ids, _.pluck(this.activities, 'id'));
+//        var fetch_def;
+//        if (missing_ids.length) {
+//            fetch_def = this._rpc({
+//                    model: 'mail.activity',
+//                    method: 'read',
+//                    args: [missing_ids],
+//                });
+//        }
+//        return $.when(fetch_def).then(function (results) {
+//            // convert create_date and date_deadline to moments
+//            _.each(results, function (activity) {
+//                activity.create_date = moment(time.auto_str_to_date(activity.create_date));
+//                activity.date_deadline = moment(time.auto_str_to_date(activity.date_deadline));
+//            });
+//
+//            // filter out activities that are no longer linked to this record
+//            self.activities = _.filter(self.activities.concat(results || []), function (activity) {
+//                return _.contains(self.value.res_ids, activity.id);
+//            });
+//
+//            // sort activities by due date
+//            self.activities = _.sortBy(self.activities, 'date_deadline');
+//        });
+//    },
+//    _scheduleActivity: function (id, previous_activity_type_id, callback) {
+//        var action = {
+//            type: 'ir.actions.act_window',
+//            res_model: 'mail.activity',
+//            view_mode: 'form',
+//            view_type: 'form',
+//            views: [[false, 'form']],
+//            target: 'new',
+//            context: {
+//                default_res_id: this.res_id,
+//                default_res_model: this.model,
+//                default_previous_activity_type_id: previous_activity_type_id,
+//            },
+//            res_id: id || false,
+//        };
+//        return this.do_action(action, { on_close: callback });
+//    },
+//});
+//
+var CustomFieldChar = AbstractField.extend({
+    template: "recruitment_ads.LastKanbanActivity",
+    events: {
+        'click .o_activity_btn': '_onButtonClick',
+    },
+
+    _renderDropdown: function () {
+        var self = this;
+        var missing_ids = self.recordData.id;
+        this.$('.o_activity').html(QWeb.render("mail.KanbanActivityLoading"));
+        console.log(self);
+        rpc.query({
+         model: 'hr.applicant',
+         method:'get_last_activity',
+         args: [[missing_ids]],
+
+         }).then(function (result) {
+                var x = result;
+                 console.log(x);
+                 self.$('.o_activity').html(QWeb.render("recruitment_ads.LastKanbanActivityLoading", {
+                records: result ,
+
+            }));
+                    });
+
+            },
+
+    _onButtonClick: function (event) {
+        event.preventDefault();
+        this._renderDropdown();
+    },
+
+
+
+});
+
+
+fieldRegistry.add('my-custom-field', CustomFieldChar);
 
 
 MailActivity.include({

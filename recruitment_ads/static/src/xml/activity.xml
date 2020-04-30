@@ -51,4 +51,27 @@
         </t>
     </t>
 
+    <t t-name="recruitment_ads.LastKanbanActivity">
+        <div class="o_kanban_inline_block dropdown o_kanban_selection">
+            <a class="dropdown-toggle o_activity_btn" data-toggle="dropdown">
+                <span class="fa fa-info-circle fa-2x"/>
+            </a>
+            <ul class="dropdown-menu o_activity" role="menu">
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="recruitment_ads.LastKanbanActivityLoading">
+        <li t-if="!_.isEmpty(records)">
+             <t t-foreach="records" t-as="key">
+                <li class="text-center o_no_activity" >
+                    <strong>
+                    <strong> <t t-esc="key_value"/></strong>
+                    </strong>
+                </li>
+             </t>
+
+        </li>
+    </t>
+
 </templates>
