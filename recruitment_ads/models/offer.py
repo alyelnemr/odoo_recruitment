@@ -168,8 +168,7 @@ class Offer(models.Model):
     @api.multi
     def write(self, vals):
         if vals['state'] == 'hired':
-            activity = self.env['hr.recruitment.stage'].search([('name', '=', ' Hired')], limit=1)
-            activity = self.env['hr.recruitment.stage'].search([('name', '=', ' Hired')], limit=1)
+            activity = self.env['hr.recruitment.stage'].search([('name', '=','Hired')], limit=1)
             if activity:
                 self.application_id.write({'stage_id': activity.id})
         return super(Offer, self).write(vals)
