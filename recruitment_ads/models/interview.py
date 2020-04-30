@@ -229,6 +229,7 @@ class Interview(models.Model):
                             if applicant_obj:
                                 applicant_obj.write({'last_activity': meeting_activity_type.id,
                                                      'last_activity_date': fields.date.today(),
+                                                    'result' : False
                                                      })
                                 activity = self.env['hr.recruitment.stage'].search([('name', '=', ' Interview')], limit=1)
                                 if activity:
