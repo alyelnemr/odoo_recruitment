@@ -21,6 +21,8 @@ class MailActivity(models.Model):
     real_write_uid = fields.Many2one('res.users', string='Real Write User',
                                      help='Store the real write user as odoo always overwrite write_uid with admin',
                                      default=lambda self: self.env.user)
+    call_result_date=fields.Date()
+    interview_result_date = fields.Date()
 
     @api.multi
     def write(self, vals):
@@ -54,7 +56,8 @@ class MailActivity(models.Model):
             )
             message |= record.message_ids[0]
             record.write({'result': interview_result})
-        self.write({'active': False})
+        self.write({'active': False,
+                    'interview_result_date':fields.Date.today()})
         self.mapped('calendar_event_id').write({'is_interview_done': True})
         self.update_calendar_event(interview_result)
         return message.ids and message.ids[0] or False
@@ -74,7 +77,8 @@ class MailActivity(models.Model):
             )
             message |= record.message_ids[0]
             record.write({'result':call_result_id})
-        self.write({'active': False})
+        self.write({'active': False,
+                    'call_result_date':fields.Date.today()})
         self.update_calendar_event(call_result_id)
         return message.ids and message.ids[0] or False
 
@@ -111,6 +115,7 @@ class MailActivity(models.Model):
                     raise ValidationError(_("Please insert Applicant LinkedIn in order to schedule LinkedIn Call?"))
             hr_applicant_id.write({'last_activity':values['activity_type_id'],
                                    'last_activity_date':values['date_deadline'],
+                                   'result':False,
                                   })
             if not hr_applicant_id.user_id:
                 hr_applicant_id.write({'user_id': self.env.user.id,
