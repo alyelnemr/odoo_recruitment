@@ -54,7 +54,7 @@
     <t t-name="recruitment_ads.LastKanbanActivity">
         <div class="o_kanban_inline_block dropdown o_kanban_selection">
             <a class="dropdown-toggle o_activity_btn" data-toggle="dropdown">
-                <span class="fa fa-info-circle fa-2x"/>
+                <i class="fa fa-check-circle-o fa-lg"></i>
             </a>
             <ul class="dropdown-menu o_activity" role="menu">
             </ul>
