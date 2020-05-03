@@ -84,8 +84,8 @@ class Applicant(models.Model):
         activity={}
         self._cr.execute(
             "select MAT.name , to_char(MA.date_deadline, 'DD-MM-YYYY') , MA.call_result_id, MA.interview_result , MAT.id  from mail_activity MA INNER JOIN mail_activity_type MAT ON MA.activity_type_id = MAT.id"
-            " where MA.res_model =  %s and  MA.res_id =  %s AND (MAT.id not in (%s ,%s ,%s,%s))  order by MA.create_date desc limit 1 ",
-            ('hr.applicant',self.id,1,3,4,5))
+            " where MA.res_model =  %s and  MA.res_id =  %s AND (MAT.id not in (%s ,%s ,%s))  order by MA.create_date desc limit 1 ",
+            ('hr.applicant',self.id,1,3,4))
         results =self.env.cr.fetchone()
 
         if results:
