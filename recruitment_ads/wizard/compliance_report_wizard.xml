@@ -19,7 +19,7 @@
                         />
                     </group>
                     <footer>
-<!--                        <button name="button_export_xlsx" type="object" string="Export (XLSX)" class="oe_highlight"/>-->
+                        <button name="button_export_xlsx" type="object" string="Export (XLSX)" class="oe_highlight"/>
                         <button string="Cancel" class="btn-default" special="cancel"/>
                     </footer>
                 </sheet>
