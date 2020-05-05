@@ -6,27 +6,39 @@ from odoo.exceptions import ValidationError
 
 class IrAttachmentInherit(models.Model):
     _inherit = 'ir.attachment'
+
     # attach_name_seq = fields.Char()
     file_name_seq = fields.Char()
+    attachment_type = fields.Selection([('cv', 'CV'), ('assessment', 'Assessment')],
+                                       string="Attachment Type", required=True, default="cv")
 
-    @api.onchange('datas_fname')
+    @api.onchange('datas_fname', 'attachment_type')
     def _get_attach_name(self):
         if self.datas_fname and self.res_model == 'hr.applicant':
-            no_attach = self.env['ir.attachment'].search([('res_id', '=', self.res_id)], order='create_date asc')
-            extension = self.datas_fname.split(".")
-            if extension:
-                last_item = len(extension) - 1
-                extension = extension[last_item]
+            attach_no = self.search([('res_id', '=', self.res_id)])
+            application = self.env['hr.applicant'].browse(self.res_id)
 
-                if no_attach:
-                    last_attach_index = len(no_attach) - 1
-                    last_attach_obj = no_attach[last_attach_index]
-                    self.file_name_seq = int(last_attach_obj.file_name_seq) + 1
-                else:
-                    self.file_name_seq = str(1)
-                if self.name:
-                    self.datas_fname = self.name + '(' + self.file_name_seq + ')' + '.' + extension
-                    self.name = self.name + '(' + self.file_name_seq + ')'
+            extension = self.datas_fname.split(".")
+            last_item = len(extension) - 1
+            extension = extension[last_item]
+
+            cv_attach = []
+            ass_attach = []
+            if attach_no:
+                for attach in attach_no:
+                    if attach.attachment_type == 'cv':
+                        cv_attach.append(attach)
+                    elif attach.attachment_type == 'assessment':
+                        ass_attach.append(attach)
+
+                cv_seq = str('(' + str(len(cv_attach) + 1) + ')' if len(cv_attach) >= 1 else '')
+                ass_seq = str('_ASS_' + str(len(ass_attach) + 1) if len(ass_attach) >= 1 else '_ASS')
+                if self.attachment_type == 'cv':
+                    self.datas_fname = application.name + cv_seq + '.' + extension
+                    self.name = application.name + cv_seq
+                elif self.attachment_type == 'assessment':
+                    self.datas_fname = application.name + ass_seq + '.' + extension
+                    self.name = application.name + ass_seq
 
     @api.depends('res_model', 'res_id')
     def _compute_res_name(self):
