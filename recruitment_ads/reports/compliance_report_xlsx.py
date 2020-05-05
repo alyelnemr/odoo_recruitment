@@ -38,19 +38,22 @@ class ComplianceReportXslx(models.AbstractModel):
                     ('active', '=', False),
                     ('res_model', '=', 'hr.applicant'),
                     ('real_create_uid', '=', rec.id),
-                    ('activity_type_id', 'in', (2, 6, 7),)
+                    ('activity_type_id', 'in', (2, 6, 7)),
+                    ('id', 'in', report.application_ids.ids),
                 ]
                 interviews_domain = [
                     ('active', '=', False),
                     ('res_model', '=', 'hr.applicant'),
                     ('real_create_uid', '=', rec.id),
-                    ('activity_type_id', '=', 5),]
+                    ('activity_type_id', '=', 5),
+                    ('id','in',report.application_ids.ids),]
 
-                offers_domain = [('create_uid', '=', rec.id),]
-                if report.bu_ids:
-                    offers_domain.append(('business_unit_id','in',report.bu_ids.ids))
-                    # interviews_domain.append(('res_id.job_id.business_unit_id', 'in', report.bu_ids.ids))
-                    # call_domain.append(('res_id.job_id', 'in', report.bu_ids.ids),)
+                offers_domain = [('create_uid', '=', rec.id),
+                                 ('application_id','in',report.application_ids.ids),
+                                 ]
+                # if report.bu_ids:
+                #     offers_domain.append(('business_unit_id','in',report.bu_ids.ids))
+                #
 
                 call_domain.extend(domain)
                 total_calls = self.env['mail.activity'].search(call_domain)
@@ -60,7 +63,6 @@ class ComplianceReportXslx(models.AbstractModel):
                 interviews_domain.extend(domain)
                 interviews = self.env['mail.activity'].search(interviews_domain)
                 done_interviews = interviews.filtered(lambda x: x.interview_result != False)
-
 
                 offers_domain.extend(domain)
                 offers = self.env['hr.offer'].search(offers_domain)
