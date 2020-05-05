@@ -219,11 +219,6 @@
             <xpath expr="//field[@name='datas']" position="replace">
                 <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}" required="1"/>
             </xpath>
-            <xpath expr="//group/group" position="after">
-                <group>
-                    <field name="attachment_type" widget="radio" nolabel="1"/>
-                </group>
-            </xpath>
 <!---->
         </field>
     </record>
