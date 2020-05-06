@@ -20,7 +20,7 @@ class RecruiterActivityReportWizard(models.TransientModel):
     offer = fields.Boolean('Offered')
     hired = fields.Boolean('Hired')
 
-    application_ids = fields.Many2many('hr.applicant')
+    # application_ids = fields.Many2many('hr.applicant')
     call_ids = fields.Many2many('mail.activity', 'call_recruiter_report_rel', 'report_id', 'call_id',
                                 domain=[('active', '=', False)])
     interview_ids = fields.Many2many('mail.activity', 'interview_recruiter_report_rel', 'report_id', 'interview_id',

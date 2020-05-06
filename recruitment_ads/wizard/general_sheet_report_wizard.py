@@ -9,7 +9,7 @@ class GeneralSheetReportWizard(models.TransientModel):
 
     _description = "General Sheet Report Wizard"
 
-    application_ids = fields.Many2many('hr.applicant')
+    # application_ids = fields.Many2many('hr.applicant')
 
     @api.multi
     def button_export_xlsx(self):

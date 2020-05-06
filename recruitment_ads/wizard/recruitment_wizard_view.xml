@@ -117,6 +117,13 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
+    <record id="interview_report_wizard_action" model="ir.actions.act_window">
+        <field name="name">Interview Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">interview.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
     <menuitem id="report_hr_recruitment_general_report"
               name="General Reports"
               parent="hr_recruitment.menu_hr_recruitment_root"
@@ -133,4 +140,10 @@
               sequence="2"
               action="general_sheet_wizard_action"
               groups="group_view_general_sheet"/>
+    <menuitem id="report_hr_recruitment_interview_report"
+              name="Interviews Report"
+              parent="report_hr_recruitment_general_report"
+              sequence="3"
+              action="interview_report_wizard_action"
+              groups="group_view_interview_report"/>
 </odoo>

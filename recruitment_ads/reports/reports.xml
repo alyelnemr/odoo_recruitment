@@ -16,4 +16,12 @@
         <field name="report_type">xlsx</field>
         <field name="report_file">General Sheet</field>
     </record>
+    <record id="action_report_interview_report_xlsx" model="ir.actions.report">
+        <field name="name">Interview Report XLSX</field>
+        <field name="model">interview.report.wizard</field>
+        <field name="type">ir.actions.report</field>
+        <field name="report_name">recruitment_ads.report_interview_report_xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_file">Interview Report</field>
+    </record>
 </odoo>
