@@ -152,7 +152,7 @@ class GeneralSheetWrapper:
 
         self.job_id = application.job_id
 
-        calls = self._get_activity('call', application).sorted('write_date', reverse=False)
+        calls = self._get_activity('call', application).sorted('write_date', reverse=True)
         first_call = calls[0] if calls else False
         call_feedback = first_call.feedback if first_call else False
         self.call_type = first_call.activity_type_id.name if first_call else False
