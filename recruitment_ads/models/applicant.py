@@ -234,14 +234,16 @@ class Applicant(models.Model):
 
         return {'value': {
             'department_id': department_id,
-            'stage_id': stage_id
+            'stage_id': stage_id,
+            'user_id' : user_id
         }}
 
     @api.onchange('job_id')
     def onchange_job_id(self):
         vals = self._onchange_job_id_internal(self.job_id.id)
         self.department_id = vals['value']['department_id']
-        # self.user_id = vals['value']['user_id']
+        if not self._origin.id:
+             self.user_id = False
         self.stage_id = vals['value']['stage_id']
 
     def _get_history_data(self, applicant_id):
