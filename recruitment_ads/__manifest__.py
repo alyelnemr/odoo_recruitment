@@ -45,6 +45,6 @@ Handle recruitment Process for Andalusia
     ],
 
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
 }
