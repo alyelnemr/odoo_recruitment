@@ -99,13 +99,13 @@
                     <field name="linkedin" widget="url"/>
                     <field name="face_book" widget="url"/>
                 </xpath>
-<!--                <div name="button_box" position="inside">-->
-<!--                    <button name="action_open_partner_merge" type="object" class="oe_stat_button"-->
-<!--                            icon="fa-archive">-->
-<!--                        Check-->
-<!--                        Duplication-->
-<!--                    </button>-->
-<!--                </div>-->
+                <field name="department_id" position="after">
+                    <field name="section_id"
+                           domain="[('parent_id','=',department_id)]"
+                           context="{'default_parent_id': department_id,
+                           'form_view_ref' : 'recruitment_ads.view_section_form',
+                           'tree_view_ref' : 'recruitment_ads.view_section_tree'}"/>
+                </field>
             </field>
         </record>
 

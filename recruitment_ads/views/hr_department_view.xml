@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Department Action-->
+        <record id="hr_recruitment.action_hr_department" model="ir.actions.act_window">
+            <field name="name">Departments</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('parent_id', '=', False)]</field>
+            <field name="search_view_id" ref="hr.view_department_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a department.
+                </p>
+                <p>
+                    Odoo's department structure is used to manage all documents
+                    related to employees by departments: expenses, timesheets,
+                    leaves, recruitments, etc.
+                </p>
+            </field>
+        </record>
+        <record id="hr.open_module_tree_department" model="ir.actions.act_window">
+            <field name="name">Departments</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('parent_id', '=', False)]</field>
+            <field name="search_view_id" ref="hr.view_department_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a department.
+                </p>
+                <p>
+                    Odoo's department structure is used to manage all documents
+                    related to employees by departments: expenses, timesheets,
+                    leaves, recruitments, etc.
+                </p>
+            </field>
+        </record>
+
+        <!--Create Department form-->
+        <record id="view_department_form_inherit" model="ir.ui.view">
+            <field name="name">hr.department.form.inherit</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="business_unit_id" invisible="0"/>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <attribute name="domain">[('business_unit_id', '=', business_unit_id)]</attribute>
+                    <attribute name="context">{'default_business_unit_id':business_unit_id}</attribute>
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group" position="after">
+                    <notebook>
+                        <page string="Sections" name="sections">
+                            <field name="child_ids" nolable="0"
+                                   domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', active_id),('allow_call', '=', allow_call)]"
+                                   context="{'default_business_unit_id':business_unit_id,'default_allow_call':allow_call,
+                                   'default_parent_id':active_id,'form_view_ref' : 'recruitment_ads.view_section_form'}">
+                                <tree string="Sections" editable="bottom">
+                                    <field name="name" string="Section Name"/>
+                                    <field name="business_unit_id" readonly="1"/>
+                                    <field name="parent_id" readonly="1" string="Department"/>
+                                    <field name="manager_id"/>
+                                    <field name="allow_call"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Job Titles" name="job_titles">
+                            <field name="job_title_ids" nolable="0" readonly="0"/>
+                        </page>
+                    </notebook>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="allow_call" attrs="{'invisible': [('uid','!=',1)]}"/>
+
+                </xpath>
+
+            </field>
+        </record>
+
+        <!--Department tree-->
+        <record id="view_department_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.department.tree.inherit</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="replace"/>
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="business_unit_id"/>
+                    <!--                    <field name="parent_id"/>-->
+                </xpath>
+                <xpath expr="//field[@name='display_name']" position="attributes">
+                    <attribute name="string">Department Name</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

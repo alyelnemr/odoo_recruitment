@@ -103,7 +103,10 @@ class Department(models.Model):
     allow_call= fields.Boolean(string='Allow Online Call')
 
     def _get_default_bu(self):
-        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
+        if self.parent_id:
+            return self.parent_id.business_unit_id
+        else:
+            return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
     business_unit_id = fields.Many2one('business.unit', required=True, default=_get_default_bu)
     job_title_ids = fields.Many2many('job.title', 'hr_dep_job_rel', 'dep_id', 'job_id', string='Job Titles')
@@ -127,6 +130,12 @@ class Department(models.Model):
             if child_department:
                for child in child_department:
                 child.write({'allow_call': self.allow_call})
+
+    @api.onchange('parent_id')
+    def _onchange_parent_id(self):
+        if self.parent_id:
+            self.allow_call = self.parent_id.allow_call
+            self.business_unit_id = self.parent_id.business_unit_id
 
     @api.model
     def create(self, vals):
@@ -164,7 +173,9 @@ class Job(models.Model):
     name = fields.Char(string='Job Position', required=False, index=True, translate=True, compute='_compute_job_name',
                        store=True)
     business_unit_id = fields.Many2one('business.unit', required=True, domain=lambda self: self._get_bu_domain())
-    department_id = fields.Many2one('hr.department', string='Department', required=True)
+    department_id = fields.Many2one('hr.department', string='Department', required=True,
+                                    domain=[('parent_id', '=', False)])
+    section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
     job_level_id = fields.Many2one('job.level', string='Job Level', required=False)
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user)
@@ -225,8 +236,11 @@ class Job(models.Model):
         self.department_id = False
         self.job_title_id = False
         self.job_level_id = False
+        self.section_id = False
 
     @api.onchange('department_id')
     def onchange_department_id(self):
         self.job_title_id = False
         self.job_level_id = False
+        if self.department_id != self.section_id.parent_id:
+            self.section_id = False

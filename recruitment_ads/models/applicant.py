@@ -58,6 +58,8 @@ class Applicant(models.Model):
     email_from = fields.Char()
     partner_phone = fields.Char(related="partner_id.phone")
     partner_mobile = fields.Char(related="partner_id.mobile")
+    department_id = fields.Many2one('hr.department', "Department", domain=[('parent_id', '=', False)])
+    section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
 
     partner_name = fields.Char(required=True)
     job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
@@ -80,7 +82,7 @@ class Applicant(models.Model):
     name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
                        store=True)
     serial = fields.Char('serial', copy=False)
-    allow_call = fields.Boolean(string="Allow Online Call", related="department_id.allow_call")
+    allow_call = fields.Boolean(string="Allow Online Call", compute='_get_allow_call', store=True)
     # face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
     # linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
     face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book")
@@ -246,6 +248,10 @@ class Applicant(models.Model):
              self.user_id = False
         self.stage_id = vals['value']['stage_id']
 
+    @api.onchange('department_id')
+    def onchange_department_id(self):
+        self.section_id = False
+
     def _get_history_data(self, applicant_id):
         if applicant_id == False:
             return self.env['hr.applicant.history']
@@ -262,6 +268,18 @@ class Applicant(models.Model):
 
         history = self._get_history_data(self.partner_id.id)
         self.applicant_history_ids = [(6, 0, history.ids)]
+
+    @api.multi
+    @api.onchange('department_id.allow_call', 'section_id.allow_call')
+    @api.depends('department_id.allow_call', 'section_id.allow_call')
+    def _get_allow_call(self):
+        for applicant in self:
+            if applicant.section_id:
+                applicant.allow_call = applicant.section_id.allow_call
+            elif applicant.department_id:
+                applicant.allow_call = applicant.department_id.allow_call
+            else:
+                applicant.allow_call = False
 
     @api.onchange('cv_matched')
     def onchange_cv_matched(self):
@@ -280,10 +298,13 @@ class Applicant(models.Model):
     @api.multi
     def action_makeMeeting(self):
         self.ensure_one()
-        if self.user_id.id != self.env.user.id and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager'):
-            raise ValidationError(
-                'This Application is Owned by another Recruiter , you are not allowed to take any on.')
+        activity_result = self.env['mail.activity'].search([('res_id', '=',self.id)])
+        if activity_result:
+            for activity in activity_result:
+                if not activity.call_result_id and not activity.interview_result:
+                    raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
+        if self.user_id.id != self.env.user.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
+            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         if not self.partner_phone or not self.partner_mobile or not self.email_from:
             raise ValidationError('Please insert Applicant Mobile /Email /Phone in order to schedule activity .')
         else:
@@ -381,11 +402,14 @@ class Applicant(models.Model):
     #oveeride  method to prevent current user to change state if is not recruiter responsible for application
     @api.onchange('stage_id')
     def onchange_stage_id(self):
-        # res=super(Applicant, self).onchange_stage_id()
-        if self.env.user.id != self.user_id.id and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
-            raise ValidationError(
-                'This Application is Owned by another Recruiter , you are not allowed to take any on.')
+        # res=super(Applicant, self).onchange_stage_id
+        activity_result = self.env['mail.activity'].search([('res_id', '=', self._origin.id)])
+        if activity_result:
+            for activity in activity_result:
+                if not activity.call_result_id and not activity.interview_result:
+                    raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
+        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
+            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         else:
             vals = self._onchange_stage_id_internal(self.stage_id.id)
             if vals['value'].get('date_closed'):

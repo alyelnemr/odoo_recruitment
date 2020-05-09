@@ -1,48 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!--Create Department form-->
-        <record id="view_department_form_inherit" model="ir.ui.view">
-            <field name="name">hr.department.form.inherit</field>
-            <field name="model">hr.department</field>
-            <field name="inherit_id" ref="hr.view_department_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="after">
-                    <field name="business_unit_id" invisible="0"/>
-                </xpath>
-                <xpath expr="//field[@name='parent_id']" position="attributes">
-                    <attribute name="domain">[('business_unit_id', '=', business_unit_id)]</attribute>
-                    <attribute name="context">{'default_business_unit_id':business_unit_id}</attribute>
-                </xpath>
-                <xpath expr="//group" position="after">
-                    <separator string="Job Titles"/>
-                    <field name="job_title_ids" nolable="0" readonly="0"/>
-                </xpath>
-                <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="allow_call" attrs="{'invisible': [('uid','!=',1)]}"/>
-
-                </xpath>
-
-            </field>
-        </record>
-
-        <!--Department tree-->
-        <record id="view_department_tree_inherit" model="ir.ui.view">
-            <field name="name">hr.department.tree.inherit</field>
-            <field name="model">hr.department</field>
-            <field name="inherit_id" ref="hr.view_department_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='parent_id']" position="replace"/>
-                <xpath expr="//field[@name='display_name']" position="after">
-                    <field name="business_unit_id"/>
-                    <field name="parent_id"/>
-                </xpath>
-                <xpath expr="//field[@name='display_name']" position="attributes">
-                    <attribute name="string">Department Name</attribute>
-                </xpath>
-            </field>
-        </record>
-
         <!--Create a Job Position popup form-->
         <record id="hr_job_simple_form_inherit" model="ir.ui.view">
             <field name="name">hr.job.simple.form.inherit</field>
@@ -54,7 +12,11 @@
                            options="{'no_create':True,'no_open':True}"
                     />
                     <field name="department_id" class="oe_inline"
-                           domain="[('business_unit_id', '=', business_unit_id)]"/>
+                           domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"/>
+                    <field name="section_id" class="oe_inline"
+                           domain="[('parent_id','=',department_id)]" context="{'default_parent_id': department_id,
+                           'form_view_ref' : 'recruitment_ads.view_section_form',
+                           'tree_view_ref' : 'recruitment_ads.view_section_tree'}"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
                            context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"
                            options="{'no_create':True,'no_create_edit':True}"/>
