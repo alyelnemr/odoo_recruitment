@@ -44,8 +44,15 @@
                         </h3>
                         <label for="department_id"/>
                         <h3>
-                            <field name="department_id" domain="[('business_unit_id', '=', business_unit_id)]"
-                                   context="{'default_business_unit_id':business_unit_id}"/>
+                            <field name="department_id" class="oe_inline"
+                           domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"/>
+                        </h3>
+                        <label for="section_id"/>
+                        <h3>
+                            <field name="section_id" class="oe_inline"
+                           domain="[('parent_id','=',department_id)]" context="{'default_parent_id': department_id,
+                           'form_view_ref' : 'recruitment_ads.view_section_form',
+                           'tree_view_ref' : 'recruitment_ads.view_section_tree'}"/>
                         </h3>
                         <label for="job_title_id"/>
                         <h3>

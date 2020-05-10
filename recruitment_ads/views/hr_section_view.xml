@@ -24,7 +24,7 @@
                             <group>
                                 <field name="business_unit_id"/>
                                 <field name="parent_id" string="Department"
-                                       domain="[('business_unit_id', '=', business_unit_id)]" required="True"/>
+                                       domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]" required="True"/>
                             </group>
                             <group>
                                 <field name="manager_id"/>

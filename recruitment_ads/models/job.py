@@ -143,6 +143,7 @@ class Department(models.Model):
             parent_department = self.env['hr.department'].search([('id', '=', vals['parent_id'])])
             if parent_department:
                 vals['allow_call'] = parent_department.allow_call
+                vals['business_unit_id'] = parent_department.business_unit_id.id
 
         return super(Department, self).create(vals)
 

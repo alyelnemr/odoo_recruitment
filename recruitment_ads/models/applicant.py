@@ -219,11 +219,13 @@ class Applicant(models.Model):
 
     def _onchange_job_id_internal(self, job_id):
         department_id = False
+        section_id = False
         user_id = False
         stage_id = self.stage_id.id
         if job_id:
             job = self.env['hr.job'].browse(job_id)
             department_id = job.department_id.id
+            section_id = job.section_id.id
             # user_id = job.user_id.id
             if not self.stage_id:
                 stage_ids = self.env['hr.recruitment.stage'].search([
@@ -236,6 +238,7 @@ class Applicant(models.Model):
 
         return {'value': {
             'department_id': department_id,
+            'section_id': section_id,
             'stage_id': stage_id,
             'user_id' : user_id
         }}
@@ -244,13 +247,15 @@ class Applicant(models.Model):
     def onchange_job_id(self):
         vals = self._onchange_job_id_internal(self.job_id.id)
         self.department_id = vals['value']['department_id']
+        self.section_id = vals['value']['section_id']
         if not self._origin.id:
              self.user_id = False
         self.stage_id = vals['value']['stage_id']
 
     @api.onchange('department_id')
     def onchange_department_id(self):
-        self.section_id = False
+        if self.department_id != self.section_id.parent_id:
+            self.section_id = False
 
     def _get_history_data(self, applicant_id):
         if applicant_id == False:
