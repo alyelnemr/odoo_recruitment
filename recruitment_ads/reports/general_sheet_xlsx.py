@@ -20,13 +20,18 @@ class GeneralSheetXslx(models.AbstractModel):
                 2: {'header': _('Applicant Code'), 'field': 'application_code', 'width': 20},
                 3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                 4: {'header': _('Have CV'), 'field': 'have_cv', 'width': 20, 'type': 'bool'},
-                5: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                6: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                7: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                8: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                9: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,'type': 'many2one'},
-                10: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                11: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                5: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
+                6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                7: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                8: {'header': _('Facebook'), 'field': 'facebook_link', 'width': 20},
+                9: {'header': _('Linkedin'), 'field': 'linkedin_link', 'width': 20},
+                10: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                11: {'header': _('Expected salary'), 'field': 'salary_expected','width': 20},
+                12: {'header': _('Current salary'), 'field': 'salary_current','width': 20},
+                13: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                14: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,'type': 'many2one'},
+                15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                15: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
 
             }
         })
@@ -61,14 +66,16 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 3: {'header': _('Call Date'), 'field': 'call_date', 'width': 18, 'type': 'datetime'},
                 last_row + 4: {'header': _('Called by'), 'field': 'called_by', 'width': 18, 'type': 'many2one'},
                 last_row + 5: {'header': _('Call Result'), 'field': 'call_result', 'width': 18},
-                last_row + 6: {'header': _('Call Comment'), 'field': 'call_comment', 'width': 18},
-
-                last_row + 7: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
-                last_row + 8: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                last_row + 9: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                last_row + 10: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,
+                last_row + 6: {'header': _('Call Done Date '), 'field': 'call_result_date', 'width': 18},
+                last_row + 7: {'header': _('Call Comment'), 'field': 'call_comment', 'width': 18},
+                last_row + 8: {'header': _('Interview Creation Date 1'), 'field': 'interview_create_date', 'width': 22},
+                last_row + 9: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
+                last_row + 10: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
+                last_row + 11: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
+                last_row + 12: {'header': _('Interview Done Date'), 'field': 'interview_result_date', 'width': 20, },
+                last_row + 13: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,
                                 'type': 'many2one'},
-                last_row + 11: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
+                last_row + 14: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
         last_row = max(sheets[0]['General Sheet']) + 1
         if max_interviews_count > 0:
@@ -79,22 +86,28 @@ class GeneralSheetXslx(models.AbstractModel):
             for i in range(max_interviews_count):
                 sheets[0]['General Sheet'].update(
                     {
-                        last_row: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
+                        last_row : {'header': _('Interview Creation Date ' + str(i + 2)), 'field': 'interview_create_date' + str(i + 1),
+                                       'width': 22},
+                        last_row + 1: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
                                    'width': 18},
-                        last_row + 1: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
+                        last_row + 2: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
                                        'width': 30,
                                        'type': 'x2many'},
-                        last_row + 2: {'header': _('Interview result ' + str(i + 2)),
+                        last_row + 3: {'header': _('Interview result ' + str(i + 2)),
                                        'field': 'interview_result' + str(i + 1),
                                        'width': 20, },
-                        last_row + 3: {'header': _('Interview type ' + str(i + 2)),
+                        last_row + 4: {'header': _('Interview Done Date ' + str(i + 2)),
+                                       'field': 'interview_result_date' + str(i + 1),
+                                       'width': 20, },
+
+                        last_row + 5: {'header': _('Interview type ' + str(i + 2)),
                                        'field': 'interview_type_id' + str(i + 1),
                                        'width': 20, 'type': 'many2one'},
-                        last_row + 4: {'header': _('Interview Comment ' + str(i + 2)),
+                        last_row + 6: {'header': _('Interview Comment ' + str(i + 2)),
                                        'field': 'interview_comment' + str(i + 1), 'width': 22},
                     }
                 )
-                last_row = last_row + 5
+                last_row = last_row + 7
         last_row = max(sheets[0]['General Sheet'])
         sheets[0]['General Sheet'].update(
             {
@@ -104,7 +117,8 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 4: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 22},
                 last_row + 5: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
                 last_row + 6: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
-                last_row + 7: {'header': _('Generated By'), 'field': 'offer_generated_by_bu_id', 'width': 40,
+                last_row + 7: {'header': _('Have Offer'), 'field': 'have_offer', 'width': 20, 'type': 'bool'},
+                last_row + 8: {'header': _('Generated By'), 'field': 'offer_generated_by_bu_id', 'width': 40,
                                'type': 'many2one'}
             }
         )
@@ -124,9 +138,14 @@ class GeneralSheetWrapper:
         self.application_code = application.name
         self.partner_name = application.partner_name
         self.have_cv = application.have_cv
+        self.have_assessment = application.have_assessment
         self.partner_mobile = application.partner_mobile
         self.email_from = application.email_from
+        self.facebook_link = application.face_book
+        self.linkedin_link = application.linkedin
         self.cv_matched = application.cv_matched
+        self.salary_expected = str(application.salary_expected)
+        self.salary_current = str(application.salary_current)
         self.source_id = application.source_id
         self.source_resp = application.source_resp
         self.business_unit_id = application.job_id.business_unit_id
@@ -159,22 +178,27 @@ class GeneralSheetWrapper:
         self.call_date = first_call.write_date if first_call else False
         self.called_by = first_call.user_id if first_call else False
         self.call_result = first_call.call_result_id if first_call else False
+        self.call_result_date = first_call.call_result_date if first_call else False
         self.call_comment = re.sub(r"<.*?>", '', call_feedback if call_feedback else '')
 
         interviews = self._get_activity('interview', application).sorted('write_date', reverse=False)
         first_interview = interviews[0] if interviews else False
         interview_feedback = first_interview.feedback if first_interview else False
+        self.interview_create_date = first_interview.create_date if first_interview else False
         self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
         self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
         self.interview_result = first_interview.interview_result if first_interview else False
+        self.interview_result_date = first_interview.interview_result_date if first_interview else False
         self.interview_type_id = first_interview.calendar_event_id.interview_type_id if first_interview else False
         self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
         for i in range(len(interviews)):
             if i == 0:
                 continue
+            setattr(self, 'interview_create_date' + str(i), interviews[i].create_date)
             setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
             setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
             setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
+            setattr(self, 'interview_result_date' + str(i), interviews[i].interview_result_date)
             setattr(self, 'interview_type_id' + str(i), interviews[i].calendar_event_id.interview_type_id)
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
@@ -188,6 +212,7 @@ class GeneralSheetWrapper:
         self.env = application.env
         self._context = application._context
         self.total_package = application.offer_id.total_package
+        self.have_offer = application.offer_id.have_offer
         self.total_salary = application.offer_id.total_salary
         self.offer_generated_by_bu_id = application.offer_id.generated_by_bu_id
 

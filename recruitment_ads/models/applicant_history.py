@@ -36,15 +36,15 @@ class Applicant(models.Model):
              date_last_stage_update,priority,salary_proposed_extra,salary_expected_extra,salary_proposed,
              salary_expected,availability,type_id,department_id,reference,delay_close,
              color ,emp_id,response_id,campaign_id ,medium_id , message_last_post ,activity_date_deadline
-              ,last_activity, last_activity_date, result , face_book ,linkedin,have_cv ,source_resp,old_data , tooltip_icon from hr_applicant
+              ,last_activity, last_activity_date, result , face_book ,linkedin,have_cv ,source_resp,old_data , tooltip_icon , have_assessment  from hr_applicant
         """
         return select_str
 
     def column_exists(self):
         """ Return whether the given column exists. """
         query = """ SELECT column_name FROM information_schema.columns
-                            WHERE table_name=%s AND  (column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s  or column_name = %s or column_name = %s ) """
-        result=self.env.cr.execute(query, ('hr_applicant', 'last_activity','last_activity_date','result','face_book','linkedin','response_id','source_resp','have_cv','tooltip_icon'))
+                            WHERE table_name=%s AND  (column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s  or column_name = %s or column_name = %s or column_name = %s ) """
+        result=self.env.cr.execute(query, ('hr_applicant', 'last_activity','last_activity_date','result','face_book','linkedin','response_id','source_resp','have_cv','tooltip_icon','have_assessment'))
         # return result
         return {row['column_name']: row for row in self.env.cr.dictfetchall()}
     @api.model_cr
