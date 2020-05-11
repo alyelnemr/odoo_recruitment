@@ -61,9 +61,12 @@ class InterviewReportWizard(models.TransientModel):
                         domain += [('create_uid', 'in', self.recruiter_ids.ids)]
 
         applications = self.env['hr.applicant'].search(domain, order='create_date desc')
-        if applications:
+        applications_interviews = self.env['mail.activity'].search(
+            [('res_model', '=', 'hr.applicant'), ('res_id', 'in', applications.ids), ('activity_type_id', '=', 5),
+             ('active', '=', False)]).mapped('res_id')
+        if applications_interviews:
             no_records = False
-        self.application_ids = [(6, 0, applications.ids)]
+        self.application_ids = [(6, 0, applications_interviews)]
 
         if no_records:
             raise ValidationError(_("No record to display"))

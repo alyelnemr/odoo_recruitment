@@ -2,7 +2,7 @@ from odoo import models, _
 import re
 
 
-class GeneralSheetXslx(models.AbstractModel):
+class InterviewReportXslx(models.AbstractModel):
     _name = 'report.recruitment_ads.report_interview_report_xlsx'
     _inherit = 'report.recruitment_ads.abstract_report_xlsx'
 
@@ -12,7 +12,7 @@ class GeneralSheetXslx(models.AbstractModel):
     def _get_report_sheets(self, report):
         sheets = []
         sheets.append({
-            'General Sheet': {
+            'Interview Report': {
                 0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
                 1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
                 2: {'header': _('Applicant Code'), 'field': 'application_code', 'width': 20},
@@ -38,13 +38,13 @@ class GeneralSheetXslx(models.AbstractModel):
                     department = department.parent_id
                 if len(department_list) > max_sections_count:
                     max_sections_count = len(department_list)
-        last_row = max(sheets[0]['General Sheet'])
+        last_row = max(sheets[0]['Interview Report'])
         if max_sections_count >= 1:
-            sheets[0]['General Sheet'].update({
+            sheets[0]['Interview Report'].update({
                 last_row + 1: {'header': _('Section'), 'field': 'section_id', 'width': 20, 'type': 'many2one', }})
             last_row = last_row + 1
 
-        sheets[0]['General Sheet'].update(
+        sheets[0]['Interview Report'].update(
             {
                 last_row + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
 
@@ -60,12 +60,12 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 7: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
                 last_row + 8: {'header': _('Interview Comment'), 'field': 'interview_comment', 'width': 22},
             })
-        last_row = max(sheets[0]['General Sheet']) + 1
+        last_row = max(sheets[0]['Interview Report']) + 1
         max_interviews_count = max(
             report.with_context({'active_test': False}).application_ids.mapped('count_done_interviews')) - 1
         if max_interviews_count > 0:
             for i in range(max_interviews_count):
-                sheets[0]['General Sheet'].update(
+                sheets[0]['Interview Report'].update(
                     {
                         last_row: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
                                    'width': 18},
@@ -87,12 +87,12 @@ class GeneralSheetXslx(models.AbstractModel):
 
     def _generate_report_content(self, workbook, report):
         if report:
-            self.write_array_header('General Sheet')
+            self.write_array_header('Interview Report')
             for app_line in report.application_ids.sorted('create_date', reverse=True):
-                self.write_line(GeneralSheetWrapper(app_line), 'General Sheet')
+                self.write_line(InterviewReportWrapper(app_line), 'Interview Report')
 
 
-class GeneralSheetWrapper:
+class InterviewReportWrapper:
     def __init__(self, application):
         self.user_id = application.user_id
         self.generated_by_bu_id = application.create_uid.business_unit_id
@@ -137,18 +137,6 @@ class GeneralSheetWrapper:
             setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
-
-        self.offer_status = application.offer_id.state
-        self.offer_date = application.offer_id.issue_date
-        self.hiring_date = application.offer_id.hiring_date
-        offer_dict = {'normal_offer': 'Normal Offer', 'nursing_offer': 'Nursing Offer'}
-        self.offer_type = offer_dict.get(application.offer_id.offer_type, '')
-
-        self.env = application.env
-        self._context = application._context
-        self.total_package = application.offer_id.total_package
-        self.total_salary = application.offer_id.total_salary
-        self.offer_generated_by_bu_id = application.offer_id.generated_by_bu_id
 
     def _get_activity(self, activity, data):
         """
