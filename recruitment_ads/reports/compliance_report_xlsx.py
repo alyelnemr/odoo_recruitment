@@ -35,15 +35,6 @@ class ComplianceReportXslx(models.AbstractModel):
                       ('create_date', '<=', report.date_to + ' 23:59:59'),
                       ]
 
-            activity_calls = [('active', '=', False),
-                               ('res_model', '=', 'hr.applicant'),
-                              ('activity_type_id', 'in' , (2, 6, 7))
-                               ]
-
-            activity_interviews = [('active', '=', False),
-                                   ('res_model', '=', 'hr.applicant'),
-                                   ('activity_type_id', '=' , 5),
-                               ]
             app_domain = []
             offers_domain = []
             if report.bu_ids:
@@ -51,31 +42,49 @@ class ComplianceReportXslx(models.AbstractModel):
                 applications = self.env['hr.applicant'].search([('job_id', 'in', jobs.ids)])
                 app_domain.append(('job_id','in',jobs.ids),)
                 offers_domain.append(('business_unit_id','in',report.bu_ids.ids),)
-                activity_interviews.append(('res_id','in',applications.ids),)
-                activity_calls.append(('res_id','in',applications.ids),)
 
             app_domain.extend(domain)
-            activity_calls.extend(domain)
-            activity_interviews.extend(domain)
             offers_domain.extend(domain)
             for recruiter in report.recruiter_ids.ids:
                 app_domain.append(('create_uid','=',recruiter),)
-                activity_calls.append(('real_create_uid', '=', recruiter), )
-                activity_interviews.append(('real_create_uid', '=', recruiter), )
                 offers_domain.append(('create_uid', '=', recruiter), )
                 total_app = self.env['hr.applicant'].search(app_domain)
                 attachments = self.env['ir.attachment'].search([('res_model', '=', 'hr.applicant'), ('res_id', 'in', total_app.ids)])
                 cvs = attachments.filtered(lambda x: x.attachment_type == 'cv')
                 asses = attachments.filtered(lambda x: x.attachment_type == 'assessment')
-                total_calls = self.env['mail.activity'].search(activity_calls)
-                no_done_calls = total_calls.filtered(lambda x: x.call_result_id != False)
-                interviews = self.env['mail.activity'].search(activity_interviews)
-                done_interviews = interviews.filtered(lambda x: x.interview_result != False)
+                if report.bu_ids:
+                    query_total_calls = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id in (%s, %s, %s) and real_create_uid = %s and res_id in %s'
+                    self.env.cr.execute(query_total_calls,( report.date_from + ' 00:00:00', report.date_to + ' 23:59:59','hr.applicant',2, 6, 7,recruiter, tuple(applications.ids)))
+                    total_calls = self.env.cr.dictfetchall()
+                    query_done_calls = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id in (%s, %s, %s) and real_create_uid = %s and  call_result_id is not null and res_id in %s'
+                    self.env.cr.execute(query_done_calls,(report.date_from + ' 00:00:00', report.date_to + ' 23:59:59', 'hr.applicant', 2, 6, 7, recruiter,tuple(applications.ids)))
+                    no_done_calls = self.env.cr.dictfetchall()
+                    query_total_interviews = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id = %s and real_create_uid = %s and res_id in %s'
+                    self.env.cr.execute(query_total_interviews, (
+                    report.date_from + ' 00:00:00', report.date_to + ' 23:59:59', 'hr.applicant',5, recruiter,tuple(applications.ids)))
+                    interviews = self.env.cr.dictfetchall()
+                    query_done_interviews = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id = %s and real_create_uid = %s and  interview_result is not null and res_id in %s'
+                    self.env.cr.execute(query_done_interviews, (
+                    report.date_from + ' 00:00:00', report.date_to + ' 23:59:59', 'hr.applicant',5, recruiter,tuple(applications.ids)))
+                    done_interviews = self.env.cr.dictfetchall()
+                else:
+                    query_total_calls = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id in (%s, %s, %s) and real_create_uid = %s'
+                    self.env.cr.execute(query_total_calls,( report.date_from + ' 00:00:00', report.date_to + ' 23:59:59','hr.applicant',2, 6, 7,recruiter))
+                    total_calls = self.env.cr.dictfetchall()
+                    query_done_calls = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id in (%s, %s, %s) and real_create_uid = %s and  call_result_id is not null'
+                    self.env.cr.execute(query_done_calls,(report.date_from + ' 00:00:00', report.date_to + ' 23:59:59', 'hr.applicant', 2, 6, 7, recruiter))
+                    no_done_calls = self.env.cr.dictfetchall()
+                    query_total_interviews = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id = %s and real_create_uid = %s'
+                    self.env.cr.execute(query_total_interviews, (
+                    report.date_from + ' 00:00:00', report.date_to + ' 23:59:59', 'hr.applicant',5, recruiter))
+                    interviews = self.env.cr.dictfetchall()
+                    query_done_interviews = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id = %s and real_create_uid = %s and  interview_result is not null'
+                    self.env.cr.execute(query_done_interviews, (
+                    report.date_from + ' 00:00:00', report.date_to + ' 23:59:59', 'hr.applicant',5, recruiter))
+                    done_interviews = self.env.cr.dictfetchall()
                 offers = self.env['hr.offer'].search(offers_domain)
                 hired = offers.filtered(lambda x: x.state == 'hired')
                 del app_domain[-1]
-                del activity_calls[-1]
-                del activity_interviews[-1]
                 del offers_domain[-1]
                 total_app = str(len(total_app))
                 cvs_no = str(len(cvs))
