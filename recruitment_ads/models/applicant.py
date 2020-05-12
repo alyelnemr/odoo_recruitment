@@ -51,6 +51,13 @@ class IrAttachmentInherit(models.Model):
                     attachment.name = record.display_name
         return res
 
+    @api.model
+    def create(self, vals):
+        res = super(IrAttachmentInherit, self).create(vals)
+        if vals['res_model'] == 'hr.offer':
+            self._cr.execute(" update hr_offer set have_offer = %s where id =  %s ", (True,vals['res_id'],))
+            raise ValidationError('hello')
+        return res
 
 class Applicant(models.Model):
     _inherit = "hr.applicant"
@@ -88,6 +95,7 @@ class Applicant(models.Model):
     face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book")
     linkedin = fields.Char(string='LinkedIn Link', readonly=False, related="partner_id.linkedin")
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
+    have_assessment = fields.Boolean(compute='_get_attachment', default=False, store=True)
     user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange", default=False)
     source_resp = fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",
                                   default=lambda self: self.env.user.id)
@@ -147,11 +155,18 @@ class Applicant(models.Model):
     @api.multi
     @api.depends('attachment_ids.res_id')
     def _get_attachment(self):
+        cv = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','cv'),('res_model','=','hr.applicant')])
+        assessment = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','assessment'),('res_model','=','hr.applicant')])
         for record in self:
-            if record.attachment_ids:
+            if cv :
                 record.have_cv = True
             else:
                 record.have_cv = False
+            if assessment:
+                record.have_assessment = True
+            else:
+                record.have_assessment = False
+
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
