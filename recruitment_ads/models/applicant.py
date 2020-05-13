@@ -155,8 +155,8 @@ class Applicant(models.Model):
     @api.multi
     @api.depends('attachment_ids.res_id')
     def _get_attachment(self):
-        cv = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','cv'),('res_model','=','hr.applicant')])
-        assessment = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','assessment'),('res_model','=','hr.applicant')])
+        cv = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','cv'),('res_model','=','hr.applicant')], limit=1)
+        assessment = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','assessment'),('res_model','=','hr.applicant')], limit=1)
         for record in self:
             if cv :
                 record.have_cv = True
