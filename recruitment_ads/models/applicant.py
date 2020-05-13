@@ -54,9 +54,8 @@ class IrAttachmentInherit(models.Model):
     @api.model
     def create(self, vals):
         res = super(IrAttachmentInherit, self).create(vals)
-        if vals['res_model'] == 'hr.offer':
-            self._cr.execute(" update hr_offer set have_offer = %s where id =  %s ", (True,vals['res_id'],))
-            raise ValidationError('hello')
+        if res.res_model == 'hr.offer':
+            self._cr.execute(" update hr_offer set have_offer = %s where id =  %s ", (True,res.res_id,))
         return res
 
 class Applicant(models.Model):
@@ -151,14 +150,16 @@ class Applicant(models.Model):
         else :
             return "not manager"
 
-
     @api.multi
     @api.depends('attachment_ids.res_id')
     def _get_attachment(self):
-        cv = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','cv'),('res_model','=','hr.applicant')], limit=1)
-        assessment = self.env['ir.attachment'].search([('res_id','=',self.id),('attachment_type','=','assessment'),('res_model','=','hr.applicant')], limit=1)
         for record in self:
-            if cv :
+            cv = self.env['ir.attachment'].search(
+                [('res_id', '=', record.id), ('attachment_type', '=', 'cv'), ('res_model', '=', 'hr.applicant')])
+            assessment = self.env['ir.attachment'].search(
+                [('res_id', '=', record.id), ('attachment_type', '=', 'assessment'),
+                 ('res_model', '=', 'hr.applicant')])
+            if cv:
                 record.have_cv = True
             else:
                 record.have_cv = False
@@ -166,7 +167,6 @@ class Applicant(models.Model):
                 record.have_assessment = True
             else:
                 record.have_assessment = False
-
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
