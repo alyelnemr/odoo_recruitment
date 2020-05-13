@@ -31,7 +31,7 @@ class GeneralSheetXslx(models.AbstractModel):
                 13: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
                 14: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,'type': 'many2one'},
                 15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                15: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                16: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
 
             }
         })
