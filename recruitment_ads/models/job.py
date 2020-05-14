@@ -91,6 +91,7 @@ class BusinessUnit(models.Model):
     _name = 'business.unit'
     name = fields.Char(required=True)
     job_dep_ids = fields.One2many('hr.department', 'business_unit_id')
+    bu_location = fields.Selection([('egypt', 'Egypt'),('ksa', 'KSA')], string='Location',default ='egypt' )
 
     _sql_constraints = [('name_unique',
                          'unique(name)',
