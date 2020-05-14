@@ -25,17 +25,19 @@ class RecActivityXslx(models.AbstractModel):
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
                     3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     4: {'header': _('Have CV'), 'field': 'have_cv', 'width': 20, 'type': 'bool'},
-                    5: {'header': _('Email'), 'field': 'email_from', 'width': 20},
-                    6: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
-                    7: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    8: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                    9: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
-                    10: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
-                    11: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    12: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    5: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
+                    6: {'header': _('Email'), 'field': 'email_from', 'width': 20},
+                    7: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
+                    8: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
+                    9: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
+                    10: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
+                    11: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
+                    12: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
+                    13: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
+                    14: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    15: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                 }
             })
-
             # getting the department_id of each job of the application.
             if report.job_ids:
                 departments = list(set(report.job_ids.mapped('department_id')))
@@ -50,32 +52,24 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 12
+            last_row = max(sheets[0]['CV Source'])
             if max_sections_count >= 1:
                 sheets[0]['CV Source'].update({
-                    start + 1: {'header': _('Section'),
-                                'field': 'section_id',
-                                'width': 20,
-                                'type': 'many2one', }})
-                start = start + 1
-                # start = 11
-                # for i in range(max_sections_count):
-                #     if i <= 1:
-                #         continue
-                #     sheets[0]['CV Source'].update({
-                #         start + i: {'header': _('Section' + str(i)),
-                #                     'field': 'section_id' + str(i),
-                #                     'width': 20,
-                #                     'type': 'many2one', }})
-                # start = start + i
-
+                    last_row + 1: {'header': _('Section'),
+                                   'field': 'section_id',
+                                   'width': 20,
+                                   'type': 'many2one', }})
+                last_row = last_row + 1
             sheets[0]['CV Source'].update({
-                start + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
-                start + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                start + 5: {'header': _('Reason of Rejection'), 'field': 'reason_of_rejection', 'width': 10, },
+                last_row + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18,
+                               'type': 'amount'},
+                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
+                               'type': 'amount'},
+                last_row + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                last_row + 5: {'header': _('Reason of Rejection'), 'field': 'reason_of_rejection', 'width': 35, },
             })
+
         if report.calls:
             sheets.append({
                 'Calls': {
@@ -87,16 +81,18 @@ class RecActivityXslx(models.AbstractModel):
                     4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                     5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
                     6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    7: {'header': _('Call Type'), 'field': 'call_type', 'width': 18},
-                    8: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
-                    9: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
-                    10: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
-                    11: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    12: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    13: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    7: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
+                    8: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
+                    9: {'header': _('Call Type'), 'field': 'call_type', 'width': 18},
+                    10: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
+                    11: {'header': _('Done Date'), 'field': 'call_result_date', 'width': 18, 'type': 'datetime'},
+                    12: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
+                    13: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
+                    14: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
+                    15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    16: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
                 }
             })
-
             # getting the department_id of each job of the application.
             if report.job_ids:
                 departments = list(set(report.job_ids.mapped('department_id')))
@@ -111,39 +107,35 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 13
-            # if not report.cv_source:
-            #     sheet= sheets[0]['Calls']
-            # else:
-            #     sheet = sheets[1]['Calls']
+            tap_count = -1
+            for tap in sheets:
+                for k, v in tap.items():
+                    tap_count += 1
+                    if k == 'Calls':
+                        break
+            last_row = max(sheets[tap_count]['Calls'])
             x = 0
             if report.cv_source:
                 x += 1
             sheet = sheets[x]['Calls']
             if max_sections_count >= 1:
                 sheet.update({
-                    start + 1: {'header': _('Section'),
-                                'field': 'section_id',
-                                'width': 20,
-                                'type': 'many2one', }})
-                start = start + 1
-                # start = 11
-                # for i in range(max_sections_count):
-                #     if i <= 1:
-                #         continue
-                #     sheets[1]['Calls'].update({
-                #         start + i: {'header': _('Section' + str(i)),
-                #                     'field': 'section_id' + str(i),
-                #                     'width': 20,
-                #                     'type': 'many2one', }})
-                # start = start + i
+                    last_row + 1: {'header': _('Section'),
+                                   'field': 'section_id',
+                                   'width': 20,
+                                   'type': 'many2one', }})
+                last_row = last_row + 1
             sheet.update({
-                start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
-                start + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                start + 5: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18,
+                               'type': 'amount'},
+                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
+                               'type': 'amount'},
+                last_row + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                last_row + 5: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
+                               'type': 'many2one'},
             })
+
         if report.interviews:
             applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
             sheets.append({
@@ -156,11 +148,19 @@ class RecActivityXslx(models.AbstractModel):
                     4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                     5: {'header': _('Phone'), 'field': 'partner_phone', 'width': 20},
                     6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    7: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    8: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    7: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
+                    8: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
+                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
+                    10: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
                 }
             })
-
+            tap_count = -1
+            for tap in sheets:
+                for k, v in tap.items():
+                    tap_count += 1
+                    if k == 'Interviews':
+                        break
+            last_row = max(sheets[tap_count]['Interviews'])
             # getting the department_id of each job of the application.
             if report.job_ids:
                 departments = list(set(report.job_ids.mapped('department_id')))
@@ -175,80 +175,77 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 7
-            # if not report.calls and not report.cv_source:
-            #     sheet= sheets[0]['Interviews']
-            # if (not report.calls and  report.cv_source) or (report.calls and  not report.cv_source):
-            #     sheet= sheets[1]['Interviews']
-            # if  report.calls and  report.cv_source:
-            #     sheet= sheets[2]['Interviews']
             x = 0
             if report.cv_source:
                 x += 1
             if report.calls:
                 x += 1
             sheet = sheets[x]['Interviews']
-
             if max_sections_count >= 1:
                 sheet.update({
-                    start + 1: {'header': _('Section'),
-                                'field': 'section_id',
-                                'width': 20,
-                                'type': 'many2one', }})
-                start = start + 1
-                # start = 11
-                # for i in range(max_sections_count):
-                #     if i <= 1:
-                #         continue
-                #     sheets[2]['Interviews'].update({
-                #         start + i: {'header': _('Section' + str(i)),
-                #                     'field': 'section_id' + str(i),
-                #                     'width': 20,
-                #                     'type': 'many2one', }})
-                # start = start + i
+                    last_row + 1: {'header': _('Section'),
+                                   'field': 'section_id',
+                                   'width': 20,
+                                   'type': 'many2one', }})
+                last_row = last_row + 1
             sheet.update({
-                start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                start + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18, 'type': 'amount'},
-                start + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18, 'type': 'amount'},
-                start + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                start + 5: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
-                start + 6: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
-                start + 7: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                start + 8: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30,
-                            'type': 'many2one'},
-                start + 9: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                start + 10: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18,
+                               'type': 'amount'},
+                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
+                               'type': 'amount'},
+                last_row + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
+                last_row + 5: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
+                last_row + 6: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
+                               'type': 'many2one'},
+                last_row + 7: {'header': _('Created on'), 'field': 'create_date', 'width': 18},
+                last_row + 8: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
+                last_row + 9: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
+                last_row + 10: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30,
+                                'type': 'many2one'},
+                last_row + 11: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
+                last_row + 12: {'header': _('Interview Done Date 1'), 'field': 'interview_result_date', 'width': 20, },
+                last_row + 13: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
+            last_row = max(sheets[tap_count]['Interviews'])
             if applications:
                 max_interviews_count = max(
                     applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
-                if max_interviews_count > 0:
-                    if max_sections_count:
-                        start = 19
-                    else:
-                        start = 18
-                    for i in range(max_interviews_count):
-                        sheets[-1]['Interviews'].update(
-                            {
-                                start: {'header': _('Interview date ' + str(i + 2)),
-                                        'field': 'interview_date' + str(i + 1),
-                                        'width': 18},
-                                start + 1: {'header': _('Interviewers ' + str(i + 2)),
-                                            'field': 'interviewers' + str(i + 1),
-                                            'width': 30,
-                                            'type': 'x2many'},
-                                start + 2: {'header': _('Interview type ' + str(i + 2)),
-                                            'field': 'interview_type_id' + str(i + 1),
-                                            'width': 20, 'type': 'many2one'},
-                                start + 3: {'header': _('Interview result ' + str(i + 2)),
-                                            'field': 'interview_result' + str(i + 1),
-                                            'width': 20, },
-                                start + 4: {'header': _('Comment ' + str(i + 2)),
-                                            'field': 'interview_comment' + str(i + 1),
-                                            'width': 22},
-                            }
-                        )
-                        start = start + 5
+                tap_count = -1
+                for tap in sheets:
+                    for k, v in tap.items():
+                        tap_count += 1
+                        if k == 'Interviews':
+                            break
+            for i in range(max_interviews_count):
+                sheets[-1]['Interviews'].update(
+                    {
+                        last_row: {'header': _('Created on'),
+                                   'field': 'create_date',
+                                   'width': 18},
+                        last_row + 1: {'header': _('Interview date ' + str(i + 2)),
+                                       'field': 'interview_date' + str(i + 1),
+                                       'width': 18},
+                        last_row + 2: {'header': _('Interviewers ' + str(i + 2)),
+                                       'field': 'interviewers' + str(i + 1),
+                                       'width': 30,
+                                       'type': 'x2many'},
+                        last_row + 3: {'header': _('Interview type ' + str(i + 2)),
+                                       'field': 'interview_type_id' + str(i + 1),
+                                       'width': 20, 'type': 'many2one'},
+                        last_row + 4: {'header': _('Interview result ' + str(i + 2)),
+                                       'field': 'interview_result' + str(i + 1),
+                                       'width': 20, },
+                        last_row + 5: {'header': _('Interview Done Date ' + str(i + 2)),
+                                       'field': 'interview_result_date' + str(i + 1),
+                                       'width': 20, },
+                        last_row + 6: {'header': _('Comment ' + str(i + 2)),
+                                       'field': 'interview_comment' + str(i + 1),
+                                       'width': 22},
+                    }
+                )
+                last_row = last_row + 7
+
         if report.offer:
             sheets.append({
                 'Offers': {
@@ -256,12 +253,21 @@ class RecActivityXslx(models.AbstractModel):
                     1: {'header': _('Candidate Name'), 'field': 'applicant_name', 'width': 20},
                     2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                     3: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    4: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    5: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
-                    6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    4: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
+                    5: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
+                    6: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
+                    7: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    8: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
+                    9: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                 }
             })
-
+            tap_count = -1
+            for tap in sheets:
+                for k, v in tap.items():
+                    tap_count += 1
+                    if k == 'Offers':
+                        break
+            last_row = max(sheets[tap_count]['Offers'])
             # getting the department_id of each job of the application.
             if report.job_ids:
                 departments = list(set(report.job_ids.mapped('department_id')))
@@ -276,21 +282,6 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 6
-            # if not report.calls and not report.cv_source and not report.interviews:
-            #     sheet = sheets[0]['Offers']
-            #
-            # if report.calls and report.cv_source and report.interviews:
-            #     sheet = sheets[3]['Offers']
-            #
-            # if (not report.calls and report.cv_source and report.interviews) or (
-            #         report.calls and not report.cv_source and report.interviews) or (
-            #         report.calls and report.cv_source and not report.interviews):
-            #     sheet = sheets[2]['Offers']
-            # if (not report.calls and not report.cv_source and report.interviews) or (
-            #         report.calls and not report.cv_source and not report.interviews) or (
-            #         not report.calls and report.cv_source and not report.interviews):
-            #     sheet = sheets[1]['Offers']
             x = 0
             if report.cv_source:
                 x += 1
@@ -299,44 +290,29 @@ class RecActivityXslx(models.AbstractModel):
             if report.interviews:
                 x += 1
             sheet = sheets[x]['Offers']
-            # x = 1
-            # if report.cv_source:
-            #     x += 1
-            # if report.calls:
-            #     x += 1
-            # if report.interviews:
-            #     x += 1
-            # sheet = sheets[1]['offers']
-
             if max_sections_count >= 1:
                 sheet.update({
-                    start + 1: {'header': _('Section'),
-                                'field': 'section_id',
-                                'width': 20,
-                                'type': 'many2one', }})
-                start = start + 1
-                # start = 11
-                # for i in range(max_sections_count):
-                #     if i <= 1:
-                #         continue
-                #     sheets[3]['Offers'].update({
-                #         start + i: {'header': _('Section' + str(i)),
-                #                     'field': 'section_id' + str(i),
-                #                     'width': 20,
-                #                     'type': 'many2one', }})
-                # start = start + i
+                    last_row + 1: {'header': _('Section'),
+                                   'field': 'section_id',
+                                   'width': 20,
+                                   'type': 'many2one', }})
+                last_row = last_row + 1
             sheet.update({
-                start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
-                start + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
-                start + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
-                start + 4: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
-                start + 5: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
-                start + 6: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                start + 7: {'header': _('Comments'), 'field': 'comment', 'width': 40},
-                start + 8: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
-                start + 9: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40, 'type': 'many2one'},
-                start + 10: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                last_row + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
+                last_row + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
+                last_row + 4: {'header': _('Have Offer'), 'field': 'have_offer', 'width': 20, 'type': 'bool'},
+                last_row + 5: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
+                last_row + 6: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
+                last_row + 7: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
+                last_row + 8: {'header': _('Comments'), 'field': 'comment', 'width': 40},
+                last_row + 9: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
+                last_row + 10: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40,
+                                'type': 'many2one'},
+                last_row + 11: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
+                                'type': 'many2one'},
             })
+
         if report.hired:
             sheets.append({
                 'Hired': {
@@ -344,12 +320,20 @@ class RecActivityXslx(models.AbstractModel):
                     1: {'header': _('Candidate Name'), 'field': 'applicant_name', 'width': 20},
                     2: {'header': _('Email'), 'field': 'email_from', 'width': 20},
                     3: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
-                    4: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    5: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
-                    6: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    4: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
+                    5: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
+                    6: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
+                    7: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
+                    8: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
                 }
             })
-
+            tap_count = -1
+            for tap in sheets:
+                for k, v in tap.items():
+                    tap_count += 1
+                    if k == 'Hired':
+                        break
+            last_row = max(sheets[tap_count]['Hired'])
             # getting the department_id of each job of the application.
             if report.job_ids:
                 departments = list(set(report.job_ids.mapped('department_id')))
@@ -364,21 +348,6 @@ class RecActivityXslx(models.AbstractModel):
                         department = department.parent_id
                     if len(department_list) > max_sections_count:
                         max_sections_count = len(department_list)
-            start = 6
-            # if not report.calls and not report.cv_source and not report.interviews and not report.offer:
-            #     sheet = sheets[0]['Hired']
-            #
-            # if report.calls and report.cv_source and report.interviews and not report.offer:
-            #     sheet = sheets[3]['Hired']
-            #
-            # if (not report.calls and report.cv_source and report.interviews) or (
-            #         report.calls and not report.cv_source and report.interviews) or (
-            #         report.calls and report.cv_source and not report.interviews):
-            #     sheet = sheets[2]['Hired']
-            # if (not report.calls and not report.cv_source and report.interviews) or (
-            #         report.calls and not report.cv_source and not report.interviews) or (
-            #         not report.calls and report.cv_source and not report.interviews):
-            #     sheet = sheets[1]['Hired']
             x = 0
             if report.cv_source:
                 x += 1
@@ -392,33 +361,26 @@ class RecActivityXslx(models.AbstractModel):
 
             if max_sections_count >= 1:
                 sheet.update({
-                    start + 1: {'header': _('Section'),
-                                'field': 'section_id',
-                                'width': 20,
-                                'type': 'many2one', }})
-                start = start + 1
-                # start = 11
-                # for i in range(max_sections_count):
-                #     if i <= 1:
-                #         continue
-                #     sheets[3]['Hired'].update({
-                #         start + i: {'header': _('Section' + str(i)),
-                #                     'field': 'section_id' + str(i),
-                #                     'width': 20,
-                #                     'type': 'many2one', }})
-                # start = start + i
+                    last_row + 1: {'header': _('Section'),
+                                   'field': 'section_id',
+                                   'width': 20,
+                                   'type': 'many2one', }})
+                last_row = last_row + 1
             sheet.update({
-                start + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
-                start + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
-                start + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
-                start + 4: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
-                start + 5: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
-                start + 6: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
-                start + 7: {'header': _('Comments'), 'field': 'comment', 'width': 40},
-                start + 8: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
-                start + 9: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40, 'type': 'many2one'},
-                start + 10: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                last_row + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
+                last_row + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
+                last_row + 4: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
+                last_row + 5: {'header': _('Hiring Status  '), 'field': 'state', 'width': 20},
+                last_row + 6: {'header': _('Hiring Date'), 'field': 'hiring_date', 'width': 20},
+                last_row + 7: {'header': _('Comments'), 'field': 'comment', 'width': 40},
+                last_row + 8: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
+                last_row + 9: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40,
+                               'type': 'many2one'},
+                last_row + 10: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
+                                'type': 'many2one'},
             })
+
         return sheets
 
     def _generate_report_content(self, workbook, report):
@@ -457,9 +419,12 @@ class CVSourceLineWrapper:
         self.application_code = cv_source.name
         self.partner_name = cv_source.partner_name
         self.have_cv = cv_source.have_cv
+        self.have_assessment = cv_source.have_assessment
         self.email_from = cv_source.email_from
         self.partner_phone = cv_source.partner_phone
         self.partner_mobile = cv_source.partner_mobile
+        self.face_book = cv_source.face_book
+        self.linkedin = cv_source.linkedin
         self.source_id = cv_source.source_id
         self.source_resp = cv_source.source_resp
         self.create_date = cv_source.create_date
@@ -504,8 +469,11 @@ class CallLineWrapper:
         self.email_from = applicant.email_from
         self.partner_phone = applicant.partner_phone
         self.partner_mobile = applicant.partner_mobile
+        self.face_book = applicant.face_book
+        self.linkedin = applicant.linkedin
         self.call_type = call.activity_type_id.name
         self.write_date = call.write_date
+        self.call_result_date = call.call_result_date
         self.user_id = call.user_id
         self.call_result_id = call.call_result_id
         self.feedback = re.sub(r"<.*?>", '', call.feedback)
@@ -596,21 +564,27 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.email_from = application.email_from
         self.partner_phone = application.partner_phone
         self.partner_mobile = application.partner_mobile
+        self.face_book = application.face_book
+        self.linkedin = application.linkedin
         interviews = self._get_activity('interview', application).sorted('write_date', reverse=False)
         first_interview = interviews[0] if interviews else False
         interview_feedback = first_interview.feedback if first_interview else False
+        self.create_date = first_interview.calendar_event_id.create_date if first_interview else False
         self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
         self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
-        self.interview_result = first_interview.interview_result if first_interview else False
         self.interview_type_id = first_interview.calendar_event_id.interview_type_id if first_interview else False
-        self.interview_comment = re.sub(r"<.*?>", '',interview_feedback if interview_feedback else '')
+        self.interview_result = first_interview.interview_result if first_interview else False
+        self.interview_result_date = first_interview.interview_result_date if first_interview else False
+        self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
         for i in range(len(interviews)):
             if i == 0:
                 continue
+            setattr(self, 'create_date', interviews[i].calendar_event_id.create_date)
             setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
             setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
-            setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
             setattr(self, 'interview_type_id' + str(i), interviews[i].calendar_event_id.interview_type_id)
+            setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
+            setattr(self, 'interview_result_date' + str(i), interviews[i].interview_result_date)
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
         self.business_unit_id = application.department_id.business_unit_id
@@ -639,6 +613,7 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.salary_expected = application.salary_expected
         self.salary_current = application.salary_current
         self.cv_matched = application.cv_matched
+        self.have_assessment = application.have_assessment
         self.source_resp = application.source_resp
         self._context = application._context
         self.env = application.env
@@ -651,6 +626,9 @@ class offerLineWrapper:
         self.applicant_name = offer.applicant_name
         self.email_from = offer.application_id.email_from
         self.partner_mobile = offer.application_id.partner_mobile
+        self.face_book = offer.application_id.face_book
+        self.linkedin = offer.application_id.linkedin
+        self.have_assessment = offer.application_id.have_assessment
         self.create_uid = offer.create_uid
         self.business_unit_id = offer.business_unit_id
 
@@ -677,6 +655,7 @@ class offerLineWrapper:
         self.job_id = offer.job_id
         self.issue_date = offer.issue_date
         self.total_package = offer.total_package
+        self.have_offer = offer.have_offer
         self.total_salary = offer.total_salary
         self.generated_by_bu_id = offer.generated_by_bu_id
         self.state = offer.state
