@@ -13,6 +13,9 @@
         <record id="group_view_compliance_report" model="res.groups">
             <field name="name">View Compliance Report</field>
         </record>
+        <record id="group_view_interview_report" model="res.groups">
+            <field name="name">View Interview Report</field>
+        </record>
        <record id="group_view_source_menu" model="res.groups">
         <field name="name">Sources</field>
         </record>

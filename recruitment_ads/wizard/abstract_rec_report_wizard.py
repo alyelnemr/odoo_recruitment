@@ -46,6 +46,7 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
                               domain=lambda self: self._get_bu_domain())
     recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible', default=_get_current_login_user)
     check_rec_manager = fields.Char(string="check field", default=get_user)
+    application_ids = fields.Many2many('hr.applicant')
 
     @api.constrains('date_from', 'date_to')
     def check_dates(self):
