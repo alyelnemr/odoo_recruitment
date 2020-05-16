@@ -42,6 +42,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 ]
                 if self.recruiter_ids:
                     domain += [('create_uid', 'in', self.recruiter_ids.ids)]
+                else:
+                    if self.check_rec_manager == 'coordinator':
+                        recruiters = self.env['res.users'].search(
+                            ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                             ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                             ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                             ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                        domain += [('create_uid', 'in', recruiters.ids)]
                 if self.job_ids:
                     domain.append(('job_id', 'in', self.job_ids.ids))
                 else:
@@ -71,6 +79,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 domain.append(('res_id','in',applications_id.ids),)
             if self.recruiter_ids:
                 domain.append(('real_create_uid', 'in', self.recruiter_ids.ids))
+            else:
+                if self.check_rec_manager == 'coordinator':
+                    recruiters = self.env['res.users'].search(
+                        ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                         ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                         ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                    domain += [('create_uid', 'in', recruiters.ids)]
             calls = self.env['mail.activity'].search(domain, order='write_date desc')
             if self.job_ids:
                 calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in self.job_ids)
@@ -99,6 +115,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
                 domain.append(('res_id','in',applications_id.ids),)
             if self.recruiter_ids:
                 domain.append(('real_create_uid', 'in', self.recruiter_ids.ids))
+            else:
+                if self.check_rec_manager == 'coordinator':
+                    recruiters = self.env['res.users'].search(
+                        ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                         ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                         ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                    domain += [('create_uid', 'in', recruiters.ids)]
             interviews = self.env['mail.activity'].search(domain, order='write_date desc')
             if self.job_ids:
                 interviews = interviews.filtered(lambda c: c.calendar_event_id.hr_applicant_id.job_id in self.job_ids)
@@ -118,6 +142,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
             ]
             if self.recruiter_ids:
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+            else:
+                if self.check_rec_manager == 'coordinator':
+                    recruiters = self.env['res.users'].search(
+                        ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                         ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                         ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                    domain += [('create_uid', 'in', recruiters.ids)]
             if self.job_ids:
                 domain.append(('job_id', 'in', self.job_ids.ids))
             else:
@@ -137,6 +169,14 @@ class RecruiterActivityReportWizard(models.TransientModel):
             ]
             if self.recruiter_ids:
                 domain.append(('create_uid', 'in', self.recruiter_ids.ids))
+            else:
+                if self.check_rec_manager == 'coordinator':
+                    recruiters = self.env['res.users'].search(
+                        ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                         ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                         ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                    domain += [('create_uid', 'in', recruiters.ids)]
             if self.job_ids:
                 domain.append(('job_id', 'in', self.job_ids.ids))
             else:

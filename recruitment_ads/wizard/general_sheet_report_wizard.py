@@ -23,7 +23,12 @@ class GeneralSheetReportWizard(models.TransientModel):
         ]
         if self.recruiter_ids:
             domain += [('create_uid', 'in', self.recruiter_ids.ids)]
-
+        else:
+            if self.check_rec_manager == 'coordinator':
+                recruiters = self.env['res.users'].search(
+                    ['|','|','|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                     ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                domain += [('create_uid', 'in', recruiters.ids)]
         if self.job_ids:
             domain.append(('job_id', 'in', self.job_ids.ids))
 
