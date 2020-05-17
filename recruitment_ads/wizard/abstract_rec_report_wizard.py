@@ -55,31 +55,13 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
                 raise ValidationError(_("You can't select start date greater than end date"))
 
     @api.onchange('bu_ids')
-    def onchange_bu_ids(self):
-        self.job_ids = False
-
-    @api.onchange('bu_ids')
     def onchange_job_ids(self):
+        self.job_ids = False
         if self.date_from and self.date_to:
-            # changed_domain = [
-            #     '|',
-            #     '&',
-            #     ('create_date', '>=', self.date_from + ' 00:00:00'),
-            #     ('create_date', '<=', self.date_to + ' 23:59:59'),
-            #     '&',
-            #     ('write_date', '>=', self.date_from + ' 00:00:00'),
-            #     ('write_date', '<=', self.date_to + ' 23:59:59'),
-            # ]
-            # jobs = self.env['hr.applicant'].search(changed_domain).mapped('job_id')
-            # jobs = self.env['hr.applicant'].mapped('job_id')
-            # changed_activity_domain = ['&'] + changed_domain + [('res_model', '=', 'hr.applicant')]
-            # changed_activity = self.env['mail.activity'].search(changed_activity_domain)
-            # jobs |= self.env['hr.applicant'].browse(changed_activity.mapped('res_id')).mapped('job_id')
-            # jobs = self.env['hr.job'].search(changed_domain)
             if self.bu_ids:
                 if self.check_rec_manager == 'coordinator' or self.check_rec_manager == 'manager':
                     bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
-                    recruiters = self.env['res.users'].search([('business_unit_id', 'in', self.bu_ids.ids)])
+                    recruiters = self.env['res.users'].search(['|',('business_unit_id', 'in', self.bu_ids.ids),('multi_business_unit_id', 'in', self.bu_ids.ids)])
                     return {'domain': {'job_ids': [('id', 'in', bu_jobs.ids)],
                                        'recruiter_ids': [('id', 'in', recruiters.ids)]}}
 
@@ -101,8 +83,10 @@ class AbstractRecruitmentReportWizard(models.AbstractModel):
 
                 elif self.check_rec_manager == 'coordinator':
                     recruiters = self.env['res.users'].search(
-                        ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                        ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                         ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                         ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                         ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
                     bu_jobs = self.env['hr.job'].search(
                         ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
