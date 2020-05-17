@@ -46,12 +46,17 @@ class ComplianceReportXslx(models.AbstractModel):
             app_domain.extend(domain)
             offers_domain.extend(domain)
             for recruiter in report.recruiter_ids.ids:
+                no_cvs_asses = False
                 app_domain.append(('create_uid','=',recruiter),)
                 offers_domain.append(('create_uid', '=', recruiter), )
                 total_app = self.env['hr.applicant'].search(app_domain)
-                attachments = self.env['ir.attachment'].search([('res_model', '=', 'hr.applicant'), ('res_id', 'in', total_app.ids)])
-                cvs = attachments.filtered(lambda x: x.attachment_type == 'cv')
-                asses = attachments.filtered(lambda x: x.attachment_type == 'assessment')
+                if total_app:
+                    cvs_query = 'select res_id, attachment_type from ir_attachment where res_model = %s and res_id in %s and  attachment_type = %s  group by res_id, attachment_type'
+                    self.env.cr.execute(cvs_query, ('hr.applicant',tuple(total_app.ids),'cv'))
+                    cvs = self.env.cr.dictfetchall()
+                    asses =  self.env['ir.attachment'].search([('res_model', '=', 'hr.applicant'), ('res_id', 'in', total_app.ids),('attachment_type', '=', 'assessment')])
+                else :
+                    no_cvs_asses = True
                 if report.bu_ids:
                     query_total_calls = 'select * from mail_activity where create_date >= %s and create_date <= %s and res_model = %s and  activity_type_id in (%s, %s, %s) and real_create_uid = %s and res_id in %s'
                     self.env.cr.execute(query_total_calls,( report.date_from + ' 00:00:00', report.date_to + ' 23:59:59','hr.applicant',2, 6, 7,recruiter, tuple(applications.ids)))
@@ -87,8 +92,13 @@ class ComplianceReportXslx(models.AbstractModel):
                 del app_domain[-1]
                 del offers_domain[-1]
                 total_app = str(len(total_app))
-                cvs_no = str(len(cvs))
-                ass_no = str(len(asses))
+                if no_cvs_asses :
+                    cvs_no = '0'
+                    ass_no = '0'
+
+                else:
+                    cvs_no = str(len(cvs))
+                    ass_no = str(len(asses))
                 total_calls = str(len(total_calls))
                 no_done_calls = str(len(no_done_calls))
                 interviews = str(len(interviews))
