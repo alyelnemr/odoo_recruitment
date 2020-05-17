@@ -196,6 +196,17 @@ class Job(models.Model):
         vals['last_launch_rec_date'] = datetime.today()
         return super(Job, self).create(vals)
 
+    @api.multi
+    def write(self, vals):
+        user = self.env.user
+        if user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager') :
+            if self.business_unit_id.id != user.business_unit_id.id and not self.business_unit_id.id in user.multi_business_unit_id.ids and self._context.get('allow_edit',False)== False:
+                raise ValidationError("You are not allowed to edit this job")
+        if user.has_group('hr_recruitment.group_hr_recruitment_user') and self._context.get('allow_edit',False)== False:
+            raise ValidationError("You are not allowed to edit this job")
+        return super(Job, self).write(vals)
+
     @api.one
     @api.depends('job_title_id.name', 'job_level_id.name')
     def _compute_job_name(self):
