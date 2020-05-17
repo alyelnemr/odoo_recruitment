@@ -203,7 +203,8 @@ class Job(models.Model):
                 'hr_recruitment.group_hr_recruitment_manager') :
             if self.business_unit_id.id != user.business_unit_id.id and not self.business_unit_id.id in user.multi_business_unit_id.ids and self._context.get('allow_edit',False)== False:
                 raise ValidationError("You are not allowed to edit this job")
-        if user.has_group('hr_recruitment.group_hr_recruitment_user') and self._context.get('allow_edit',False)== False:
+        if user.has_group('hr_recruitment.group_hr_recruitment_user') and not user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager') and self._context.get('allow_edit',False)== False:
             raise ValidationError("You are not allowed to edit this job")
         return super(Job, self).write(vals)
 
