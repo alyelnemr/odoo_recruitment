@@ -120,7 +120,9 @@ class PartnerInherit(models.Model):
                                OR {name} {operator} {percent}
                                OR {mobile} {operator} {percent}
                                OR {phone} {operator} {percent}
-                               OR {email} {operator} {percent})
+                               OR {email} {operator} {percent}
+                               OR {face_book} {operator} {percent}
+                               OR {linkedin} {operator} {percent})
                                -- don't panic, trust postgres bitmap
                          ORDER BY {name}
                         """
@@ -129,6 +131,8 @@ class PartnerInherit(models.Model):
                 'name': unaccent('name'),
                 'mobile': unaccent('mobile'),
                 'phone': unaccent('phone'),
+                'face_book': unaccent('face_book'),
+                'linkedin': unaccent('linkedin'),
                 'email': unaccent('email')
             }
 
