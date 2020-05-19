@@ -84,6 +84,7 @@ class Applicant(models.Model):
     cv_matched = fields.Boolean('Matched', default=False)
     reason_of_rejection = fields.Char('Reason of Rejection', help="Reason why this is applicant not matched")
     count_done_interviews = fields.Integer('Done Interviews Count', compute='_get_count_done_interviews')
+    count_not_done_interviews = fields.Integer('Not Done Interviews Count', compute='_get_count_done_interviews')
     salary_current = fields.Float("Current Salary", help="Current Salary of Applicant")
     name = fields.Char("Application Code", readonly=True, required=False, compute='_compute_get_application_code',
                        store=True)
@@ -194,6 +195,9 @@ class Applicant(models.Model):
         activity_type = self.env.ref('recruitment_ads.mail_activity_type_data_interview')
         self.count_done_interviews = len(
             self.activity_ids.filtered(lambda a: a.activity_type_id == activity_type and not a.active)
+        )
+        self.count_not_done_interviews = len(
+            self.activity_ids.filtered(lambda a: a.activity_type_id == activity_type and a.active)
         )
 
     @api.multi

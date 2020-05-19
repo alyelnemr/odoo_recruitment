@@ -53,16 +53,15 @@ class InterviewReportXslx(models.AbstractModel):
                 last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
                                'type': 'amount'},
 
-                last_row + 4: {'header': _('Interview Date'), 'field': 'interview_date', 'width': 18},
-                last_row + 5: {'header': _('Interviewers'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                last_row + 6: {'header': _('Interview type'), 'field': 'interview_type_id', 'width': 20,
+                last_row + 4: {'header': _('Interview Date 1'), 'field': 'interview_date', 'width': 18},
+                last_row + 5: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
+                last_row + 6: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20,
                                'type': 'many2one'},
-                last_row + 7: {'header': _('Interview result'), 'field': 'interview_result', 'width': 20, },
-                last_row + 8: {'header': _('Interview Comment'), 'field': 'interview_comment', 'width': 22},
+                last_row + 7: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
         last_row = max(sheets[0]['Interview Report']) + 1
         max_interviews_count = max(
-            report.with_context({'active_test': False}).application_ids.mapped('count_done_interviews')) - 1
+            report.with_context({'active_test': False}).application_ids.mapped('count_not_done_interviews')) - 1
         if max_interviews_count > 0:
             for i in range(max_interviews_count):
                 sheets[0]['Interview Report'].update(
@@ -75,14 +74,11 @@ class InterviewReportXslx(models.AbstractModel):
                         last_row + 2: {'header': _('Interview type ' + str(i + 2)),
                                        'field': 'interview_type_id' + str(i + 1),
                                        'width': 20, 'type': 'many2one'},
-                        last_row + 3: {'header': _('Interview result ' + str(i + 2)),
-                                       'field': 'interview_result' + str(i + 1),
-                                       'width': 20, },
-                        last_row + 4: {'header': _('Interview Comment ' + str(i + 2)),
+                        last_row + 3: {'header': _('Interview Comment ' + str(i + 2)),
                                        'field': 'interview_comment' + str(i + 1), 'width': 22},
                     }
                 )
-                last_row = last_row + 5
+                last_row = last_row + 4
         return sheets
 
     def _generate_report_content(self, workbook, report):
@@ -126,7 +122,6 @@ class InterviewReportWrapper:
         self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
         self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
         self.interview_type_id = first_interview.calendar_event_id.interview_type_id if first_interview else False
-        self.interview_result = first_interview.interview_result if first_interview else False
         self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
         for i in range(len(interviews)):
             if i == 0:
@@ -134,7 +129,6 @@ class InterviewReportWrapper:
             setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
             setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
             setattr(self, 'interview_type_id' + str(i), interviews[i].calendar_event_id.interview_type_id)
-            setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
             setattr(self, 'interview_comment' + str(i),
                     re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
 
@@ -159,4 +153,4 @@ class InterviewReportWrapper:
         if activity == 'interview':
             activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_interview')
         return data.with_context({'active_test': False}).activity_ids.filtered(
-            lambda a: a.activity_type_id == activity_type and a.interview_result == False)
+            lambda a: a.activity_type_id == activity_type and not a.interview_result)
