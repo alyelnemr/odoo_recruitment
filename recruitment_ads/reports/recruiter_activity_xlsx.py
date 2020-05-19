@@ -211,40 +211,41 @@ class RecActivityXslx(models.AbstractModel):
             if applications:
                 max_interviews_count = max(
                     applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
-                tap_count = -1
-                for tap in sheets:
-                    for k, v in tap.items():
-                        tap_count += 1
-                        if k == 'Interviews':
-                            break
-            for i in range(max_interviews_count):
-                sheets[-1]['Interviews'].update(
-                    {
-                        last_row: {'header': _('Created on'),
-                                   'field': 'create_date',
-                                   'width': 18},
-                        last_row + 1: {'header': _('Interview date ' + str(i + 2)),
-                                       'field': 'interview_date' + str(i + 1),
-                                       'width': 18},
-                        last_row + 2: {'header': _('Interviewers ' + str(i + 2)),
-                                       'field': 'interviewers' + str(i + 1),
-                                       'width': 30,
-                                       'type': 'x2many'},
-                        last_row + 3: {'header': _('Interview type ' + str(i + 2)),
-                                       'field': 'interview_type_id' + str(i + 1),
-                                       'width': 20, 'type': 'many2one'},
-                        last_row + 4: {'header': _('Interview result ' + str(i + 2)),
-                                       'field': 'interview_result' + str(i + 1),
-                                       'width': 20, },
-                        last_row + 5: {'header': _('Interview Done Date ' + str(i + 2)),
-                                       'field': 'interview_result_date' + str(i + 1),
-                                       'width': 20, },
-                        last_row + 6: {'header': _('Comment ' + str(i + 2)),
-                                       'field': 'interview_comment' + str(i + 1),
-                                       'width': 22},
-                    }
-                )
-                last_row = last_row + 7
+                if max_interviews_count:
+                    tap_count = -1
+                    for tap in sheets:
+                        for k, v in tap.items():
+                            tap_count += 1
+                            if k == 'Interviews':
+                                break
+                    for i in range(max_interviews_count):
+                        sheets[-1]['Interviews'].update(
+                            {
+                                last_row: {'header': _('Created on'),
+                                           'field': 'create_date',
+                                           'width': 18},
+                                last_row + 1: {'header': _('Interview date ' + str(i + 2)),
+                                               'field': 'interview_date' + str(i + 1),
+                                               'width': 18},
+                                last_row + 2: {'header': _('Interviewers ' + str(i + 2)),
+                                               'field': 'interviewers' + str(i + 1),
+                                               'width': 30,
+                                               'type': 'x2many'},
+                                last_row + 3: {'header': _('Interview type ' + str(i + 2)),
+                                               'field': 'interview_type_id' + str(i + 1),
+                                               'width': 20, 'type': 'many2one'},
+                                last_row + 4: {'header': _('Interview result ' + str(i + 2)),
+                                               'field': 'interview_result' + str(i + 1),
+                                               'width': 20, },
+                                last_row + 5: {'header': _('Interview Done Date ' + str(i + 2)),
+                                               'field': 'interview_result_date' + str(i + 1),
+                                               'width': 20, },
+                                last_row + 6: {'header': _('Comment ' + str(i + 2)),
+                                               'field': 'interview_comment' + str(i + 1),
+                                               'width': 22},
+                            }
+                        )
+                        last_row = last_row + 7
 
         if report.offer:
             sheets.append({
