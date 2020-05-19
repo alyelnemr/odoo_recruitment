@@ -159,4 +159,4 @@ class InterviewReportWrapper:
         if activity == 'interview':
             activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_interview')
         return data.with_context({'active_test': False}).activity_ids.filtered(
-            lambda a: a.activity_type_id == activity_type and a.active)
+            lambda a: a.activity_type_id == activity_type and a.interview_result == False)
