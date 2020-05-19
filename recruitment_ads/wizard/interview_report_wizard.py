@@ -9,64 +9,51 @@ class InterviewReportWizard(models.TransientModel):
 
     _description = "Interview Report Wizard"
 
-    interview_ids = fields.Many2many('mail.activity', 'interview_recruiter_report_rel', 'report_id', 'interview_id',
-                                     domain=[('active', '=', False)])
+    interview_ids = fields.Many2many('mail.activity', 'interview_report_rel', 'report_id', 'interview_id')
 
     @api.multi
     def button_export_xlsx(self):
         self.ensure_one()
         no_records = True
-        domain = [
-            ('create_date', '>=', self.date_from + ' 00:00:00'),
-            ('create_date', '<=', self.date_to + ' 23:59:59'),
-        ]
+        domain = []
 
+        if self.recruiter_ids:
+            domain += [('create_uid', 'in', self.recruiter_ids.ids)]
+        else:
+            if self.check_rec_manager == 'coordinator':
+                recruiters = self.env['res.users'].search(
+                    ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                     ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                     ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                     ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                domain += [('create_uid', 'in', recruiters.ids)]
         if self.job_ids:
             domain.append(('job_id', 'in', self.job_ids.ids))
-            if self.recruiter_ids:
-                domain += [('create_uid', 'in', self.recruiter_ids.ids)]
         else:
             if self.bu_ids:
-                if self.check_rec_manager == 'manager' or self.check_rec_manager == 'coordinator':
-                    if self.recruiter_ids:
-                        domain += [('create_uid', 'in', self.recruiter_ids.ids),
-                                   ('job_id.business_unit_id', 'in', self.bu_ids.ids)]
-                    bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
-                else:
-                    if self.recruiter_ids:
-                        domain += ['|', '&', ('create_uid', 'in', self.recruiter_ids.ids),
-                                   ('job_id.business_unit_id', 'in', self.bu_ids.ids)]
-                    bu_jobs = self.env['hr.job'].search(
-                        [('business_unit_id', 'in', self.bu_ids.ids), '|', ('user_id', '=', self.env.user.id),
-                         ('other_recruiters_ids', 'in', self.env.user.id)])
+                bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
                 domain.append(('job_id', 'in', bu_jobs.ids))
             else:
                 if self.check_rec_manager == 'coordinator':
-                    if self.recruiter_ids:
-                        domain += [('create_uid', 'in', self.recruiter_ids.ids)]
                     bu_jobs = self.env['hr.job'].search(
                         ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
                     domain.append(('job_id', 'in', bu_jobs.ids))
 
-                if self.check_rec_manager == 'officer':
-                    if self.recruiter_ids:
-                        domain += ['|', ('create_uid', 'in', self.recruiter_ids.ids)]
-                    rec_jobs = self.env['hr.job'].search(
-                        ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', 'in', self.env.user.id)])
-                    domain += [('job_id', 'in', rec_jobs.ids)]
-
-                if self.check_rec_manager == 'manager':
-                    if self.recruiter_ids:
-                        domain += [('create_uid', 'in', self.recruiter_ids.ids)]
-
         applications = self.env['hr.applicant'].search(domain, order='create_date desc')
-        applications_interviews = self.env['mail.activity'].search(
-            [('res_model', '=', 'hr.applicant'), ('res_id', 'in', applications.ids), ('activity_type_id', '=', 5),
-             ('active', '=', False)]).mapped('res_id')
-        if applications_interviews:
+
+        ma_domain = [
+            ('calendar_event_id.display_start', '>=', self.date_from + ' 00:00:00'),
+            ('calendar_event_id.display_start', '<=', self.date_to + ' 23:59:59'),
+            ('calendar_event_id.is_interview_done', '=', False),
+            ('res_id', 'in', applications.ids),
+            ('res_model', '=', 'hr.applicant')
+        ]
+        interviews = self.env['mail.activity'].search(ma_domain, order='write_date desc')
+        if interviews:
             no_records = False
-        self.application_ids = [(6, 0, applications_interviews)]
+        self.interview_ids = [(6, 0, interviews.ids)]
+        self.application_ids = [(6, 0, interviews.mapped('res_id'))]
 
         if no_records:
             raise ValidationError(_("No record to display"))
