@@ -43,8 +43,8 @@ class InterviewReportWizard(models.TransientModel):
         applications = self.env['hr.applicant'].search(domain, order='create_date desc')
 
         ma_domain = [
-            ('calendar_event_id.display_start', '>=', self.date_from + ' 00:00:00'),
-            ('calendar_event_id.display_start', '<=', self.date_to + ' 23:59:59'),
+            ('calendar_event_id.start_datetime', '>=', self.date_from + ' 00:00:00'),
+            ('calendar_event_id.start_datetime', '<=', self.date_to + ' 23:59:59'),
             ('calendar_event_id.is_interview_done', '=', False),
             ('res_id', 'in', applications.ids),
             ('res_model', '=', 'hr.applicant')
