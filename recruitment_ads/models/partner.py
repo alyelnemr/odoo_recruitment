@@ -219,6 +219,16 @@ class PartnerInherit(models.Model):
         if duplicated_contact:
             return duplicated_contact
 
+    @api.model
+    def create(self, vals):
+        if vals.get('email', False):
+            partner_exist = self.search([('email', '=', vals.get('email', False))], limit=1)
+            if partner_exist:
+                raise ValidationError(
+                    _("Email must be unique.\nThis email '%s' is exist with name '%s'." % (
+                        vals.get('email', False), partner_exist.display_name)))
+        return super(PartnerInherit, self).create(vals)
+
     @api.multi
     def write(self, vals):
         ctx = self._context.copy()
