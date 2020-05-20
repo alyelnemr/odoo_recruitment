@@ -85,11 +85,11 @@ class InterviewReportXslx(models.AbstractModel):
         if report:
             self.write_array_header('Interview Report')
             for app_line in report.application_ids.sorted('create_date', reverse=True):
-                self.write_line(InterviewReportWrapper(app_line), 'Interview Report')
+                self.write_line(InterviewReportWrapper(app_line, report.interview_ids), 'Interview Report')
 
 
 class InterviewReportWrapper:
-    def __init__(self, application):
+    def __init__(self, application, interviews):
         self.user_id = application.user_id
         self.generated_by_bu_id = application.create_uid.business_unit_id
         self.application_code = application.name
@@ -116,7 +116,8 @@ class InterviewReportWrapper:
         self.salary_expected = application.salary_expected
         self.salary_current = application.salary_current
 
-        interviews = self._get_activity('interview', application).sorted('write_date', reverse=False)
+        interviews = self._get_activity('interview', application).sorted('write_date', reverse=False).filtered(
+            lambda i: i in interviews)
         first_interview = interviews[0] if interviews else False
         interview_feedback = first_interview.feedback if first_interview else False
         self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
