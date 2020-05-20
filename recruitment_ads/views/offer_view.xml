@@ -8,6 +8,13 @@
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form string="Offer" create="false">
+                    <field name="button_visible" invisible="1"/>
+<!--                   -->
+                    <header attrs="{'invisible': ['|',('id', '=', False) ,('button_visible','!=',True)]}">
+                        <button name="%(recruitment_ads.report_offer_egypt)d"
+                                type="action" state="offer,hired,pipeline" string="Export Offer"
+                                class="oe_highlight"/>
+                    </header>
                     <sheet>
                         <div class="oe_title">
                             <h4>
@@ -72,7 +79,7 @@
                                 <field name="issue_date" readonly="1"/>
                                 <field name="state"/>
                                 <field name="hiring_date" states="pipeline,hired"
-                                       attrs="{'required':[('state','in',['pipeline','hired'])]}" />
+                                       attrs="{'required':[('state','in',['pipeline','hired'])]}"/>
                                 <field name="reject_reason" states="not_join,reject"
                                        attrs="{'required':[('state','=','reject')]}"/>
                             </group>
