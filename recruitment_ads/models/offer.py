@@ -78,6 +78,8 @@ class Offer(models.Model):
 
     business_unit_id = fields.Many2one('business.unit', string='Business Unit',
                                        related='application_id.job_id.business_unit_id')
+    bu_location = fields.Selection(string='Location',
+                                       related='application_id.job_id.business_unit_id.bu_location')
     user_id = fields.Many2one('res.users', string="Recruiter Responsible", related='application_id.user_id')
     last_activity = fields.Many2one('mail.activity.type', string='Last Stage', related='application_id.last_activity')
     last_activity_date = fields.Date(string='Last Stage Date', related='application_id.last_activity_date')
