@@ -11,9 +11,13 @@
                     <field name="button_visible" invisible="1"/>
                     <!--                   -->
                     <header attrs="{'invisible': ['|',('id', '=', False) ,('button_visible','!=',True)]}">
-                        <field name="bu_location" invisible="1"/>
+                        <field name="bu_location" invisible="0"/>
                         <button name="%(recruitment_ads.report_offer_egypt)d"
-                                attrs="{'invisible': [('bu_location', '!=', 'egypt')]}"
+                                attrs="{'invisible': ['|',('bu_location', '!=', 'egypt')]}"
+                                type="action" states="offer,hired,pipeline" string="Export Offer"
+                                class="oe_highlight"/>
+                        <button name="%(recruitment_ads.report_offer_ksa)d"
+                                attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
                                 type="action" states="offer,hired,pipeline" string="Export Offer"
                                 class="oe_highlight"/>
                     </header>
