@@ -24,11 +24,12 @@
                             <group>
                                 <field name="business_unit_id"/>
                                 <field name="parent_id" string="Department"
-                                       domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]" required="True"/>
+                                       domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"
+                                       required="True"/>
                             </group>
                             <group>
                                 <field name="manager_id"/>
-                                <field name="allow_call"/>
+                                <field name="allow_call" attrs="{'invisible': [('uid','!=',1)]}"/>
                             </group>
                         </group>
                     </sheet>
@@ -49,7 +50,7 @@
                     <field name="name" string="Section Name"/>
                     <field name="parent_id" string="Department"/>
                     <field name="manager_id"/>
-                    <field name="allow_call"/>
+                    <field name="allow_call" invisible="context.get('uid',False) != 1"/>
                 </tree>
             </field>
         </record>
