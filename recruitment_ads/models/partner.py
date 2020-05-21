@@ -175,7 +175,9 @@ class PartnerInherit(models.Model):
     def validate_mail(self):
         if self.email:
             # I add 'A-Z' to allow capital letters in email format
-            match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email)
+            # match = re.match('^[_a-zA-Z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', self.email)
+            match = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$',
+                             self.email)
             if match == None:
                 raise ValidationError('Not a valid E-mail ID')
 
@@ -216,6 +218,16 @@ class PartnerInherit(models.Model):
 
         if duplicated_contact:
             return duplicated_contact
+
+    @api.model
+    def create(self, vals):
+        if vals.get('email', False):
+            partner_exist = self.search([('email', '=', vals.get('email', False))], limit=1)
+            if partner_exist:
+                raise ValidationError(
+                    _("Email must be unique.\nThis email '%s' is exist with name '%s'." % (
+                        vals.get('email', False), partner_exist.display_name)))
+        return super(PartnerInherit, self).create(vals)
 
     @api.multi
     def write(self, vals):
