@@ -41,26 +41,26 @@ class JobPosition(models.Model):
                  vals['job_code'] = job_code
          return super(JobPosition, self).create(vals)
 
-
     @api.multi
     def write(self, vals):
         initials = []
-        if vals['name']:
-            job_name =  vals['name'].split()[:2]
+        if vals.get('name', False):
+            job_name = vals['name'].split()[:2]
             for initial in job_name:
                 initials.append(initial[:2].upper())
             job_code = "".join(initial for initial in initials) if initials else False
             # update the old value by null to not get as a result for secound query
-            self._cr.execute(" update job_title set job_code = '---' where id =  %s " ,(self.id,) )
+            self._cr.execute(" update job_title set job_code = '---' where id =  %s ", (self.id,))
             self._cr.execute(
-                "select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",(job_code,str(job_code)+'\_%',))
+                "select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",
+                (job_code, str(job_code) + '\_%',))
             results = self.env.cr.fetchall()
             if results:
-                if len(results)> 1:
-                    last_code = list(results[len(results) - 1]) # convert to list and get last item
-                    last_index=str(last_code[0])[-1:] # convert to string then get last charcter
-                    vals['job_code']=job_code+'_'+str(int(last_index)+1)
-                else :
+                if len(results) > 1:
+                    last_code = list(results[len(results) - 1])  # convert to list and get last item
+                    last_index = str(last_code[0])[-1:]  # convert to string then get last charcter
+                    vals['job_code'] = job_code + '_' + str(int(last_index) + 1)
+                else:
                     vals['job_code'] = job_code + '_' + str(1)
             else:
                 vals['job_code'] = job_code
@@ -148,10 +148,14 @@ class Department(models.Model):
 
         return super(Department, self).create(vals)
 
+
 class JobLevel(models.Model):
     _name = 'job.level'
+
     name = fields.Char(required=True)
-    job_title_id = fields.Many2one('job.title', string="Job Title", required=True, ondelete='cascade')
+    job_title_id = fields.Many2one('job.title', string="Job Title", required=False, ondelete='cascade')
+    weight = fields.Integer(string="Level weight", required=True)
+    cv = fields.Integer(string="CVs", required=True)
 
     _sql_constraints = [('name_job_title_unique',
                          'unique(name,job_title_id)',

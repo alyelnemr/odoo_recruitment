@@ -4,5 +4,26 @@
         <record id="main_andalusia_bu" model="business.unit">
             <field name="name">Andalusia</field>
         </record>
+        <record id="level_director" model="job.level">
+            <field name="name">Director</field>
+        </record>
+        <record id="level_consultant" model="job.level">
+            <field name="name">Consultant</field>
+        </record>
+        <record id="level_manager" model="job.level">
+            <field name="name">Manager</field>
+        </record>
+        <record id="level_specialist" model="job.level">
+            <field name="name">Specialist</field>
+        </record>
+        <record id="level_supervisory" model="job.level">
+            <field name="name">Supervisory</field>
+        </record>
+        <record id="level_section_head" model="job.level">
+            <field name="name">Section Head</field>
+        </record>
+        <record id="level_entry" model="job.level">
+            <field name="name">Entry</field>
+        </record>
     </data>
 </openerp>

@@ -132,6 +132,7 @@
             </field>
         </record>
 
+        <!--Job level-->
         <record id="view_job_level_form" model="ir.ui.view">
             <field name="name">job.level.form</field>
             <field name="model">job.level</field>
@@ -140,11 +141,39 @@
                     <sheet>
                         <group>
                             <field name="name"/>
+                            <field name="weight"/>
+                            <field name="cv"/>
                         </group>
                     </sheet>
                 </form>
             </field>
         </record>
+
+        <record id="view_job_level_tree" model="ir.ui.view">
+            <field name="name">view_job_level_tree</field>
+            <field name="model">job.level</field>
+            <field name="type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="weight"/>
+                    <field name="cv"/>
+                </tree>
+            </field>
+        </record>
+
+        <act_window id="act_job_level_menu"
+                    name="Job Level"
+                    res_model="job.level"
+                    view_mode="tree,form"
+                    view_type="form"/>
+
+        <menuitem id="menu_job_level"
+                  name="Job Level"
+                  parent="hr_recruitment.menu_hr_recruitment_configuration"
+                  sequence="101"
+                  action="act_job_level_menu"/>
 
         <record id="view_bu_form" model="ir.ui.view">
             <field name="name">business.unit.form</field>
