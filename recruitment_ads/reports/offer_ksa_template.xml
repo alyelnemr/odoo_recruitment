@@ -21,99 +21,92 @@
                     <h3 align="center">Employment Offer</h3>
                 </div>
             <t t-foreach="docs" t-as="o">
-                <table cellspacing="0" border="0" >
-<!--                    <colgroup style="width=130;"></colgroup>-->
-<!--                    <colgroup style="width=143;"></colgroup>-->
-<!--                    <colgroup style="width=113;"></colgroup>-->
-<!--                    <colgroup style="width=101;"></colgroup>-->
-<!--                    <colgroup style="width=180;"></colgroup>-->
-<!--                    <colgroup style="width=146;"></colgroup>-->
+                <table  style="width:100%">
+                    <tr style="border:5px double black">
+                        <td class="text-center" style=" border-left: 7px double black ; border-right: 7px double black; width:50%; background-color:rgb(255, 255, 169); padding: 7px;" colspan="3"><strong>Please note that you have been appointed as follows.</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black ; border-right: 7px double black; width:50%; background-color:rgb(255, 255, 169); padding: 7px;" colspan="3" ><strong>يسرنى إبلاغكم بموافقة الإدارة على توظيفكم حسب البيانات التالي</strong></td>
+                    </tr>
                     <tr style="border: 7px double black ; ">
-
-                        <td class="text-center" style="border-top: 7px double black ; border-bottom:7px double black ; border-left: 7px double black ; border-right: 7px double black;  height=22; align:center ; valign:middle; bgcolor:#FFFFCC;" colspan="3" bgcolor="#FFFFCC"><strong>Please note that you have been appointed as follows.</strong></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black ; border-left: 7px double black ; border-right: 7px double black;  height=22; align:center ; valign:middle; bgcolor:#FFFFCC;" colspan="3" ><strong>يسرنى إبلاغكم بموافقة الإدارة على توظيفكم حسب البيانات التالي</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169); padding:10px; " ><strong>Name</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;  width : 200px; padding:10px;" colspan="4"><strong t-field="o.applicant_name"/></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding: 10px; " ><strong>الاسم </strong></td>
                     </tr>
-                    	<tr style="border: 7px double black ; ">
-                            <td class="text-center" style="border-top: 7px double black ; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle' bgcolor:#FFFFCC; " ><strong>Name</strong></td>
-                            <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:bottom; width : 200px;" colspan="4"><strong t-field="o.applicant_name"/></td>
-                            <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:middle; bgcolor:#FFFFCC;" ><strong>الاسم </strong></td>
-                        </tr>
-                    <tr>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Position:</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign :bottom; width : 150px;" ><font color="black"><strong t-field="o.job_id"/></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">المسمى الوظيفي</font></b></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><font face="Times New Roman" color="black">Dep’t</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:bottom; width : 150px;" ><font color="black"><strong t-field="o.department_id"/></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">الإدارة</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px;  " ><strong>Position:</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;  " ><strong t-field="o.job_id"/></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; "><strong>المسمى الوظيفي</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; "><strong>Dep’t</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;  " ><font color="black"><strong t-field="o.department_id"/></font></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px; "><strong>الإدارة</strong></td>
                     </tr>
-                    <tr>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Housing allowance:</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign :bottom; width : 150px;" ><font color="black"></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">:بدل سكن</font></b></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><font face="Times New Roman" color="black">Basic  salary:</font></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; ;" ><strong>Housing allowance:</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:10px; " />
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169); padding:10px; "><strong>:بدل سكن</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;  "><strong>Basic  salary:</strong></td>
                          <t t-if="o.offer_type == 'normal_offer'">
-                            <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:bottom; width : 150px;" ><font color="black"><strong t-field="o.fixed_salary"/></font></td>
+                            <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:10px; " ><strong t-field="o.fixed_salary"/></td>
                          </t>
                          <t t-if="o.offer_type == 'nursing_offer'">
-                            <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:bottom; width : 150px;" ><font color="black"><strong t-field="o.total_salary"/></font></td>
+                            <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; width : 150px;padding:10px; " ><strong t-field="o.total_salary"/></td>
                          </t>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">الراتب الأساسى</font></b></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; ;background-color:rgb(255, 255, 169);padding:10px; "><strong>الراتب الأساسى</strong></td>
+                    </tr>
+                    <tr style="border: 7px double black ;">
+                        <td  class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; " ><strong>Total Salary:</strong></td>
+                            <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px; " colspan="4" ><strong t-field="o.total_salary"/></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; " ><strong>اجمالى المرتب </strong></td>
+                    </tr>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; " ><strong>Bonus:</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; width : 150px;padding:10px; " ><strong>Bonus according to company policy</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; "><strong>:العلاوة</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;  "><strong>Vacation</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;  " ><font color="black"></font></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px; "><strong>الأجازة</strong></td>
+                    </tr>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;  " ><strong>Other  Benefits:</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; padding:10px; " ><strong>تامين طبي لشخصه و المضافين على اقامته</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; "><strong>مزايا  أخرى</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;  "><strong>Ticket</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;  width : 150px;padding:10px; " ><strong>تذكرة سفر سنوية لشخصه</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169); padding:10px; "><strong>التذاكر</strong></td>
+                    </tr>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; " ><strong>Transportation allowens</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;  " ><strong></strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; "><strong >:بدل مواصلات</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169); padding:10px; "><strong>Service award :</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; width : 150px;padding:10px; " ><strong >طبقا للنظام</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px; "><strong>مكافأة  نهاية الخدمة</strong></td>
+                    </tr>
+                    <tr style="border: 7px double black ;">
+                        <td  class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px; "   ><strong>Total:</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;  " colspan="4" ><strong t-field="o.total_package"/></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:10px; " ><strong>الاجمالى</strong></td>
                     </tr>
                     <tr>
-                        <td  class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Total Salary:</font></td>
-                            <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:bottom;" colspan="4" ><font color="black"><strong t-field="o.total_salary"/></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black"></font>اجمالى المرتب </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Bonus:</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign :bottom; width : 150px;" ><font color="black"></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">:العلاوة</font></b></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><font face="Times New Roman" color="black">Vacation</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:bottom; width : 150px;" ><font color="black"></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">الأجازة</font></b></td>
-                    </tr>
-                    <tr>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Other  Benefits:</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign :bottom; width : 150px;" ><font color="black">تامين طبي لشخصه و المضافين على اقامته</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">مزايا  أخرى</font></b></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><font face="Times New Roman" color="black">Ticket</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:bottom; width : 150px;" ><font color="black">تذكرة سفر سنوية لشخصه</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">التذاكر</font></b></td>
-                    </tr>
-                    <tr>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Transportation allowens</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign :bottom; width : 150px;" ><font color="black"></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">:بدل مواصلات</font></b></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><font face="Times New Roman" color="black">Service award :</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:bottom; width : 150px;" ><font color="black">طبقا للنظام</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;"><b><font face="Times New Roman" color="black">مكافأة  نهاية الخدمة</font></b></td>
-                    </tr>
-                    <tr>
-                        <td  class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black">Total:</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:bottom;" colspan="4" ><font color="black"><strong t-field="o.total_package"/></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:left; valign:middle; bgcolor:#FFFFCC;" ><font face="Times New Roman" color="black"></font>الاجمالى</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black;  height:21; align:center; valign:middle;" colspan="6"><font face="Times New Roman" color="black"> ……….ويخضع الراتب لأى إستقطاعات مثل التأمينات الإجتماعية ، صندوق الإدخار ،إصابة عمل </font></td>
+                        <td class="text-center" style="border-top: 7px double black; border-left: 7px double black; border-right: 7px double black;padding:10px; " colspan="6"><strong> ……….ويخضع الراتب لأى إستقطاعات مثل التأمينات الإجتماعية ، صندوق الإدخار ،إصابة عمل </strong></td>
 		            </tr>
                     <tr>
-                         <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:21; align:center; valign:middle; " colspan="6" ><font face="Times New Roman" color="black">Salary is subject to any deduction such as, Social Insurance  saving Find  work-related injuries accidents, etc. ......</font></td>
+                         <td class="text-center" style=" border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black;padding:10px; " colspan="6" ><font>Salary is subject to any deduction such as, Social Insurance  saving Find  work-related injuries accidents, etc. ......</font></td>
                     </tr>
-                    <tr>
-                        <td  class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" colspan="2" ><font face="Times New Roman" color="black">Expected date of work:</font></td>
-                        <td  class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:bottom;" colspan="2" ><font color="black">---------</font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;" colspan="2" ><font face="Times New Roman" color="black">التاريخ المطلوب للعمل</font> </td>
+                    <tr style="border: 7px double black ;">
+                        <td  class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169); padding:7px; " colspan="2" ><strong>Expected date of work:</strong></td>
+                        <td  class="text-center" style="border-left: 7px double black; border-right: 7px double black; padding:7px;  " colspan="2" ><strong>---------</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169); padding:7px; " colspan="2" ><strong>التاريخ المطلوب للعمل</strong> </td>
 		             </tr>
-                    <tr>
-                        <td  class="text-center" style="border :7px double black; border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height:22; align:center; valign:middle; bgcolor:#FFFFCC;" colspan="2" ><font face="Times New Roman" color="black">Offer is valid</font></td>
-                        <td  class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:bottom;" colspan="2" ><font color="black"></font></td>
-                        <td class="text-center" style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; align:center; valign:middle; bgcolor:#FFFFCC;" colspan="2" ><font face="Times New Roman" color="black">سريان العرض</font> </td>
+                    <tr style="border: 7px double black ;">
+                        <td  class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:7px; " colspan="2" ><strong>Offer is valid</strong></td>
+                        <td  class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:7px;  " colspan="2" ><strong></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 169);padding:7px; "  colspan="2" ><strong>سريان العرض</strong> </td>
 		             </tr>
-                    <tr>
-                        <td class="text-center" style="border :7px double black; border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black; height=22; align=left; valign=middle;" colspan="3" ><input type="checkbox" /> Accept the offer
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px; " colspan="3" ><input type="checkbox" /> Accept the offer
                             <br/> <input type="checkbox" />DisAgree <br/> Name… <br/> Signature…</td>
 
-                            <td class="text-center"  style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double; border-right: 7px double; align=right; valign=middle;" colspan="3">
+                            <td class="text-center"  style=" border-left: 7px double; border-right: 7px double;padding:10px; " colspan="3">
                             أوافق على العرض <input type="checkbox" /><br/>
                             أرفض العرض  <input type="checkbox" /> <br/>
                                 ………………………………:الإسم<br/>
@@ -121,82 +114,83 @@
 
                         </td>
                     </tr>
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black" colspan="3" height="22" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">  This section is to be filled by Human Resources:</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" colspan="3" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">:- هذا الجزء يملاء بمعرفة إدارة الموارد البشرية </font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black;background-color:rgb(255, 255, 169); padding:7px; " colspan="3"><strong>  This section is to be filled by Human Resources:</strong></td>
+                        <td class="text-center" style="background-color:rgb(255, 255, 169); padding:7px; " colspan="3" ><strong>:- هذا الجزء يملاء بمعرفة إدارة الموارد البشرية </strong></td>
                     </tr>
 
-                    <tr>
-		                <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" colspan="6" height="22" align="center" valign="bottom"><font color="black"><br/></font></td>
+                    <tr style="border: 7px double black ; ">
+		                <td  colspan="6"><font><br/></font></td>
 		            </tr>
-                    <tr>
-                        <td style="border-bottom: 7px double black; border-left: 7px double black" height="22" align="left" valign="bottom"><font face="Times New Roman" color="black">Don’t Accepts offer</font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black" align="center" valign="bottom"><font color="black">[                                       ]</font></td>
-                        <td style="border-bottom: 7px double black" align="left" valign="bottom"><b><font face="Times New Roman" color="black"> لايوافق على العرض</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black" align="left" valign="bottom"><font face="Times New Roman" color="black">Accepts offer as it is:</font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black" align="center" valign="bottom"><font color="black">[                                       ]</font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-right: 7px double black" align="left" valign="bottom"><b><font face="Times New Roman" color="black"> يوافق على العرض بصورته الحالية</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style=" border-left: 7px double black; padding:7px;" ><strong>Don’t Accepts offer</strong></td>
+                        <td class="text-center"  style=" padding:7px;" ><strong>[                                       ]</strong></td>
+                        <td class="text-center" style=" padding:7px;" ><strong> لايوافق على العرض</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; padding:7px;" ><strong>Accepts offer as it is:</strong></td>
+                        <td class="text-center" style=" padding:7px;"><font color="black">[                                       ]</font></td>
+                        <td class="text-center" style="border-right: 7px double black; padding:7px;"><strong> يوافق على العرض بصورته الحالية</strong></td>
                     </tr>
-                    <tr>
-                            <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black;" colspan="2" height="22" align="left" valign="bottom"><font color="black">After doing the following amendments:</font></td>
-                            <td style="border-top: 7px double black; border-bottom: 7px double black; " colspan="2" align="center" valign="bottom"><font color="black">[                                          ]</font></td>
-                            <td style="border-top: 7px double black; border-bottom: 7px double black; border-right: 7px double black" colspan="2" align="right" valign="bottom"><b><font face="Times New Roman" color="black">بعد إجراء التعديلات الآتية </font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; padding:7px;" colspan="2" ><strong>After doing the following amendments:</strong></td>
+                        <td class="text-center"  style=" padding:7px;" colspan="2" ><strong>[                                          ]</strong></td>
+                        <td class="text-center" style=" border-right: 7px double black; padding:7px;" colspan="2" ><strong>بعد إجراء التعديلات الآتية </strong></td>
                     </tr>
 
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" height="22" align="left" valign="middle"><font face="Times New Roman" color="black">Remarks:</font></td>
-                        <td style="border-top: 7px double black; border-left: 7px double black; border-bottom: 7px double black;" colspan="4" align="center" valign="bottom"><font color="black"><br/></font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="right" valign="bottom"><b><font face="Times New Roman" color="black">:ملاحظات</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong>Remarks:</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black;padding:10px; " colspan="4" ><font><br/></font></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;"><strong>:ملاحظات</strong></td>
                     </tr>
-                    <tr>
-                      <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" colspan="6" height="22" align="center" valign="bottom"><font color="black"><br/></font></td>
+                    <tr style="border: 7px double black ;">
+                      <td colspan="6"><font color="black"><br/></font></td>
                     </tr>
-                   <tr>
-                      <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" colspan="6" height="22" align="center" valign="bottom"><font color="black"><br/></font></td>
+                   <tr style="border: 7px double black ;">
+                      <td colspan="6"><font color="black"><br/></font></td>
                     </tr>
-                   <tr>
-                      <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" colspan="6" height="22" align="center" valign="bottom"><font color="black"><br/></font></td>
+                   <tr style="border: 7px double black ;">
+                      <td  colspan="6"><font color="black"><br/></font></td>
                     </tr>
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" height="22" align="center" valign="middle"><b><font face="Times New Roman" color="black"><br/></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><font face="Times New Roman" color="black"><br/></font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black">التاريخ</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">التوقيع</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black">الأسم</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">الدرجه الوظيفيه</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;"><strong>التاريخ</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong>التوقيع</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong>الأسم</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;"><strong>الدرجه الوظيفيه</strong></td>
                     </tr>
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" height="22" align="center" valign="middle"><b><font face="Times New Roman" color="black"><br/></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><font face="Times New Roman" color="black"><br/></font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black">التاريخ</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">التوقيع</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black"></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">Regional HR Manager</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;"><strong>التاريخ</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong>التوقيع</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;"><strong>Regional HR Manager</strong></td>
                     </tr>
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" height="22" align="center" valign="middle"><b><font face="Times New Roman" color="black"><br/></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><font face="Times New Roman" color="black"><br/></font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black">التاريخ</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">التوقيع</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black"></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">Deputy Group Recruitment Mananger</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;"><strong>التاريخ</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong>التوقيع</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;"><strong>Deputy Group Recruitment Mananger</strong></td>
                     </tr>
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" height="22" align="center" valign="middle"><b><font face="Times New Roman" color="black"><br/></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><font face="Times New Roman" color="black"><br/></font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black">التاريخ</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">التوقيع</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black"></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">Regional Financial  Manager</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;"><strong>التاريخ</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong>التوقيع</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;"><strong>Regional Financial  Manager</strong></td>
                     </tr>
-                    <tr>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" height="22" align="center" valign="middle"><b><font face="Times New Roman" color="black"><br/></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><font face="Times New Roman" color="black"><br/></font></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black">التاريخ</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">التوقيع</font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle"><b><font face="Times New Roman" color="black"></font></b></td>
-                        <td style="border-top: 7px double black; border-bottom: 7px double black; border-left: 7px double black; border-right: 7px double black" align="center" valign="middle" bgcolor="#FFFFCC"><b><font face="Times New Roman" color="black">Group HR Director</font></b></td>
+                    <tr style="border: 7px double black ;">
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong><br/></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;padding:10px;"><strong>التاريخ</strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;" ><strong>التوقيع</strong></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:10px;" ><strong></strong></td>
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 169);padding:10px;"><strong>Group HR Director</strong></td>
                     </tr>
+
 
                 </table>
             </t>
