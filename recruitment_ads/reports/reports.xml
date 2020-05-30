@@ -36,5 +36,9 @@
     <report id="report_offer_egypt" model="hr.offer" string="Egypt Offer" report_type="qweb-pdf"
             name="recruitment_ads.offer_egypt" file="recruitment_ads.offer_egypt" attachment_use="True"/>
     <report id="report_offer_ksa" model="hr.offer" string="Ksa Offer" report_type="qweb-pdf"
-            name="recruitment_ads.offer_ksa" file="recruitment_ads.offer_ksa" attachment_use="True"/>
+            name="recruitment_ads.offer_ksa" file="recruitment_ads.offer_ksa" attachment_use="True"
+           />
+    <record id="recruitment_ads.report_offer_ksa" model="ir.actions.report">
+        <field name="paperformat_id" ref="base.paperformat_batch_deposit" />
+    </record>
 </odoo>
