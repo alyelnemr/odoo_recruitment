@@ -4,42 +4,41 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 from datetime import datetime
 
 
-
-
 class JobPosition(models.Model):
     _name = 'job.title'
     name = fields.Char(required=True)
     department_ids = fields.Many2many('hr.department', 'hr_dep_job_rel', 'job_id', 'dep_id')
-    job_code = fields.Char(string="Job Code",readonly=True ,store=True )
+    job_code = fields.Char(string="Job Code", readonly=True, store=True)
     has_application = fields.Boolean(string='Has Application', compute='_compute_has_application')
-    job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels" )
+    # job_level_ids = fields.One2many('job.level', 'job_title_id', string="Job Levels")
+    job_level_ids = fields.Many2many('job.level', 'hr_level_title_rel', 'job_id', 'level_id', string="Job Levels")
 
     #  override create to generate job code to take first two letter and if it repated add number specific for each code
-    #""" get first two letters of first two words then check if this code found before or not
-     # if no then  save the code if  yes the add  "_" and the seq number of code
+    # """ get first two letters of first two words then check if this code found before or not
+    # if no then  save the code if  yes the add  "_" and the seq number of code
     # """
     @api.model
     def create(self, vals):
-         initials = []
-         if vals['name']:
-             job_name = vals['name'].split()[:2]
-             for initial in job_name:
-                 initials.append(initial[:2].upper())
-             job_code = "".join(initial for initial in initials) if initials else False
-             self._cr.execute(
-                 "select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",
-                 (job_code, str(job_code) + '\_%',))
-             results = self.env.cr.fetchall()
-             if results:
-                 if len(results) > 1:
-                     last_code = list(results[len(results) - 1])  # convert to list and get last item
-                     last_index = str(last_code[0])[-1:]  # convert to string then get last charcter
-                     vals['job_code'] = job_code + '_' + str(int(last_index) + 1)
-                 else:
-                     vals['job_code'] = job_code + '_' + str(1)
-             else:
-                 vals['job_code'] = job_code
-         return super(JobPosition, self).create(vals)
+        initials = []
+        if vals['name']:
+            job_name = vals['name'].split()[:2]
+            for initial in job_name:
+                initials.append(initial[:2].upper())
+            job_code = "".join(initial for initial in initials) if initials else False
+            self._cr.execute(
+                "select job_code from job_title where job_code ilike  %s or  job_code ilike  %s  order by create_date ",
+                (job_code, str(job_code) + '\_%',))
+            results = self.env.cr.fetchall()
+            if results:
+                if len(results) > 1:
+                    last_code = list(results[len(results) - 1])  # convert to list and get last item
+                    last_index = str(last_code[0])[-1:]  # convert to string then get last charcter
+                    vals['job_code'] = job_code + '_' + str(int(last_index) + 1)
+                else:
+                    vals['job_code'] = job_code + '_' + str(1)
+            else:
+                vals['job_code'] = job_code
+        return super(JobPosition, self).create(vals)
 
     @api.multi
     def write(self, vals):
@@ -91,7 +90,7 @@ class BusinessUnit(models.Model):
     _name = 'business.unit'
     name = fields.Char(required=True)
     job_dep_ids = fields.One2many('hr.department', 'business_unit_id')
-    bu_location = fields.Selection([('egypt', 'Egypt'),('ksa', 'KSA')], string='Location',default ='egypt' )
+    bu_location = fields.Selection([('egypt', 'Egypt'), ('ksa', 'KSA')], string='Location', default='egypt')
 
     _sql_constraints = [('name_unique',
                          'unique(name)',
@@ -101,7 +100,7 @@ class BusinessUnit(models.Model):
 class Department(models.Model):
     _inherit = "hr.department"
     # current_user=fields.Many2one('res.users',default=lambda self: self.env.uid)
-    allow_call= fields.Boolean(string='Allow Online Call')
+    allow_call = fields.Boolean(string='Allow Online Call')
 
     def _get_default_bu(self):
         if self.parent_id:
@@ -127,10 +126,11 @@ class Department(models.Model):
     @api.onchange('allow_call')
     def _get_allow_call(self):
         if not self.parent_id:
-            child_department= self.env['hr.department'].search([('parent_id','=',self._origin.id),('parent_id','!=',False)])
+            child_department = self.env['hr.department'].search(
+                [('parent_id', '=', self._origin.id), ('parent_id', '!=', False)])
             if child_department:
-               for child in child_department:
-                child.write({'allow_call': self.allow_call})
+                for child in child_department:
+                    child.write({'allow_call': self.allow_call})
 
     @api.onchange('parent_id')
     def _onchange_parent_id(self):
@@ -153,13 +153,38 @@ class JobLevel(models.Model):
     _name = 'job.level'
 
     name = fields.Char(required=True)
-    job_title_id = fields.Many2one('job.title', string="Job Title", required=False, ondelete='cascade')
+    # job_title_id = fields.Many2one('job.title', string="Job Title", required=False, ondelete='cascade')
+    job_title_ids = fields.Many2many('job.title', 'hr_level_title_rel', 'level_id', 'job_id', string="Job title",
+                                     required=True)
     weight = fields.Integer(string="Level weight", required=True)
     cv = fields.Integer(string="CVs", required=True)
 
     _sql_constraints = [('name_job_title_unique',
-                         'unique(name,job_title_id)',
-                         'The name of the Job Level must be unique! per Job Title.'), ]
+                         'unique(name)',
+                         'The name of the Job Level must be unique!'), ]
+
+    @api.model
+    def create(self, vals):
+        if vals['weight'] < 1:
+            raise ValidationError(_("The field 'Level weight' must be greater than 0"))
+        if vals['cv'] < 1:
+            raise ValidationError(_("The field 'CV' must be greater than 0"))
+        return super(JobLevel, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        for level in self:
+            if level.weight < 1 and not vals.get('weight', False):
+                raise ValidationError(_("The field 'Level weight' must be greater than 0"))
+            if vals.get('weight', False):
+                if vals['weight'] < 1:
+                    raise ValidationError(_("The field 'Level weight' must be greater than 0"))
+            if level.cv < 1 and not vals.get('cv', False):
+                raise ValidationError(_("The field 'cv' must be greater than 0"))
+            if vals.get('cv', False):
+                if vals['cv'] < 1:
+                    raise ValidationError(_("The field 'CV' must be greater than 0"))
+        return super(JobLevel, self).write(vals)
 
 
 class Job(models.Model):
@@ -169,13 +194,16 @@ class Job(models.Model):
     #        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
 
     def _get_bu_domain(self):
-        if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-            domain=['|',('id', '=', self.env.user.business_unit_id.id), ('id','in',self.env.user.multi_business_unit_id.ids)
-                 ]
+        if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager'):
+            domain = ['|', ('id', '=', self.env.user.business_unit_id.id),
+                      ('id', 'in', self.env.user.multi_business_unit_id.ids)
+                      ]
 
         else:
-            domain=[]
+            domain = []
         return domain
+
     name = fields.Char(string='Job Position', required=False, index=True, translate=True, compute='_compute_job_name',
                        store=True)
     business_unit_id = fields.Many2one('business.unit', required=True, domain=lambda self: self._get_bu_domain())
@@ -184,17 +212,17 @@ class Job(models.Model):
     section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
     job_title_id = fields.Many2one('job.title', string='Job Title', required=True)
     job_level_id = fields.Many2one('job.level', string='Job Level', required=False)
+    # , domain = lambda self: self.job_title_level_domain()
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user)
     other_recruiters_ids = fields.Many2many('res.users', string="Other Recruiters")
     remaining_vacancies = fields.Integer(string='Remaining Vacancies', compute='_compute_remaining_vacancies',
                                          help='Number of vacancies needed during the recruitment phase.')
     no_of_hired_applicants = fields.Integer(string='Hired Applicants', compute='_compute_remaining_vacancies',
-                                    help='Number of hired applicants for this job position during recruitment phase.')
+                                            help='Number of hired applicants for this job position during recruitment phase.')
     last_launch_rec_date = fields.Date(string='Recruitment Launch Date',
                                        help="Technical field to catch the starting date of the last recruitment phase")
     scale_from = fields.Float(string='Salary Scale From')
     scale_to = fields.Float(string='Salary Scale To')
-
 
     @api.model
     def create(self, vals):
@@ -205,11 +233,13 @@ class Job(models.Model):
     def write(self, vals):
         user = self.env.user
         if user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager') :
-            if self.business_unit_id.id != user.business_unit_id.id and not self.business_unit_id.id in user.multi_business_unit_id.ids and self._context.get('allow_edit',False)== False:
+                'hr_recruitment.group_hr_recruitment_manager'):
+            if self.business_unit_id.id != user.business_unit_id.id and not self.business_unit_id.id in user.multi_business_unit_id.ids and self._context.get(
+                    'allow_edit', False) == False:
                 raise ValidationError("You are not allowed to edit this job")
         if user.has_group('hr_recruitment.group_hr_recruitment_user') and not user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')and not user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and self._context.get('allow_edit',False)== False:
+                'hr_recruitment.group_hr_recruitment_manager') and not user.has_group(
+            'recruitment_ads.group_hr_recruitment_coordinator') and self._context.get('allow_edit', False) == False:
             raise ValidationError("You are not allowed to edit this job")
         return super(Job, self).write(vals)
 
@@ -229,9 +259,10 @@ class Job(models.Model):
 
     @api.multi
     def _compute_remaining_vacancies(self):
-        hired_offer = self.env['hr.offer'].search([('job_id', 'in', self.ids), ('state', '=', 'hired'),('hiring_date','!=',False)])
+        hired_offer = self.env['hr.offer'].search(
+            [('job_id', 'in', self.ids), ('state', '=', 'hired'), ('hiring_date', '!=', False)])
         for job in self:
-            if job.state == 'recruit' and job.last_launch_rec_date :
+            if job.state == 'recruit' and job.last_launch_rec_date:
                 filter_by = lambda d: datetime.strptime(d.hiring_date, DEFAULT_SERVER_DATE_FORMAT) >= datetime.strptime(
                     job.last_launch_rec_date, DEFAULT_SERVER_DATE_FORMAT) and d.job_id == job
                 hired_count = len(hired_offer.filtered(filter_by))
