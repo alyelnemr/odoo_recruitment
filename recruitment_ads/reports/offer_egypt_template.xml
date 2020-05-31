@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="egypt_offer_layout">
+        <!-- Multicompany -->
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+        <t t-call="recruitment_ads.egypt_offer_layout_header"/>
+        <t t-raw="0"/>
+
+        <div class="footer" dir="rtl">
+            <div>
+                <p>
+                    -هذا العرض ساري المفعول لمدة أسبوعين من تاريخه
+                    <br/>
+                    -في حالة وجود اية استفسارات برجاء الاتصال بادارة الموارد البشرية ت: 753730530
+                </p>
+            </div>
+
+            <div class="text-muted text-center">
+                Page:
+                <span class="page"/>
+                /
+                <span class="topage"/>
+            </div>
+        </div>
+    </template>
+    <template id="egypt_offer_layout_header">
+        <div class="header">
+            <div class="row">
+                <div class="col-xs-12">
+                    <img src='/recruitment_ads/static/src/image/logo.jpg'
+                         style=" margin-left: auto;margin-right: auto;display: block;"/>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="offer_egypt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="recruitment_ads.egypt_offer_layout">
+                    <div class="page" dir="rtl" style="color:black!important;font-size:14px;">
+                        <h4 class="text-center">"عرض توظيف"</h4>
+                        <p>
+                            <b>التاريخ:</b>
+                            <span dir="ltr"
+                                  t-esc="datetime.datetime.strptime(o.issue_date, '%Y-%m-%d').strftime('%d-%b-%Y')"/>
+                        </p>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="2" class="text-center"
+                                    style="background-color:rgb(81,145,208);border:5px double black;">
+                                    <b style="color:black!important;">يسرنا إبلاغكم بموافقة الإدارة على توظيفكم حسب
+                                        البيانات التالية:
+                                    </b>
+                                </td>
+                                <td colspan="2" class="text-center" dir="ltr"
+                                    style="background-color:rgb(81,145,208);border:5px double black;">
+                                    <b>
+                                        <i style="color:black!important;">Please note that you have been appointed as
+                                            follows:
+                                        </i>
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الاسم
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"></td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.application_id.partner_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Name
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الوظيفة
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.job_id.job_title_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.job_id.job_title_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Position
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الدرجة
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.job_id.job_level_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.job_id.job_level_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Grade
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        يتبع إداري ا
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <!--                                    <span t-field="o.job_id.job_level_id.name" style="color:black!important;"/>-->
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <!--                                    <span t-field="o.job_id.job_level_id.name" style="color:black!important;"/>-->
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Admin.<br/>Reports to
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        يتبع فني ا
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <!--                                    <span t-field="o.job_id.job_level_id.name" style="color:black!important;"/>-->
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <!--                                    <span t-field="o.job_id.job_level_id.name" style="color:black!important;"/>-->
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Functional<br/>Reports to
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        القسم
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.department_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.department_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Department
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الإدارة
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.business_unit_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.business_unit_id.name" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Unit
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        مدة العقد
+                                    </b>
+                                </td>
+                                <td colspan="2" style="border:5px double black;">
+                                    <b style="color:black!important;" dir="ltr" class="text-left">لمدة محددة بعام واحد
+                                        يبدأ من التاريخ المثبت بالعقد
+                                        و قابلة للتجديد
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;" dir="ltr" class="text-right">
+                                        <i dir="ltr" class="text-right" style="float:left;">For a definite period of one
+                                            renewable year,
+                                            effective the date mentioned in
+                                            the contract
+                                        </i>
+                                    </b>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Period of<br/>contract
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <h5>
+                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                                الاستحقاقات الشهرية ( صافى الراتب ) :
+                            </b>
+                        </h5>
+                        <br/>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الراتب الثابت
+                                    </b>
+                                </td>
+                                <td colspan="2" style="border:5px double black;width:50%"
+                                    dir="ltr" class="text-center">
+                                    <t t-if="o.offer_type == 'normal_offer'">
+                                        <span t-field="o.fixed_salary" style="color:black!important;"
+                                              t-att-style="style"
+                                              t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </t>
+                                    <t t-if="o.offer_type == 'nursing_offer'">
+                                        <span t-field="o.total_salary" style="color:black!important;"
+                                              t-att-style="style"
+                                              t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </t>
+
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Fixed salary
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الراتب المتغير
+                                    </b>
+                                </td>
+                                <td colspan="2" style="border:5px double black;width:50%"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.variable_salary" style="color:black!important;"
+                                          t-att-style="style"
+                                          t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Variable
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        الراتب الشهري
+                                    </b>
+                                </td>
+                                <td colspan="2" style="border:5px double black;width:50%"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.total_package" style="color:black!important;"
+                                          t-att-style="style"
+                                          t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Basic monthly salary
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <h5>
+                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                                الــمزايــا :
+                            </b>
+                        </h5>
+                        <br/>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        تأمين طبى:
+                                    </b>
+                                </td>
+                                <td colspan="2" style="border:5px double black;width:50%"
+                                    dir="ltr" class="text-center">
+                                    <span style="color:black!important;">لمدة محددة بعام واحد
+                                        شخصى – طبقًا لسياسة الشركة المطبقة حاليا
+                                    </span>
+                                    <br/>
+                                    <i style="color:black!important;">Personal - according to the
+                                        company policy
+                                    </i>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:25%;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Health Insurance:
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <h5>
+                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                                التوقيعات :
+                            </b>
+                        </h5>
+                        <br/>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);width:16.7%;border:1px solid #000;"></td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:1px solid #000;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التوقيع
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Signature
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التاريخ
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Date
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:#fff;width:16.7%"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);width:16.7%;"></td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التوقيع
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Signature
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التاريخ
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Date
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:#fff;width:16.7%"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);width:16.7%;"></td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التوقيع
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Signature
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التاريخ
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Date
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:#fff;width:16.7%"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);width:16.7%;"></td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التوقيع
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Signature
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التاريخ
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Date
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:#fff;width:16.7%"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);width:16.7%;"></td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التوقيع
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Signature
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التاريخ
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Date
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:#fff;width:16.7%"></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <h5>
+                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                                توقيع المرشح للعمل :
+                            </b>
+                        </h5>
+                        <br/>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);width:16.7%;"></td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التوقيع
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Signature
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;width:16.7%"></td>
+                                <td colspan="1"
+                                    style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        التاريخ
+                                    </b>
+                                    <br/>
+                                    <b style="color:black!important;">
+                                        Date
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:#fff;width:16.7%"></td>
+                            </tr>
+                        </table>
+                        <br/>
+
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="1" style="border:1px solid #000;background-color:rgb(205,216,247);">
+                                    <b style="color:black;">التحقق من البيانات المقدمة :</b>
+                                </td>
+                                <td colspan="1" style="border:1px solid #000;background-color:rgb(205,216,247);"
+                                    dir="ltr" class="text-left">
+                                    <b style="color:black;">
+                                        <i>References Details:</i>
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" style="border:1px solid #000;width:50%">
+                                    <ul>
+                                        <li style="color:black;">اقر انا الموقع ادناه ان البيانات المذكورة بالسيرة
+                                            الذاتية الخاصة بيوالمقدمة
+                                            الي الشركة صحيحة وكاملة .
+                                        </li>
+                                        <li style="color:black;">كما اقر باستيفاء مسوغات التعيين الموضحه ادناه وذلك في
+                                            اول يوم عمل لي بشركة
+                                            اندلسية للخدمات الطبية .
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td colspan="1" dir="ltr" class="text-left"
+                                    style="border:1px solid #000;background-color:#fff;width:50%">
+                                    <ul dir="ltr">
+                                        <li>
+                                            <i style="color:black;">I declare that the information I have given in my
+                                                resume is to the best
+                                                of my knowledge, true and complete.
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Any employment offer will depend up on fulfilling
+                                                the rationale for the
+                                                appointment described below in the first day of work for me at Andalusia
+                                                for medical service.
+                                            </i>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                        <h4 style="background-color:rgb(81,145,208);margin:0px!important;padding:10px;">
+                            <b style="color:black;">مسوغات التعيين</b>
+                        </h4>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="2" style="border:1px solid #000;width:50%;color:black;">
+                                    <ol>
+                                        <li>اصل شهادة المؤهل الدراسي.</li>
+                                        <li>اصل شهادة الميلاد أو مستخرج رسمي منها.</li>
+                                        <li>اصل صحيفة الحالة الجنائية معنونة باسم شركة (أندلسية الطبية لحلول الأعمال).
+                                        </li>
+                                        <li>اصل شهادة المعاملة العسكرية.</li>
+                                        <li>شهادة قيد من مكتب العمل.</li>
+                                        <li>صورة البطاقة الشخصية/العائلية/القومية /جواز السفر.</li>
+                                        <li>عدد 6 صور ملونة حديثة مقاس باسبورت.</li>
+                                        <li>شـهادات الخبرة من العمل السابق ( ان وجدت ).</li>
+                                        <li>صورة من استمارة 6 تامينات اجتماعية لمن سبق التامين عليهم.</li>
+                                        <li>أصل اخلاء الطرف من العمل السابق ( موقع من ادارة الموارد البشرية ومختوم بختم
+                                            الشركة )
+                                        </li>
+                                        <li>نموذج( 111( ت ص )فحص طبى – كشف طبى ابتدائى</li>
+                                    </ol>
+                                </td>
+                                <td colspan="2" dir="ltr" class="text-left"
+                                    style="border:1px solid #000;background-color:#fff;width:50%">
+                                    <ol dir="ltr">
+                                        <li>
+                                            <i style="color:black;">Original Academic Qualifications Certificate.</i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Original Birth Certificate or an official copy
+                                                thereof
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Criminal Record (In the name of the company)</i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Original Certificate of Military Service
+                                                completion
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Registration Receipt from the labor Office.</i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Photocopy of National Identity of family card/
+                                                passport
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">6recent personal photos</i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Experience certificates from previous employers (If
+                                                available )
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Copy of Social Insurance 6 form for those who have
+                                                been previously employed &amp; insured by others
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i style="color:black;">Original Release form from previous employer signed
+                                                by Human Resources Department &amp; stamped from the company
+                                            </i>
+                                        </li>
+                                        <li><i style="color:black;"></i>Model (111) Medical Examination - Primary
+                                            Medical Examination
+                                        </li>
+                                    </ol>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;background-color:rgb(205,216,247);">
+                                    <b style="color:black;">ايام العمل :</b>
+                                </td>
+                                <td style="border:1px solid #000;">
+                                    <b style="color:black;">
+                                        من الاحد إلى الخميس
+                                        <br/>
+                                        الجمعة و السبت (عطلة رسمية)
+                                    </b>
+                                </td>
+                                <td dir="ltr" class="text-left" style="border:1px solid #000;">
+                                    <b>
+                                        <i style="color:black;">
+                                            From Sunday to Thursday
+                                            <br/>
+                                            Friday &amp; Saturday is official holiday
+                                        </i>
+                                    </b>
+                                </td>
+                                <td style="border:1px solid #000;background-color:rgb(205,216,247);" dir="ltr"
+                                    class="text-left">
+                                    <b>
+                                        <i style="color:black;">Working days :</i>
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #000;background-color:rgb(205,216,247);">
+                                    <b style="color:black;">مواعيد العمل :</b>
+                                </td>
+                                <td style="border:1px solid #000;">
+                                    <b style="color:black;">
+                                        من الاحد الى الخميس من الساعة 9 صباح حتى الساعة 6 مساء
+                                    </b>
+                                </td>
+                                <td style="border:1px solid #000;" dir="ltr">
+                                    <b>
+                                        <i style="color:black;" class="text-left">Sunday To Thursday From 9 AM to 6 PM
+                                        </i>
+                                    </b>
+                                </td>
+                                <td style="border:1px solid #000;background-color:rgb(205,216,247);" dir="ltr"
+                                    class="text-left">
+                                    <b>
+                                        <i style="color:black;">Working Hours :</i>
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    class="text-center">
+                                    <b style="color:black!important;">
+                                        تاريخ بدء العمل:
+                                    </b>
+                                </td>
+                                <td colspan="2" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.hiring_date" style="color:black!important;"/>
+                                </td>
+                                <td colspan="2" style="border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <span t-field="o.hiring_date" style="color:black!important;"/>
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    dir="ltr" class="text-center">
+                                    <b style="color:black!important;">
+                                        Working Start Date:
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;">
+                                    <b style="color:black!important;">
+                                        الاسم:
+                                        <br/>
+                                        <i style="float:left;">Name</i>
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;width:16.7%"
+                                    dir="ltr" class="text-center">
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;">
+                                    <b style="color:black!important;">
+                                        التوقيع:
+                                        <br/>
+                                        <i style="float:left;">Signature</i>
+                                    </b>
+                                </td>
+                                <td colspan="1" style="border:5px double black;width:16.7%"
+                                    dir="ltr" class="text-center">
+                                </td>
+                                <td colspan="1"
+                                    style="background-color:rgb(205,216,247);border:5px double black;">
+                                    <b style="color:black!important;">
+                                        التاريخ:
+                                        <br/>
+                                        <i style="float:left;">Date</i>
+                                    </b>
+                                </td>
+                                <td colspan="1" style="background-color:#fff;border:5px double black;width:16.7%"
+                                    dir="ltr" class="text-center">
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

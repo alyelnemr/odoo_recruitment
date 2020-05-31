@@ -77,6 +77,8 @@ class Offer(models.Model):
 
     business_unit_id = fields.Many2one('business.unit', string='Business Unit',
                                        related='application_id.job_id.business_unit_id')
+    bu_location = fields.Selection(string='Location',
+                                       related='application_id.job_id.business_unit_id.bu_location')
     user_id = fields.Many2one('res.users', string="Recruiter Responsible", related='application_id.user_id')
     last_activity = fields.Many2one('mail.activity.type', string='Last Stage', related='application_id.last_activity')
     last_activity_date = fields.Date(string='Last Stage Date', related='application_id.last_activity_date')
@@ -94,6 +96,16 @@ class Offer(models.Model):
          ('not_join', 'Not Join'),
          ('reject', 'Reject Offer')], default='offer', string="Hiring Status", track_visibility='onchange',
         required=True)
+    button_visible = fields.Boolean(compute='_compute_button_visible')
+
+    def _compute_button_visible(self):
+        for rec in self:
+            allowed_users = self.job_id.user_id | self.job_id.hr_responsible_id | self.job_id.other_recruiters_ids
+            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') or \
+                    self.env.user in allowed_users:
+                rec.button_visible = True
+            else:
+                rec.button_visible = False
 
     @api.onchange('state','hiring_date')
     def _get_hiring_date(self):

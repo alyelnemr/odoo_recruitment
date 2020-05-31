@@ -8,6 +8,15 @@
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form string="Offer" create="false">
+                    <field name="button_visible" invisible="1"/>
+<!--                   -->
+                    <header attrs="{'invisible': ['|',('id', '=', False) ,('button_visible','!=',True)]}">
+                        <field name="bu_location" invisible="1"/>
+                        <button name="%(recruitment_ads.report_offer_egypt)d"
+                                attrs="{'invisible': ['|',('bu_location', '!=', 'egypt')]}"
+                                type="action" states="offer,hired,pipeline" string="Export Offer"
+                                class="oe_highlight"/>
+                    </header>
                     <sheet>
                         <div class="oe_title">
                             <h4>
