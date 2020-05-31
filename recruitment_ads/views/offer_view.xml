@@ -16,6 +16,10 @@
                                 attrs="{'invisible': ['|',('bu_location', '!=', 'egypt')]}"
                                 type="action" states="offer,hired,pipeline" string="Export Offer"
                                 class="oe_highlight"/>
+                        <button name="%(recruitment_ads.report_offer_ksa)d"
+                                attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
+                                type="action" states="offer,hired,pipeline" string="Export Offer"
+                                class="oe_highlight"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
