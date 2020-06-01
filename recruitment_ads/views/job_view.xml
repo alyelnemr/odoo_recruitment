@@ -20,8 +20,8 @@
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
                            context="{'default_department_ids':[(4,department_id)]}" placeholder="e.g. Sales Manager"
                            options="{'no_create':True,'no_create_edit':True}"/>
-                    <field name="job_level_id" class="oe_inline" domain="[('job_title_id', '=', job_title_id)]"
-                           context="{'default_job_title_id':job_title_id}" placeholder="e.g. Level 1"/>
+                    <field name="job_level_id" class="oe_inline" domain="[('job_title_ids', 'in', job_title_id)]"
+                           context="{'default_job_title_ids':[(4,job_title_id)]}" placeholder="e.g. Level 1"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="attrs">{'invisible':True,'required':False}</attribute>
@@ -61,8 +61,8 @@
                         </h3>
                         <label for="job_level_id"/>
                         <h3>
-                            <field name="job_level_id" domain="[('job_title_id', '=', job_title_id)]"
-                                   context="{'default_job_title_id':job_title_id}"/>
+                            <field name="job_level_id" domain="[('job_title_ids', 'in', job_title_id)]"
+                                   context="{'default_job_title_ids':[(4,job_title_id)]}"/>
                         </h3>
                         <field name="name" attrs="{'invisible':True,'required':False}"/>
                     </div>
@@ -132,6 +132,7 @@
             </field>
         </record>
 
+        <!--Job level-->
         <record id="view_job_level_form" model="ir.ui.view">
             <field name="name">job.level.form</field>
             <field name="model">job.level</field>
@@ -139,12 +140,43 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="name"/>
+                            <field name="name" string="Level"/>
+                            <field name="weight"/>
+                            <field name="cv"/>
+                        </group>
+                        <group>
+                            <field name="job_title_ids"/>
                         </group>
                     </sheet>
                 </form>
             </field>
         </record>
+
+        <record id="view_job_level_tree" model="ir.ui.view">
+            <field name="name">view_job_level_tree</field>
+            <field name="model">job.level</field>
+            <field name="type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" string="Level"/>
+                    <field name="weight"/>
+                    <field name="cv"/>
+                </tree>
+            </field>
+        </record>
+
+        <act_window id="act_job_level_menu"
+                    name="Job Level"
+                    res_model="job.level"
+                    view_mode="tree,form"
+                    view_type="form"/>
+
+        <menuitem id="menu_job_level"
+                  name="Job Level"
+                  parent="hr_recruitment.menu_hr_recruitment_configuration"
+                  sequence="101"
+                  action="act_job_level_menu"/>
 
         <record id="view_bu_form" model="ir.ui.view">
             <field name="name">business.unit.form</field>
