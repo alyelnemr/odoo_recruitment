@@ -35,7 +35,7 @@
                     </tr>
                     <tr style="border: 7px double black ;">
                         <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 200);padding:5px; ;" ><span style="font-family:Times New Roman;font-weight: bold;">Housing allowance:</span></td>
-                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " />
+                        <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " ><strong t-field="o.housing_allowance"/></td>
                         <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 200); padding:5px; "><span style="font-family:Times New Roman;font-weight: bold;">:بدل سكن</span></td>
                         <td class="text-center" style="border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 200);padding:5px;  "><span style="font-family:Times New Roman;font-weight: bold;">Basic  salary:</span></td>
                          <t t-if="o.offer_type == 'normal_offer'">
@@ -69,7 +69,7 @@
                     </tr>
                     <tr style="border: 7px double black ;">
                         <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 200);padding:5px; " ><span style="font-family:Times New Roman;font-weight: bold;">Transportation allowens</span></td>
-                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:5px;  " ><span style="font-family:Times New Roman"></span></td>
+                        <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;padding:5px;  " ><strong t-field="o.travel_allowance"/></td>
                         <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; background-color:rgb(255, 255, 200);padding:5px; "><span style="font-family:Times New Roman;font-weight: bold;">:بدل مواصلات</span></td>
                         <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black;background-color:rgb(255, 255, 200); padding:5px; "><span style="font-family:Times New Roman;font-weight: bold;">Service award :</span></td>
                         <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " ><span style="font-family:Times New Roman;font-weight: bold;">طبقا للنظام</span></td>
