@@ -9,7 +9,9 @@
             <t t-set="company" t-value="res_company"></t>
         </t>
         <t t-call="recruitment_ads.egypt_offer_layout_header"/>
-        <t t-raw="0"/>
+        <div class="article">
+            <t t-raw="0"/>
+        </div>
 
         <div class="footer" dir="rtl">
             <div>
