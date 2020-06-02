@@ -45,12 +45,12 @@
                         <label for="department_id"/>
                         <h3>
                             <field name="department_id" class="oe_inline"
-                           domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"/>
+                                   domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"/>
                         </h3>
                         <label for="section_id"/>
                         <h3>
                             <field name="section_id" class="oe_inline"
-                           domain="[('parent_id','=',department_id)]" context="{'default_parent_id': department_id,
+                                   domain="[('parent_id','=',department_id)]" context="{'default_parent_id': department_id,
                            'form_view_ref' : 'recruitment_ads.view_section_form',
                            'tree_view_ref' : 'recruitment_ads.view_section_tree'}"/>
                         </h3>
@@ -101,8 +101,12 @@
                     <field name="no_of_hired_applicants"/>
                 </field>
                 <xpath expr="//div[@class='o_primary']" position="before">
-                   <div class="o_primary"><t t-esc="record.business_unit_id.value"/></div>
-                   <div class="o_primary"><t t-esc="record.department_id.value"/></div>
+                    <div class="o_primary">
+                        <t t-esc="record.business_unit_id.value"/>
+                    </div>
+                    <div class="o_primary">
+                        <t t-esc="record.department_id.value"/>
+                    </div>
                 </xpath>
 
                 <xpath expr="//div[@class='col-xs-12 o_kanban_primary_bottom bottom_block']/field[@name='no_of_hired_employee']"
@@ -122,7 +126,7 @@
                         <group>
                             <field name="department_ids" widget='many2many_tags' readonly="1"/>
                             <field name="name" string="Job Name"/>
-                            <field name="job_code" force_save ="1"/>
+                            <field name="job_code" force_save="1"/>
                         </group>
                         <separator string="Job Levels"/>
                         <field name="job_level_ids" nolable="1"/>
@@ -176,8 +180,10 @@
                   name="Job Level"
                   parent="hr_recruitment.menu_hr_recruitment_configuration"
                   sequence="101"
-                  action="act_job_level_menu"/>
+                  action="act_job_level_menu"
+                  groups="group_view_job_level"/>
 
+        <!--BU-->
         <record id="view_bu_form" model="ir.ui.view">
             <field name="name">business.unit.form</field>
             <field name="model">business.unit</field>
@@ -212,19 +218,19 @@
             </field>
         </record>
 
-<!--   to prevent office to edit in jop position   for officer  -->
+        <!--   to prevent office to edit in jop position   for officer  -->
         <record id="view_list_move_edit_officer" model="ir.ui.view">
             <field name="name">view.list.remove.edit.officer</field>
             <field name="model">hr.job</field>
             <field name="inherit_id" ref="hr.view_hr_job_form"/>
             <field name="groups_id" eval="[(6, 0, [ref('hr_recruitment.group_hr_recruitment_user')])]"/>
             <field name="arch" type="xml">
-            <xpath expr="//form" position="attributes">
-            <attribute name="edit">false</attribute>
-            </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">false</attribute>
+                </xpath>
             </field>
         </record>
-<!--        -->
+        <!--        -->
         <!--  to allow coordinator to edit in jop position   -->
         <record id="view_list_move_edit_coordinator" model="ir.ui.view">
             <field name="name">view.list.add.edit.coordinator</field>
@@ -232,9 +238,9 @@
             <field name="inherit_id" ref="hr.view_hr_job_form"/>
             <field name="groups_id" eval="[(6,0, [ref('recruitment_ads.group_hr_recruitment_coordinator')])]"/>
             <field name="arch" type="xml">
-            <xpath expr="//form" position="attributes">
-                <attribute name="edit">true</attribute>
-            </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">true</attribute>
+                </xpath>
             </field>
         </record>
 
