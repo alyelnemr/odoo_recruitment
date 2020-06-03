@@ -134,8 +134,8 @@
             ('business_unit_id', 'in', user.multi_business_unit_id.ids) ]
         </field>
         <field name="perm_read">1</field>
-        <field name="perm_write">1</field>
-        <field name="perm_create">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">0</field>
         <field name="perm_unlink">0</field>
         <field name="groups" eval="[(4, ref('recruitment_ads.group_hr_recruitment_coordinator'))]"/>
     </record>
@@ -146,8 +146,8 @@
             ('business_unit_id', 'in', user.multi_business_unit_id.ids)]
         </field>
         <field name="perm_read">1</field>
-        <field name="perm_write">1</field>
-        <field name="perm_create">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">0</field>
         <field name="perm_unlink">0</field>
         <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
     </record>
