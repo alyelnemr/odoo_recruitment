@@ -112,4 +112,40 @@
         <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
     </record>
     <!---->
+
+    <!--Department/Section access record rules for officer coordinator manager -->
+    <record id="hr_department_all_departments" model="ir.rule">
+        <field name="name">See All Departments</field>
+        <field name="model_id" ref="model_hr_department"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+        <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
+    </record>
+    <record id="hr_department_coordinator" model="ir.rule">
+        <field name="name">Coordinator See My Own Departments</field>
+        <field name="model_id" ref="model_hr_department"/>
+        <field name="domain_force">['|', ('business_unit_id', '=', user.business_unit_id.id),
+            ('business_unit_id', 'in', user.multi_business_unit_id.ids) ]
+        </field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+        <field name="groups" eval="[(4, ref('recruitment_ads.group_hr_recruitment_coordinator'))]"/>
+    </record>
+    <record id="hr_department_own_departments" model="ir.rule">
+        <field name="name">See My Own Departments</field>
+        <field name="model_id" ref="model_hr_department"/>
+        <field name="domain_force">['|', ('business_unit_id', '=', user.business_unit_id.id),
+            ('business_unit_id', 'in', user.multi_business_unit_id.ids)]
+        </field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+        <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
+    </record>
 </odoo>
