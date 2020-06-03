@@ -29,7 +29,7 @@
                             </group>
                             <group>
                                 <field name="manager_id"/>
-                                <field name="allow_call" attrs="{'invisible': [('uid','!=',1)]}"/>
+                                <field name="allow_call" groups="recruitment_ads.group_view_allow_online_call_checkbox"/>
                             </group>
                         </group>
                     </sheet>
@@ -50,7 +50,7 @@
                     <field name="name" string="Section Name"/>
                     <field name="parent_id" string="Department"/>
                     <field name="manager_id"/>
-                    <field name="allow_call" invisible="context.get('uid',False) != 1"/>
+                    <field name="allow_call" groups="recruitment_ads.group_view_allow_online_call_checkbox"/>
                 </tree>
             </field>
         </record>

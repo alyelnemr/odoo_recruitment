@@ -65,7 +65,7 @@
                                     <field name="business_unit_id" readonly="1"/>
                                     <field name="parent_id" readonly="1" string="Department"/>
                                     <field name="manager_id"/>
-                                    <field name="allow_call" invisible="context.get('uid',False) != 1"/>
+                                    <field name="allow_call" groups="recruitment_ads.group_view_allow_online_call_checkbox"/>
                                 </tree>
                             </field>
                         </page>
@@ -75,7 +75,7 @@
                     </notebook>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="allow_call" attrs="{'invisible': [('uid','!=',1)]}"/>
+                    <field name="allow_call" groups="recruitment_ads.group_view_allow_online_call_checkbox"/>
 
                 </xpath>
 
