@@ -33,12 +33,17 @@
         <field name="report_type">xlsx</field>
         <field name="report_file">Interview Report</field>
     </record>
-    <report id="report_offer_egypt" model="hr.offer" string="Egypt Offer" report_type="qweb-pdf"
+    <report id="report_offer_egypt" model="hr.offer" string="Egypt Offer"
+            report_type="qweb-pdf"
             name="recruitment_ads.offer_egypt" file="recruitment_ads.offer_egypt" attachment_use="True"/>
     <report id="report_offer_ksa" model="hr.offer" string="Ksa Offer" report_type="qweb-pdf"
-        name="recruitment_ads.offer_ksa" file="recruitment_ads.offer_ksa" attachment_use="True"
-       />
+            name="recruitment_ads.offer_ksa" file="recruitment_ads.offer_ksa" attachment_use="True"
+    />
     <record id="recruitment_ads.report_offer_ksa" model="ir.actions.report">
-        <field name="paperformat_id" ref="base.paperformat_batch_deposit" />
+        <field name="paperformat_id" ref="base.paperformat_batch_deposit"/>
+        <field name="binding_model_id" ref=""/>
+    </record>
+    <record id="recruitment_ads.report_offer_egypt" model="ir.actions.report">
+        <field name="binding_model_id" ref=""/>
     </record>
 </odoo>
