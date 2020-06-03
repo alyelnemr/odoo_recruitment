@@ -54,13 +54,13 @@
                         <table class="table" style="width:100%">
                             <tr>
                                 <td colspan="2" class="text-center"
-                                    style="background-color:rgb(81,145,208);border:5px double black;">
+                                    style="background-color:rgb(81,145,208);border:5px double black;width:50%;">
                                     <b style="color:black!important;">يسرنا إبلاغكم بموافقة الإدارة على توظيفكم حسب
                                         البيانات التالية:
                                     </b>
                                 </td>
                                 <td colspan="2" class="text-center" dir="ltr"
-                                    style="background-color:rgb(81,145,208);border:5px double black;">
+                                    style="background-color:rgb(81,145,208);border:5px double black;width:50%;">
                                     <b>
                                         <i style="color:black!important;">Please note that you have been appointed as
                                             follows:
@@ -70,19 +70,19 @@
                             </tr>
                             <tr>
                                 <td colspan="1"
-                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:15%;"
                                     class="text-center">
                                     <b style="color:black!important;">
                                         الاسم
                                     </b>
                                 </td>
-                                <td colspan="1" style="border:5px double black;"></td>
-                                <td colspan="1" style="border:5px double black;"
+                                <td colspan="1" style="border:5px double black;width:35%;"></td>
+                                <td colspan="1" style="border:5px double black;width:35%;"
                                     dir="ltr" class="text-center">
                                     <span t-field="o.application_id.partner_id.name" style="color:black!important;"/>
                                 </td>
                                 <td colspan="1"
-                                    style="background-color:rgb(205,216,247);border:5px double black;"
+                                    style="background-color:rgb(205,216,247);border:5px double black;width:15%;"
                                     dir="ltr" class="text-center">
                                     <b style="color:black!important;">
                                         Name
@@ -266,7 +266,7 @@
                         </table>
                         <br/>
                         <h5>
-                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                            <b style="color:black!important;background-image: -webkit-linear-gradient(top, rgba(81,145,208,1), rgba(81,145,208,.6), rgba(81,145,208,1));padding:10px;border:2px solid rgb(81,145,208);">
                                 الاستحقاقات الشهرية ( صافى الراتب ) :
                             </b>
                         </h5>
@@ -350,7 +350,7 @@
                         </table>
                         <br/>
                         <h5>
-                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                            <b style="color:black!important;background-image: -webkit-linear-gradient(top, rgba(81,145,208,1), rgba(81,145,208,.6), rgba(81,145,208,1));padding:10px;border:2px solid rgb(81,145,208);">
                                 الــمزايــا :
                             </b>
                         </h5>
@@ -385,7 +385,7 @@
                         </table>
                         <br/>
                         <h5>
-                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                            <b style="color:black!important;background-image: -webkit-linear-gradient(top, rgba(81,145,208,1), rgba(81,145,208,.6), rgba(81,145,208,1));padding:10px;border:2px solid rgb(81,145,208);">
                                 التوقيعات :
                             </b>
                         </h5>
@@ -539,7 +539,7 @@
                         </table>
                         <br/>
                         <h5>
-                            <b style="color:black!important;background-image: linear-gradient(rgba(81,145,208,0.5), rgba(81,145,208,1), rgba(81,145,208,0.5));padding:10px;border:2px solid rgb(81,145,208);">
+                            <b style="color:black!important;background-image: -webkit-linear-gradient(top, rgba(81,145,208,1), rgba(81,145,208,.6), rgba(81,145,208,1));padding:10px;border:2px solid rgb(81,145,208);">
                                 توقيع المرشح للعمل :
                             </b>
                         </h5>
@@ -591,7 +591,7 @@
                             </tr>
                             <tr>
                                 <td colspan="1" style="border:1px solid #000;width:50%">
-                                    <ul>
+                                    <ul style="padding-right:40px;">
                                         <li style="color:black;">اقر انا الموقع ادناه ان البيانات المذكورة بالسيرة
                                             الذاتية الخاصة بيوالمقدمة
                                             الي الشركة صحيحة وكاملة .
@@ -604,7 +604,7 @@
                                 </td>
                                 <td colspan="1" dir="ltr" class="text-left"
                                     style="border:1px solid #000;background-color:#fff;width:50%">
-                                    <ul dir="ltr">
+                                    <ul dir="ltr" style="padding-left:40px;">
                                         <li>
                                             <i style="color:black;">I declare that the information I have given in my
                                                 resume is to the best
@@ -628,7 +628,7 @@
                         <table class="table" style="width:100%">
                             <tr>
                                 <td colspan="2" style="border:1px solid #000;width:50%;color:black;">
-                                    <ol>
+                                    <ol style="padding-right:40px;">
                                         <li>اصل شهادة المؤهل الدراسي.</li>
                                         <li>اصل شهادة الميلاد أو مستخرج رسمي منها.</li>
                                         <li>اصل صحيفة الحالة الجنائية معنونة باسم شركة (أندلسية الطبية لحلول الأعمال).
@@ -647,7 +647,7 @@
                                 </td>
                                 <td colspan="2" dir="ltr" class="text-left"
                                     style="border:1px solid #000;background-color:#fff;width:50%">
-                                    <ol dir="ltr">
+                                    <ol dir="ltr" style="padding-left:40px;">
                                         <li>
                                             <i style="color:black;">Original Academic Qualifications Certificate.</i>
                                         </li>
