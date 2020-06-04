@@ -1,7 +1,9 @@
 import re
 import json
+from datetime import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from dateutil.relativedelta import relativedelta
 
 
 class IrAttachmentInherit(models.Model):
@@ -57,6 +59,7 @@ class IrAttachmentInherit(models.Model):
         if res.res_model == 'hr.offer':
             self._cr.execute(" update hr_offer set have_offer = %s where id =  %s ", (True,res.res_id,))
         return res
+
 
 class Applicant(models.Model):
     _inherit = "hr.applicant"
@@ -142,6 +145,8 @@ class Applicant(models.Model):
                         old_dict[key] = applicant[key]
                 if old_dict:
                     vals['old_data'] = json.dumps(old_dict)
+        if vals.get('job_id', False):
+            self.calculate_application_period_policy(vals, action="write")
         return super(Applicant, self).write(vals)
 
     def get_current_user_group(self):
@@ -180,8 +185,41 @@ class Applicant(models.Model):
         serial = self.serial
         self.name = '-'.join(filter(lambda i: i, [applicant_name, job_code, applicant_mobile, serial]))
 
+    def calculate_application_period_policy(self, vals, action):
+        """
+        This function checks if the applicant has applied on the same job before within the period in the policy
+        :param vals:
+        :return: raise a validation error, and stop the user from creating the application, if the applicant has applied
+        before within the policy period.
+        """
+        if vals.get('job_id', False):
+            parent_id = ""
+            if action == "create":
+                parent_id = vals['partner_id']
+            elif action == "write":
+                parent_id = self.partner_id.id
+            policy = self.env['hr.policy'].browse(1)
+            domain = [('partner_id', '=', parent_id), ('job_id', '=', vals['job_id'])]
+            old_applications = self.env['hr.applicant'].search(domain)
+            if old_applications:
+                for old_app in old_applications:
+                    app_date = fields.Datetime.from_string(old_app.create_date)
+                    added_date = app_date + relativedelta(days=policy.day, months=policy.month, years=policy.year)
+                    if added_date > datetime.today():
+                        remaining_time = added_date - datetime.today()
+                        period = []
+                        period.append(str(policy.day) + " day(s)") if policy.day > 0 else False
+                        period.append(str(policy.month) + " month(s)") if policy.month else False
+                        period.append(str(policy.year) + " year(s)") if policy.year else False
+                        raise ValidationError(
+                            _("This Applicant is applied before on this Job: '%s' within %s.\n "
+                              "Please wait %s and then apply again.") % (
+                                old_app.job_id.name if old_app.job_id.name else "", " ".join(period),
+                                str(remaining_time.days) + " day(s)"))
+
     @api.model
     def create(self, vals):
+        self.calculate_application_period_policy(vals, action="create")
         res = super(Applicant, self).create(vals)
         if not res.source_resp:
             res.source_resp = self.env.user.id

@@ -19,6 +19,9 @@
     <record id="group_view_job_level" model="res.groups">
         <field name="name">View Job Level</field>
     </record>
+    <record id="group_view_policy_menu" model="res.groups">
+        <field name="name">View Policy Menu</field>
+    </record>
     <record id="group_view_source_menu" model="res.groups">
         <field name="name">Sources</field>
     </record>
