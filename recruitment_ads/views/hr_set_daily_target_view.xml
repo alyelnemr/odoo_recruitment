@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--hr.set.daily.target form-->
+        <record id="view_hr_set_daily_target_form" model="ir.ui.view">
+            <field name="name">hr.set.daily.target.form</field>
+            <field name="model">hr.set.daily.target</field>
+            <field name="arch" type="xml">
+                <form string="Section">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button pull-right btn-primary" type="object" name="set_target"
+                                    icon="fa-search">
+                                <span class="o_stat_text text-primary">Search</span>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Date"/>
+                            <h1>
+                                <field name="name" placeholder="Date" required="True"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="bu_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True,'no_create': True}"/>
+                                <field name="job_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True,'no_create':True}"/>
+                            </group>
+                            <group>
+                                <field name="user_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True,'no_create':True}"/>
+                            </group>
+                        </group>
+                        <!--                        <group>-->
+                        <!--                            <group></group>-->
+                        <!--                            <group>-->
+                        <!--                            </group>-->
+                        <!--                        </group>-->
+                        <field name="lines_count" invisible="1"/>
+                        <notebook attrs="{'invisible':[('lines_count','=',0)]}">
+                            <page string="Recruiters Target">
+                                <field name="line_ids" nolabel="1">
+                                    <tree editable="bottom" delete="false" create="false">
+                                        <field name="name"/>
+                                        <field name="recruiter_bu_id"/>
+                                        <field name="recruiter_id"/>
+                                        <field name="bu_id"/>
+                                        <field name="department_id"/>
+                                        <field name="section_id"/>
+                                        <field name="job_id"/>
+                                        <field name="level_id" domain="[('job_title_ids', 'in', job_id)]"/>
+                                        <field name="weight"/>
+                                        <field name="cvs"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+        <!--hr.set.daily.target tree-->
+        <record id="view_hr_set_daily_target_tree" model="ir.ui.view">
+            <field name="name">hr.set.daily.target.tree</field>
+            <field name="model">hr.set.daily.target</field>
+            <field name="arch" type="xml">
+                <tree string="Set Daily Target">
+                    <field name="name"/>
+                    <field name="bu_ids" widget="many2many_tags"/>
+                    <field name="job_ids" widget="many2many_tags"/>
+                    <field name="user_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+        <!--hr.set.daily.target Search-->
+        <record id="view_hr_set_daily_target_filter" model="ir.ui.view">
+            <field name="name">hr.set.daily.target.search</field>
+            <field name="model">hr.set.daily.target</field>
+            <field name="arch" type="xml">
+                <search string="Sections">
+                    <field name="name" string="Date"/>
+                    <field name="bu_ids" string="Business Unit"/>
+                    <field name="job_ids" string="Job Position"/>
+                    <field name="user_ids" string="Recruiter Responsible"/>
+                </search>
+            </field>
+        </record>
+        <!--hr.set.daily.target Action-->
+        <record id="action_hr_set_daily_target" model="ir.actions.act_window">
+            <field name="name">Set Daily Target</field>
+            <field name="res_model">hr.set.daily.target</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!--            <field name="domain">[('parent_id', '!=', False)]</field>-->
+            <field name="search_view_id" ref="view_hr_set_daily_target_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree','view_id':ref('view_hr_set_daily_target_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_daily_target_form')})]"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new daily target.
+                </p>
+            </field>
+        </record>
+        <!--menu_hr_daily_target Menu-->
+        <menuitem id="menu_hr_daily_target"
+                  name="Target"
+                  sequence="3"
+                  parent="hr_recruitment.menu_hr_recruitment_root"
+                  groups="recruitment_ads.group_view_set_daily_target"/>
+        <menuitem
+                action="action_hr_set_daily_target"
+                id="menu_hr_set_daily_target"
+                parent="menu_hr_daily_target"
+                sequence="1"
+                name="Set Daily Target"
+                groups="recruitment_ads.group_view_set_daily_target"/>
+
+    </data>
+</odoo>

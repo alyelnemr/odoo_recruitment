@@ -32,6 +32,7 @@ Handle recruitment Process for Andalusia
         'views/hr_section_view.xml',
         'views/hr_department_view.xml',
         'views/res_users_view.xml',
+        'views/hr_set_daily_target_view.xml',
         'wizard/recruitment_wizard_view.xml',
         'wizard/offer_wizard_view.xml',
         'wizard/interview_mail_compose_message_wizard_view.xml',
