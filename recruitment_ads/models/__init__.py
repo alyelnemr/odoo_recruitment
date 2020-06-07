@@ -6,4 +6,5 @@ from . import applicant_history
 from . import job
 from . import offer
 from . import res_users
+from . import policy
 #test automation build mail
