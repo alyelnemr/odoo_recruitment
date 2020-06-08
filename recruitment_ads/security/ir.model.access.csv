@@ -26,3 +26,5 @@ officer_access_utm_source,officer_access_utm_source,utm.model_utm_source,hr_recr
 off_manager_access_utm_source,manager_access_utm_source,utm.model_utm_source,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
 public_applicant_history,public_applicant_history,model_hr_applicant_history,,1,1,1,1
 hr_policy_manager,hr_policy_manager,model_hr_policy,hr_recruitment.group_hr_recruitment_manager,1,1,0,0
+hr_policy_coordinator,hr_policy_coordinator,model_hr_policy,recruitment_ads.group_hr_recruitment_coordinator,1,1,0,0
+hr_policy_officer,hr_policy_officer,model_hr_policy,hr_recruitment.group_hr_recruitment_user,1,1,0,0
