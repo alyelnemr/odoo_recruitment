@@ -20,6 +20,48 @@ class HRSetDailyTarget(models.Model):
             domain = []
         return domain
 
+    def _get_recruiter_domain(self):
+        domain = []
+        if self.bu_ids:
+            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
+                    'hr_recruitment.group_hr_recruitment_manager'):
+                domain = ['|', ('business_unit_id', 'in', self.bu_ids.ids),
+                          ('multi_business_unit_id', 'in', self.bu_ids.ids),
+                          ('active', '=', True)]
+            else:
+                domain = [('active', '=', True)]
+        else:
+            if self.env.user.has_group(
+                    'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager'):
+                domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                          ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
+                          ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                          ('active', '=', True)]
+            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+                domain = []
+        return domain
+
+    def _get_job_domain(self):
+        domain = []
+        if self.bu_ids:
+            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
+                    'hr_recruitment.group_hr_recruitment_manager'):
+                domain = [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')]
+            else:
+                domain = [('state', '=', 'recruit')]
+        else:
+            if self.env.user.has_group(
+                    'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager'):
+                domain = ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
+                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
+                          ('state', '=', 'recruit')]
+            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+                domain = [('state', '=', 'recruit')]
+        return domain
+
     @api.model
     def default_get(self, fields):
         res = super(HRSetDailyTarget, self).default_get(fields)
@@ -40,9 +82,9 @@ class HRSetDailyTarget(models.Model):
     bu_ids = fields.Many2many('business.unit', 'set_daily_target_bu_rel', 'daily_target_id', 'bu_id',
                               string='Business Units', domain=lambda self: self._get_bu_domain())
     user_ids = fields.Many2many('res.users', 'set_daily_target_users_rel', 'daily_target_id', 'user_id',
-                                string='Recruiter Responsible')
+                                string='Recruiter Responsible', domain=lambda self: self._get_recruiter_domain())
     job_ids = fields.Many2many('hr.job', 'set_daily_target_jobs_rel', 'daily_target_id', 'job_id',
-                               string='Job Position')
+                               string='Job Position', domain=lambda self: self._get_job_domain())
     line_ids = fields.One2many('hr.set.daily.target.line', 'target_id', string='Lines')
     lines_count = fields.Integer(compute='_compute_lines_count')
 
