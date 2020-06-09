@@ -99,7 +99,7 @@ class HRSetDailyTarget(models.Model):
             raise ValidationError(_('Date must be greater than or equal today'))
 
     @api.onchange('bu_ids')
-    def _get_job_domain(self):
+    def _get_jobs_domain(self):
         self.job_ids = False
         if self.bu_ids:
             if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
