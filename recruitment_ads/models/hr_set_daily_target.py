@@ -87,8 +87,11 @@ class HRSetDailyTarget(models.Model):
                 return {'domain': {}}
 
     @api.multi
-    def set_target(self):
+    def search_filter(self):
         self.ensure_one()
+        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager')):
+            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
         self.line_ids.unlink()
         bu_domain = job_domain = user_domain = []
         self.job_ids = False
@@ -190,11 +193,33 @@ class HRSetDailyTarget(models.Model):
                     'section_id': job.section_id.id,
                     'job_id': job.job_title_id.id,
                     'level_id': job.job_level_id.id,
-                    'weight': job.job_level_id.weight,
-                    'cvs': job.job_level_id.cv,
+                    'weight': job.job_level_id.weight or 0,
+                    'cvs': job.job_level_id.cv or 0,
                     'target_id': self.id,
                 })
         return True
+
+    @api.multi
+    def set_target(self):
+        self.ensure_one()
+        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager')):
+            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
+        return True
+
+    @api.model
+    def create(self, vals):
+        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager')):
+            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
+        return super(HRSetDailyTarget, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager')):
+            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
+        return super(HRSetDailyTarget, self).write(vals)
 
 
 class HRSetDailyTargetLine(models.Model):
@@ -213,7 +238,13 @@ class HRSetDailyTargetLine(models.Model):
     section_id = fields.Many2one('hr.department', string='Section', readonly=True,
                                  track_visibility='always')
     job_id = fields.Many2one('job.title', string='Position', required=True, readonly=True, track_visibility='always')
-    level_id = fields.Many2one('job.level', string='Level', required=True, track_visibility='always')
-    weight = fields.Integer(string="Weight", required=True, track_visibility='always')
-    cvs = fields.Integer(string="Target Application", required=True, track_visibility='always')
+    level_id = fields.Many2one('job.level', string='Level', track_visibility='always')
+    weight = fields.Integer(string="Weight", track_visibility='always', default=0)
+    cvs = fields.Integer(string="Target Application", track_visibility='always', default=0)
     target_id = fields.Many2one('hr.set.daily.target', string='Set Daily Target', track_visibility='always')
+
+    @api.onchange('level_id')
+    def _compute_level(self):
+        # for line in self:
+        self.weight = self.level_id.weight
+        self.cvs = self.level_id.cv
