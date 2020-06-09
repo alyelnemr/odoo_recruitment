@@ -198,7 +198,7 @@ class Applicant(models.Model):
                 parent_id = vals['partner_id']
             elif action == "write":
                 parent_id = self.partner_id.id
-            policy = self.env['hr.policy'].browse(1)
+            policy = self.env['hr.policy'].search([], limit=1)
             domain = [('partner_id', '=', parent_id), ('job_id', '=', vals['job_id'])]
             old_applications = self.env['hr.applicant'].search(domain)
             if old_applications:
