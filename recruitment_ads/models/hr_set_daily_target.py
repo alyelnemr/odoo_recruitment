@@ -20,48 +20,6 @@ class HRSetDailyTarget(models.Model):
             domain = []
         return domain
 
-    def _get_recruiter_domain(self):
-        domain = []
-        if self.bu_ids:
-            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                    'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', ('business_unit_id', 'in', self.bu_ids.ids),
-                          ('multi_business_unit_id', 'in', self.bu_ids.ids),
-                          ('active', '=', True)]
-            else:
-                domain = [('active', '=', True)]
-        else:
-            if self.env.user.has_group(
-                    'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                          ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                          ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                          ('active', '=', True)]
-            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                domain = []
-        return domain
-
-    def _get_job_domain(self):
-        domain = []
-        if self.bu_ids:
-            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                    'hr_recruitment.group_hr_recruitment_manager'):
-                domain = [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')]
-            else:
-                domain = [('state', '=', 'recruit')]
-        else:
-            if self.env.user.has_group(
-                    'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                          ('state', '=', 'recruit')]
-            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                domain = [('state', '=', 'recruit')]
-        return domain
-
     @api.model
     def default_get(self, fields):
         res = super(HRSetDailyTarget, self).default_get(fields)
@@ -82,9 +40,9 @@ class HRSetDailyTarget(models.Model):
     bu_ids = fields.Many2many('business.unit', 'set_daily_target_bu_rel', 'daily_target_id', 'bu_id',
                               string='Business Units', domain=lambda self: self._get_bu_domain())
     user_ids = fields.Many2many('res.users', 'set_daily_target_users_rel', 'daily_target_id', 'user_id',
-                                string='Recruiter Responsible', domain=lambda self: self._get_recruiter_domain())
+                                string='Recruiter Responsible')
     job_ids = fields.Many2many('hr.job', 'set_daily_target_jobs_rel', 'daily_target_id', 'job_id',
-                               string='Job Position', domain=lambda self: self._get_job_domain())
+                               string='Job Position')
     line_ids = fields.One2many('hr.set.daily.target.line', 'target_id', string='Lines')
     lines_count = fields.Integer(compute='_compute_lines_count')
 
@@ -129,11 +87,8 @@ class HRSetDailyTarget(models.Model):
                 return {'domain': {}}
 
     @api.multi
-    def search_filter(self):
+    def set_target(self):
         self.ensure_one()
-        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
         self.line_ids.unlink()
         bu_domain = job_domain = user_domain = []
         self.job_ids = False
@@ -235,33 +190,11 @@ class HRSetDailyTarget(models.Model):
                     'section_id': job.section_id.id,
                     'job_id': job.job_title_id.id,
                     'level_id': job.job_level_id.id,
-                    'weight': job.job_level_id.weight or 0,
-                    'cvs': job.job_level_id.cv or 0,
+                    'weight': job.job_level_id.weight,
+                    'cvs': job.job_level_id.cv,
                     'target_id': self.id,
                 })
         return True
-
-    @api.multi
-    def set_target(self):
-        self.ensure_one()
-        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
-        return True
-
-    @api.model
-    def create(self, vals):
-        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
-        return super(HRSetDailyTarget, self).create(vals)
-
-    @api.multi
-    def write(self, vals):
-        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
-        return super(HRSetDailyTarget, self).write(vals)
 
 
 class HRSetDailyTargetLine(models.Model):
@@ -280,13 +213,7 @@ class HRSetDailyTargetLine(models.Model):
     section_id = fields.Many2one('hr.department', string='Section', readonly=True,
                                  track_visibility='always')
     job_id = fields.Many2one('job.title', string='Position', required=True, readonly=True, track_visibility='always')
-    level_id = fields.Many2one('job.level', string='Level', track_visibility='always')
-    weight = fields.Integer(string="Weight", track_visibility='always', default=0)
-    cvs = fields.Integer(string="Target Application", track_visibility='always', default=0)
+    level_id = fields.Many2one('job.level', string='Level', required=True, track_visibility='always')
+    weight = fields.Integer(string="Weight", required=True, track_visibility='always')
+    cvs = fields.Integer(string="Target Application", required=True, track_visibility='always')
     target_id = fields.Many2one('hr.set.daily.target', string='Set Daily Target', track_visibility='always')
-
-    @api.onchange('level_id')
-    def _compute_level(self):
-        # for line in self:
-        self.weight = self.level_id.weight
-        self.cvs = self.level_id.cv

@@ -7,16 +7,13 @@
             <field name="model">hr.set.daily.target</field>
             <field name="arch" type="xml">
                 <form string="Section">
-                    <!--                     <header>-->
-                    <!--                        -->
-                    <!--                    </header>-->
                     <sheet>
-                        <!--                        <div class="oe_button_box" name="button_box">-->
-                        <!--                            <button class="oe_stat_button pull-right btn-primary" type="object" name="set_target"-->
-                        <!--                                    icon="fa-search">-->
-                        <!--                                <span class="o_stat_text text-primary">Search</span>-->
-                        <!--                            </button>-->
-                        <!--                        </div>-->
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button pull-right btn-primary" type="object" name="set_target"
+                                    icon="fa-search">
+                                <span class="o_stat_text text-primary">Search</span>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only" string="Date"/>
                             <h1>
@@ -24,21 +21,22 @@
                             </h1>
                         </div>
                         <group>
-                            <group col="1">
+                            <group>
                                 <field name="bu_ids" widget="many2many_tags"
                                        options="{'no_create_edit': True,'no_create': True}"/>
                                 <field name="job_ids" widget="many2many_tags"
                                        options="{'no_create_edit': True,'no_create':True}"/>
+                            </group>
+                            <group>
                                 <field name="user_ids" widget="many2many_tags"
                                        options="{'no_create_edit': True,'no_create':True}"/>
                             </group>
                         </group>
-                        <footer class="pull-right">
-                            <button name="search_filter" string="Search" type="object" class="oe_highlight oe_inline "
-                                    icon="fa-search" style="margin-right:30px"/>
-                            <button name="set_target" string="Set Target" type="object" class="oe_highlight oe_inline"
-                                    icon="fa-pencil" style="margin-right:30px"/>
-                        </footer>
+                        <!--                        <group>-->
+                        <!--                            <group></group>-->
+                        <!--                            <group>-->
+                        <!--                            </group>-->
+                        <!--                        </group>-->
                         <field name="lines_count" invisible="1"/>
                         <notebook attrs="{'invisible':[('lines_count','=',0)]}">
                             <page string="Recruiters Target">
