@@ -83,9 +83,10 @@
                             </group>
                             <group string="General">
                                 <field name="issue_date" readonly="1"/>
-                                <field name="state"/>
+                                <field name="state" attrs="{'readonly':[('lock_hired_date','=',True)]}"/>
+                                <field name="lock_hired_date" invisible="1"/>
                                 <field name="hiring_date" states="pipeline,hired"
-                                       attrs="{'required':[('state','in',['pipeline','hired'])]}" />
+                                       attrs="{'required':[('state','in',['pipeline','hired'])], 'readonly':[('lock_hired_date','=',True)]}"/>
                                 <field name="reject_reason" states="not_join,reject"
                                        attrs="{'required':[('state','=','reject')]}"/>
                             </group>
