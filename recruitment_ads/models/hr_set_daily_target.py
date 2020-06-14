@@ -20,48 +20,6 @@ class HRSetDailyTarget(models.Model):
             domain = []
         return domain
 
-    def _get_recruiter_domain(self):
-        domain = []
-        if self.bu_ids:
-            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                    'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', ('business_unit_id', 'in', self.bu_ids.ids),
-                          ('multi_business_unit_id', 'in', self.bu_ids.ids),
-                          ('active', '=', True)]
-            else:
-                domain = [('active', '=', True)]
-        else:
-            if self.env.user.has_group(
-                    'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                          ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                          ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                          ('active', '=', True)]
-            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                domain = []
-        return domain
-
-    def _get_job_domain(self):
-        domain = []
-        if self.bu_ids:
-            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                    'hr_recruitment.group_hr_recruitment_manager'):
-                domain = [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')]
-            else:
-                domain = [('state', '=', 'recruit')]
-        else:
-            if self.env.user.has_group(
-                    'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                          ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                          ('state', '=', 'recruit')]
-            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                domain = [('state', '=', 'recruit')]
-        return domain
-
     @api.model
     def default_get(self, fields):
         res = super(HRSetDailyTarget, self).default_get(fields)
@@ -69,22 +27,15 @@ class HRSetDailyTarget(models.Model):
             if self.env.user.has_group(
                     'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager'):
-                domain = ['|', ('id', '=', self.env.user.business_unit_id.id),
-                          ('id', 'in', self.env.user.multi_business_unit_id.ids)
-                          ]
-
-                business_unit = self.env['business.unit'].search(domain)
-                res['bu_ids'] = [(6, 0, business_unit.ids)]
                 res['user_ids'] = [(6, 0, [self.env.user.id])]
         return res
 
     name = fields.Date(required=True, default=fields.Date.today, track_visibility='always')
     bu_ids = fields.Many2many('business.unit', 'set_daily_target_bu_rel', 'daily_target_id', 'bu_id',
                               string='Business Units', domain=lambda self: self._get_bu_domain())
+    job_ids = fields.Many2many('hr.job', string='Job Position')
     user_ids = fields.Many2many('res.users', 'set_daily_target_users_rel', 'daily_target_id', 'user_id',
-                                string='Recruiter Responsible', domain=lambda self: self._get_recruiter_domain())
-    job_ids = fields.Many2many('hr.job', 'set_daily_target_jobs_rel', 'daily_target_id', 'job_id',
-                               string='Job Position', domain=lambda self: self._get_job_domain())
+                                string='Recruiter Responsible')
     line_ids = fields.One2many('hr.set.daily.target.line', 'target_id', string='Lines')
     lines_count = fields.Integer(compute='_compute_lines_count')
 
@@ -93,135 +44,78 @@ class HRSetDailyTarget(models.Model):
         self.lines_count = len(self.line_ids)
 
     @api.onchange('name')
-    @api.depends('name')
     def onchange_date(self):
         if self.name < fields.Date.today():
             raise ValidationError(_('Date must be greater than or equal today'))
 
     @api.onchange('bu_ids')
     def _get_jobs_domain(self):
-        self.job_ids = False
+        if not self._context.get('get_domain', False):
+            self.job_ids = False
         if self.bu_ids:
-            if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                    'hr_recruitment.group_hr_recruitment_manager'):
-                return {'domain': {'job_ids': [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')],
-                                   'recruiter_ids': ['|', ('business_unit_id', 'in', self.bu_ids.ids),
-                                                     ('multi_business_unit_id', 'in', self.bu_ids.ids),
-                                                     ('active', '=', True)]}}
-            else:
-                return {'domain': {}}
+            job_domain = [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')]
         else:
             if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                return {'domain': {'job_ids': [('state', '=', 'recruit')],
-                                   'recruiter_ids': [('active', '=', True)]}}
-            elif self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator'):
-                return {'domain': {
-                    'job_ids': ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                ('state', '=', 'recruit')],
-                    'recruiter_ids': ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                      ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                      ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                                      ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                      ('active', '=', True)]
-                }}
+                job_domain = [('state', '=', 'recruit')]
             else:
-                return {'domain': {}}
+                job_domain = [('business_unit_id', 'in',
+                               self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids),
+                              ('state', '=', 'recruit')]
+        return {'domain': {'job_ids': job_domain}}
+
+    @api.onchange('job_ids')
+    def _get_recruiters_domain(self):
+        # self.user_ids = False
+        flag = False
+        bus = self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids
+        if self.job_ids:
+            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+                user_domain = [('id', 'in', self.job_ids.mapped('user_id').ids + self.job_ids.mapped(
+                    'other_recruiters_ids').ids), ('active', '=', True)]
+            else:
+                flag = True
+                if bus:
+                    user_domain = [
+                        ('id', 'in',
+                         self.job_ids.mapped('user_id').ids + self.job_ids.mapped('other_recruiters_ids').ids),
+                        '|', ('business_unit_id', 'in', bus), ('multi_business_unit_id', 'in', bus),
+                        ('active', '=', True)]
+                else:
+                    user_domain = [
+                        ('id', 'in',
+                         self.job_ids.mapped('user_id').ids + self.job_ids.mapped('other_recruiters_ids').ids),
+                        ('active', '=', True)]
+        else:
+            if bus:
+                user_domain = [('business_unit_id', 'in', bus),
+                               ('active', '=', True)]
+            else:
+                user_domain = [('active', '=', True)]
+
+        if flag and not self._context.get('get_domain', False):
+            if len(self.env['res.users'].search(user_domain)) == 0:
+                raise ValidationError(_('The Selected Job positions have no recruiters under your BU'))
+        return {'domain': {'user_ids': user_domain}}
 
     @api.multi
     def search_filter(self):
         self.ensure_one()
-        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
         self.line_ids.unlink()
-        bu_domain = job_domain = user_domain = []
-        self.job_ids = False
-        if self.bu_ids:
-            bu_domain = [('id', '=', self.bu_ids.ids)]
-            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                bu_domain = []
-                if self.job_ids:
-                    job_domain = [('id', 'in', self.job_ids.ids)]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        self.job_ids.mapped('other_recruiters_ids')
-                        user_domain = [
-                            ('id', 'in',
-                             self.job_ids.mapped('other_recruiters_ids') + self.job_ids.mapped('user_id')),
-                            ('active', '=', True)]
-                else:
-                    job_domain = [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        user_domain = [('active', '=', True)]
-            elif self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator'):
-                if self.job_ids:
-                    job_domain = [('id', 'in', self.job_ids.ids)]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        user_domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                       ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                                       ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('active', '=', True)]
-                else:
-                    job_domain = ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                  ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                  ('state', '=', 'recruit')]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        user_domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                       ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                                       ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('active', '=', True)]
+        # if self.bu_ids:
+        #     bu_domain = [('id', 'in', self.bu_ids.ids)]
+        # else:
+        #     bu_domain = self._get_bu_domain()
+        if self.job_ids:
+            job_domain = [('id', 'in', self.job_ids.ids)]
         else:
-            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                bu_domain = []
-                if self.job_ids:
-                    job_domain = [('id', 'in', self.job_ids.ids)]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        self.job_ids.mapped('other_recruiters_ids')
-                        user_domain = [
-                            ('id', 'in', self.job_ids.mapped('other_recruiters_ids') + self.job_ids.mapped('user_id')),
-                            ('active', '=', True)]
-                else:
-                    job_domain = [('state', '=', 'recruit')]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        user_domain = [('active', '=', True)]
-            elif self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator'):
-                bu_domain = [('id', 'in', self.env.user.multi_business_unit_id.ids + self.env.user.business_unit_id.id)]
-                if self.job_ids:
-                    job_domain = [('id', 'in', self.job_ids.ids)]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        user_domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                       ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                                       ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('active', '=', True)]
-                else:
-                    job_domain = ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                  ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                  ('state', '=', 'recruit')]
-                    if self.user_ids:
-                        user_domain = [('id', 'in', self.user_ids.ids)]
-                    else:
-                        user_domain = ['|', '|', '|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
-                                       ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('multi_business_unit_id', 'in', self.env.user.business_unit_id.id),
-                                       ('multi_business_unit_id', 'in', self.env.user.multi_business_unit_id.ids),
-                                       ('active', '=', True)]
+            job_domain = self.with_context({'get_domain': True})._get_jobs_domain().get('domain', False).get('job_ids',
+                                                                                                             False)
+        if self.user_ids:
+            user_domain = [('id', 'in', self.user_ids.ids)]
+        else:
+            user_domain = self.with_context({'get_domain': True})._get_recruiters_domain().get('domain', False).get(
+                'user_ids', False)
+
         job_report = self.env['hr.job'].search(job_domain)
         user_report = self.env['res.users'].search(user_domain)
         for user in user_report:
@@ -241,26 +135,18 @@ class HRSetDailyTarget(models.Model):
                 })
         return True
 
-    @api.multi
-    def set_target(self):
-        self.ensure_one()
-        if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
-                'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
-        return True
-
     @api.model
     def create(self, vals):
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
+            raise ValidationError(_('You are not allowed to set targets'))
         return super(HRSetDailyTarget, self).create(vals)
 
     @api.multi
     def write(self, vals):
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
-            raise ValidationError(_('You are not allowed to set target. Please ask for helping from your manager.'))
+            raise ValidationError(_('You are not allowed to set targets'))
         return super(HRSetDailyTarget, self).write(vals)
 
 

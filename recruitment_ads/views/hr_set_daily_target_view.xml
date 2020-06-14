@@ -36,8 +36,6 @@
                         <footer class="pull-right">
                             <button name="search_filter" string="Search" type="object" class="oe_highlight oe_inline "
                                     icon="fa-search" style="margin-right:30px"/>
-                            <button name="set_target" string="Set Target" type="object" class="oe_highlight oe_inline"
-                                    icon="fa-pencil" style="margin-right:30px"/>
                         </footer>
                         <field name="lines_count" invisible="1"/>
                         <notebook attrs="{'invisible':[('lines_count','=',0)]}">
