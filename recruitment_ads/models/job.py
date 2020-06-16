@@ -223,11 +223,15 @@ class Job(models.Model):
                                        help="Technical field to catch the starting date of the last recruitment phase")
     scale_from = fields.Float(string='Salary Scale From')
     scale_to = fields.Float(string='Salary Scale To')
+    edited_recruiter_responsible = fields.Many2one('res.users')
+    removed_recruiter_responsible = fields.Many2one('res.users')
 
     @api.model
     def create(self, vals):
         vals['last_launch_rec_date'] = datetime.today()
-        return super(Job, self).create(vals)
+        res = super(Job, self).create(vals)
+        res.job_assignment(res, action='create')
+        return res
 
     @api.multi
     def write(self, vals):
@@ -241,6 +245,8 @@ class Job(models.Model):
                 'hr_recruitment.group_hr_recruitment_manager') and not user.has_group(
             'recruitment_ads.group_hr_recruitment_coordinator') and self._context.get('allow_edit', False) == False:
             raise ValidationError("You are not allowed to edit this job")
+        if vals.get('user_id', False) or vals.get('other_recruiters_ids', False):
+            self.job_assignment(vals, action='write')
         return super(Job, self).write(vals)
 
     @api.one
@@ -293,3 +299,49 @@ class Job(models.Model):
         self.job_level_id = False
         if self.department_id != self.section_id.parent_id:
             self.section_id = False
+
+    def job_assignment(self, vals, action):
+        rec_user = ""
+        rec_other_user = ""
+        if action == 'create':
+            rec_user = vals.user_id
+            rec_other_user = vals.other_recruiters_ids
+        elif action == 'write':
+            rec_user = vals.get('user_id', False)
+            rec_other_user = vals.get('other_recruiters_ids', False)
+        if rec_user or rec_other_user:
+            user_obj = self.env['res.users']
+            added_rec_users = []
+            removed_rec_users = []
+            if rec_user:
+                added_rec_users.append(user_obj.browse(rec_user) if action == 'write' else rec_user)
+                removed_rec_users.append(user_obj.browse(self.user_id).id) if action == 'write' else False
+            if rec_other_user:
+                other_rec_mails = user_obj.browse(rec_other_user[0][2]) if action == 'write' else rec_other_user
+                for m in other_rec_mails:
+                    if m not in self.other_recruiters_ids and m not in added_rec_users:
+                        added_rec_users.append(m)
+                    if m in self.other_recruiters_ids and m not in removed_rec_users:
+                        removed_rec_users.append(m) if action == 'write' else False
+            if added_rec_users:
+                for user in added_rec_users:
+                    self.write({'edited_recruiter_responsible': user.id})
+                    self.send_mail_job_assignment_template()
+            if removed_rec_users:
+                for user in removed_rec_users:
+                    self.write({'removed_recruiter_responsible': user.id})
+                    self.send_mail_job_not_assigned_template()
+
+    @api.multi
+    def send_mail_job_assignment_template(self):
+        # Find the e-mail template
+        template = self.env.ref('recruitment_ads.job_assignment_email_template')
+        # Send out the e-mail template to the user
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
+
+    @api.multi
+    def send_mail_job_not_assigned_template(self):
+        # Find the e-mail template
+        template = self.env.ref('recruitment_ads.job_not_assignment_email_template')
+        # Send out the e-mail template to the user
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
