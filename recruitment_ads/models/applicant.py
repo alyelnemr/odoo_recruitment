@@ -65,8 +65,8 @@ class Applicant(models.Model):
     _inherit = "hr.applicant"
 
     email_from = fields.Char()
-    partner_phone = fields.Char(related="partner_id.phone")
-    partner_mobile = fields.Char(related="partner_id.mobile")
+    partner_phone = fields.Char(related="partner_id.phone",store = True)
+    partner_mobile = fields.Char(related="partner_id.mobile",store = True , size= 256)
     department_id = fields.Many2one('hr.department', "Department", domain=[('parent_id', '=', False)])
     section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
 
@@ -95,9 +95,9 @@ class Applicant(models.Model):
     allow_call = fields.Boolean(string="Allow Online Call", compute='_get_allow_call', store=True)
     # face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
     # linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
-    face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book")
-    linkedin = fields.Char(string='LinkedIn Link', readonly=False, related="partner_id.linkedin")
-    have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
+    face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book",store=True)
+    linkedin = fields.Char(string='LinkedIn Link', readonly=False, related="partner_id.linkedin",store=True)
+    have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False)
     have_assessment = fields.Boolean(compute='_get_attachment', default=False, store=True)
     user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange", default=False)
     source_resp = fields.Many2one('res.users', "Source Responsible", track_visibility="onchange",
