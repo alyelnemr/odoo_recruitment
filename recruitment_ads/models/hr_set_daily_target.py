@@ -1,7 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
-from datetime import datetime, date
+from lxml import etree
 
 
 class HRSetDailyTarget(models.Model):
@@ -19,6 +18,28 @@ class HRSetDailyTarget(models.Model):
         elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
             domain = []
         return domain
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(HRSetDailyTarget, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            target_id = self._context.get('params', {}).get('id', False)
+            if target_id:
+                for node in doc.xpath("//field[@name='job_ids']"):
+                    jobs_domain = self.browse(target_id).with_context({'get_domain': True})._get_jobs_domain() \
+                        .get('domain', False).get('job_ids', False)
+                    if jobs_domain:
+                        node.set('domain', str(jobs_domain))
+
+                for node in doc.xpath("//field[@name='user_ids']"):
+                    users_domain = self.browse(target_id).with_context({'get_domain': True})._get_recruiters_domain() \
+                        .get('domain', False).get('user_ids', False)
+                    if users_domain:
+                        node.set('domain', str(users_domain))
+                res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
 
     @api.model
     def default_get(self, fields):
