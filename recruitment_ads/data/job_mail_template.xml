@@ -24,8 +24,6 @@
                     </div>
                     <p>Best regards,</p>
                     ${(object.company_id.name)}<br/>
-                    ${(object.edited_recruiter_responsible.email)}<br/>
-                    ${(object.edited_recruiter_responsible.name)}
 	            ]]>
             </field>
         </record>
@@ -43,18 +41,16 @@
                 <![CDATA[
 	                <p>Dear ${(object.removed_recruiter_responsible.name)},<br/><br/>
 		            You are no longer assigned to ${(object.name)}<br/></p>
-		            You can View or access your assigned job position via the following URL:
-                    <div style="text-align: center; margin-top: 16px;">
+<!--		            You can View or access your assigned job position via the following URL:-->
+<!--                    <div style="text-align: center; margin-top: 16px;">-->
 <!--                        <a href="mail/view?model=hr.job&res_id=${object.id}"-->
 <!--                        style="background-color: #9E588B; margin-top: 10px; padding: 10px; text-decoration: none;-->
 <!--                        color: #fff; border-radius: 5px; font-size: 16px;">-->
 <!--                            View ${object.name}-->
 <!--                        </a>-->
-                    </div>
+<!--                    </div>-->
                     <p>Best regards,</p>
                     ${(object.company_id.name)}<br/>
-                    ${(object.removed_recruiter_responsible.email)}<br/>
-                    ${(object.removed_recruiter_responsible.name)}
 	            ]]>
             </field>
         </record>
