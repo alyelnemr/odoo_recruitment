@@ -70,9 +70,15 @@ class HRSetDailyTarget(models.Model):
             raise ValidationError(_('Date must be greater than or equal today'))
 
     @api.onchange('bu_ids')
-    def _get_jobs_domain(self):
-        if not self._context.get('get_domain', False):
-            self.job_ids = False
+    def _get_jobs_users_domain(self):
+        return self._get_job_user_domain()
+
+    @api.onchange('job_ids')
+    def _get_recruiters_domain(self):
+        return self._get_job_user_domain()
+
+    def _get_job_user_domain(self):
+        # JOB DOMAIN
         if self.bu_ids:
             job_domain = [('business_unit_id', 'in', self.bu_ids.ids), ('state', '=', 'recruit')]
         else:
@@ -82,41 +88,33 @@ class HRSetDailyTarget(models.Model):
                 job_domain = [('business_unit_id', 'in',
                                self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids),
                               ('state', '=', 'recruit')]
-        return {'domain': {'job_ids': job_domain}}
-
-    @api.onchange('job_ids')
-    def _get_recruiters_domain(self):
-        # self.user_ids = False
-        flag = False
+        # USER DOMAIN
+        jobs = False
         bus = self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids
+        user_domain = [('active', '=', True)]
+        if self.bu_ids:
+            user_domain += [
+                '|', ('business_unit_id', 'in', self.bu_ids.ids),
+                ('multi_business_unit_id', 'in', self.bu_ids.ids),
+            ]
+            jobs = self.env['hr.job'].search(job_domain)
+        elif bus and not self.bu_ids and self.env.user.has_group(
+                'recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
+            'hr_recruitment.group_hr_recruitment_manager'):
+            user_domain += ['|', ('business_unit_id', 'in', bus),
+                            ('multi_business_unit_id', 'in', bus)]
         if self.job_ids:
-            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-                user_domain = [('id', 'in', self.job_ids.mapped('user_id').ids + self.job_ids.mapped(
-                    'other_recruiters_ids').ids), ('active', '=', True)]
-            else:
-                flag = True
-                if bus:
-                    user_domain = [
-                        ('id', 'in',
-                         self.job_ids.mapped('user_id').ids + self.job_ids.mapped('other_recruiters_ids').ids),
-                        '|', ('business_unit_id', 'in', bus), ('multi_business_unit_id', 'in', bus),
-                        ('active', '=', True)]
-                else:
-                    user_domain = [
-                        ('id', 'in',
-                         self.job_ids.mapped('user_id').ids + self.job_ids.mapped('other_recruiters_ids').ids),
-                        ('active', '=', True)]
-        else:
-            if bus:
-                user_domain = [('business_unit_id', 'in', bus),
-                               ('active', '=', True)]
-            else:
-                user_domain = [('active', '=', True)]
+            user_domain += [('id', 'in', self.job_ids.mapped('user_id').ids + self.job_ids.mapped(
+                'other_recruiters_ids').ids)]
+        elif jobs:
+            user_domain += [('id', 'in', jobs.mapped('user_id').ids + jobs.mapped('other_recruiters_ids').ids)]
 
-        if flag and not self._context.get('get_domain', False):
+        if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager') and self.job_ids and not self._context.get(
+            'get_domain', False):
             if len(self.env['res.users'].search(user_domain)) == 0:
                 raise ValidationError(_('The Selected Job positions have no recruiters under your BU'))
-        return {'domain': {'user_ids': user_domain}}
+        return {'domain': {'job_ids': job_domain, 'user_ids': user_domain}}
 
     @api.multi
     def search_filter(self):
@@ -139,21 +137,23 @@ class HRSetDailyTarget(models.Model):
 
         job_report = self.env['hr.job'].search(job_domain)
         user_report = self.env['res.users'].search(user_domain)
-        for user in user_report:
-            for job in job_report:
-                self.env['hr.set.daily.target.line'].create({
-                    'name': self.name,
-                    'recruiter_id': user.id,
-                    'recruiter_bu_id': user.business_unit_id.id,
-                    'bu_id': job.business_unit_id.id,
-                    'department_id': job.department_id.id,
-                    'section_id': job.section_id.id,
-                    'job_id': job.job_title_id.id,
-                    'level_id': job.job_level_id.id,
-                    'weight': job.job_level_id.weight or 0,
-                    'cvs': job.job_level_id.cv or 0,
-                    'target_id': self.id,
-                })
+
+        for job in job_report:
+            for user in job.mapped('user_id') + job.mapped('other_recruiters_ids'):
+                if user in user_report:
+                    self.env['hr.set.daily.target.line'].create({
+                        'name': self.name,
+                        'recruiter_id': user.id,
+                        'recruiter_bu_id': user.business_unit_id.id,
+                        'bu_id': job.business_unit_id.id,
+                        'department_id': job.department_id.id,
+                        'section_id': job.section_id.id,
+                        'job_id': job.job_title_id.id,
+                        'level_id': job.job_level_id.id,
+                        'weight': job.job_level_id.weight or 0,
+                        'cvs': job.job_level_id.cv or 0,
+                        'target_id': self.id,
+                    })
         return True
 
     @api.model
