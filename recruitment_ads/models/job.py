@@ -303,25 +303,31 @@ class Job(models.Model):
     def job_assignment(self, vals, action):
         rec_user = ""
         rec_other_user = ""
+        user_obj = self.env['res.users']
+        old_rec = ""
+        old_other = ""
         if action == 'create':
             rec_user = vals.user_id
             rec_other_user = vals.other_recruiters_ids
+            old_rec = []
+            old_other = []
         elif action == 'write':
-            rec_user = vals.get('user_id', False)
-            rec_other_user = vals.get('other_recruiters_ids', False)
+            rec_user = user_obj.browse(vals.get('user_id', False))
+            rec_other_user = user_obj.browse(vals.get('other_recruiters_ids', False)[0][2]) if vals.get(
+                'other_recruiters_ids', False) else ""
+            old_rec = self.user_id
+            old_other = self.other_recruiters_ids
         if rec_user or rec_other_user:
-            user_obj = self.env['res.users']
             added_rec_users = []
             removed_rec_users = []
             if rec_user:
-                added_rec_users.append(user_obj.browse(rec_user) if action == 'write' else rec_user)
-                removed_rec_users.append(user_obj.browse(self.user_id).id) if action == 'write' else False
+                added_rec_users.append(rec_user)
+                removed_rec_users.append(old_rec) if old_rec else False
             if rec_other_user:
-                other_rec_mails = user_obj.browse(rec_other_user[0][2]) if action == 'write' else rec_other_user
-                for m in other_rec_mails:
-                    if m not in self.other_recruiters_ids and m not in added_rec_users:
+                for m in rec_other_user:
+                    if m not in old_other and m not in added_rec_users:
                         added_rec_users.append(m)
-                    if m in self.other_recruiters_ids and m not in removed_rec_users:
+                    if m in self.other_recruiters_ids and m not in rec_other_user and m not in removed_rec_users:
                         removed_rec_users.append(m) if action == 'write' else False
             if added_rec_users:
                 for user in added_rec_users:
