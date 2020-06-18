@@ -317,24 +317,25 @@ class Job(models.Model):
                 'other_recruiters_ids', False) else ""
             old_rec = self.user_id
             old_other = self.other_recruiters_ids
-        if rec_user or rec_other_user:
-            added_rec_users = []
-            removed_rec_users = []
+        if rec_user or rec_other_user or old_rec or old_other:
+            added_rec_users_list = []
+            removed_rec_users_list = []
             if rec_user:
-                added_rec_users.append(rec_user)
-                removed_rec_users.append(old_rec) if old_rec else False
-            if rec_other_user:
+                added_rec_users_list.append(rec_user)
+                removed_rec_users_list.append(old_rec) if old_rec else False
+            if rec_other_user or old_other:
                 for m in rec_other_user:
-                    if m not in old_other and m not in added_rec_users:
-                        added_rec_users.append(m)
-                    if m in self.other_recruiters_ids and m not in rec_other_user and m not in removed_rec_users:
-                        removed_rec_users.append(m) if action == 'write' else False
-            if added_rec_users:
-                for user in added_rec_users:
+                    if m not in old_other and m not in added_rec_users_list:
+                        added_rec_users_list.append(m)
+                for m in old_other:
+                    if m not in rec_other_user and m not in removed_rec_users_list:
+                        removed_rec_users_list.append(m)
+            if added_rec_users_list:
+                for user in added_rec_users_list:
                     self.write({'edited_recruiter_responsible': user.id})
                     self.send_mail_job_assignment_template()
-            if removed_rec_users:
-                for user in removed_rec_users:
+            if removed_rec_users_list:
+                for user in removed_rec_users_list:
                     self.write({'removed_recruiter_responsible': user.id})
                     self.send_mail_job_not_assigned_template()
 
