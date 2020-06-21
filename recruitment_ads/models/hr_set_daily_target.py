@@ -70,7 +70,7 @@ class HRSetDailyTarget(models.Model):
             raise ValidationError(_('Date must be greater than or equal today'))
 
     @api.onchange('bu_ids')
-    def _get_jobs_users_domain(self):
+    def _get_jobs_domain(self):
         return self._get_job_user_domain()
 
     @api.onchange('job_ids')
