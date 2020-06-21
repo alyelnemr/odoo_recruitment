@@ -161,14 +161,39 @@ class HRSetDailyTarget(models.Model):
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
-        return super(HRSetDailyTarget, self).create(vals)
+        res = super(HRSetDailyTarget, self).create(vals)
+        # res.send_daily_target_mail(res, action='create')
+        return res
 
     @api.multi
     def write(self, vals):
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
+        self.send_daily_target_mail(vals, action='write')
         return super(HRSetDailyTarget, self).write(vals)
+
+    def send_daily_target_mail(self, data, action):
+        # lines = self.env['hr.set.daily.target.line'].browse(self.id)
+        # if action == 'create':
+        #     for line in lines:
+        #         data.with_context({'line': line})
+        #         data.send_mail_set_daily_target()
+        if action == 'write':
+            if data.get('line_ids', False):
+                for line in data['line_ids']:
+                    self.with_context({'line': line})
+                    self.send_mail_set_daily_target()
+
+    @api.multi
+    def send_mail_set_daily_target(self):
+        template = self.env.ref('recruitment_ads.set_daily_target_line_email_template')
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
+
+    @api.multi
+    def send_mail_update_daily_target(self):
+        template = self.env.ref('recruitment_ads.update_daily_target_line_email_template')
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
 
 
 class HRSetDailyTargetLine(models.Model):
