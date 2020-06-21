@@ -16,13 +16,13 @@ class PartnerInherit(models.Model):
     @api.constrains('mobile', 'name', 'phone')
     def constrain_partner_mobile(self):
         for applicant in self:
-            if applicant.phone:
+            if applicant.phone and not self._context.get('ldap', False):
                 if applicant.phone.isnumeric() == False or len(applicant.phone) > 15:
                     raise ValidationError(_('Phone number must be digits only and not greater than 15 digit. '))
-            if applicant.mobile:
+            if applicant.mobile and not self._context.get('ldap', False):
                 if applicant.mobile.isnumeric() == False or len(applicant.mobile) > 15:
                     raise ValidationError(_('Mobile number must be digits only and not greater than 15 digit. '))
-            if applicant.name:
+            if applicant.name and not self._context.get('ldap', False):
                 if all(x.isalpha() or x.isspace() for x in applicant.name):
                     pass
                 else:

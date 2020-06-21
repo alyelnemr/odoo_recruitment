@@ -11,7 +11,7 @@ class Partner(models.Model):
     _inherit = 'res.partner'
 
     employee = fields.Boolean('Is Employee', default=False)
-    GUID = fields.Char('GUID',size=256)
+    GUID = fields.Char('GUID', size=256)
 
     @api.model
     def get_ldap_employee_data(self, email='*', attrlst=['objectGUID']):
@@ -51,7 +51,7 @@ class Partner(models.Model):
                 mapped_val[mapper[key]] = val.get(key, '')
             return mapped_val
 
-        employees_data = self.get_ldap_employee_data(attrlst=['objectGUID','name', 'mail', 'title'])
+        employees_data = self.get_ldap_employee_data(attrlst=['objectGUID', 'name', 'mail', 'title'])
         GUIDS = list(map(lambda emp: emp['objectGUID'], employees_data))
         employee_to_update = self.search([('GUID', 'in', GUIDS), '|', ('active', '=', True), ('active', '=', False)])
         GUIDS_to_create_employee = list(set(GUIDS) - set(employee_to_update.mapped('GUID')))
@@ -67,7 +67,7 @@ class Partner(models.Model):
                 if values_hash != emp_hash:
                     vals = remap_vals(val, attr_map)
                     vals['active'] = True
-                    emp.write(vals)
+                    emp.with_context({'ldap': True}).write(vals)
                     updated += 1
                     _logger.debug("Employee: %s has been updated because of different hashes %s : %s" % (
                         emp.name, values_hash, emp_hash))
@@ -84,7 +84,7 @@ class Partner(models.Model):
                 'company_type': 'person',
                 'GUID': GUID,
             }
-            self.create(val)
+            self.with_context({'ldap': True}).create(val)
             created += 1
             _logger.debug(" %s of %s Employees has been created" % (created, len(GUIDS_to_create_employee)))
         employee_to_archive = self.search([('GUID', 'not in', GUIDS), ('employee', '=', True)])
