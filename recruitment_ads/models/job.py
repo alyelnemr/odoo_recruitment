@@ -330,14 +330,18 @@ class Job(models.Model):
                 for m in old_other:
                     if m not in rec_other_user and m not in removed_rec_users_list:
                         removed_rec_users_list.append(m)
+            intersection = [x for x in added_rec_users_list if x in removed_rec_users_list] + \
+                           [x for x in removed_rec_users_list if x in added_rec_users_list]
             if added_rec_users_list:
                 for user in added_rec_users_list:
-                    self.write({'edited_recruiter_responsible': user.id})
-                    self.send_mail_job_assignment_template()
+                    if user not in intersection:
+                        self.write({'edited_recruiter_responsible': user[0].id})
+                        self.send_mail_job_assignment_template()
             if removed_rec_users_list:
                 for user in removed_rec_users_list:
-                    self.write({'removed_recruiter_responsible': user.id})
-                    self.send_mail_job_not_assigned_template()
+                    if user not in intersection:
+                        self.write({'removed_recruiter_responsible': user[0].id})
+                        self.send_mail_job_not_assigned_template()
 
     @api.multi
     def send_mail_job_assignment_template(self):

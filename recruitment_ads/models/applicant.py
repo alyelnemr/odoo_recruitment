@@ -212,10 +212,11 @@ class Applicant(models.Model):
                         period.append(str(policy.month) + " month(s)") if policy.month else False
                         period.append(str(policy.year) + " year(s)") if policy.year else False
                         raise ValidationError(
-                            _("This Applicant is applied before on this Job: '%s' within %s.\n "
-                              "Please wait %s and then apply again.") % (
-                                old_app.job_id.name if old_app.job_id.name else "", " ".join(period),
-                                str(remaining_time.days) + " day(s)"))
+                            _("This Applicant is applied before on this Job: '%s.'\n"
+                              "Please wait %s and then apply again.\n"
+                              "Maximum Period: %s") % (
+                                old_app.job_id.name if old_app.job_id.name else "",
+                                str(remaining_time.days) + " day(s)", " ".join(period)))
 
     @api.model
     def create(self, vals):
