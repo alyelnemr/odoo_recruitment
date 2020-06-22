@@ -76,15 +76,20 @@ class Partner(models.Model):
         _logger.info("found %s Employees to create" % (len(GUIDS_to_create_employee)))
         for GUID in GUIDS_to_create_employee:
             emp_data = list(filter(lambda i: i['objectGUID'] == GUID, employees_data))[0]
-            val = {
-                'name': emp_data.get('name', 'Name Not Found'),
-                'email': emp_data.get('mail', ''),
-                'function': emp_data.get('title', ''),
-                'employee': True,
-                'company_type': 'person',
-                'GUID': GUID,
-            }
-            self.with_context({'ldap': True}).create(val)
+            email = emp_data.get('mail', False)
+            partner_update = self.search(['|', ('email', '=', email), ('email', '=', email.lower())])
+            if partner_update and email:
+                partner_update.with_context({'ldap': True}).write({'GUID': GUID})
+            else:
+                val = {
+                    'name': emp_data.get('name', 'Name Not Found'),
+                    'email': emp_data.get('mail', ''),
+                    'function': emp_data.get('title', ''),
+                    'employee': True,
+                    'company_type': 'person',
+                    'GUID': GUID,
+                }
+                self.with_context({'ldap': True}).create(val)
             created += 1
             _logger.debug(" %s of %s Employees has been created" % (created, len(GUIDS_to_create_employee)))
         employee_to_archive = self.search([('GUID', 'not in', GUIDS), ('employee', '=', True)])
