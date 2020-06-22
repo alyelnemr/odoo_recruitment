@@ -18,7 +18,11 @@
                                 class="oe_highlight"/>
                         <button name="%(recruitment_ads.report_offer_ksa)d"
                                 attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
-                                type="action" states="offer,hired,pipeline" string="Export Offer"
+                                type="action" states="offer,hired,pipeline" string="Export Offer PDF"
+                                class="oe_highlight"/>
+                        <button name="print_ksa_offer_docx"
+                                attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
+                                type="object" states="offer,hired,pipeline" string="Export Offer Docx"
                                 class="oe_highlight"/>
                     </header>
                     <sheet>
