@@ -63,42 +63,31 @@
             <field name="name">Set Daily Target Line e-mail Template</field>
             <field name="subject">Daily Target Report</field>
             <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
-            <field name="email_to">${(object.create_uid.email)} </field>
+            <field name="email_to">${(object.recruiter_id.email)}</field>
             <field name="email_cc">${(object.create_uid.email)}</field>
             <field name="lang">${object.lang}</field>
-            <field name="model_id" ref="recruitment_ads.model_hr_set_daily_target"/>
+            <field name="model_id" ref="recruitment_ads.model_hr_set_daily_target_line"/>
             <field name="auto_delete" eval="True"/>
             <field name="body_html">
                 <![CDATA[
-		            You can View or access your daily target screen via the following URL:
-                    <p>Best regards,</p>
-	            ]]>
-            </field>
-        </record>
-
-        <record id="update_daily_target_line_email_template" model="mail.template">
-            <field name="name">Update Daily Target Line e-mail Template</field>
-            <field name="subject">Daily Target Report Updated</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
-            <field name="email_to">${(object.recruiter_id.email)} </field>
-            <field name="email_cc">${(object.create_uid.email)}</field>
-            <field name="lang">${object.lang}</field>
-            <field name="model_id" ref="recruitment_ads.model_hr_set_daily_target"/>
-            <field name="auto_delete" eval="True"/>
-            <field name="body_html">
-                <![CDATA[
-	                <p>Dear ${(object.recruiter_id.name)},<br/><br/>
-<!--		            Your daily target have been updated for the position ${(object.job_id)} - ${(object.level_id)} is ${(object.cvs)}<br/></p>-->
-		            You can View or access your daily target screen via the following URL:
-<!--                    <div style="text-align: center; margin-top: 16px;">-->
-<!--                        <a href="mail/view?model=hr.job&res_id=${object.id}"-->
-<!--                        style="background-color: #9E588B; margin-top: 10px; padding: 10px; text-decoration: none;-->
-<!--                        color: #fff; border-radius: 5px; font-size: 16px;">-->
-<!--                            View ${object.name}-->
-<!--                        </a>-->
-<!--                    </div>-->
-                    <p>Best regards,</p>
-                    ${(object.company_id.name)}<br/>
+		            Dear ${(object.recruiter_id.name)},<br/><br/>
+		            Kindly find your daily target report, with the following data:<br/>
+                    Job Position: ${(object.job_id.name)}<br/>
+                    Job Level: ${(object.level_id.name)}<br/>
+                    Weight: ${(object.weight)}<br/>
+                    Target Applications: ${(object.cvs)}<br/><br/>
+                    You can View or access your daily target screen via the following URL:
+                    <div style="text-align: center; margin-top: 16px;">
+                        <a href="mail/view?model=hr.job&res_id=${object.id}"
+                        style="background-color: #9E588B; margin-top: 10px; padding: 10px; text-decoration: none;
+                        color: #fff; border-radius: 5px; font-size: 16px;">
+                            View Daily Target
+                        </a>
+                    </div><br/><br/>
+                    Best regards,<br/>
+                    ${object.company_id.name}<br/>
+                    ${(object.write_uid.name)}<br/>
+                    ${(object.write_uid.email)}<br/>
 	            ]]>
             </field>
         </record>
