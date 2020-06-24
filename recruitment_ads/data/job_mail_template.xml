@@ -57,7 +57,7 @@
 
         <record id="set_daily_target_line_email_template" model="mail.template">
             <field name="name">Set Daily Target Line e-mail Template</field>
-            <field name="subject">Daily Target Report</field>
+            <field name="subject">Daily Target Report of "${(object.job_id.name)}"</field>
             <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
             <field name="email_to">${(object.recruiter_id.email)}</field>
             <field name="email_cc">${(object.create_uid.email)}</field>
@@ -68,6 +68,8 @@
                 <![CDATA[
 		            Dear ${(object.recruiter_id.name)},<br/><br/>
 		            Kindly find your daily target report, with the following data:<br/>
+                    Date: ${(object.name)}<br/>
+                    BU: ${(object.bu_id.name)}<br/>
                     Job Position: ${(object.job_id.name)}<br/>
                     Job Level: ${(object.level_id.name)}<br/>
                     Weight: ${(object.weight)}<br/>
