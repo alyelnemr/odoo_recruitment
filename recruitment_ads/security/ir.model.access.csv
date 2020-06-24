@@ -14,7 +14,7 @@ officer_access_job_level,officer_access_job_level,model_job_level,hr_recruitment
 manager_access_job_level,manager_access_job_level,model_job_level,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
 hr.access_hr_job_user,hr.job user,hr.model_hr_job,hr.group_hr_user,1,0,0,0
 access_hr_job_manager,hr.job manager,hr.model_hr_job,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
-hr.access_hr_department_user,hr.department.user,hr.model_hr_department,hr.group_hr_user,1,0,0,0
+hr.access_hr_department_user,hr.department.user,hr.model_hr_department,hr.group_hr_user,1,1,0,0
 hr.access_hr_department_officer,hr.department.officer,hr.model_hr_department,hr_recruitment.group_hr_recruitment_user,1,0,0,0
 hr.access_hr_department_coordinator,hr.department.coordinator,hr.model_hr_department,recruitment_ads.group_hr_recruitment_coordinator,1,0,0,0
 access_hr_department_manager,hr.department manager,hr.model_hr_department,hr_recruitment.group_hr_recruitment_manager,1,1,1,1

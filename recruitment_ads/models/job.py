@@ -148,6 +148,16 @@ class Department(models.Model):
 
         return super(Department, self).create(vals)
 
+    @api.multi
+    def write(self, vals):
+        user = self.env.user
+        if user.has_group('hr_recruitment.group_hr_recruitment_user') and not user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager') and not user.has_group(
+            'recruitment_ads.group_hr_recruitment_coordinator') and self._context.get('allow_edit', False) == False:
+            raise ValidationError("You are not allowed to edit this job")
+        return super(Department, self).write(vals)
+
+
 
 class JobLevel(models.Model):
     _name = 'job.level'
