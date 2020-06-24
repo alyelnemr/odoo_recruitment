@@ -203,8 +203,9 @@ class HRSetDailyTargetLine(models.Model):
 
     @api.multi
     def write(self, vals):
+        res = super(HRSetDailyTargetLine, self).write(vals)
         self.send_daily_target_mail(vals)
-        return super(HRSetDailyTargetLine, self).write(vals)
+        return res
 
     def send_daily_target_mail(self, data):
         if data:
