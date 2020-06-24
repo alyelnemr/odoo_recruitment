@@ -161,7 +161,9 @@ class HRSetDailyTarget(models.Model):
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
-        return super(HRSetDailyTarget, self).create(vals)
+        res = super(HRSetDailyTarget, self).create(vals)
+        # res.send_daily_target_mail(res, action='create')
+        return res
 
     @api.multi
     def write(self, vals):
@@ -191,9 +193,24 @@ class HRSetDailyTargetLine(models.Model):
     weight = fields.Integer(string="Weight", track_visibility='always', default=0)
     cvs = fields.Integer(string="Target Application", track_visibility='always', default=0)
     target_id = fields.Many2one('hr.set.daily.target', string='Set Daily Target', track_visibility='always')
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
 
     @api.onchange('level_id')
     def _compute_level(self):
         # for line in self:
         self.weight = self.level_id.weight
         self.cvs = self.level_id.cv
+
+    @api.multi
+    def write(self, vals):
+        self.send_daily_target_mail(vals)
+        return super(HRSetDailyTargetLine, self).write(vals)
+
+    def send_daily_target_mail(self, data):
+        if data:
+            self.send_mail_set_daily_target()
+
+    @api.multi
+    def send_mail_set_daily_target(self):
+        template = self.env.ref('recruitment_ads.set_daily_target_line_email_template')
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
