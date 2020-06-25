@@ -707,6 +707,7 @@ class Offer(models.Model):
         file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
         document.save(file_name)
+        os.chmod(file_name, os.stat.S_IRUSR | os.stat.S_IWUSR | os.stat.S_IXUSR)
         # document.save(file_name)
         os.system(file_name)
 
