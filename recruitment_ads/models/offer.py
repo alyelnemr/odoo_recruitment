@@ -705,7 +705,8 @@ class Offer(models.Model):
         number = sequence.next_by_id()
         file_name = "KSA_Offer_%s.docx" % number
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
-        document.save(file_name)
+        document.save("/usr/lib/python3/dist-packages/docx/" + file_name)
+        # document.save(file_name)
         os.system(file_name)
 
 
