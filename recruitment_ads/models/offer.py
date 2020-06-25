@@ -704,8 +704,9 @@ class Offer(models.Model):
         sequence = self.env.ref('recruitment_ads.sequence_offer_ksa')
         number = sequence.next_by_id()
         file_name = "KSA_Offer_%s.docx" % number
+        file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
-        document.save("/usr/lib/python3/dist-packages/docx/" + file_name)
+        document.save(file_name)
         # document.save(file_name)
         os.system(file_name)
 
