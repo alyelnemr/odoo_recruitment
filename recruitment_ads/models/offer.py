@@ -1,9 +1,9 @@
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import ValidationError
-from datetime import date
+from datetime import date, datetime
 from docx import Document
-from docx.shared import Inches ,Pt
+from docx.shared import Inches, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import RGBColor
 from docx.enum.table import WD_ALIGN_VERTICAL
@@ -16,6 +16,7 @@ from docx.oxml import parse_xml
 from docx.enum.style import WD_STYLE
 from docx.shared import Cm
 import os
+import base64
 
 
 class Offer(models.Model):
@@ -206,6 +207,56 @@ class Offer(models.Model):
                 self.application_id.write({'stage_id': activity.id})
         return super(Offer, self).write(vals)
 
+    @api.multi
+    def print_offer_egypt(self):
+        from docxtpl import DocxTemplate
+        doc = DocxTemplate("egypt-offer.docx")
+        context = {
+            'name_en': self.application_id.partner_id.name,
+            'job': self.job_id.job_title_id.name,
+            'level': self.job_id.job_level_id.name,
+            'department': self.department_id.name,
+            'business_unit': self.business_unit_id.name,
+            'fixed_salary': str(
+                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type == 'normal_offer' else str(
+                self.total_salary) + ' ' + self.currency_id.symbol,
+            'variable_salary': str(self.variable_salary) + ' ' + self.currency_id.symbol,
+            'total_package': str(self.total_package) + ' ' + self.currency_id.symbol,
+            'date': datetime.strptime(self.issue_date, '%Y-%m-%d').strftime('%d-%b-%Y')
+        }
+        doc.render(context)
+
+        # save pdf as attachment
+        sequence = self.env.ref('recruitment_ads.sequence_offer_egypt')
+        number = sequence.next_by_id()
+        file_name = "EGYPT_Offer_%s.docx" % number
+        doc.save(file_name)
+        # read = doc.read(name)
+        if hasattr(file_name, 'read'):
+            buf = file_name.read()
+        else:
+            with open(file_name, 'rb') as fh:
+                buf = fh.read()
+
+        b64_pdf = base64.encodestring(buf)
+        res = self.env['ir.attachment'].create({
+            'name': file_name,
+            'type': 'binary',
+            'datas': b64_pdf,
+            'datas_fname': file_name,
+            'store_fname': file_name,
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        })
+        # http: // localhost: 8011 / web / content / 34013?download = true
+        url = '/web/content/%s?download=true' % res.id
+        # url = '/web/binary/download_document?tab_id=%s' % res.id
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'self',
+        }
 
     # @api.multi
     def print_ksa_offer_docx(self):
@@ -704,12 +755,35 @@ class Offer(models.Model):
         sequence = self.env.ref('recruitment_ads.sequence_offer_ksa')
         number = sequence.next_by_id()
         file_name = "KSA_Offer_%s.docx" % number
-        file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
+        # file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
         document.save(file_name)
-        os.chmod(file_name, os.stat.S_IRUSR | os.stat.S_IWUSR | os.stat.S_IXUSR)
-        # document.save(file_name)
-        os.system(file_name)
+        if hasattr(file_name, 'read'):
+            buf = file_name.read()
+        else:
+            with open(file_name, 'rb') as fh:
+                buf = fh.read()
+
+        b64_pdf = base64.encodestring(buf)
+        res = self.env['ir.attachment'].create({
+            'name': file_name,
+            'type': 'binary',
+            'datas': b64_pdf,
+            'datas_fname': file_name,
+            'store_fname': file_name,
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        })
+        # http: // localhost: 8011 / web / content / 34013?download = true
+        url = '/web/content/%s?download=true' % res.id
+        # url = '/web/binary/download_document?tab_id=%s' % res.id
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'self',
+        }
+        # os.system(file_name)
 
 
 class RejectionReason(models.Model):
