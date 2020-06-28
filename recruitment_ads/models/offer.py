@@ -771,7 +771,7 @@ class Offer(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': url,
-            'target': 'self',
+            'target': 'new',
         }
         # os.system(file_name)
 
