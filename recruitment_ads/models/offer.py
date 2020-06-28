@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import ValidationError
@@ -260,7 +261,7 @@ class Offer(models.Model):
 
     # @api.multi
     def print_ksa_offer_docx(self):
-        document= Document()
+        document = Document()
 
         header_1 = document.add_heading('" توظيف عرض  "', 2)
         header_1.style.font.color.rgb = RGBColor(140, 140, 140)
@@ -277,11 +278,11 @@ class Offer(models.Model):
         # first Row
         row = table.rows[0]
 
-        t_1_1,t_1_2, t_1_3 = row.cells[:3]
+        t_1_1, t_1_2, t_1_3 = row.cells[:3]
         cell_1 = t_1_1.merge(t_1_3)
         cell_1.text = 'Please note that you have been appointed as follows.'
-        t_1_4,t_1_5, t_1_6= row.cells[3:6]
-        cell_1 = t_1_4.merge( t_1_6)
+        t_1_4, t_1_5, t_1_6 = row.cells[3:6]
+        cell_1 = t_1_4.merge(t_1_6)
 
         cell_1.text = "یسرنى إبلاغكم بموافقة الإدارة على توظیفكم حسب البیانات التالیة"
         paragraph = cell_1.paragraphs[0]
@@ -293,18 +294,16 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         table.rows[0].cells[5]._tc.get_or_add_tcPr().append(shading_elm)
 
-
         # second Row
         row = table.rows[1].cells[0]
         row.text = "Name"
         row.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
-        t_2_3 ,t_2_4,t_2_5 ,t_2_6 = table.rows[1].cells[1:5]
+        t_2_3, t_2_4, t_2_5, t_2_6 = table.rows[1].cells[1:5]
         row = t_2_3.merge(t_2_6)
         row = row.add_paragraph().add_run()
         row.add_text(str(self.applicant_name))
-
 
         row = table.rows[1].cells[5]
         row.text = "الاسم"
@@ -338,10 +337,10 @@ class Offer(models.Model):
         row.add_text(str(self.department_id.name))
 
         row = table.rows[2].cells[5]
-        row.text =" الإدارة"
+        row.text = " الإدارة"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
-        #row 4
+        # row 4
         row = table.rows[3].cells[0]
         row.text = "Housing allowance:"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -364,25 +363,25 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         row = table.rows[3].cells[4]
-        if self.offer_type == 'normal_offer' :
+        if self.offer_type == 'normal_offer':
             row = row.add_paragraph().add_run()
             row.add_text(str(self.fixed_salary))
         else:
             row = row.add_paragraph().add_run()
             row.add_text(str(self.total_salary))
         row = table.rows[3].cells[5]
-        row.text ="الراتب الأساسى "
+        row.text = "الراتب الأساسى "
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         paragraph = row.paragraphs[0]
         run = paragraph.runs
         run[0].font.rtl = True
-        #row 5
+        # row 5
         row = table.rows[4].cells[0]
         row.text = "Total Salary"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
-        t_2_3 ,t_2_4,t_2_5 ,t_2_6 = table.rows[4].cells[1:5]
+        t_2_3, t_2_4, t_2_5, t_2_6 = table.rows[4].cells[1:5]
         row = t_2_3.merge(t_2_6)
         row = row.add_paragraph().add_run()
         row.add_text(str(self.total_salary))
@@ -393,7 +392,7 @@ class Offer(models.Model):
         paragraph = row.paragraphs[0]
         run = paragraph.runs
         run[0].font.rtl = True
-        #row 6
+        # row 6
         row = table.rows[5].cells[0]
         row.text = "Bonus: "
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -412,10 +411,10 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         row = table.rows[5].cells[5]
-        row.text ="الأجازة"
+        row.text = "الأجازة"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
-        #row 7
+        # row 7
         row = table.rows[6].cells[0]
         row.text = "Other Benefits: "
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -437,12 +436,12 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         row = table.rows[6].cells[4]
-        row.text ="تذكرة سفر سنویة لشخصه"
+        row.text = "تذكرة سفر سنویة لشخصه"
         paragraph = row.paragraphs[0]
         run = paragraph.runs
         run[0].font.rtl = True
         row = table.rows[6].cells[5]
-        row.text ="التذاكر"
+        row.text = "التذاكر"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         # ROW 8
@@ -466,12 +465,12 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         row = table.rows[7].cells[4]
-        row.text ="طبقا للنظام"
+        row.text = "طبقا للنظام"
         paragraph = row.paragraphs[0]
         run = paragraph.runs
         run[0].font.rtl = True
         row = table.rows[7].cells[5]
-        row.text ="مكافأة نھایة الخدمة"
+        row.text = "مكافأة نھایة الخدمة"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         paragraph = row.paragraphs[0]
@@ -489,12 +488,12 @@ class Offer(models.Model):
         paragraph = row.paragraphs[0]
         run = paragraph.runs
         run[0].font.rtl = True
-        t_2_3 ,t_2_4,t_2_5 ,t_2_6 = table.rows[8].cells[1:5]
-        row =t_2_3.merge(t_2_6)
+        t_2_3, t_2_4, t_2_5, t_2_6 = table.rows[8].cells[1:5]
+        row = t_2_3.merge(t_2_6)
         row = row.add_paragraph().add_run()
         row.add_text(str(self.total_package))
-        #row 10
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[9].cells[0:6]
+        # row 10
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[9].cells[0:6]
         row = t_10_1.merge(t_10_6)
         row = row.add_paragraph().add_run()
         row.add_text('''
@@ -502,35 +501,36 @@ class Offer(models.Model):
          ........  عمل إصابة الإدخار صندوق الإجتماعیة التأمینات  مثل إستقطاعات لأى الراتب  ویخضع     
         
         \n 
-        ''' )
-        row.add_text('Salary is subject to any deduction such as, Social Insurance saving Findwork-related injuries accidents, etc. ......')
+        ''')
+        row.add_text(
+            'Salary is subject to any deduction such as, Social Insurance saving Findwork-related injuries accidents, etc. ......')
         # row 11
 
-        t_11_1,t_11_2 = table.rows[10].cells[:2]
+        t_11_1, t_11_2 = table.rows[10].cells[:2]
         row = t_11_1.merge(t_11_2)
         row.text = ("Expected date of work:")
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
-        t_11_3,t_11_4 = table.rows[10].cells[2:4]
+        t_11_3, t_11_4 = table.rows[10].cells[2:4]
         row = t_11_3.merge(t_11_4)
         row.text = ('------')
-        t_11_5,t_11_6= table.rows[10].cells[4:6]
+        t_11_5, t_11_6 = table.rows[10].cells[4:6]
         row = t_11_5.merge(t_11_6)
-        row.text=('التاریخ المطلوب ')
+        row.text = ('التاریخ المطلوب ')
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         paragraph = row.paragraphs[0]
         run = paragraph.runs
         run[0].font.rtl = True
         # row 12
-        t_11_1,t_11_2 = table.rows[11].cells[:2]
+        t_11_1, t_11_2 = table.rows[11].cells[:2]
         row = t_11_1.merge(t_11_2)
-        row.text=('Offer is Valid')
+        row.text = ('Offer is Valid')
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
-        t_11_3,t_11_4 = table.rows[11].cells[2:4]
+        t_11_3, t_11_4 = table.rows[11].cells[2:4]
         t_11_3.merge(t_11_4)
-        t_11_5,t_11_6= table.rows[11].cells[4:6]
+        t_11_5, t_11_6 = table.rows[11].cells[4:6]
         row = t_11_5.merge(t_11_6)
         row.text = ('سریان العرض')
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -539,7 +539,7 @@ class Offer(models.Model):
         run = paragraph.runs
         run[0].font.rtl = True
         # row 13
-        t_1_1,t_1_2, t_1_3 = table.rows[12].cells[:3]
+        t_1_1, t_1_2, t_1_3 = table.rows[12].cells[:3]
         row = t_1_1.merge(t_1_3)
         # check = parse_xml('''
         # <w:listPr>
@@ -567,8 +567,8 @@ class Offer(models.Model):
         ''')
         # run = row.add_run()
 
-        t_1_4,t_1_5, t_1_6= table.rows[12].cells[3:6]
-        row = t_1_4.merge( t_1_6)
+        t_1_4, t_1_5, t_1_6 = table.rows[12].cells[3:6]
+        row = t_1_4.merge(t_1_6)
         row = row.add_paragraph().add_run()
         row.add_text('''    [ ] أوافق على العرض
                                    
@@ -579,34 +579,35 @@ class Offer(models.Model):
         ''')
         row.font.rtl = True
         row.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[13].cells[0:6]
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[13].cells[0:6]
         row = t_10_1.merge(t_10_6)
         # row.width = Inches(4)
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
         row = row.add_paragraph().add_run()
-        row.add_text('This section is to be filled by Human Resources:                      :- البشریة الموارد إدارة بمعرفة یملاء الجزء ھذا')
+        row.add_text(
+            'This section is to be filled by Human Resources:                      :- البشریة الموارد إدارة بمعرفة یملاء الجزء ھذا')
         # Row 15
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[14].cells[0:6]
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[14].cells[0:6]
         t_10_1.merge(t_10_6)
 
-        #row 16
-        t_1_1,t_1_2, t_1_3 = table.rows[15].cells[:3]
+        # row 16
+        t_1_1, t_1_2, t_1_3 = table.rows[15].cells[:3]
         row = t_1_1.merge(t_1_3)
         row.text = ('Don’t Accepts offer [ ] العرض على یوافق لا  ')
 
-        t_1_4,t_1_5, t_1_6= table.rows[15].cells[3:6]
-        row = t_1_4.merge( t_1_6)
+        t_1_4, t_1_5, t_1_6 = table.rows[15].cells[3:6]
+        row = t_1_4.merge(t_1_6)
         row.text = ('Accepts offer as it is:[ ] الحالیة بصورته العرض على یوافق')
 
         # row 17
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[16].cells[0:6]
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[16].cells[0:6]
         row = t_10_1.merge(t_10_6)
         row.text = ('After doing the following amendments:       [ ]        الآتیة التعدیلات إجراء بعد')
-        #row 18
+        # row 18
         row = table.rows[17].cells[0]
         row.text = ('Remarks')
-        t_2_3 ,t_2_4,t_2_5 ,t_2_6 = table.rows[17].cells[1:5]
+        t_2_3, t_2_4, t_2_5, t_2_6 = table.rows[17].cells[1:5]
         t_2_3.merge(t_2_6)
         row = table.rows[17].cells[5]
         row.text = ('ملاحظات:')
@@ -614,15 +615,15 @@ class Offer(models.Model):
         run = paragraph.runs
         run[0].font.rtl = True
 
-        #row 19 , 20 , 21
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[18].cells[0:6]
+        # row 19 , 20 , 21
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[18].cells[0:6]
         t_10_1.merge(t_10_6)
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[19].cells[0:6]
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[19].cells[0:6]
         t_10_1.merge(t_10_6)
-        t_10_1,t_10_2,t_10_3 ,t_10_4, t_10_5, t_10_6 = table.rows[20].cells[0:6]
+        t_10_1, t_10_2, t_10_3, t_10_4, t_10_5, t_10_6 = table.rows[20].cells[0:6]
         t_10_1.merge(t_10_6)
 
-        #row 22
+        # row 22
         row = table.rows[21].cells[5]
         row.text = "الدرجة الوظیفیه"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -643,8 +644,7 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
 
-
-        #row 23
+        # row 23
         row = table.rows[22].cells[5]
         row.text = "Regional HR Manager"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -659,8 +659,7 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
 
-
-        #row 24
+        # row 24
         row = table.rows[23].cells[5]
         row.text = "Deputy Group Recruitment Mananger"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -675,8 +674,7 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
 
-
-        #row 25
+        # row 25
         row = table.rows[24].cells[5]
         row.text = "Regional Financial Manager"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -691,9 +689,7 @@ class Offer(models.Model):
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
         row._tc.get_or_add_tcPr().append(shading_elm)
 
-
-
-        #row 26
+        # row 26
         row = table.rows[25].cells[5]
         row.text = "Group HR Director"
         shading_elm = parse_xml(r'<w:shd {} w:fill="FFFFC8"/>'.format(nsdecls('w')))
@@ -710,8 +706,7 @@ class Offer(models.Model):
         # p3 = row.add_paragraph('Item B', style='List Continue')
         # style = styles[WD_STYLE.LIST_CONTINUE]
 
-
-        table.style =('Table Grid')
+        table.style = ('Table Grid')
         for row in table.rows:
             # row.height =Cm(0.85)
             row.width = Cm(2)
@@ -755,7 +750,7 @@ class Offer(models.Model):
         sequence = self.env.ref('recruitment_ads.sequence_offer_ksa')
         number = sequence.next_by_id()
         file_name = "KSA_Offer_%s.docx" % number
-        # file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
+        file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
         document.save(file_name)
         if hasattr(file_name, 'read'):
