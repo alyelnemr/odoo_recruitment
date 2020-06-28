@@ -749,8 +749,8 @@ class Offer(models.Model):
 
         sequence = self.env.ref('recruitment_ads.sequence_offer_ksa')
         number = sequence.next_by_id()
-        file_name = "KSA_Offer_%s.docx" % number
-        file_name = "/usr/lib/python3/dist-packages/docx/" + file_name
+        file_number = "KSA_Offer_%s.docx" % number
+        file_name = "/usr/lib/python3/dist-packages/docx/" + file_number
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
         document.save(file_name)
         if hasattr(file_name, 'read'):
@@ -761,11 +761,11 @@ class Offer(models.Model):
 
         b64_pdf = base64.encodestring(buf)
         res = self.env['ir.attachment'].create({
-            'name': file_name,
+            'name': file_number,
             'type': 'binary',
             'datas': b64_pdf,
-            'datas_fname': file_name,
-            'store_fname': file_name,
+            'datas_fname': file_number,
+            'store_fname': file_number,
             'res_model': self._name,
             'res_id': self.id,
             'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
