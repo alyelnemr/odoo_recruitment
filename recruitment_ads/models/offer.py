@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
-from odoo.tools import osutil
+from odoo.tools import osutil, config
 from odoo.exceptions import ValidationError
 from datetime import date, datetime
 from docx import Document
@@ -212,7 +212,9 @@ class Offer(models.Model):
     @api.multi
     def print_offer_egypt(self):
         from docxtpl import DocxTemplate
-        doc = DocxTemplate("egypt-offer.docx")
+        c_p = config['addons_path'].split(',')[-1] + '\\recruitment_ads\\static\\src\\docx\\'
+        doc = DocxTemplate(c_p + "egypt-offer.docx")
+
         context = {
             'name_en': self.application_id.partner_id.name,
             'job': self.job_id.job_title_id.name,
@@ -231,9 +233,10 @@ class Offer(models.Model):
         # save pdf as attachment
         sequence = self.env.ref('recruitment_ads.sequence_offer_egypt')
         number = sequence.next_by_id()
-        file_name = "EGYPT_Offer_%s.docx" % number
+        file_number = "EGYPT_Offer_%s.docx" % number
+        with osutil.tempdir() as dump_dir:
+            file_name = dump_dir
         doc.save(file_name)
-        # read = doc.read(name)
         if hasattr(file_name, 'read'):
             buf = file_name.read()
         else:
@@ -242,22 +245,14 @@ class Offer(models.Model):
 
         b64_pdf = base64.encodestring(buf)
         res = self.env['ir.attachment'].create({
-            'name': file_name,
-            'type': 'binary',
+            'name': file_number,
             'datas': b64_pdf,
-            'datas_fname': file_name,
-            'store_fname': file_name,
-            'res_model': self._name,
-            'res_id': self.id,
-            'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        })
-        # http: // localhost: 8011 / web / content / 34013?download = true
+            'datas_fname': file_number})
         url = '/web/content/%s?download=true' % res.id
-        # url = '/web/binary/download_document?tab_id=%s' % res.id
         return {
             'type': 'ir.actions.act_url',
             'url': url,
-            'target': 'self',
+            'target': 'new',
         }
 
     # @api.multi
@@ -753,8 +748,6 @@ class Offer(models.Model):
         file_number = "KSA_Offer_%s.docx" % number
         with osutil.tempdir() as dump_dir:
             file_name = dump_dir
-        # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
-        # 'C:\\Users\\marina.mikhael\\AppData\\Local\\OpenERP S.A\\Odoo\\filestore\\recuitment_10_05_2020\\ee/ee3e8d9bb26a2358423e902e6bafddbe0a2be007'
         document.save(file_name)
         if hasattr(file_name, 'read'):
             buf = file_name.read()
@@ -773,7 +766,6 @@ class Offer(models.Model):
             'url': url,
             'target': 'new',
         }
-        # os.system(file_name)
 
 
 class RejectionReason(models.Model):
