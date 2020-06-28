@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
+from odoo.tools import osutil
 from odoo.exceptions import ValidationError
 from datetime import date, datetime
 from docx import Document
@@ -750,8 +751,10 @@ class Offer(models.Model):
         sequence = self.env.ref('recruitment_ads.sequence_offer_ksa')
         number = sequence.next_by_id()
         file_number = "KSA_Offer_%s.docx" % number
-        file_name = "/usr/lib/python3/dist-packages/docx/" + file_number
+        with osutil.tempdir() as dump_dir:
+            file_name = dump_dir
         # document.save('C:\\Users\\esraa-elmasry\\Downloads\\' + file_name)
+        # 'C:\\Users\\marina.mikhael\\AppData\\Local\\OpenERP S.A\\Odoo\\filestore\\recuitment_10_05_2020\\ee/ee3e8d9bb26a2358423e902e6bafddbe0a2be007'
         document.save(file_name)
         if hasattr(file_name, 'read'):
             buf = file_name.read()
@@ -762,17 +765,9 @@ class Offer(models.Model):
         b64_pdf = base64.encodestring(buf)
         res = self.env['ir.attachment'].create({
             'name': file_number,
-            'type': 'binary',
             'datas': b64_pdf,
-            'datas_fname': file_number,
-            'store_fname': file_number,
-            'res_model': self._name,
-            'res_id': self.id,
-            'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        })
-        # http: // localhost: 8011 / web / content / 34013?download = true
+            'datas_fname': file_number})
         url = '/web/content/%s?download=true' % res.id
-        # url = '/web/binary/download_document?tab_id=%s' % res.id
         return {
             'type': 'ir.actions.act_url',
             'url': url,
