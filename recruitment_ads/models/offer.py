@@ -212,7 +212,14 @@ class Offer(models.Model):
     @api.multi
     def print_offer_egypt(self):
         from docxtpl import DocxTemplate
-        c_p = config['addons_path'].split(',')[-1] + '\\recruitment_ads\\static\\src\\docx\\'
+        paths = config['addons_path'].split(',')
+        c_p = ''
+        for path in paths:
+            c_p = path + '\\recruitment_ads\\static\\src\\docx\\'
+            if os.path.isdir(c_p):
+                break
+        if not c_p:
+            raise ValidationError('Check addon paths on configuration file')
         doc = DocxTemplate(c_p + "egypt-offer.docx")
 
         context = {
