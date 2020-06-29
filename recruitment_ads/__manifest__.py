@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # noinspection PyStatementEffect
 {
-    'name': 'Recruitment ADS',
+    'name': 'Recruitment ADS - Word',
     'version': '2.1.0',
     'summary': 'Recruitment Management',
     'category': 'Employees',
