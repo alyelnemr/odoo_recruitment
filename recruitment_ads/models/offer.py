@@ -226,7 +226,7 @@ class Offer(models.Model):
         context = {
             'name_en': self.application_id.partner_id.name,
             'job': self.job_id.job_title_id.name,
-            'level': self.job_id.job_level_id.name,
+            'level': self.job_id.job_level_id.name or '',
             'department': self.department_id.name,
             'business_unit': self.business_unit_id.name,
             'fixed_salary': str(
