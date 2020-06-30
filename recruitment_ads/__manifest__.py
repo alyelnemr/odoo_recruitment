@@ -38,6 +38,7 @@ Handle recruitment Process for Andalusia
         'wizard/recruitment_wizard_view.xml',
         'wizard/offer_wizard_view.xml',
         'wizard/interview_mail_compose_message_wizard_view.xml',
+        'wizard/generate_daily_target_report_wizard.xml',
         'wizard/compliance_report_wizard.xml',
         'reports/offer_egypt_template.xml',
         'reports/offer_ksa_template.xml',
