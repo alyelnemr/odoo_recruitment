@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <record id="action_report_generate_daily_target_xlsx" model="ir.actions.report">
+        <field name="name">Generate Daily Target XLSX</field>
+        <field name="model">generate.daily.target.report.wizard</field>
+        <field name="type">ir.actions.report</field>
+        <field name="report_name">recruitment_ads.report_generate_daily_target_xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_file">Daily Target</field>
+    </record>
     <record id="action_report_recruiter_activity_xlsx" model="ir.actions.report">
         <field name="name">Recruiter Activity XLSX</field>
         <field name="model">recruiter.activity.report.wizard</field>
