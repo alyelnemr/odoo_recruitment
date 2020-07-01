@@ -229,4 +229,4 @@ class HRSetDailyTargetLine(models.Model):
         })
         action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
                                                               'generate_daily_target_report_wizard_action')
-        return 'web#action=' + str(action.get('id')) + '&id=' + str(res.id)
+        return 'web#action=' + str(action.get('id', False)) + '&id=' + str(res.id)
