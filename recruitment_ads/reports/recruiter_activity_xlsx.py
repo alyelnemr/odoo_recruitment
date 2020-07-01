@@ -17,11 +17,12 @@ class RecActivityXslx(models.AbstractModel):
 
     def _get_report_sheets(self, report):
         sheets = []
+
         if report.cv_source:
             sheets.append({
                 'CV Source': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
-                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20},
+                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
                     3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     4: {'header': _('Have CV'), 'field': 'have_cv', 'width': 20, 'type': 'bool'},
@@ -31,37 +32,32 @@ class RecActivityXslx(models.AbstractModel):
                     8: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                     9: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
                     10: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
-                    11: {'header': _('CV Source'), 'field': 'source_id', 'width': 10, 'type': 'many2one'},
-                    12: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20, 'type': 'many2one'},
-                    13: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18, 'type': 'datetime'},
-                    14: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    15: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    11: {'header': _('CV Source'), 'field': 'source_id', 'width': 10},
+                    12: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20},
+                    13: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18},
+                    14: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18},
+                    15: {'header': _('Department'), 'field': 'department_id', 'width': 20},
                 }
             })
-            # getting the department_id of each job of the application.
-            if report.job_ids:
-                departments = list(set(report.job_ids.mapped('department_id')))
-            else:
-                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
-            max_sections_count = 0
-            for department in departments:
-                if department.parent_id:
-                    department_list = []
-                    while department:
-                        department_list.append(department.id)
-                        department = department.parent_id
-                    if len(department_list) > max_sections_count:
-                        max_sections_count = len(department_list)
+
             last_row = max(sheets[0]['CV Source'])
-            if max_sections_count >= 1:
+            if report.job_ids:
+                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            else:
+                departments_query = 'select hr_applicant.id  from hr_applicant inner join hr_department on hr_department.id = hr_applicant.department_id where hr_applicant.id in %s and hr_department.parent_id is not null '
+                self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            if departments:
                 sheets[0]['CV Source'].update({
                     last_row + 1: {'header': _('Section'),
                                    'field': 'section_id',
                                    'width': 20,
-                                   'type': 'many2one', }})
+                                   }})
                 last_row = last_row + 1
             sheets[0]['CV Source'].update({
-                last_row + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
+                last_row + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35},
                 last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18,
                                'type': 'amount'},
                 last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
@@ -74,8 +70,8 @@ class RecActivityXslx(models.AbstractModel):
             sheets.append({
                 'Calls': {
                     0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20,
-                        'type': 'many2one'},
-                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                        },
+                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
                     3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
@@ -84,29 +80,16 @@ class RecActivityXslx(models.AbstractModel):
                     7: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
                     8: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
                     9: {'header': _('Call Type'), 'field': 'call_type', 'width': 18},
-                    10: {'header': _('Call Date'), 'field': 'write_date', 'width': 18, 'type': 'datetime'},
-                    11: {'header': _('Done Date'), 'field': 'call_result_date', 'width': 18, 'type': 'datetime'},
-                    12: {'header': _('Called By'), 'field': 'user_id', 'width': 20, 'type': 'many2one'},
+                    10: {'header': _('Call Date'), 'field': 'write_date', 'width': 18},
+                    11: {'header': _('Done Date'), 'field': 'call_result_date', 'width': 18},
+                    12: {'header': _('Called By'), 'field': 'user_id', 'width': 20},
                     13: {'header': _('Call result'), 'field': 'call_result_id', 'width': 20, },
                     14: {'header': _('Comment'), 'field': 'feedback', 'width': 22},
-                    15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    16: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18},
+                    16: {'header': _('Department'), 'field': 'department_id', 'width': 22},
                 }
             })
-            # getting the department_id of each job of the application.
-            if report.job_ids:
-                departments = list(set(report.job_ids.mapped('department_id')))
-            else:
-                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
-            max_sections_count = 0
-            for department in departments:
-                if department.parent_id:
-                    department_list = []
-                    while department:
-                        department_list.append(department.id)
-                        department = department.parent_id
-                    if len(department_list) > max_sections_count:
-                        max_sections_count = len(department_list)
+
             tap_count = -1
             for tap in sheets:
                 for k, v in tap.items():
@@ -114,35 +97,46 @@ class RecActivityXslx(models.AbstractModel):
                     if k == 'Calls':
                         break
             last_row = max(sheets[tap_count]['Calls'])
+
             x = 0
             if report.cv_source:
                 x += 1
             sheet = sheets[x]['Calls']
-            if max_sections_count >= 1:
+            if report.job_ids:
+                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            else:
+                departments_query = '''select hr_applicant.id  from hr_applicant 
+                inner join hr_department on hr_department.id = hr_applicant.department_id
+                inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                 where mail_activity.id in %s and hr_department.parent_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.call_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
                                    'field': 'section_id',
                                    'width': 20,
-                                   'type': 'many2one', }})
+                                   }})
                 last_row = last_row + 1
             sheet.update({
-                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18,
-                               'type': 'amount'},
-                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
-                               'type': 'amount'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35},
+                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18},
+                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18},
                 last_row + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
                 last_row + 5: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
-                               'type': 'many2one'},
+                               },
+                #
             })
 
         if report.interviews:
-            applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
+
             sheets.append({
                 'Interviews': {
-                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20,
-                        'type': 'many2one'},
-                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20, 'type': 'many2one'},
+                    0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20
+                        },
+                    1: {'header': _('Recruiter BU'), 'field': 'generated_by_bu_id', 'width': 20},
                     2: {'header': _('Application Code'), 'field': 'application_code', 'width': 20},
                     3: {'header': _('Applicant Name'), 'field': 'partner_name', 'width': 20},
                     4: {'header': _('Email'), 'field': 'email_from', 'width': 20},
@@ -150,8 +144,8 @@ class RecActivityXslx(models.AbstractModel):
                     6: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                     7: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
                     8: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
-                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18, 'type': 'many2one'},
-                    10: {'header': _('Department'), 'field': 'department_id', 'width': 22, 'type': 'many2one'},
+                    9: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18},
+                    10: {'header': _('Department'), 'field': 'department_id', 'width': 22},
                 }
             })
             tap_count = -1
@@ -161,91 +155,90 @@ class RecActivityXslx(models.AbstractModel):
                     if k == 'Interviews':
                         break
             last_row = max(sheets[tap_count]['Interviews'])
-            # getting the department_id of each job of the application.
-            if report.job_ids:
-                departments = list(set(report.job_ids.mapped('department_id')))
-            else:
-                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
-            max_sections_count = 0
-            for department in departments:
-                if department.parent_id:
-                    department_list = []
-                    while department:
-                        department_list.append(department.id)
-                        department = department.parent_id
-                    if len(department_list) > max_sections_count:
-                        max_sections_count = len(department_list)
+
             x = 0
             if report.cv_source:
                 x += 1
             if report.calls:
                 x += 1
             sheet = sheets[x]['Interviews']
-            if max_sections_count >= 1:
+            if report.job_ids:
+                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            else:
+                departments_query = '''select hr_applicant.id  from hr_applicant 
+                inner join hr_department on hr_department.id = hr_applicant.department_id
+                inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                 where mail_activity.id in %s and hr_department.parent_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.interview_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
                                    'field': 'section_id',
                                    'width': 20,
-                                   'type': 'many2one', }})
+                                   }})
                 last_row = last_row + 1
             sheet.update({
-                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35, 'type': 'many2one'},
-                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18,
-                               'type': 'amount'},
-                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18,
-                               'type': 'amount'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 35},
+                last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18
+                               },
+                last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18
+                               },
                 last_row + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
                 last_row + 5: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
-                last_row + 6: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
-                               'type': 'many2one'},
-                last_row + 7: {'header': _('Created on'), 'field': 'create_date', 'width': 18},
+                last_row + 6: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20
+                               },
+                last_row + 7: {'header': _('Created on'), 'field': 'interview_create_date', 'width': 18},
                 last_row + 8: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
-                last_row + 9: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30, 'type': 'x2many'},
-                last_row + 10: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30,
-                                'type': 'many2one'},
-                last_row + 11: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20, },
-                last_row + 12: {'header': _('Interview Done Date 1'), 'field': 'interview_result_date', 'width': 20, },
+                last_row + 9: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30},
+                last_row + 10: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30
+                                },
+                last_row + 11: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20},
+                last_row + 12: {'header': _('Interview Done Date 1'), 'field': 'interview_result_date', 'width': 20},
                 last_row + 13: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
             last_row = max(sheets[tap_count]['Interviews'])
-            if applications:
-                max_interviews_count = max(
-                    applications.with_context({'active_test': False}).mapped('count_done_interviews')) - 1
-                if max_interviews_count:
-                    tap_count = -1
-                    for tap in sheets:
-                        for k, v in tap.items():
-                            tap_count += 1
-                            if k == 'Interviews':
-                                break
-                    for i in range(max_interviews_count):
-                        sheets[-1]['Interviews'].update(
-                            {
-                                last_row: {'header': _('Created on'),
-                                           'field': 'create_date',
+            max_interviews_count_query = 'select max(x.count) from( select count(res_id) from mail_activity where id in %s and activity_type_id = %s and active = %s group by res_id) x'
+            self.env.cr.execute(max_interviews_count_query, (tuple(report.interview_ids.ids), 5, False))
+            max_interviews_count = self.env.cr.dictfetchall()
+            max_interviews_count = max_interviews_count[0]['max'] - 1
+            if max_interviews_count:
+                tap_count = -1
+                for tap in sheets:
+                    for k, v in tap.items():
+                        tap_count += 1
+                        if k == 'Interviews':
+                            break
+                for i in range(max_interviews_count):
+                    sheets[-1]['Interviews'].update(
+                        {
+                            last_row: {'header': _('Created on'),
+                                       'field': 'interview_create_date',
+                                       'width': 18},
+                            last_row + 1: {'header': _('Interview date ' + str(i + 2)),
+                                           'field': 'interview_date' + str(i + 1),
                                            'width': 18},
-                                last_row + 1: {'header': _('Interview date ' + str(i + 2)),
-                                               'field': 'interview_date' + str(i + 1),
-                                               'width': 18},
-                                last_row + 2: {'header': _('Interviewers ' + str(i + 2)),
-                                               'field': 'interviewers' + str(i + 1),
-                                               'width': 30,
-                                               'type': 'x2many'},
-                                last_row + 3: {'header': _('Interview type ' + str(i + 2)),
-                                               'field': 'interview_type_id' + str(i + 1),
-                                               'width': 20, 'type': 'many2one'},
-                                last_row + 4: {'header': _('Interview result ' + str(i + 2)),
-                                               'field': 'interview_result' + str(i + 1),
-                                               'width': 20, },
-                                last_row + 5: {'header': _('Interview Done Date ' + str(i + 2)),
-                                               'field': 'interview_result_date' + str(i + 1),
-                                               'width': 20, },
-                                last_row + 6: {'header': _('Comment ' + str(i + 2)),
-                                               'field': 'interview_comment' + str(i + 1),
-                                               'width': 22},
-                            }
-                        )
-                        last_row = last_row + 7
+                            last_row + 2: {'header': _('Interviewers ' + str(i + 2)),
+                                           'field': 'interviewers' + str(i + 1),
+                                           'width': 30,
+                                           },
+                            last_row + 3: {'header': _('Interview type ' + str(i + 2)),
+                                           'field': 'interview_type_id' + str(i + 1),
+                                           'width': 20},
+                            last_row + 4: {'header': _('Interview result ' + str(i + 2)),
+                                           'field': 'interview_result' + str(i + 1),
+                                           'width': 20, },
+                            last_row + 5: {'header': _('Interview Done Date ' + str(i + 2)),
+                                           'field': 'interview_result_date' + str(i + 1),
+                                           'width': 20, },
+                            last_row + 6: {'header': _('Comment ' + str(i + 2)),
+                                           'field': 'interview_comment' + str(i + 1),
+                                           'width': 22},
+                        }
+                    )
+                    last_row = last_row + 7
 
         if report.offer:
             sheets.append({
@@ -257,9 +250,9 @@ class RecActivityXslx(models.AbstractModel):
                     4: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
                     5: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
                     6: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
-                    7: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    8: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
-                    9: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    7: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20},
+                    8: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20},
+                    9: {'header': _('Department'), 'field': 'department_id', 'width': 20},
                 }
             })
             tap_count = -1
@@ -269,20 +262,7 @@ class RecActivityXslx(models.AbstractModel):
                     if k == 'Offers':
                         break
             last_row = max(sheets[tap_count]['Offers'])
-            # getting the department_id of each job of the application.
-            if report.job_ids:
-                departments = list(set(report.job_ids.mapped('department_id')))
-            else:
-                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
-            max_sections_count = 0
-            for department in departments:
-                if department.parent_id:
-                    department_list = []
-                    while department:
-                        department_list.append(department.id)
-                        department = department.parent_id
-                    if len(department_list) > max_sections_count:
-                        max_sections_count = len(department_list)
+
             x = 0
             if report.cv_source:
                 x += 1
@@ -291,15 +271,26 @@ class RecActivityXslx(models.AbstractModel):
             if report.interviews:
                 x += 1
             sheet = sheets[x]['Offers']
-            if max_sections_count >= 1:
+            if report.job_ids:
+                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            else:
+                departments_query = '''select hr_applicant.id  from hr_applicant 
+                inner join hr_department on hr_department.id = hr_applicant.department_id
+                inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                 where hr_offer.id in %s and hr_department.parent_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.offer_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
                                    'field': 'section_id',
                                    'width': 20,
-                                   'type': 'many2one', }})
+                                   }})
                 last_row = last_row + 1
             sheet.update({
-                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20},
                 last_row + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
                 last_row + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
                 last_row + 4: {'header': _('Have Offer'), 'field': 'have_offer', 'width': 20, 'type': 'bool'},
@@ -309,9 +300,9 @@ class RecActivityXslx(models.AbstractModel):
                 last_row + 8: {'header': _('Comments'), 'field': 'comment', 'width': 40},
                 last_row + 9: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
                 last_row + 10: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40,
-                                'type': 'many2one'},
+                                },
                 last_row + 11: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
-                                'type': 'many2one'},
+                                },
             })
 
         if report.hired:
@@ -323,9 +314,9 @@ class RecActivityXslx(models.AbstractModel):
                     3: {'header': _('Mobile'), 'field': 'partner_mobile', 'width': 20},
                     4: {'header': _('FaceBook'), 'field': 'face_book', 'width': 20},
                     5: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
-                    6: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20, 'type': 'many2one'},
-                    7: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20, 'type': 'many2one'},
-                    8: {'header': _('Department'), 'field': 'department_id', 'width': 20, 'type': 'many2one'},
+                    6: {'header': _('Recruiter'), 'field': 'create_uid', 'width': 20},
+                    7: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 20},
+                    8: {'header': _('Department'), 'field': 'department_id', 'width': 20, },
                 }
             })
             tap_count = -1
@@ -335,20 +326,6 @@ class RecActivityXslx(models.AbstractModel):
                     if k == 'Hired':
                         break
             last_row = max(sheets[tap_count]['Hired'])
-            # getting the department_id of each job of the application.
-            if report.job_ids:
-                departments = list(set(report.job_ids.mapped('department_id')))
-            else:
-                departments = report.application_ids.sorted('create_date', reverse=True).mapped('department_id')
-            max_sections_count = 0
-            for department in departments:
-                if department.parent_id:
-                    department_list = []
-                    while department:
-                        department_list.append(department.id)
-                        department = department.parent_id
-                    if len(department_list) > max_sections_count:
-                        max_sections_count = len(department_list)
             x = 0
             if report.cv_source:
                 x += 1
@@ -359,16 +336,27 @@ class RecActivityXslx(models.AbstractModel):
             if report.offer:
                 x += 1
             sheet = sheets[x]['Hired']
+            if report.job_ids:
+                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+                departments = self.env.cr.dictfetchall()
+            else:
+                departments_query = '''select hr_applicant.id  from hr_applicant 
+                inner join hr_department on hr_department.id = hr_applicant.department_id
+                inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                 where hr_offer.id in %s and hr_department.parent_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.hired_ids.ids),))
+                departments = self.env.cr.dictfetchall()
 
-            if max_sections_count >= 1:
+            if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
                                    'field': 'section_id',
                                    'width': 20,
-                                   'type': 'many2one', }})
+                                   }})
                 last_row = last_row + 1
             sheet.update({
-                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
+                last_row + 1: {'header': _('Job position'), 'field': 'job_id', 'width': 20},
                 last_row + 2: {'header': _('Issue Date'), 'field': 'issue_date', 'width': 20},
                 last_row + 3: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
                 last_row + 4: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
@@ -377,9 +365,9 @@ class RecActivityXslx(models.AbstractModel):
                 last_row + 7: {'header': _('Comments'), 'field': 'comment', 'width': 40},
                 last_row + 8: {'header': _('Offer Type'), 'field': 'offer_type', 'width': 40},
                 last_row + 9: {'header': _('Generated By'), 'field': 'generated_by_bu_id', 'width': 40,
-                               'type': 'many2one'},
+                               },
                 last_row + 10: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
-                                'type': 'many2one'},
+                                },
             })
 
         return sheets
@@ -387,283 +375,362 @@ class RecActivityXslx(models.AbstractModel):
     def _generate_report_content(self, workbook, report):
         if report.cv_source:
             self.write_array_header('CV Source')
-            for app_line in report.application_ids.sorted('create_date', reverse=True):
-                self.write_line(CVSourceLineWrapper(app_line), 'CV Source')
+            cvs = '''select prt_user.name user_id , prt_creater.name source_resp , creater_bu.name creater_bu ,
+            app.name app_name , app.partner_mobile, app.partner_phone , app.email_from , app.have_assessment,
+            app.have_cv ,app.partner_name , app.face_book , app.linkedin, app.create_date,
+            source.name source , app.cv_matched , app.salary_expected , app.salary_current ,app.reason_of_rejection,
+            job.name job_name , job_bu.name bu_name ,dep.name dept ,parent_dep.name parent_dept
+            from hr_applicant app
+             left join  res_users usr on app.user_id = usr.id
+             left join res_partner  prt_user on usr.partner_id = prt_user.id
+             left join res_users creater on creater.id = app.create_uid
+             left join res_partner prt_creater on creater.partner_id = prt_creater.id
+             left join business_unit creater_bu on creater.business_unit_id = creater_bu.id
+             left join utm_source source on app.source_id = source.id
+             left join hr_job job on app.job_id = job.id 
+             left join  business_unit job_bu on job.business_unit_id = job_bu.id
+             left join hr_department dep on job.department_id = dep.id 
+             left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+             where app.id in %s order by  create_date desc'''
+            self._cr.execute(cvs, (tuple(report.application_ids.ids),))
+            cvs = self.env.cr.dictfetchall()
+
+            for cv in cvs:
+                self.write_line(CVSourceLineWrapper(cv), 'CV Source')
 
         if report.calls:
             self.write_array_header('Calls')
-            for call in report.call_ids.sorted('write_date', reverse=True):
-                self.write_line(CallLineWrapper(call), 'Calls')
+            calls = 'select * from mail_activity where id in %s order by  write_date desc'
+            self._cr.execute(calls, (tuple(report.call_ids.ids),))
+            calls = self.env.cr.dictfetchall()
+            for i in range(len(calls)):
+                call_activity_query = '''
+                    select app.name app_name ,app.partner_phone,app.partner_mobile ,
+                     app.email_from,app.face_book,app.partner_name,
+                    app.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
+                    job.name job_name,job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept, prt_uid_name.name source_resp ,
+                     MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
+                    from mail_activity MA
+                    inner join mail_activity_type MAT
+                    on MAT.id = MA.activity_type_id 
+                    inner join res_users uid 
+                    on  MA.user_id = uid.id
+                    inner join res_partner prt 
+                    on  uid.partner_id = prt.id
+                    left join  business_unit cr_bu
+                    on uid.business_unit_id = cr_bu.id
+                    left join hr_applicant app
+                    on app.id = MA.res_id
+                    left join hr_job job on app.job_id = job.id 
+                    left join  business_unit job_bu on job.business_unit_id = job_bu.id
+                    left join hr_department dep on job.department_id = dep.id 
+                    left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+                    left join res_users source_resp on source_resp.id = app.create_uid
+                    left join res_partner prt_uid_name on source_resp.partner_id = prt_uid_name.id
+                    where MA.call_result_id is not null  and MA.id = %s
+                '''
+                self._cr.execute(call_activity_query, (calls[i]['id'],))
+                call_data = self.env.cr.dictfetchall()
+                self.write_line(CallLineWrapper(call_data), 'Calls')
 
         if report.interviews:
             self.write_array_header('Interviews')
-            applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
-            for application in applications.sorted('write_date', reverse=True):
-                self.write_line(InterviewsPerApplicationWrapper(application), 'Interviews')
+            # applications = self.env['hr.applicant'].browse(list(set(report.interview_ids.mapped('res_id'))))
+            # x=len(applications)
+            applications = '''select distinct app.id ,app.write_date 
+                            from mail_activity ma 
+                           inner join hr_applicant app on app.id = ma.res_id where ma.id in %s 
+                           order by  app.write_date desc'''
 
+            self._cr.execute(applications, (tuple(report.interview_ids.ids),))
+            applications = self.env.cr.dictfetchall()
+            # y = len(applications)
+            for i in range(len(applications)):
+                interviews_activity_query = '''
+                select  app.name app_name, app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
+                app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
+                parent_dep.name parent_dept, dep.name dept , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
+                app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
+                it.name, CE.display_corrected_start_date ,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
+                from mail_activity MA
+
+                inner join calendar_event CE on MA.calendar_event_id = CE.id
+
+
+                inner join interview_type it  on  CE.interview_type_id = it.id  
+
+
+                left join calendar_event_res_partner_rel CR on CE.id = CR.calendar_event_id
+
+
+                left join res_partner res on  CR.res_partner_id = res.id
+
+
+                inner join hr_applicant app on app.id = MA.res_id
+
+
+                left join  res_users usr on app.user_id = usr.id
+
+
+                inner join res_partner  on usr.partner_id = res_partner.id
+
+
+                left join res_users uid on uid.id = app.create_uid
+
+                left join res_partner prt_uid_name on uid.partner_id = prt_uid_name.id
+
+                 left join business_unit cr_bu on uid.business_unit_id = cr_bu.id
+
+                left join hr_job job on app.job_id = job.id 
+
+		        left join  business_unit job_bu on job.business_unit_id = job_bu.id
+                left join hr_department dep on job.department_id = dep.id 
+
+		        left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+
+                where MA.res_id = %s
+
+                group by MA.id, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
+                CE.display_corrected_start_date, it.name ,
+                app.name ,app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
+                app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name,job_bu.name ,
+                parent_dep.name ,dep.name, job.name, cr_bu.name , res_partner.name , 
+                app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched
+                order by  MA.write_date asc
+                '''
+                self._cr.execute(interviews_activity_query, (applications[i]['id'],))
+                interviews_data = self.env.cr.dictfetchall()
+                if interviews_data:
+                    self.write_line(InterviewsPerApplicationWrapper(interviews_data), 'Interviews')
+        if report.offer or report.hired:
+            offer_query = '''
+                            select  app.name app_name , app.partner_name,app.email_from, 
+                            app.partner_mobile, app.face_book , app.linkedin ,app.have_assessment,
+                            prt_creater.name create_uid , offer_bu.name bu_name,source_prt.name source_resp ,
+                            job.name job_name, dep.name dept ,parent_dep.name parent_dept,
+                            offer.issue_date, offer.total_package , offer.have_offer,
+                            offer.total_salary ,offer.offer_type , offer.hiring_date ,
+                            offer.state , offer.comment ,offer_gen_bu.name gen_bu_name
+                            from hr_offer offer
+                            left join hr_applicant app on app.id = offer.application_id 
+                            left join res_users source_usr on source_usr.id = app.create_uid
+            		        left join res_partner source_prt on source_usr.partner_id = source_prt.id
+
+                            left join res_users creater on creater.id = offer.create_uid
+            		        left join res_partner prt_creater on creater.partner_id = prt_creater.id
+            		        left join  business_unit offer_bu on offer.business_unit_id  = offer_bu.id
+            		        left join  business_unit offer_gen_bu on offer.generated_by_bu_id = offer_gen_bu.id
+            		        left join hr_job job on offer.job_id = job.id
+                            left join hr_department dep on job.department_id = dep.id 
+                            left join hr_department parent_dep on dep.parent_id = parent_dep.id
+                            where offer.id in %s order by issue_date desc
+                        '''
         if report.offer:
             self.write_array_header('Offers')
-            for offer in report.offer_ids.sorted(lambda o: (o.issue_date, o.create_date), reverse=True):
+            self.env.cr.execute(offer_query, (tuple(report.offer_ids.ids),))
+            offers = self.env.cr.dictfetchall()
+            for offer in offers:
                 self.write_line(offerLineWrapper(offer), 'Offers')
 
         if report.hired:
             self.write_array_header('Hired')
-            for hired in report.hired_ids.sorted(lambda o: (o.issue_date, o.create_date), reverse=True):
+            self.env.cr.execute(offer_query, (tuple(report.hired_ids.ids),))
+            offers = self.env.cr.dictfetchall()
+            for hired in offers:
                 self.write_line(offerLineWrapper(hired), 'Hired')
 
 
 # noinspection PyProtectedMember
 class CVSourceLineWrapper:
     def __init__(self, cv_source):
-        self.user_id = cv_source.user_id
-        self.generated_by_bu_id = cv_source.create_uid.business_unit_id
-        self.application_code = cv_source.name
-        self.partner_name = cv_source.partner_name
-        self.have_cv = cv_source.have_cv
-        self.have_assessment = cv_source.have_assessment
-        self.email_from = cv_source.email_from
-        self.partner_phone = cv_source.partner_phone
-        self.partner_mobile = cv_source.partner_mobile
-        self.face_book = cv_source.face_book
-        self.linkedin = cv_source.linkedin
-        self.source_id = cv_source.source_id
-        self.source_resp = cv_source.source_resp
-        self.create_date = cv_source.create_date
-        self.business_unit_id = cv_source.job_id.business_unit_id
-        if cv_source.job_id.department_id.parent_id:
-            department = cv_source.job_id.department_id
-            department_list = []
-            while department:
-                department_list.append(department)
-                department = department.parent_id
-            department_list.reverse()
-            # self.department_list = list(filter(None, department_list))
-            self.department_id = department_list[0]
-            self.section_id = department_list[1]
-            setattr(self, 'section_id', department_list[1])
-            # if len(department_list) > 2:
-            #     for i in range(len(department_list)):
-            #         if i <= 1:
-            #             continue
-            #         setattr(self, 'section_id' + str(i), department_list[i])
-
+        self.user_id = cv_source['user_id']
+        self.generated_by_bu_id = cv_source['creater_bu']
+        self.application_code = cv_source['app_name']
+        self.partner_name = cv_source['partner_name']
+        self.have_cv = cv_source['have_cv']
+        self.have_assessment = cv_source['have_assessment']
+        self.email_from = cv_source['email_from']
+        self.partner_phone = cv_source['partner_phone']
+        self.partner_mobile = cv_source['partner_mobile']
+        self.face_book = cv_source['face_book']
+        self.linkedin = cv_source['linkedin']
+        self.source_id = cv_source['source']
+        self.source_resp = cv_source['source_resp']
+        self.create_date = cv_source['create_date']
+        self.business_unit_id = cv_source['bu_name']
+        if not cv_source['parent_dept']:
+            self.department_id = cv_source['dept']
         else:
-            self.department_id = cv_source.job_id.department_id
+            self.section_id = cv_source['dept']
+            self.department_id = cv_source['parent_dept']
+        self.job_id = cv_source['job_name']
+        if cv_source['salary_expected']:
+            self.salary_expected = cv_source['salary_expected']
+        else:
+            self.salary_expected = '0.0'
 
-        self.job_id = cv_source.job_id
-        self.salary_expected = cv_source.salary_expected
-        self.salary_current = cv_source.salary_current
-        self.cv_matched = cv_source.cv_matched
-        self.reason_of_rejection = cv_source.reason_of_rejection
-        self._context = cv_source._context
-        self.env = cv_source.env
+        if cv_source['salary_current']:
+            self.salary_current = cv_source['salary_current']
+        else:
+            self.salary_current = '0.0'
+        self.cv_matched = cv_source['cv_matched']
+        self.reason_of_rejection = cv_source['reason_of_rejection']
 
 
 # noinspection PyProtectedMember
 class CallLineWrapper:
     def __init__(self, call):
-        applicant = call.env[call.res_model].browse(call.res_id)
-        self.user_id = call.user_id
-        self.generated_by_bu_id = call.real_create_uid.business_unit_id
-        self.application_code = applicant.name
-        self.partner_name = applicant.partner_name
-        self.email_from = applicant.email_from
-        self.partner_phone = applicant.partner_phone
-        self.partner_mobile = applicant.partner_mobile
-        self.face_book = applicant.face_book
-        self.linkedin = applicant.linkedin
-        self.call_type = call.activity_type_id.name
-        self.write_date = call.write_date
-        self.call_result_date = call.call_result_date
-        self.user_id = call.user_id
-        self.call_result_id = call.call_result_id
-        self.feedback = re.sub(r"<.*?>", '', call.feedback)
-        self.business_unit_id = applicant.department_id.business_unit_id
-        if applicant.job_id.department_id.parent_id:
-            department = applicant.job_id.department_id
-            department_list = []
-            while department:
-                department_list.append(department)
-                department = department.parent_id
-            department_list.reverse()
-            # self.department_list = list(filter(None, department_list))
-            self.department_id = department_list[0]
-            self.section_id = department_list[1]
-            setattr(self, 'section_id', department_list[1])
-
-            # if len(department_list) > 2:
-            #     for i in range(len(department_list)):
-            #         if i <= 1:
-            #             continue
-            #         setattr(self, 'section_id' + str(i), department_list[i])
-
+        self.user_id = call[0]['create_uid']
+        self.generated_by_bu_id = call[0]['cr_bu']
+        self.application_code = call[0]['app_name']
+        self.partner_name = call[0]['partner_name']
+        self.email_from = call[0]['email_from']
+        self.partner_phone = call[0]['partner_phone']
+        self.partner_mobile = call[0]['partner_mobile']
+        self.face_book = call[0]['face_book']
+        self.linkedin = call[0]['linkedin']
+        self.call_type = call[0]['name']
+        self.write_date = call[0]['write_date']
+        self.call_result_date = call[0]['call_result_date']
+        self.user_id = call[0]['create_uid']
+        self.call_result_id = call[0]['call_result_id']
+        self.feedback = re.sub(r"<.*?>", '', call[0]['feedback'])
+        self.business_unit_id = call[0]['job_bu']
+        if not call[0]['parent_dept']:
+            self.department_id = call[0]['dept']
         else:
-            self.department_id = applicant.job_id.department_id
+            self.section_id = call[0]['dept']
+            self.department_id = call[0]['parent_dept']
 
-        self.job_id = applicant.job_id
-        self.salary_expected = applicant.salary_expected
-        self.salary_current = applicant.salary_current
-        self.cv_matched = applicant.cv_matched
-        self.source_resp = applicant.source_resp
-        self._context = call._context
-        self.env = call.env
-
-
-# noinspection PyProtectedMember
-class InterviewLineWrapper:
-    def __init__(self, interview):
-        applicant = interview.env[interview.res_model].browse(interview.res_id)
-        self.user_id = interview.user_id
-        self.application_code = applicant.name
-        self.partner_name = applicant.partner_name
-        self.email_from = applicant.email_from
-        self.partner_phone = applicant.partner_phone
-        self.partner_mobile = applicant.partner_mobile
-        self.start_date = interview.calendar_event_id.start
-        self.partner_ids = interview.calendar_event_id.partner_ids
-        self.interview_type_id = interview.calendar_event_id.interview_type_id
-        self.interview_result = interview.interview_result
-        self.feedback = re.sub(r"<.*?>", '', interview.feedback)
-        self.business_unit_id = applicant.department_id.business_unit_id
-
-        if applicant.job_id.department_id.parent_id:
-            department = applicant.job_id.department_id
-            department_list = []
-            while department:
-                department_list.append(department)
-                department = department.parent_id
-            department_list.reverse()
-            # self.department_list = list(filter(None, department_list))
-            self.department_id = department_list[0]
-            self.section_id = department_list[1]
-            setattr(self, 'section_id', department_list[1])
-            # if len(department_list) > 2:
-            #     for i in range(len(department_list)):
-            #         if i <= 1:
-            #             continue
-            #         setattr(self, 'section_id' + str(i), department_list[i])
-
+        self.job_id = call[0]['job_name']
+        if call[0]['salary_expected']:
+            self.salary_expected = str(call[0]['salary_expected'])
         else:
-            self.department_id = applicant.job_id.department_id
+            self.salary_expected = '0.0'
+        if call[0]['salary_current']:
+            self.salary_current = str(call[0]['salary_current'])
+        else:
+            self.salary_current = '0.0'
 
-        self.job_id = applicant.job_id
-        self.salary_expected = applicant.salary_expected
-        self.salary_current = applicant.salary_current
-        self.cv_matched = applicant.cv_matched
-        self.source_resp = applicant.source_resp
-        self._context = interview._context
-        self.env = interview.env
+        self.cv_matched = call[0]['cv_matched']
+        self.source_resp = call[0]['source_resp']
 
 
 # noinspection PyUnresolvedReferences,PyMissingConstructor,PyProtectedMember
 class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
-    def __init__(self, application):
-        self.user_id = application.user_id
-        self.generated_by_bu_id = application.create_uid.business_unit_id
-        self.application_code = application.name
-        self.partner_name = application.partner_name
-        self.email_from = application.email_from
-        self.partner_phone = application.partner_phone
-        self.partner_mobile = application.partner_mobile
-        self.face_book = application.face_book
-        self.linkedin = application.linkedin
-        interviews = self._get_activity('interview', application).sorted('write_date', reverse=False)
-        first_interview = interviews[0] if interviews else False
-        interview_feedback = first_interview.feedback if first_interview else False
-        self.create_date = first_interview.calendar_event_id.create_date if first_interview else False
-        self.interview_date = first_interview.calendar_event_id.display_corrected_start_date if first_interview else False
-        self.interviewers = first_interview.calendar_event_id.partner_ids if first_interview else False
-        self.interview_type_id = first_interview.calendar_event_id.interview_type_id if first_interview else False
-        self.interview_result = first_interview.interview_result if first_interview else False
-        self.interview_result_date = first_interview.interview_result_date if first_interview else False
-        self.interview_comment = re.sub(r"<.*?>", '', interview_feedback if interview_feedback else '')
-        for i in range(len(interviews)):
+    def __init__(self, interviews_data):
+        self.user_id = interviews_data[0]['prt_name']
+        self.generated_by_bu_id = interviews_data[0]['cr_bu']
+        self.application_code = interviews_data[0]['app_name']
+        self.partner_name = interviews_data[0]['partner_name']
+        self.email_from = interviews_data[0]['email_from']
+        self.partner_phone = interviews_data[0]['partner_phone']
+        self.partner_mobile = interviews_data[0]['partner_mobile']
+        self.face_book = interviews_data[0]['face_book']
+        self.linkedin = interviews_data[0]['linkedin']
+
+        self.interview_type_id = interviews_data[0]['name'] if interviews_data[0]['name'] else False
+        self.interviewers = interviews_data[0]['string_agg'] if interviews_data[0]['string_agg'] else False
+        self.interview_create_date = interviews_data[0]['create_on'] if interviews_data[0]['create_on'] else False
+        self.interview_date = interviews_data[0]['display_corrected_start_date'] if interviews_data[0][
+            'display_corrected_start_date'] else False
+        self.interview_result = interviews_data[0]['interview_result'] if interviews_data[0][
+            'interview_result'] else False
+        self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0][
+            'interview_result_date'] else False
+        self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0][
+            'interview_result_date'] else False
+        self.interview_comment = re.sub(r"<.*?>", '', interviews_data[0]['feedback']) if interviews_data[0][
+            'feedback'] else False
+
+        for i in range(len(interviews_data)):
             if i == 0:
                 continue
-            setattr(self, 'create_date', interviews[i].calendar_event_id.create_date)
-            setattr(self, 'interview_date' + str(i), interviews[i].calendar_event_id.display_corrected_start_date)
-            setattr(self, 'interviewers' + str(i), interviews[i].calendar_event_id.partner_ids)
-            setattr(self, 'interview_type_id' + str(i), interviews[i].calendar_event_id.interview_type_id)
-            setattr(self, 'interview_result' + str(i), interviews[i].interview_result)
-            setattr(self, 'interview_result_date' + str(i), interviews[i].interview_result_date)
+            setattr(self, 'interview_create_date' + str(i), interviews_data[i]['create_on'])
+            setattr(self, 'interview_date' + str(i), interviews_data[i]['display_corrected_start_date'])
+            setattr(self, 'interviewers' + str(i), interviews_data[i]['string_agg'])
+            setattr(self, 'interview_result' + str(i), interviews_data[i]['interview_result'])
+            setattr(self, 'interview_result_date' + str(i), interviews_data[i]['interview_result_date'])
+            setattr(self, 'interview_type_id' + str(i), interviews_data[i]['name'])
             setattr(self, 'interview_comment' + str(i),
-                    re.sub(r"<.*?>", '', interviews[i].feedback if interviews[i].feedback else ''))
-        self.business_unit_id = application.department_id.business_unit_id
+                    re.sub(r"<.*?>", '', interviews_data[i]['feedback'] if interviews_data[i]['feedback'] else ''))
 
-        if application.job_id.department_id.parent_id:
-            department = application.job_id.department_id
-            department_list = []
-            while department:
-                department_list.append(department)
-                department = department.parent_id
-            department_list.reverse()
-            # self.department_list = list(filter(None, department_list))
-            self.department_id = department_list[0]
-            self.section_id = department_list[1]
-            setattr(self, 'section_id', department_list[1])
-            # if len(department_list) > 2:
-            #     for i in range(len(department_list)):
-            #         if i <= 1:
-            #             continue
-            #         setattr(self, 'section_id' + str(i), department_list[i])
-
+        self.business_unit_id = interviews_data[0]['job_bu']
+        if not interviews_data[0]['parent_dept']:
+            self.department_id = interviews_data[0]['dept']
         else:
-            self.department_id = application.job_id.department_id
+            self.section_id = interviews_data[0]['dept']
+            self.department_id = interviews_data[0]['parent_dept']
+        self.job_id = interviews_data[0]['job_name']
+        self.salary_expected = str(interviews_data[0]['salary_expected'])
+        self.salary_current = str(interviews_data[0]['salary_current'])
+        self.cv_matched = interviews_data[0]['cv_matched']
+        self.have_assessment = interviews_data[0]['have_assessment']
+        self.source_resp = interviews_data[0]['creater']
 
-        self.job_id = application.job_id
-        self.salary_expected = application.salary_expected
-        self.salary_current = application.salary_current
-        self.cv_matched = application.cv_matched
-        self.have_assessment = application.have_assessment
-        self.source_resp = application.source_resp
-        self._context = application._context
-        self.env = application.env
+    # def _get_activity(self, activity, data):
+    #     """
+    #     This function get all the activity lines from the mail.activity model
+    #     :param activity: 'call', 'interview'
+    #     :param data:
+    #     :return:
+    #     """
+    #     activity_type = ""
+    #     if activity == 'call':
+    #         if data.with_context({'active_test': False}).activity_ids.filtered(
+    #                 lambda r: r.activity_type_id.name == "Call"):
+    #             activity_type = data.env.ref('mail.mail_activity_data_call')
+    #         if data.with_context({'active_test': False}).activity_ids.filtered(
+    #                 lambda r: r.activity_type_id.name == "LinkedIn Call"):
+    #             activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_linkedIn_call')
+    #         if data.with_context({'active_test': False}).activity_ids.filtered(
+    #                 lambda r: r.activity_type_id.name == "Facebook Call"):
+    #             activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_facebook_call')
+    #     if activity == 'interview':
+    #         activity_type = data.env.ref('recruitment_ads.mail_activity_type_data_interview')
+    #     return data.with_context({'active_test': False}).activity_ids.filtered(
+    #         lambda a: a.activity_type_id == activity_type and not a.active)
 
 
 # noinspection PyProtectedMember
 class offerLineWrapper:
     def __init__(self, offer):
-        self.application_code = offer.application_id.name
-        self.applicant_name = offer.applicant_name
-        self.email_from = offer.application_id.email_from
-        self.partner_mobile = offer.application_id.partner_mobile
-        self.face_book = offer.application_id.face_book
-        self.linkedin = offer.application_id.linkedin
-        self.have_assessment = offer.application_id.have_assessment
-        self.create_uid = offer.create_uid
-        self.business_unit_id = offer.business_unit_id
-
-        if offer.job_id.department_id.parent_id:
-            department = offer.job_id.department_id
-            department_list = []
-            while department:
-                department_list.append(department)
-                department = department.parent_id
-            department_list.reverse()
-            # self.department_list = list(filter(None, department_list))
-            self.department_id = department_list[0]
-            self.section_id = department_list[1]
-            setattr(self, 'section_id', department_list[1])
-            # if len(department_list) > 2:
-            #     for i in range(len(department_list)):
-            #         if i <= 1:
-            #             continue
-            #         setattr(self, 'section_id' + str(i), department_list[i])
-
+        self.application_code = offer['app_name']
+        self.applicant_name = offer['partner_name']
+        self.email_from = offer['email_from']
+        self.partner_mobile = offer['partner_mobile']
+        self.face_book = offer['face_book']
+        self.linkedin = offer['linkedin']
+        self.have_assessment = offer['have_assessment']
+        self.create_uid = offer['create_uid']
+        self.business_unit_id = offer['bu_name']
+        if not offer['parent_dept']:
+            self.department_id = offer['dept']
         else:
-            self.department_id = offer.job_id.department_id
+            self.section_id = offer['dept']
+            self.department_id = offer['parent_dept']
 
-        self.job_id = offer.job_id
-        self.issue_date = offer.issue_date
-        self.total_package = offer.total_package
-        self.have_offer = offer.have_offer
-        self.total_salary = offer.total_salary
-        self.generated_by_bu_id = offer.generated_by_bu_id
-        self.state = offer.state
-        self.hiring_date = offer.hiring_date
-        self.comment = offer.comment
+        self.job_id = offer['job_name']
+
+        self.issue_date = offer['issue_date']
+
+        if offer['total_package']:
+            self.total_package = offer['total_package']
+        else:
+            self.total_package = '0.0'
+
+        if offer['total_salary']:
+            self.total_salary = offer['total_salary']
+        else:
+            self.total_salary = '0.0'
+        self.have_offer = offer['have_offer']
+        self.generated_by_bu_id = offer['gen_bu_name']
+        self.state = offer['state']
+        self.hiring_date = offer['hiring_date']
+        self.comment = offer['comment']
         offer_dict = {'normal_offer': 'Normal Offer', 'nursing_offer': 'Nursing Offer'}
-        self.offer_type = offer_dict.get(offer.offer_type, '')
-        self._context = offer._context
-        self.env = offer.env
-        self.source_resp = offer.application_id.source_resp
+        if offer['offer_type'] == 'normal_offer':
+            self.offer_type = 'Normal Offer'
+        else:
+            self.offer_type = 'Nursing Offer'
+        self.source_resp = offer['source_resp']
