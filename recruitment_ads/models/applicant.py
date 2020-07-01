@@ -157,7 +157,7 @@ class Applicant(models.Model):
             return "not manager"
 
     @api.multi
-    @api.depends('attachment_ids.res_id')
+    @api.depends('attachment_ids.res_id', 'attachment_ids.attachment_type')
     def _get_attachment(self):
         for record in self:
             cv = self.env['ir.attachment'].search(
