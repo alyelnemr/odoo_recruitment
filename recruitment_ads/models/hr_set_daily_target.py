@@ -149,6 +149,7 @@ class HRSetDailyTarget(models.Model):
                         'department_id': job.department_id.id,
                         'section_id': job.section_id.id,
                         'job_id': job.job_title_id.id,
+                        'job_position_id': job.id,
                         'level_id': job.job_level_id.id,
                         'weight': job.job_level_id.weight or 0,
                         'cvs': job.job_level_id.cv or 0,
@@ -189,6 +190,8 @@ class HRSetDailyTargetLine(models.Model):
     section_id = fields.Many2one('hr.department', string='Section', readonly=True,
                                  track_visibility='always')
     job_id = fields.Many2one('job.title', string='Position', required=True, readonly=True, track_visibility='always')
+    job_position_id = fields.Many2one('hr.job', string='Position from target', required=True, readonly=True,
+                                      track_visibility='always')
     level_id = fields.Many2one('job.level', string='Level', track_visibility='always')
     weight = fields.Integer(string="Weight", track_visibility='always', default=0)
     cvs = fields.Integer(string="Target Application", track_visibility='always', default=0)
@@ -215,3 +218,15 @@ class HRSetDailyTargetLine(models.Model):
     def send_mail_set_daily_target(self):
         template = self.env.ref('recruitment_ads.set_daily_target_line_email_template')
         self.env['mail.template'].browse(template.id).send_mail(self.id)
+
+    def get_mail_url(self):
+        self.ensure_one()
+        res = self.env['generate.daily.target.report.wizard'].create({
+            'date_from': self.name,
+            'date_to': self.name,
+            'job_ids': [(6, 0, [self.job_position_id.id])],
+            'recruiter_ids': [(6, 0, [self.recruiter_id.id])]
+        })
+        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
+                                                              'generate_daily_target_report_wizard_action')
+        return 'web#action=' + str(action.get('id', False)) + '&id=' + str(res.id)
