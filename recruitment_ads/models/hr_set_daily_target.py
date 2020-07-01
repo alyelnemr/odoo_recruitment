@@ -227,4 +227,6 @@ class HRSetDailyTargetLine(models.Model):
             'job_ids': [(6, 0, [self.job_position_id.id])],
             'recruiter_ids': [(6, 0, [self.recruiter_id.id])]
         })
-        return 'mail/view?model=generate.daily.target.report.wizard&res_id=' + str(res.id)
+        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
+                                                              'generate_daily_target_report_wizard_action')
+        return 'web#action=' + str(action.get('id')) + '&id=' + str(res.id)
