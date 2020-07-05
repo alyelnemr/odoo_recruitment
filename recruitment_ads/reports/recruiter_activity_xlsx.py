@@ -46,9 +46,12 @@ class RecActivityXslx(models.AbstractModel):
                 self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                departments_query = 'select hr_applicant.id  from hr_applicant inner join hr_department on hr_department.id = hr_applicant.department_id where hr_applicant.id in %s and hr_department.parent_id is not null '
-                self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
-                departments = self.env.cr.dictfetchall()
+                if report.application_ids.ids :
+                    departments_query = 'select hr_applicant.id  from hr_applicant inner join hr_department on hr_department.id = hr_applicant.department_id where hr_applicant.id in %s and hr_department.parent_id is not null '
+                    self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
+                    departments = self.env.cr.dictfetchall()
+                else:
+                    departments = False
             if departments:
                 sheets[0]['CV Source'].update({
                     last_row + 1: {'header': _('Section'),
@@ -107,12 +110,15 @@ class RecActivityXslx(models.AbstractModel):
                 self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                departments_query = '''select hr_applicant.id  from hr_applicant 
-                inner join hr_department on hr_department.id = hr_applicant.department_id
-                inner join mail_activity on  mail_activity.res_id = hr_applicant.id
-                 where mail_activity.id in %s and hr_department.parent_id is not null '''
-                self.env.cr.execute(departments_query, (tuple(report.call_ids.ids),))
-                departments = self.env.cr.dictfetchall()
+                if report.call_ids.ids :
+                    departments_query = '''select hr_applicant.id  from hr_applicant 
+                    inner join hr_department on hr_department.id = hr_applicant.department_id
+                    inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                     where mail_activity.id in %s and hr_department.parent_id is not null '''
+                    self.env.cr.execute(departments_query, (tuple(report.call_ids.ids),))
+                    departments = self.env.cr.dictfetchall()
+                else:
+                    departments = False
             if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
@@ -167,12 +173,14 @@ class RecActivityXslx(models.AbstractModel):
                 self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                departments_query = '''select hr_applicant.id  from hr_applicant 
-                inner join hr_department on hr_department.id = hr_applicant.department_id
-                inner join mail_activity on  mail_activity.res_id = hr_applicant.id
-                 where mail_activity.id in %s and hr_department.parent_id is not null '''
-                self.env.cr.execute(departments_query, (tuple(report.interview_ids.ids),))
-                departments = self.env.cr.dictfetchall()
+                if report.interview_ids.ids:
+                    departments_query = '''select hr_applicant.id  from hr_applicant 
+                    inner join hr_department on hr_department.id = hr_applicant.department_id
+                    inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                     where mail_activity.id in %s and hr_department.parent_id is not null '''
+                    self.env.cr.execute(departments_query, (tuple(report.interview_ids.ids),))
+                    departments = self.env.cr.dictfetchall()
+                else:departments = False
             if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
@@ -200,10 +208,12 @@ class RecActivityXslx(models.AbstractModel):
                 last_row + 13: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
             last_row = max(sheets[tap_count]['Interviews'])
-            max_interviews_count_query = 'select max(x.count) from( select count(res_id) from mail_activity where id in %s and activity_type_id = %s and active = %s group by res_id) x'
-            self.env.cr.execute(max_interviews_count_query, (tuple(report.interview_ids.ids), 5, False))
-            max_interviews_count = self.env.cr.dictfetchall()
-            max_interviews_count = max_interviews_count[0]['max'] - 1
+            max_interviews_count = False
+            if report.interview_ids.ids:
+                max_interviews_count_query = 'select max(x.count) from( select count(res_id) from mail_activity where id in %s and activity_type_id = %s and active = %s group by res_id) x'
+                self.env.cr.execute(max_interviews_count_query, (tuple(report.interview_ids.ids), 5, False))
+                max_interviews_count = self.env.cr.dictfetchall()
+                max_interviews_count = max_interviews_count[0]['max'] - 1
             if max_interviews_count:
                 tap_count = -1
                 for tap in sheets:
@@ -276,12 +286,15 @@ class RecActivityXslx(models.AbstractModel):
                 self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                departments_query = '''select hr_applicant.id  from hr_applicant 
-                inner join hr_department on hr_department.id = hr_applicant.department_id
-                inner join hr_offer on  hr_offer.application_id= hr_applicant.id
-                 where hr_offer.id in %s and hr_department.parent_id is not null '''
-                self.env.cr.execute(departments_query, (tuple(report.offer_ids.ids),))
-                departments = self.env.cr.dictfetchall()
+                if report.offer_ids.ids:
+                    departments_query = '''select hr_applicant.id  from hr_applicant 
+                    inner join hr_department on hr_department.id = hr_applicant.department_id
+                    inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                     where hr_offer.id in %s and hr_department.parent_id is not null '''
+                    self.env.cr.execute(departments_query, (tuple(report.offer_ids.ids),))
+                    departments = self.env.cr.dictfetchall()
+                else:
+                    departments = False
             if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
@@ -341,12 +354,15 @@ class RecActivityXslx(models.AbstractModel):
                 self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                departments_query = '''select hr_applicant.id  from hr_applicant 
-                inner join hr_department on hr_department.id = hr_applicant.department_id
-                inner join hr_offer on  hr_offer.application_id= hr_applicant.id
-                 where hr_offer.id in %s and hr_department.parent_id is not null '''
-                self.env.cr.execute(departments_query, (tuple(report.hired_ids.ids),))
-                departments = self.env.cr.dictfetchall()
+                if report.hired_ids.ids:
+                    departments_query = '''select hr_applicant.id  from hr_applicant 
+                    inner join hr_department on hr_department.id = hr_applicant.department_id
+                    inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                     where hr_offer.id in %s and hr_department.parent_id is not null '''
+                    self.env.cr.execute(departments_query, (tuple(report.hired_ids.ids),))
+                    departments = self.env.cr.dictfetchall()
+                else:
+                    departments = False
 
             if departments:
                 sheet.update({
@@ -392,46 +408,48 @@ class RecActivityXslx(models.AbstractModel):
              left join hr_department dep on job.department_id = dep.id 
              left join hr_department parent_dep on dep.parent_id = parent_dep.id 
              where app.id in %s order by  create_date desc'''
-            self._cr.execute(cvs, (tuple(report.application_ids.ids),))
-            cvs = self.env.cr.dictfetchall()
+            if report.application_ids.ids:
+                self._cr.execute(cvs, (tuple(report.application_ids.ids),))
+                cvs = self.env.cr.dictfetchall()
 
-            for cv in cvs:
-                self.write_line(CVSourceLineWrapper(cv), 'CV Source')
+                for cv in cvs:
+                    self.write_line(CVSourceLineWrapper(cv), 'CV Source')
 
         if report.calls:
             self.write_array_header('Calls')
             calls = 'select * from mail_activity where id in %s order by  write_date desc'
-            self._cr.execute(calls, (tuple(report.call_ids.ids),))
-            calls = self.env.cr.dictfetchall()
-            for i in range(len(calls)):
-                call_activity_query = '''
-                    select app.name app_name ,app.partner_phone,app.partner_mobile ,
-                     app.email_from,app.face_book,app.partner_name,
-                    app.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
-                    job.name job_name,job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept, prt_uid_name.name source_resp ,
-                     MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
-                    from mail_activity MA
-                    inner join mail_activity_type MAT
-                    on MAT.id = MA.activity_type_id 
-                    inner join res_users uid 
-                    on  MA.user_id = uid.id
-                    inner join res_partner prt 
-                    on  uid.partner_id = prt.id
-                    left join  business_unit cr_bu
-                    on uid.business_unit_id = cr_bu.id
-                    left join hr_applicant app
-                    on app.id = MA.res_id
-                    left join hr_job job on app.job_id = job.id 
-                    left join  business_unit job_bu on job.business_unit_id = job_bu.id
-                    left join hr_department dep on job.department_id = dep.id 
-                    left join hr_department parent_dep on dep.parent_id = parent_dep.id 
-                    left join res_users source_resp on source_resp.id = app.create_uid
-                    left join res_partner prt_uid_name on source_resp.partner_id = prt_uid_name.id
-                    where MA.call_result_id is not null  and MA.id = %s
-                '''
-                self._cr.execute(call_activity_query, (calls[i]['id'],))
-                call_data = self.env.cr.dictfetchall()
-                self.write_line(CallLineWrapper(call_data), 'Calls')
+            if report.call_ids.ids:
+                self._cr.execute(calls, (tuple(report.call_ids.ids),))
+                calls = self.env.cr.dictfetchall()
+                for i in range(len(calls)):
+                    call_activity_query = '''
+                        select app.name app_name ,app.partner_phone,app.partner_mobile ,
+                         app.email_from,app.face_book,app.partner_name,
+                        app.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
+                        job.name job_name,job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept, prt_uid_name.name source_resp ,
+                         MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
+                        from mail_activity MA
+                        inner join mail_activity_type MAT
+                        on MAT.id = MA.activity_type_id 
+                        inner join res_users uid 
+                        on  MA.user_id = uid.id
+                        inner join res_partner prt 
+                        on  uid.partner_id = prt.id
+                        left join  business_unit cr_bu
+                        on uid.business_unit_id = cr_bu.id
+                        left join hr_applicant app
+                        on app.id = MA.res_id
+                        left join hr_job job on app.job_id = job.id 
+                        left join  business_unit job_bu on job.business_unit_id = job_bu.id
+                        left join hr_department dep on job.department_id = dep.id 
+                        left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+                        left join res_users source_resp on source_resp.id = app.create_uid
+                        left join res_partner prt_uid_name on source_resp.partner_id = prt_uid_name.id
+                        where MA.call_result_id is not null  and MA.id = %s
+                    '''
+                    self._cr.execute(call_activity_query, (calls[i]['id'],))
+                    call_data = self.env.cr.dictfetchall()
+                    self.write_line(CallLineWrapper(call_data), 'Calls')
 
         if report.interviews:
             self.write_array_header('Interviews')
@@ -441,67 +459,67 @@ class RecActivityXslx(models.AbstractModel):
                             from mail_activity ma 
                            inner join hr_applicant app on app.id = ma.res_id where ma.id in %s 
                            order by  app.write_date desc'''
-
-            self._cr.execute(applications, (tuple(report.interview_ids.ids),))
-            applications = self.env.cr.dictfetchall()
-            # y = len(applications)
-            for i in range(len(applications)):
-                interviews_activity_query = '''
-                select  app.name app_name, app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
-                app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
-                parent_dep.name parent_dept, dep.name dept , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
-                app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
-                it.name, CE.display_corrected_start_date ,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
-                from mail_activity MA
-
-                inner join calendar_event CE on MA.calendar_event_id = CE.id
-
-
-                inner join interview_type it  on  CE.interview_type_id = it.id  
-
-
-                left join calendar_event_res_partner_rel CR on CE.id = CR.calendar_event_id
-
-
-                left join res_partner res on  CR.res_partner_id = res.id
-
-
-                inner join hr_applicant app on app.id = MA.res_id
-
-
-                left join  res_users usr on app.user_id = usr.id
-
-
-                inner join res_partner  on usr.partner_id = res_partner.id
-
-
-                left join res_users uid on uid.id = app.create_uid
-
-                left join res_partner prt_uid_name on uid.partner_id = prt_uid_name.id
-
-                 left join business_unit cr_bu on uid.business_unit_id = cr_bu.id
-
-                left join hr_job job on app.job_id = job.id 
-
-		        left join  business_unit job_bu on job.business_unit_id = job_bu.id
-                left join hr_department dep on job.department_id = dep.id 
-
-		        left join hr_department parent_dep on dep.parent_id = parent_dep.id 
-
-                where MA.res_id = %s
-
-                group by MA.id, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
-                CE.display_corrected_start_date, it.name ,
-                app.name ,app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
-                app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name,job_bu.name ,
-                parent_dep.name ,dep.name, job.name, cr_bu.name , res_partner.name , 
-                app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched
-                order by  MA.write_date asc
-                '''
-                self._cr.execute(interviews_activity_query, (applications[i]['id'],))
-                interviews_data = self.env.cr.dictfetchall()
-                if interviews_data:
-                    self.write_line(InterviewsPerApplicationWrapper(interviews_data), 'Interviews')
+            if report.interview_ids.ids:
+                self._cr.execute(applications, (tuple(report.interview_ids.ids),))
+                applications = self.env.cr.dictfetchall()
+                # y = len(applications)
+                for i in range(len(applications)):
+                    interviews_activity_query = '''
+                    select  app.name app_name, app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
+                    app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
+                    parent_dep.name parent_dept, dep.name dept , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
+                    app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
+                    it.name, CE.display_corrected_start_date ,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
+                    from mail_activity MA
+    
+                    inner join calendar_event CE on MA.calendar_event_id = CE.id
+    
+    
+                    inner join interview_type it  on  CE.interview_type_id = it.id  
+    
+    
+                    left join calendar_event_res_partner_rel CR on CE.id = CR.calendar_event_id
+    
+    
+                    left join res_partner res on  CR.res_partner_id = res.id
+    
+    
+                    inner join hr_applicant app on app.id = MA.res_id
+    
+    
+                    left join  res_users usr on app.user_id = usr.id
+    
+    
+                    inner join res_partner  on usr.partner_id = res_partner.id
+    
+    
+                    left join res_users uid on uid.id = app.create_uid
+    
+                    left join res_partner prt_uid_name on uid.partner_id = prt_uid_name.id
+    
+                     left join business_unit cr_bu on uid.business_unit_id = cr_bu.id
+    
+                    left join hr_job job on app.job_id = job.id 
+    
+                    left join  business_unit job_bu on job.business_unit_id = job_bu.id
+                    left join hr_department dep on job.department_id = dep.id 
+    
+                    left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+    
+                    where MA.res_id = %s
+    
+                    group by MA.id, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
+                    CE.display_corrected_start_date, it.name ,
+                    app.name ,app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
+                    app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name,job_bu.name ,
+                    parent_dep.name ,dep.name, job.name, cr_bu.name , res_partner.name , 
+                    app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched
+                    order by  MA.write_date asc
+                    '''
+                    self._cr.execute(interviews_activity_query, (applications[i]['id'],))
+                    interviews_data = self.env.cr.dictfetchall()
+                    if interviews_data:
+                        self.write_line(InterviewsPerApplicationWrapper(interviews_data), 'Interviews')
         if report.offer or report.hired:
             offer_query = '''
                             select  app.name app_name , app.partner_name,app.email_from, 
@@ -527,17 +545,19 @@ class RecActivityXslx(models.AbstractModel):
                         '''
         if report.offer:
             self.write_array_header('Offers')
-            self.env.cr.execute(offer_query, (tuple(report.offer_ids.ids),))
-            offers = self.env.cr.dictfetchall()
-            for offer in offers:
-                self.write_line(offerLineWrapper(offer), 'Offers')
+            if report.offer_ids.ids:
+                self.env.cr.execute(offer_query, (tuple(report.offer_ids.ids),))
+                offers = self.env.cr.dictfetchall()
+                for offer in offers:
+                    self.write_line(offerLineWrapper(offer), 'Offers')
 
         if report.hired:
             self.write_array_header('Hired')
-            self.env.cr.execute(offer_query, (tuple(report.hired_ids.ids),))
-            offers = self.env.cr.dictfetchall()
-            for hired in offers:
-                self.write_line(offerLineWrapper(hired), 'Hired')
+            if report.hired_ids.ids:
+                self.env.cr.execute(offer_query, (tuple(report.hired_ids.ids),))
+                offers = self.env.cr.dictfetchall()
+                for hired in offers:
+                    self.write_line(offerLineWrapper(hired), 'Hired')
 
 
 # noinspection PyProtectedMember
