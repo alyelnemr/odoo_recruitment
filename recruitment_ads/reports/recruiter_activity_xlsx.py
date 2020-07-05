@@ -224,8 +224,8 @@ class RecActivityXslx(models.AbstractModel):
                 for i in range(max_interviews_count):
                     sheets[-1]['Interviews'].update(
                         {
-                            last_row: {'header': _('Created on'),
-                                       'field': 'interview_create_date',
+                            last_row: {'header': _('Created on' + str(i + 2)),
+                                       'field': 'interview_create_date'+ str(i + 1),
                                        'width': 18},
                             last_row + 1: {'header': _('Interview date ' + str(i + 2)),
                                            'field': 'interview_date' + str(i + 1),
