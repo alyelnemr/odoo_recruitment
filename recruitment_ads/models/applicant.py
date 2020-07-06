@@ -65,7 +65,7 @@ class Applicant(models.Model):
     _inherit = "hr.applicant"
 
     email_from = fields.Char()
-    partner_phone = fields.Char(related="partner_id.phone",store = True)
+    partner_phone = fields.Char(related="partner_id.phone",store = True,size= 256)
     partner_mobile = fields.Char(related="partner_id.mobile",store = True , size= 256)
     department_id = fields.Many2one('hr.department', "Department", domain=[('parent_id', '=', False)])
     section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
