@@ -11,10 +11,12 @@ class GeneralSheetXslx(models.AbstractModel):
 
     def _get_report_sheets(self, report):
         sheets = []
+        max_interviews_count = 0
         max_interviews_count_query ='select max(x.count) from( select count(res_id) from mail_activity where res_id in %s and activity_type_id = %s and active = %s group by res_id) x'
         self.env.cr.execute(max_interviews_count_query, (tuple(report.application_ids.ids),5,False))
-        max_interviews_count = self.env.cr.dictfetchall()
-        max_interviews_count = max_interviews_count[0]['max'] -1
+        interviews_count = self.env.cr.dictfetchall()
+        if interviews_count[0]['max'] :
+            max_interviews_count = interviews_count[0]['max'] -1
         sheets.append({
             'General Sheet': {
                 0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20},
