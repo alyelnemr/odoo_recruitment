@@ -29,7 +29,7 @@ class Interview(models.Model):
     candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count")
     interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count")
 
-    display_corrected_start_date = fields.Char('start Datetime', compute='_compute_display_corrected_start_date')
+    display_corrected_start_date = fields.Char('start Datetime', compute='_compute_display_corrected_start_date',store =True)
 
     interview_category = fields.Selection(selection=[
         ('Personal','Personal'),
