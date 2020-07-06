@@ -231,4 +231,4 @@ class HRSetDailyTargetLine(models.Model):
         #                                                       'generate_daily_target_report_wizard_action')
         # menu = self.env.ref('recruitment_ads.hr_recruitment_generate_daily_target_report').id
         # return 'web#menu_id=' + str(menu) + '&action=' + str(action.get('id', '')) + '&id=' + str(res.id)
-        return 'mail/view?model=generate.daily.target.report.wizard&res_id=' + str(res.id)
+        return 'web#id=' + str(res.id) + '&view_type=form&model=generate.daily.target.report.wizard'
