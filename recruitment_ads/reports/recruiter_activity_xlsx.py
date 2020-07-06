@@ -469,7 +469,7 @@ class RecActivityXslx(models.AbstractModel):
                     app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
                     parent_dep.name parent_dept, dep.name dept , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
                     app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
-                    it.name, CE.display_corrected_start_date ,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
+                    it.name, CE.display_corrected_start_date ,CE.start_datetime,CE.start_date,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
                     from mail_activity MA
     
                     inner join calendar_event CE on MA.calendar_event_id = CE.id
@@ -513,7 +513,7 @@ class RecActivityXslx(models.AbstractModel):
                     app.name ,app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
                     app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name,job_bu.name ,
                     parent_dep.name ,dep.name, job.name, cr_bu.name , res_partner.name , 
-                    app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched
+                    app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched,CE.start_datetime,CE.start_date
                     order by  MA.write_date asc
                     '''
                     self._cr.execute(interviews_activity_query, (applications[i]['id'],))
@@ -652,14 +652,20 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.interview_type_id = interviews_data[0]['name'] if interviews_data[0]['name'] else False
         self.interviewers = interviews_data[0]['string_agg'] if interviews_data[0]['string_agg'] else False
         self.interview_create_date = interviews_data[0]['create_on'] if interviews_data[0]['create_on'] else False
-        self.interview_date = interviews_data[0]['display_corrected_start_date'] if interviews_data[0][
-            'display_corrected_start_date'] else False
+        if interviews_data[0]['display_corrected_start_date']:
+         self.interview_date = interviews_data[0]['display_corrected_start_date']
+        elif interviews_data[0]['start_datetime']:
+            self.interview_date = interviews_data[0]['start_datetime']
+        elif interviews_data[0]['start_date']:
+            self.interview_date = interviews_data[0]['start_date']
+        else:
+            False
         self.interview_result = interviews_data[0]['interview_result'] if interviews_data[0][
             'interview_result'] else False
         self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0][
-            'interview_result_date'] else False
-        self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0][
-            'interview_result_date'] else False
+            'interview_result_date']\
+            else False
+
         self.interview_comment = re.sub(r"<.*?>", '', interviews_data[0]['feedback']) if interviews_data[0][
             'feedback'] else False
 
@@ -667,7 +673,15 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
             if i == 0:
                 continue
             setattr(self, 'interview_create_date' + str(i), interviews_data[i]['create_on'])
-            setattr(self, 'interview_date' + str(i), interviews_data[i]['display_corrected_start_date'])
+            if interviews_data[i]['display_corrected_start_date']:
+                setattr(self, 'interview_date' + str(i), interviews_data[i]['display_corrected_start_date'])
+            elif interviews_data[i]['start_datetime']:
+                setattr(self, 'interview_date' + str(i), interviews_data[i]['start_datetime'])
+            elif interviews_data[i]['start_date']:
+                setattr(self, 'interview_date' + str(i), interviews_data[i]['start_date'])
+            else:
+                False
+            # setattr(self, 'interview_date' + str(i), interviews_data[i]['display_corrected_start_date'])
             setattr(self, 'interviewers' + str(i), interviews_data[i]['string_agg'])
             setattr(self, 'interview_result' + str(i), interviews_data[i]['interview_result'])
             setattr(self, 'interview_result_date' + str(i), interviews_data[i]['interview_result_date'])
