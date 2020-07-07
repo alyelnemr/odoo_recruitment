@@ -215,7 +215,7 @@ class Job(models.Model):
                 ('department_id', '=', job.department_id.id or False),
                 ('section_id', '=', job.section_id.id or False),
             ])
-            if exist_job and job.id != exist_job.id:
+            if exist_job and job.id not in exist_job.ids:
                 raise ValidationError(
                     _('The name of the job position must be unique per department and section in company!'))
 
