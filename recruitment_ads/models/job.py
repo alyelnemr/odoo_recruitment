@@ -202,6 +202,23 @@ class Job(models.Model):
 
     # def _get_default_bu(self):
     #        return self.env.ref('recruitment_ads.main_andalusia_bu', raise_if_not_found=False)
+    _sql_constraints = [
+        ('name_company_uniq', 'CHECK(1=1)',
+         'The name of the job position must be unique per department and section in company!'),
+    ]
+
+    @api.constrains('name', 'company_id', 'department_id', 'section_id')
+    def _check_name_company_section_uniq(self):
+        for job in self:
+            exist_job = job.search([
+                ('name', '=', job.name),
+                ('company_id', '=', job.company_id.id or False),
+                ('department_id', '=', job.department_id.id or False),
+                ('section_id', '=', job.section_id.id or False),
+            ])
+            if exist_job:
+                raise ValidationError(
+                    _('The name of the job position must be unique per department and section in company!'))
 
     def _get_bu_domain(self):
         if self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') and not self.env.user.has_group(
