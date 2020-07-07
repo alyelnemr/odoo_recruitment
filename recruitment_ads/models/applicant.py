@@ -4,71 +4,14 @@ from datetime import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
-import datetime as datetime_now
-
-class IrAttachmentInherit(models.Model):
-    _inherit = 'ir.attachment'
-
-    # attach_name_seq = fields.Char()
-    file_name_seq = fields.Char()
-    attachment_type = fields.Selection([('cv', 'CV'), ('assessment', 'Assessment')],
-                                       string="Attachment Type", required=True, default="cv")
-    upload_date = fields.Datetime(string='Upload date')
-
-    @api.onchange('datas_fname', 'attachment_type')
-    def _get_attach_name(self):
-        if self.datas_fname and self.res_model == 'hr.applicant':
-            self.upload_date = fields.Datetime.to_string(datetime_now.datetime.now())
-            attach_no = self.search([('res_id', '=', self.res_id)])
-            application = self.env['hr.applicant'].browse(self.res_id)
-
-            extension = self.datas_fname.split(".")
-            last_item = len(extension) - 1
-            extension = extension[last_item]
-
-            cv_attach = []
-            ass_attach = []
-            if attach_no:
-                for attach in attach_no:
-                    if attach.attachment_type == 'cv':
-                        cv_attach.append(attach)
-                    elif attach.attachment_type == 'assessment':
-                        ass_attach.append(attach)
-
-                cv_seq = str('(' + str(len(cv_attach) + 1) + ')' if len(cv_attach) >= 1 else '')
-                ass_seq = str('_ASS_' + str(len(ass_attach) + 1) if len(ass_attach) >= 1 else '_ASS')
-                if self.attachment_type == 'cv':
-                    self.datas_fname = application.name + cv_seq + '.' + extension
-                    self.name = application.name + cv_seq
-                elif self.attachment_type == 'assessment':
-                    self.datas_fname = application.name + ass_seq + '.' + extension
-                    self.name = application.name + ass_seq
-
-    @api.depends('res_model', 'res_id')
-    def _compute_res_name(self):
-        res = super(IrAttachmentInherit, self)._compute_res_name()
-        for attachment in self:
-            if attachment.res_model and attachment.res_id:
-                if attachment.res_model == 'hr.applicant':
-                    record = self.env[attachment.res_model].browse(attachment.res_id)
-                    attachment.res_name = record.display_name
-                    attachment.name = record.display_name
-        return res
-
-    @api.model
-    def create(self, vals):
-        res = super(IrAttachmentInherit, self).create(vals)
-        if res.res_model == 'hr.offer':
-            self._cr.execute(" update hr_offer set have_offer = %s where id =  %s ", (True,res.res_id,))
-        return res
 
 
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
     email_from = fields.Char()
-    partner_phone = fields.Char(related="partner_id.phone",store = True,size= 256)
-    partner_mobile = fields.Char(related="partner_id.mobile",store = True , size= 256)
+    partner_phone = fields.Char(related="partner_id.phone", store=True, size=256)
+    partner_mobile = fields.Char(related="partner_id.mobile", store=True, size=256)
     department_id = fields.Many2one('hr.department', "Department", domain=[('parent_id', '=', False)])
     section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
 
@@ -97,8 +40,8 @@ class Applicant(models.Model):
     allow_call = fields.Boolean(string="Allow Online Call", compute='_get_allow_call', store=True)
     # face_book = fields.Char(string='Facebook Link ', related="partner_id.face_book", readonly=False)
     # linkedin = fields.Char(string='LinkedIn Link', related="partner_id.linkedin", readonly=False)
-    face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book",store=True)
-    linkedin = fields.Char(string='LinkedIn Link', readonly=False, related="partner_id.linkedin",store=True)
+    face_book = fields.Char(string='Facebook Link ', readonly=False, related="partner_id.face_book", store=True)
+    linkedin = fields.Char(string='LinkedIn Link', readonly=False, related="partner_id.linkedin", store=True)
     have_cv = fields.Boolean(srting='Have CV', compute='_get_attachment', default=False, store=True)
     have_assessment = fields.Boolean(compute='_get_attachment', default=False, store=True)
     user_id = fields.Many2one('res.users', "Responsible", track_visibility="onchange", default=False)
@@ -108,27 +51,27 @@ class Applicant(models.Model):
     tooltip_icon = fields.Char(string='Info.')
 
     def get_last_activity(self):
-        activity={}
+        activity = {}
         self._cr.execute(
             "select MAT.name , to_char(MA.date_deadline, 'DD-MM-YYYY') , MA.call_result_id, MA.interview_result , MAT.id  from mail_activity MA INNER JOIN mail_activity_type MAT ON MA.activity_type_id = MAT.id"
             " where MA.res_model =  %s and  MA.res_id =  %s AND (MAT.id not in (%s ,%s ,%s))  order by MA.create_date desc limit 1 ",
-            ('hr.applicant',self.id,1,3,4))
-        results =self.env.cr.fetchone()
+            ('hr.applicant', self.id, 1, 3, 4))
+        results = self.env.cr.fetchone()
 
         if results:
             if not results[2] and not results[3]:
                 activity = {
-                    'Activity_Result':'No result added.'}
+                    'Activity_Result': 'No result added.'}
             else:
-                if results[4] != 5 :
+                if results[4] != 5:
                     activity = {
-                        'Activity_type' : 'Type = ' + results[0],
-                        'Activity_Date' : 'Date = ' + results[1],
-                        'Activity_Result':'Result = ' + results[2]}
+                        'Activity_type': 'Type = ' + results[0],
+                        'Activity_Date': 'Date = ' + results[1],
+                        'Activity_Result': 'Result = ' + results[2]}
                 else:
                     activity = {
-                        'Activity_type' :  'Type = ' + results[0],
-                        'Activity_Date' :  'Date = ' + results[1],
+                        'Activity_type': 'Type = ' + results[0],
+                        'Activity_Date': 'Date = ' + results[1],
                         'Activity_Result': 'Result = ' + results[3]}
             return activity
         else:
@@ -154,8 +97,8 @@ class Applicant(models.Model):
     def get_current_user_group(self):
         res_user = self.env.user
         if res_user.has_group('hr_recruitment.group_hr_recruitment_manager'):
-            return  'manager'
-        else :
+            return 'manager'
+        else:
             return "not manager"
 
     @api.multi
@@ -300,7 +243,7 @@ class Applicant(models.Model):
             'department_id': department_id,
             'section_id': section_id,
             'stage_id': stage_id,
-            'user_id' : user_id
+            'user_id': user_id
         }}
 
     @api.onchange('job_id')
@@ -309,7 +252,7 @@ class Applicant(models.Model):
         self.department_id = vals['value']['department_id']
         self.section_id = vals['value']['section_id']
         if not self._origin.id:
-             self.user_id = False
+            self.user_id = False
         self.stage_id = vals['value']['stage_id']
 
     @api.onchange('department_id')
@@ -363,13 +306,15 @@ class Applicant(models.Model):
     @api.multi
     def action_makeMeeting(self):
         self.ensure_one()
-        activity_result = self.env['mail.activity'].search([('res_id', '=',self.id)])
+        activity_result = self.env['mail.activity'].search([('res_id', '=', self.id)])
         if activity_result:
             for activity in activity_result:
                 if not activity.call_result_id and not activity.interview_result:
                     raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
-        if self.user_id.id != self.env.user.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') :
-            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
+        if self.user_id.id != self.env.user.id and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager'):
+            raise ValidationError(
+                'This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         if not self.partner_phone or not self.partner_mobile or not self.email_from:
             raise ValidationError('Please insert Applicant Mobile /Email /Phone in order to schedule activity .')
         else:
@@ -466,7 +411,8 @@ class Applicant(models.Model):
                 else:
                     # if applicant.partner_name.isalpha() == False :
                     raise ValidationError(_('Applicant Name must be Characters only . '))
-    #oveeride  method to prevent current user to change state if is not recruiter responsible for application
+
+    # oveeride  method to prevent current user to change state if is not recruiter responsible for application
     @api.onchange('stage_id')
     def onchange_stage_id(self):
         # res=super(Applicant, self).onchange_stage_id
@@ -475,8 +421,10 @@ class Applicant(models.Model):
             for activity in activity_result:
                 if not activity.call_result_id and not activity.interview_result:
                     raise ValidationError('Please insert Activity Result in order to be transferred to another stage')
-        if self.env.user.id != self.user_id.id and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
-            raise ValidationError('This Application is Owned by another Recruiter , you are not allowed to take any action on.')
+        if self.env.user.id != self.user_id.id and not self.env.user.has_group(
+                'hr_recruitment.group_hr_recruitment_manager') and self._origin.id:
+            raise ValidationError(
+                'This Application is Owned by another Recruiter , you are not allowed to take any action on.')
         else:
             vals = self._onchange_stage_id_internal(self.stage_id.id)
             if vals['value'].get('date_closed'):
@@ -522,22 +470,24 @@ class Stage(models.Model):
     def unlink(self):
         """Prevent deleting offer call cv_source hired interview  stage"""
         real_ids, xml_ids = zip(*self.get_xml_id().items())
-        if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or ('recruitment_ads.application_stage_cvsource_cycle_data' ) in xml_ids\
-                or  ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or  ('recruitment_ads.application_stage_interview_cycle_data') in xml_ids\
-                or  ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
+        if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or (
+        'recruitment_ads.application_stage_cvsource_cycle_data') in xml_ids \
+                or ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or (
+        'recruitment_ads.application_stage_interview_cycle_data') in xml_ids \
+                or ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
             raise ValidationError(_("You are not allowed to delete this Stage"))
-
 
         return super(Stage, self).unlink()
 
     @api.multi
-    def write(self,vals):
+    def write(self, vals):
         """Prevent edit  offer call cv_source hired interview  stage"""
         real_ids, xml_ids = zip(*self.get_xml_id().items())
-        if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or ('recruitment_ads.application_stage_cvsource_cycle_data' ) in xml_ids\
-                or  ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or  ('recruitment_ads.application_stage_interview_cycle_data') in xml_ids\
-                or  ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
+        if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or (
+        'recruitment_ads.application_stage_cvsource_cycle_data') in xml_ids \
+                or ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or (
+        'recruitment_ads.application_stage_interview_cycle_data') in xml_ids \
+                or ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
             raise ValidationError(_("You are not allowed to edit this Stage"))
-
 
         return super(Stage, self).write(vals)

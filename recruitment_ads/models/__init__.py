@@ -1,3 +1,4 @@
+from . import ir_attachment
 from . import mail
 from . import interview
 from . import partner
@@ -8,4 +9,4 @@ from . import offer
 from . import res_users
 from . import policy
 from . import hr_set_daily_target
-#test automation build mail
+# test automation build mail
