@@ -4,8 +4,7 @@ from datetime import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
-
-
+import datetime
 class IrAttachmentInherit(models.Model):
     _inherit = 'ir.attachment'
 
@@ -13,10 +12,12 @@ class IrAttachmentInherit(models.Model):
     file_name_seq = fields.Char()
     attachment_type = fields.Selection([('cv', 'CV'), ('assessment', 'Assessment')],
                                        string="Attachment Type", required=True, default="cv")
+    upload_date = fields.Datetime(string='Upload date')
 
     @api.onchange('datas_fname', 'attachment_type')
     def _get_attach_name(self):
         if self.datas_fname and self.res_model == 'hr.applicant':
+            self.upload_date = fields.Datetime.to_string(datetime.datetime.now())
             attach_no = self.search([('res_id', '=', self.res_id)])
             application = self.env['hr.applicant'].browse(self.res_id)
 
