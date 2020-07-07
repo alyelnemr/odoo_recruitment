@@ -221,14 +221,12 @@ class HRSetDailyTargetLine(models.Model):
 
     def get_mail_url(self):
         self.ensure_one()
-        res = self.env['generate.daily.target.report.wizard'].create({
+        res = self.env['generate.daily.target.report.wizard'].with_env(self.env(user=self.recruiter_id)).create({
             'date_from': self.name,
             'date_to': self.name,
             'job_ids': [(6, 0, [self.job_position_id.id])],
-            'recruiter_ids': [(6, 0, [self.recruiter_id.id])]
+            'recruiter_ids': [(6, 0, [self.recruiter_id.id])],
         })
-        # action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
-        #                                                       'generate_daily_target_report_wizard_action')
-        # menu = self.env.ref('recruitment_ads.hr_recruitment_generate_daily_target_report').id
-        # return 'web#menu_id=' + str(menu) + '&action=' + str(action.get('id', '')) + '&id=' + str(res.id)
-        return 'web#id=' + str(res.id) + '&view_type=form&model=generate.daily.target.report.wizard'
+        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
+                                                              'generate_daily_target_report_wizard_action')
+        return 'web#action=' + str(action.get('id')) + '&id=' + str(res.id)
