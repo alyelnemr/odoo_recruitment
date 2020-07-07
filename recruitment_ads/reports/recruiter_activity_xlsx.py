@@ -653,7 +653,7 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.interviewers = interviews_data[0]['string_agg'] if interviews_data[0]['string_agg'] else False
         self.interview_create_date = interviews_data[0]['create_on'] if interviews_data[0]['create_on'] else False
         if interviews_data[0]['display_corrected_start_date']:
-         self.interview_date = interviews_data[0]['display_corrected_start_date']
+            self.interview_date = interviews_data[0]['display_corrected_start_date']
         elif interviews_data[0]['start_datetime']:
             self.interview_date = interviews_data[0]['start_datetime']
         elif interviews_data[0]['start_date']:
