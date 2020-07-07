@@ -218,6 +218,7 @@
             </xpath>
             <xpath expr="//field[@name='datas']" position="replace">
                 <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}" required="1"/>
+                <field name="upload_date" readonly="1" force_save="1"/>
             </xpath>
             <xpath expr="//group/group" position="after">
                 <group>
