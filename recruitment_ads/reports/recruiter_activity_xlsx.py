@@ -41,17 +41,18 @@ class RecActivityXslx(models.AbstractModel):
             })
 
             last_row = max(sheets[0]['CV Source'])
-            if report.job_ids:
-                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
-                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            # if report.job_ids:
+            #     departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+            #     self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            #     departments = self.env.cr.dictfetchall()
+            # else:
+            if report.application_ids.ids :
+                # departments_query = 'select hr_applicant.id  from hr_applicant inner join hr_department on hr_department.id = hr_applicant.department_id where hr_applicant.id in %s and hr_department.parent_id is not null '
+                departments_query = 'select section_id  from hr_applicant  where id in %s and section_id is not null  '
+                self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                if report.application_ids.ids :
-                    departments_query = 'select hr_applicant.id  from hr_applicant inner join hr_department on hr_department.id = hr_applicant.department_id where hr_applicant.id in %s and hr_department.parent_id is not null '
-                    self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
-                    departments = self.env.cr.dictfetchall()
-                else:
-                    departments = False
+                departments = False
             if departments:
                 sheets[0]['CV Source'].update({
                     last_row + 1: {'header': _('Section'),
@@ -105,20 +106,19 @@ class RecActivityXslx(models.AbstractModel):
             if report.cv_source:
                 x += 1
             sheet = sheets[x]['Calls']
-            if report.job_ids:
-                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
-                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            # if report.job_ids:
+            #     departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+            #     self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            #     departments = self.env.cr.dictfetchall()
+            # else:
+            if report.call_ids.ids :
+                departments_query = '''select hr_applicant.section_id  from hr_applicant 
+                inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                 where mail_activity.id in %s and hr_applicant.section_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.call_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                if report.call_ids.ids :
-                    departments_query = '''select hr_applicant.id  from hr_applicant 
-                    inner join hr_department on hr_department.id = hr_applicant.department_id
-                    inner join mail_activity on  mail_activity.res_id = hr_applicant.id
-                     where mail_activity.id in %s and hr_department.parent_id is not null '''
-                    self.env.cr.execute(departments_query, (tuple(report.call_ids.ids),))
-                    departments = self.env.cr.dictfetchall()
-                else:
-                    departments = False
+                departments = False
             if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
@@ -168,19 +168,23 @@ class RecActivityXslx(models.AbstractModel):
             if report.calls:
                 x += 1
             sheet = sheets[x]['Interviews']
-            if report.job_ids:
-                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
-                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            # if report.job_ids:
+            #     departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+            #     self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            #     departments = self.env.cr.dictfetchall()
+            # else:
+            if report.interview_ids.ids:
+                # departments_query = '''select hr_applicant.id  from hr_applicant
+                # inner join hr_department on hr_department.id = hr_applicant.department_id
+                # inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                #  where mail_activity.id in %s and hr_department.parent_id is not null '''
+
+                departments_query = '''select hr_applicant.section_id  from hr_applicant 
+                   inner join mail_activity on  mail_activity.res_id = hr_applicant.id
+                    where mail_activity.id in %s and hr_applicant.section_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.interview_ids.ids),))
                 departments = self.env.cr.dictfetchall()
-            else:
-                if report.interview_ids.ids:
-                    departments_query = '''select hr_applicant.id  from hr_applicant 
-                    inner join hr_department on hr_department.id = hr_applicant.department_id
-                    inner join mail_activity on  mail_activity.res_id = hr_applicant.id
-                     where mail_activity.id in %s and hr_department.parent_id is not null '''
-                    self.env.cr.execute(departments_query, (tuple(report.interview_ids.ids),))
-                    departments = self.env.cr.dictfetchall()
-                else:departments = False
+            else:departments = False
             if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
@@ -281,20 +285,25 @@ class RecActivityXslx(models.AbstractModel):
             if report.interviews:
                 x += 1
             sheet = sheets[x]['Offers']
-            if report.job_ids:
-                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
-                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            # if report.job_ids:
+            #     departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+            #     self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            #     departments = self.env.cr.dictfetchall()
+            # else:
+            if report.offer_ids.ids:
+
+                departments_query = '''select hr_applicant.section_id  from hr_applicant 
+                   inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                    where hr_offer.id in %s and hr_applicant.section_id is not null '''
+
+                # departments_query = '''select hr_applicant.id  from hr_applicant
+                # inner join hr_department on hr_department.id = hr_applicant.department_id
+                # inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                #  where hr_offer.id in %s and hr_department.parent_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.offer_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                if report.offer_ids.ids:
-                    departments_query = '''select hr_applicant.id  from hr_applicant 
-                    inner join hr_department on hr_department.id = hr_applicant.department_id
-                    inner join hr_offer on  hr_offer.application_id= hr_applicant.id
-                     where hr_offer.id in %s and hr_department.parent_id is not null '''
-                    self.env.cr.execute(departments_query, (tuple(report.offer_ids.ids),))
-                    departments = self.env.cr.dictfetchall()
-                else:
-                    departments = False
+                departments = False
             if departments:
                 sheet.update({
                     last_row + 1: {'header': _('Section'),
@@ -355,10 +364,13 @@ class RecActivityXslx(models.AbstractModel):
                 departments = self.env.cr.dictfetchall()
             else:
                 if report.hired_ids.ids:
-                    departments_query = '''select hr_applicant.id  from hr_applicant 
-                    inner join hr_department on hr_department.id = hr_applicant.department_id
-                    inner join hr_offer on  hr_offer.application_id= hr_applicant.id
-                     where hr_offer.id in %s and hr_department.parent_id is not null '''
+                    # departments_query = '''select hr_applicant.id  from hr_applicant
+                    # inner join hr_department on hr_department.id = hr_applicant.department_id
+                    # inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                    #  where hr_offer.id in %s and hr_department.parent_id is not null '''
+                    departments_query = '''select hr_applicant.section_id  from hr_applicant 
+                       inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                        where hr_offer.id in %s and hr_applicant.section_id is not null '''
                     self.env.cr.execute(departments_query, (tuple(report.hired_ids.ids),))
                     departments = self.env.cr.dictfetchall()
                 else:
@@ -395,7 +407,7 @@ class RecActivityXslx(models.AbstractModel):
             app.name app_name , app_partner.mobile, app_partner.phone , app.email_from , app.have_assessment,
             app.have_cv ,app.partner_name , app_partner.face_book , app_partner.linkedin, app.create_date,
             source.name source , app.cv_matched , app.salary_expected , app.salary_current ,app.reason_of_rejection,
-            job.name job_name , job_bu.name bu_name ,dep.name dept ,parent_dep.name parent_dept
+            job.name job_name , job_bu.name bu_name ,department.name department ,section.name section
             from hr_applicant app
             inner join res_partner app_partner
              on app.partner_id = app_partner.id
@@ -407,8 +419,10 @@ class RecActivityXslx(models.AbstractModel):
              left join utm_source source on app.source_id = source.id
              left join hr_job job on app.job_id = job.id 
              left join  business_unit job_bu on job.business_unit_id = job_bu.id
-             left join hr_department dep on job.department_id = dep.id 
-             left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+
+             left join hr_department department on app.department_id = department.id 
+             left join hr_department section on app.section_id = section.id 
+             
              where app.id in %s order by  create_date desc'''
             if report.application_ids.ids:
                 self._cr.execute(cvs, (tuple(report.application_ids.ids),))
@@ -428,7 +442,7 @@ class RecActivityXslx(models.AbstractModel):
                         select app.name app_name ,app_partner.phone,app_partner.mobile ,
                          app.email_from,app_partner.face_book,app.partner_name,
                         app_partner.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
-                        job.name job_name,job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept, prt_uid_name.name source_resp ,
+                        job.name job_name,job_bu.name job_bu , department.name department ,section.name section, prt_uid_name.name source_resp ,
                          MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
                         from mail_activity MA
 
@@ -446,8 +460,10 @@ class RecActivityXslx(models.AbstractModel):
                         on app.id = MA.res_id
                         left join hr_job job on app.job_id = job.id 
                         left join  business_unit job_bu on job.business_unit_id = job_bu.id
-                        left join hr_department dep on job.department_id = dep.id 
-                        left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+
+                        left join hr_department department on app.department_id = department.id 
+                        left join hr_department section on app.section_id = section.id 
+                        
                         left join res_users source_resp on source_resp.id = app.create_uid
                         left join res_partner prt_uid_name on source_resp.partner_id = prt_uid_name.id
                         where MA.call_result_id is not null  and MA.id = %s
@@ -472,7 +488,7 @@ class RecActivityXslx(models.AbstractModel):
                     interviews_activity_query = '''
                     select  app.name app_name, app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
                     app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
-                    parent_dep.name parent_dept, dep.name dept , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
+                    department.name department, section.name section , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
                     app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
                     it.name, CE.display_corrected_start_date ,CE.start_datetime,CE.start_date,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
                     from mail_activity MA
@@ -510,9 +526,9 @@ class RecActivityXslx(models.AbstractModel):
                     left join hr_job job on app.job_id = job.id 
     
                     left join  business_unit job_bu on job.business_unit_id = job_bu.id
-                    left join hr_department dep on job.department_id = dep.id 
-    
-                    left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+                    
+                    left join hr_department department on app.department_id = department.id 
+                    left join hr_department section on app.section_id = section.id 
     
                     where MA.res_id = %s
     
@@ -520,7 +536,7 @@ class RecActivityXslx(models.AbstractModel):
                     CE.display_corrected_start_date, it.name ,
                     app.name ,app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
                     app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name,job_bu.name ,
-                    parent_dep.name ,dep.name, job.name, cr_bu.name , res_partner.name , 
+                    department.name ,section.name, job.name, cr_bu.name , res_partner.name , 
                     app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched,CE.start_datetime,CE.start_date
                     order by  MA.write_date asc
                     '''
@@ -533,7 +549,7 @@ class RecActivityXslx(models.AbstractModel):
                             select  app.name app_name , app.partner_name,app.email_from, 
                             app_partner.mobile, app_partner.face_book , app_partner.linkedin ,app.have_assessment,
                             prt_creater.name create_uid , offer_bu.name bu_name,source_prt.name source_resp ,
-                            job.name job_name, dep.name dept ,parent_dep.name parent_dept,
+                            job.name job_name, section.name section ,department.name department,
                             offer.issue_date, offer.total_package , offer.have_offer,
                             offer.total_salary ,offer.offer_type , offer.hiring_date ,
                             offer.state , offer.comment ,offer_gen_bu.name gen_bu_name
@@ -550,8 +566,8 @@ class RecActivityXslx(models.AbstractModel):
             		        left join  business_unit offer_bu on offer.business_unit_id  = offer_bu.id
             		        left join  business_unit offer_gen_bu on offer.generated_by_bu_id = offer_gen_bu.id
             		        left join hr_job job on offer.job_id = job.id
-                            left join hr_department dep on job.department_id = dep.id 
-                            left join hr_department parent_dep on dep.parent_id = parent_dep.id
+                            left join hr_department department on app.department_id = department.id 
+                            left join hr_department section on app.section_id = section.id 
                             where offer.id in %s order by issue_date desc
                         '''
         if report.offer:
@@ -589,11 +605,14 @@ class CVSourceLineWrapper:
         self.source_resp = cv_source['source_resp']
         self.create_date = cv_source['create_date']
         self.business_unit_id = cv_source['bu_name']
-        if not cv_source['parent_dept']:
-            self.department_id = cv_source['dept']
-        else:
-            self.section_id = cv_source['dept']
-            self.department_id = cv_source['parent_dept']
+        # if not cv_source['parent_dept']:
+        #     self.department_id = cv_source['dept']
+        # else:
+        #     self.section_id = cv_source['dept']
+        #     self.department_id = cv_source['parent_dept']
+        self.department_id = cv_source['department']
+        # else:
+        self.section_id = cv_source['section']
         self.job_id = cv_source['job_name']
         if cv_source['salary_expected']:
             self.salary_expected = cv_source['salary_expected']
@@ -627,11 +646,11 @@ class CallLineWrapper:
         self.call_result_id = call[0]['call_result_id']
         self.feedback = re.sub(r"<.*?>", '', call[0]['feedback'])
         self.business_unit_id = call[0]['job_bu']
-        if not call[0]['parent_dept']:
-            self.department_id = call[0]['dept']
-        else:
-            self.section_id = call[0]['dept']
-            self.department_id = call[0]['parent_dept']
+        # if not call[0]['parent_dept']:
+        self.department_id = call[0]['department']
+        # else:
+        self.section_id = call[0]['section']
+            # self.department_id = call[0]['parent_dept']
 
         self.job_id = call[0]['job_name']
         if call[0]['salary_expected']:
@@ -701,11 +720,11 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
                     re.sub(r"<.*?>", '', interviews_data[i]['feedback'] if interviews_data[i]['feedback'] else ''))
 
         self.business_unit_id = interviews_data[0]['job_bu']
-        if not interviews_data[0]['parent_dept']:
-            self.department_id = interviews_data[0]['dept']
-        else:
-            self.section_id = interviews_data[0]['dept']
-            self.department_id = interviews_data[0]['parent_dept']
+        # if not interviews_data[0]['parent_dept']:
+        self.department_id = interviews_data[0]['department']
+        # else:
+        self.section_id = interviews_data[0]['section']
+            # self.department_id = interviews_data[0]['parent_dept']
         self.job_id = interviews_data[0]['job_name']
         self.salary_expected = str(interviews_data[0]['salary_expected'])
         self.salary_current = str(interviews_data[0]['salary_current'])
@@ -749,11 +768,11 @@ class offerLineWrapper:
         self.have_assessment = offer['have_assessment']
         self.create_uid = offer['create_uid']
         self.business_unit_id = offer['bu_name']
-        if not offer['parent_dept']:
-            self.department_id = offer['dept']
-        else:
-            self.section_id = offer['dept']
-            self.department_id = offer['parent_dept']
+        # if not offer['parent_dept']:
+        self.department_id = offer['department']
+        # else:
+        self.section_id = offer['section']
+            # self.department_id = offer['parent_dept']
 
         self.job_id = offer['job_name']
 

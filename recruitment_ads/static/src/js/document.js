@@ -12,12 +12,18 @@ var _t = core._t;
 //Document.include({
 Sidebar.include({
      init : function (parent, options) {
-//     console.log(this.env);
        this._super.apply(this, arguments);
-       console.log(this.env.model);
+        var value_without_attach_button = this.sections;
+        console.log(value_without_attach_button);
         if (options.viewType === "form") {
         if (this.env.model === 'hr.applicant'){
-            this.sections = []
+//            this.sections.splice(1, 0, { 'name' : 'files', 'label' : _t('Attachment(s)'), });
+            for(var i in this.sections){
+                if(this.sections[i]['label']=="Attachment(s)"){
+                   this.sections.splice(i,1);
+                    break;
+            }
+        }
         }
         }
 

@@ -40,14 +40,14 @@ class GeneralSheetXslx(models.AbstractModel):
             }
         })
 
-        if report.job_ids:
-            departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
-            self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
-            departments = self.env.cr.dictfetchall()
-        else:
-            departments_query = 'select hr_applicant.id  from hr_applicant inner join hr_department on hr_department.id = hr_applicant.department_id where hr_applicant.id in %s and hr_department.parent_id is not null '
-            self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
-            departments = self.env.cr.dictfetchall()
+        # if report.job_ids:
+        #     departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+        #     self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+        #     departments = self.env.cr.dictfetchall()
+        # else:
+        departments_query = 'select section_id  from hr_applicant  where id in %s and section_id is not null '
+        self.env.cr.execute(departments_query, (tuple(report.application_ids.ids),))
+        departments = self.env.cr.dictfetchall()
         last_row = max(sheets[0]['General Sheet'])
         if departments:
             sheets[0]['General Sheet'].update({
@@ -130,7 +130,7 @@ class GeneralSheetXslx(models.AbstractModel):
                  app.email_from,app_partner.face_book,
                 app_partner.linkedin ,app.cv_matched , app.salary_expected , app.salary_current , res_partner.name prt_name ,
                 prt_uid_name.name creater , cr_bu.name cr_bu , utm_source.name source_name , job.name job_name ,
-                job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept,
+                job_bu.name job_bu , department.name department ,section.name section,
                 offer.state , offer.issue_date , offer.hiring_date ,offer.offer_type , 
                 offer.total_package , offer.have_offer , offer.total_salary ,
                 offer_bu.name offer_bu
@@ -147,8 +147,10 @@ class GeneralSheetXslx(models.AbstractModel):
                 left join utm_source on app.source_id = utm_source.id
                 left join hr_job job on app.job_id = job.id 
 		        left join  business_unit job_bu on job.business_unit_id = job_bu.id
-                left join hr_department dep on job.department_id = dep.id 
-		        left join hr_department parent_dep on dep.parent_id = parent_dep.id 
+		        
+                left join hr_department department on app.department_id = department.id 
+		        left join hr_department section on app.section_id = section.id 
+		        
                 left join hr_offer offer on app.offer_id = offer.id
 		        left join  business_unit offer_bu on offer.generated_by_bu_id = offer_bu.id
                 where app.id = %s  
@@ -213,11 +215,11 @@ class GeneralSheetWrapper:
         self.source_id = app_data[0]['source_name']
         self.source_resp = app_data[0]['creater']
         self.business_unit_id = app_data[0]['job_bu']
-        if not app_data[0]['parent_dept'] :
-            self.department_id = app_data[0]['dept']
-        else:
-            self.section_id = app_data[0]['dept']
-            self.department_id = app_data[0]['parent_dept']
+        # if not app_data[0]['parent_dept'] :
+        self.department_id = app_data[0]['department']
+        # else:
+        self.section_id = app_data[0]['section']
+            # self.department_id = app_data[0]['parent_dept']
         self.job_id =  app_data[0]['job_name']
 
         if call_data:
