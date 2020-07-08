@@ -358,23 +358,23 @@ class RecActivityXslx(models.AbstractModel):
             if report.offer:
                 x += 1
             sheet = sheets[x]['Hired']
-            if report.job_ids:
-                departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
-                self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            # if report.job_ids:
+            #     departments_query = 'select hr_department.id  from hr_department inner join hr_job on hr_department.id = hr_job.department_id where hr_department.parent_id is not null and hr_job.id in %s'
+            #     self.env.cr.execute(departments_query, (tuple(report.job_ids.ids),))
+            #     departments = self.env.cr.dictfetchall()
+            # else:
+            if report.hired_ids.ids:
+                # departments_query = '''select hr_applicant.id  from hr_applicant
+                # inner join hr_department on hr_department.id = hr_applicant.department_id
+                # inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                #  where hr_offer.id in %s and hr_department.parent_id is not null '''
+                departments_query = '''select hr_applicant.section_id  from hr_applicant 
+                   inner join hr_offer on  hr_offer.application_id= hr_applicant.id
+                    where hr_offer.id in %s and hr_applicant.section_id is not null '''
+                self.env.cr.execute(departments_query, (tuple(report.hired_ids.ids),))
                 departments = self.env.cr.dictfetchall()
             else:
-                if report.hired_ids.ids:
-                    # departments_query = '''select hr_applicant.id  from hr_applicant
-                    # inner join hr_department on hr_department.id = hr_applicant.department_id
-                    # inner join hr_offer on  hr_offer.application_id= hr_applicant.id
-                    #  where hr_offer.id in %s and hr_department.parent_id is not null '''
-                    departments_query = '''select hr_applicant.section_id  from hr_applicant 
-                       inner join hr_offer on  hr_offer.application_id= hr_applicant.id
-                        where hr_offer.id in %s and hr_applicant.section_id is not null '''
-                    self.env.cr.execute(departments_query, (tuple(report.hired_ids.ids),))
-                    departments = self.env.cr.dictfetchall()
-                else:
-                    departments = False
+                departments = False
 
             if departments:
                 sheet.update({
