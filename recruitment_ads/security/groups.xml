@@ -136,6 +136,36 @@
         <field name="perm_unlink">0</field>
         <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
     </record>
+
+    <!--    DAILY Target -->
+    <record id="hr_set_daily_target_coordinator" model="ir.rule">
+        <field name="name">Coordinator Set Daily Target</field>
+        <field name="model_id" ref="model_hr_set_daily_target"/>
+        <field name="domain_force">['|','|','|','|','|',
+            ('bu_ids', 'in', [user.business_unit_id.id]),
+            ('create_uid.business_unit_id', 'in', [user.business_unit_id.id]),
+            ('create_uid.multi_business_unit_id', 'in', [user.business_unit_id.id]),
+            ('bu_ids', 'in', user.multi_business_unit_id.ids),
+            ('create_uid.business_unit_id', 'in', user.multi_business_unit_id.ids),
+            ('create_uid.multi_business_unit_id', 'in', user.multi_business_unit_id.ids)
+            ]
+        </field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+        <field name="groups" eval="[(4, ref('recruitment_ads.group_hr_recruitment_coordinator'))]"/>
+    </record>
+    <record id="hr_set_daily_target_manager" model="ir.rule">
+        <field name="name">See All daily targets</field>
+        <field name="model_id" ref="model_hr_department"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+        <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
+    </record>
     <!--    <record id="hr_department_coordinator" model="ir.rule">-->
     <!--        <field name="name">Coordinator See My Own Departments</field>-->
     <!--        <field name="model_id" ref="model_hr_department"/>-->
