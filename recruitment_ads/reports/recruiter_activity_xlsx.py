@@ -392,11 +392,13 @@ class RecActivityXslx(models.AbstractModel):
         if report.cv_source:
             self.write_array_header('CV Source')
             cvs = '''select prt_user.name user_id , prt_creater.name source_resp , creater_bu.name creater_bu ,
-            app.name app_name , app.partner_mobile, app.partner_phone , app.email_from , app.have_assessment,
-            app.have_cv ,app.partner_name , app.face_book , app.linkedin, app.create_date,
+            app.name app_name , app_partner.mobile, app_partner.phone , app.email_from , app.have_assessment,
+            app.have_cv ,app.partner_name , app_partner.face_book , app_partner.linkedin, app.create_date,
             source.name source , app.cv_matched , app.salary_expected , app.salary_current ,app.reason_of_rejection,
             job.name job_name , job_bu.name bu_name ,dep.name dept ,parent_dep.name parent_dept
             from hr_applicant app
+            inner join res_partner app_partner
+             on app.partner_id = app_partner.id
              left join  res_users usr on app.user_id = usr.id
              left join res_partner  prt_user on usr.partner_id = prt_user.id
              left join res_users creater on creater.id = app.create_uid
@@ -423,12 +425,13 @@ class RecActivityXslx(models.AbstractModel):
                 calls = self.env.cr.dictfetchall()
                 for i in range(len(calls)):
                     call_activity_query = '''
-                        select app.name app_name ,app.partner_phone,app.partner_mobile ,
-                         app.email_from,app.face_book,app.partner_name,
-                        app.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
+                        select app.name app_name ,app_partner.phone,app_partner.mobile ,
+                         app.email_from,app_partner.face_book,app.partner_name,
+                        app_partner.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
                         job.name job_name,job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept, prt_uid_name.name source_resp ,
                          MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
                         from mail_activity MA
+
                         inner join mail_activity_type MAT
                         on MAT.id = MA.activity_type_id 
                         inner join res_users uid 
@@ -438,6 +441,8 @@ class RecActivityXslx(models.AbstractModel):
                         left join  business_unit cr_bu
                         on uid.business_unit_id = cr_bu.id
                         left join hr_applicant app
+                        left join res_partner app_partner
+                        on app.partner_id = app_partner.id
                         on app.id = MA.res_id
                         left join hr_job job on app.job_id = job.id 
                         left join  business_unit job_bu on job.business_unit_id = job_bu.id
@@ -465,12 +470,13 @@ class RecActivityXslx(models.AbstractModel):
                 # y = len(applications)
                 for i in range(len(applications)):
                     interviews_activity_query = '''
-                    select  app.name app_name, app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
-                    app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
+                    select  app.name app_name, app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
+                    app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
                     parent_dep.name parent_dept, dep.name dept , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
                     app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
                     it.name, CE.display_corrected_start_date ,CE.start_datetime,CE.start_date,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
                     from mail_activity MA
+
     
                     inner join calendar_event CE on MA.calendar_event_id = CE.id
     
@@ -485,7 +491,9 @@ class RecActivityXslx(models.AbstractModel):
     
     
                     inner join hr_applicant app on app.id = MA.res_id
-    
+                    
+                    inner join res_partner app_partner
+                     on app.partner_id = app_partner.id
     
                     left join  res_users usr on app.user_id = usr.id
     
@@ -510,8 +518,8 @@ class RecActivityXslx(models.AbstractModel):
     
                     group by MA.id, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
                     CE.display_corrected_start_date, it.name ,
-                    app.name ,app.partner_name, app.partner_mobile , app.email_from,app.face_book, app.linkedin ,
-                    app.have_cv ,app.have_assessment ,app.partner_phone , prt_uid_name.name,job_bu.name ,
+                    app.name ,app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
+                    app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name,job_bu.name ,
                     parent_dep.name ,dep.name, job.name, cr_bu.name , res_partner.name , 
                     app.salary_expected , app.salary_current ,app.write_date, MA.create_date,app.cv_matched,CE.start_datetime,CE.start_date
                     order by  MA.write_date asc
@@ -523,14 +531,17 @@ class RecActivityXslx(models.AbstractModel):
         if report.offer or report.hired:
             offer_query = '''
                             select  app.name app_name , app.partner_name,app.email_from, 
-                            app.partner_mobile, app.face_book , app.linkedin ,app.have_assessment,
+                            app_partner.mobile, app_partner.face_book , app_partner.linkedin ,app.have_assessment,
                             prt_creater.name create_uid , offer_bu.name bu_name,source_prt.name source_resp ,
                             job.name job_name, dep.name dept ,parent_dep.name parent_dept,
                             offer.issue_date, offer.total_package , offer.have_offer,
                             offer.total_salary ,offer.offer_type , offer.hiring_date ,
                             offer.state , offer.comment ,offer_gen_bu.name gen_bu_name
                             from hr_offer offer
+
                             left join hr_applicant app on app.id = offer.application_id 
+                            inner join res_partner app_partner
+                            on app.partner_id = app_partner.id
                             left join res_users source_usr on source_usr.id = app.create_uid
             		        left join res_partner source_prt on source_usr.partner_id = source_prt.id
 
@@ -570,8 +581,8 @@ class CVSourceLineWrapper:
         self.have_cv = cv_source['have_cv']
         self.have_assessment = cv_source['have_assessment']
         self.email_from = cv_source['email_from']
-        self.partner_phone = cv_source['partner_phone']
-        self.partner_mobile = cv_source['partner_mobile']
+        self.partner_phone = cv_source['phone']
+        self.partner_mobile = cv_source['mobile']
         self.face_book = cv_source['face_book']
         self.linkedin = cv_source['linkedin']
         self.source_id = cv_source['source']
@@ -605,8 +616,8 @@ class CallLineWrapper:
         self.application_code = call[0]['app_name']
         self.partner_name = call[0]['partner_name']
         self.email_from = call[0]['email_from']
-        self.partner_phone = call[0]['partner_phone']
-        self.partner_mobile = call[0]['partner_mobile']
+        self.partner_phone = call[0]['phone']
+        self.partner_mobile = call[0]['mobile']
         self.face_book = call[0]['face_book']
         self.linkedin = call[0]['linkedin']
         self.call_type = call[0]['name']
@@ -644,8 +655,8 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.application_code = interviews_data[0]['app_name']
         self.partner_name = interviews_data[0]['partner_name']
         self.email_from = interviews_data[0]['email_from']
-        self.partner_phone = interviews_data[0]['partner_phone']
-        self.partner_mobile = interviews_data[0]['partner_mobile']
+        self.partner_phone = interviews_data[0]['phone']
+        self.partner_mobile = interviews_data[0]['mobile']
         self.face_book = interviews_data[0]['face_book']
         self.linkedin = interviews_data[0]['linkedin']
 
@@ -732,7 +743,7 @@ class offerLineWrapper:
         self.application_code = offer['app_name']
         self.applicant_name = offer['partner_name']
         self.email_from = offer['email_from']
-        self.partner_mobile = offer['partner_mobile']
+        self.partner_mobile = offer['mobile']
         self.face_book = offer['face_book']
         self.linkedin = offer['linkedin']
         self.have_assessment = offer['have_assessment']

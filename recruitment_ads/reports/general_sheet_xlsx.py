@@ -126,15 +126,17 @@ class GeneralSheetXslx(models.AbstractModel):
             applications = self.env['hr.applicant'].search([('id','in',report.application_ids.ids)], order='create_date desc')
             for app_line in applications:
                 app_datas_query = '''
-                select  app.name,app.partner_name,app.have_cv ,app.have_assessment ,app.partner_mobile ,
-                 app.email_from,app.face_book,
-                app.linkedin ,app.cv_matched , app.salary_expected , app.salary_current , res_partner.name prt_name ,
+                select  app.name,app.partner_name,app.have_cv ,app.have_assessment ,app_partner.mobile ,
+                 app.email_from,app_partner.face_book,
+                app_partner.linkedin ,app.cv_matched , app.salary_expected , app.salary_current , res_partner.name prt_name ,
                 prt_uid_name.name creater , cr_bu.name cr_bu , utm_source.name source_name , job.name job_name ,
                 job_bu.name job_bu , dep.name dept ,parent_dep.name parent_dept,
                 offer.state , offer.issue_date , offer.hiring_date ,offer.offer_type , 
                 offer.total_package , offer.have_offer , offer.total_salary ,
                 offer_bu.name offer_bu
                 from hr_applicant app 
+                inner join res_partner app_partner
+                on app.partner_id = app_partner.id
                 left join  res_users usr
                 on app.user_id = usr.id
                 left join res_partner  
@@ -201,7 +203,7 @@ class GeneralSheetWrapper:
         self.partner_name =app_data[0]['partner_name']
         self.have_cv = app_data[0]['have_cv']
         self.have_assessment = app_data[0]['have_assessment']
-        self.partner_mobile = app_data[0]['partner_mobile']
+        self.partner_mobile = app_data[0]['mobile']
         self.email_from = app_data[0]['email_from']
         self.facebook_link = app_data[0]['face_book']
         self.linkedin_link = app_data[0]['linkedin']
