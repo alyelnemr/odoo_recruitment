@@ -1,6 +1,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
+class HRPolicyOfferAndHire(models.Model):
+    _name = 'hr.policy.offer.and.hire.level'
+
+    level = fields.Many2one('job.level', string='Job Level', readonly=True)
+
 
 class HRPolicy(models.Model):
     _name = 'hr.policy'
