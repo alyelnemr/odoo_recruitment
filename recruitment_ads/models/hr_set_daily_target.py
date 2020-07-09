@@ -155,6 +155,9 @@ class HRSetDailyTarget(models.Model):
                         'cvs': job.job_level_id.cv or 0,
                         'target_id': self.id,
                     })
+
+        if len(self.line_ids) == 0:
+            raise ValidationError('Please Set Daily Target first before saving')
         return True
 
     @api.model
@@ -163,7 +166,6 @@ class HRSetDailyTarget(models.Model):
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
         res = super(HRSetDailyTarget, self).create(vals)
-        # res.send_daily_target_mail(res, action='create')
         return res
 
     @api.multi
@@ -224,8 +226,8 @@ class HRSetDailyTargetLine(models.Model):
         res = self.env['generate.daily.target.report.wizard'].with_env(self.env(user=self.recruiter_id)).create({
             'date_from': self.name,
             'date_to': self.name,
-            'job_ids': [(6, 0, [self.job_position_id.id])],
-            'recruiter_ids': [(6, 0, [self.recruiter_id.id])],
+            'job_ids': [(6, 0, [self.job_position_id.id] or [])] if self.job_position_id else False,
+            'recruiter_ids': [(6, 0, [self.recruiter_id.id] or [])] if self.recruiter_id else False,
         })
         action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
                                                               'generate_daily_target_report_wizard_action')

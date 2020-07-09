@@ -238,6 +238,10 @@ FormController.include({
             }
         }
         else{
+            if (record.model ==='hr.set.daily.target' && record.data.line_ids.length ===0){
+                this.do_warn(_t("Error"), _t("Please Set Daily Target first before saving"));
+                return
+            }
             return self._super.apply(self, arguments);
 //             ev.stopPropagation(); // Prevent x2m lines to be auto-saved
 //             this.saveRecord();
