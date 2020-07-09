@@ -4,19 +4,6 @@ from odoo.addons import decimal_precision as dp
 from odoo.tools import osutil, config
 from odoo.exceptions import ValidationError
 from datetime import date, datetime
-from docx import Document
-from docx.shared import Inches, Pt
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import RGBColor
-from docx.enum.table import WD_ALIGN_VERTICAL
-# from docx.enum.table impor WD_ALIGN_VERTICAL_Enumeration
-import unicodedata
-
-from docx.oxml.shared import OxmlElement, qn
-from docx.oxml.ns import nsdecls
-from docx.oxml import parse_xml
-from docx.enum.style import WD_STYLE
-from docx.shared import Cm
 import os
 import base64
 
