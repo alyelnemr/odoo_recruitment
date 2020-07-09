@@ -244,7 +244,6 @@ view_dialogs.FormViewDialog.include({
 //                            args: [[record.data.id]],
 //                        }).then(function (res) {
 //                            if(res){
-//                                console.log(res)
 //                                return self.do_action({
 //                                name: ("This Contact would be duplicated."),
 //                                type: 'ir.actions.act_window',

@@ -14,7 +14,6 @@ Sidebar.include({
      init : function (parent, options) {
        this._super.apply(this, arguments);
         var value_without_attach_button = this.sections;
-        console.log(value_without_attach_button);
         if (options.viewType === "form") {
         if (this.env.model === 'hr.applicant'){
 //            this.sections.splice(1, 0, { 'name' : 'files', 'label' : _t('Attachment(s)'), });

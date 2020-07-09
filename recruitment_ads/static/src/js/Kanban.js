@@ -54,7 +54,6 @@ KanbanColumn.include({
                 if(record.recordData.activity_ids.res_ids != false){
                  event.preventDefault();
                  if(flag === 'over'){
-                    console.log(record.recordData.activity_ids.res_ids)
                     alert('Please insert Activity Result in order to be transferred to another stage');}}else{
                     var checkmanager = window.manager;
                     if (record.recordData.user_id !== false){

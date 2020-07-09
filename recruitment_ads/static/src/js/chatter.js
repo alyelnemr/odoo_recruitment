@@ -133,7 +133,6 @@ Chatter.include({
             }
          });
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-            console.log(window.manager);
            alert('This Application is Owned by another Recruiter , you are not allowed to take any action on.');
         }else{
 
@@ -176,7 +175,6 @@ Chatter.include({
                     return self.do_action(action);
                 });
             }else{
-                console.log('elseeee')
                 alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
 
             }}}
@@ -190,9 +188,7 @@ Chatter.include({
              window.manager =  true;
             }
          });
-        console.log(this.record.data);
         if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-            console.log(window.manager);
            alert('This Application is Owned by another Recruiter , you are not allowed to take any action on.');
         }else{
 
@@ -203,7 +199,6 @@ Chatter.include({
                 if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
                     this.fields.activity.scheduleActivity(false);
                 }else{
-                    console.log('elseeee')
                     alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
                 }
             }
@@ -211,7 +206,6 @@ Chatter.include({
             if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
                 this.fields.activity.scheduleActivity(false);
             }else{
-                console.log('elseeee')
                 alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
             }
         }

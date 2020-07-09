@@ -91,7 +91,6 @@ var CustomFieldChar = AbstractField.extend({
         var self = this;
         var missing_ids = self.recordData.id;
         this.$('.o_activity').html(QWeb.render("mail.KanbanActivityLoading"));
-        console.log(self);
         rpc.query({
          model: 'hr.applicant',
          method:'get_last_activity',
@@ -99,7 +98,6 @@ var CustomFieldChar = AbstractField.extend({
 
          }).then(function (result) {
                 var x = result;
-                 console.log(x);
                  self.$('.o_activity').html(QWeb.render("recruitment_ads.LastKanbanActivityLoading", {
                 records: result ,
 
@@ -162,7 +160,6 @@ MailActivity.include({
                 return self.do_action(action);
             });
         }else{
-            console.log(this.record)
             alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
 
         }
@@ -320,7 +317,6 @@ MailActivity.include({
                                               self._markActivityDDDone(activity_id, feedback,call_result_id )
                                              .then(self._onScheduleInterview(self));
                                     }else{
-                                        console.log('elseeee')
                                         alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
 
                                     }
