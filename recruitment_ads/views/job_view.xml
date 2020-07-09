@@ -12,9 +12,11 @@
                            options="{'no_create':True,'no_open':True}"
                     />
                     <field name="department_id" class="oe_inline"
-                           domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"/>
+                           domain="[('business_unit_id', '=', business_unit_id),('parent_id', '=', False)]"
+                           context="{'default_business_unit_id': business_unit_id}"/>
                     <field name="section_id" class="oe_inline"
                            domain="[('parent_id','=',department_id)]" context="{'default_parent_id': department_id,
+                           'default_business_unit_id': business_unit_id,
                            'form_view_ref' : 'recruitment_ads.view_section_form',
                            'tree_view_ref' : 'recruitment_ads.view_section_tree'}"/>
                     <field name="job_title_id" class="oe_inline" domain="[('department_ids', 'in', department_id)]"
