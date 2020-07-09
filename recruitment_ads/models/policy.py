@@ -19,13 +19,17 @@ class HRPolicyOfferAndHire(models.Model):
 class HRPolicy(models.Model):
     _name = 'hr.policy'
 
-    name = fields.Char(string="Policy Name")
+    name = fields.Char(string="Policy Name", readonly=True)
     day = fields.Integer(string="Days")
     month = fields.Integer(string="Months")
     year = fields.Integer(string="Years")
     hr_policy_type = fields.Selection([('application_period', 'Application Period'),
-         ('offer_and_hire', 'Offer and Hire')], string='Policy Type', default='application_period', track_visibility='onchange', required=True)
+         ('offer_and_hire', 'Offer and Hire')], string='Policy Type', default='application_period', required=True)
     offer_and_hire_level = fields.One2many('hr.policy.offer.and.hire.level', 'hr_policy', string='Levels')
+
+    @api.onchange('hr_policy_type')
+    def onchange_hr_policy_type(self):
+        self.name = ('Application Period', 'Offer and Hire')[self.hr_policy_type == 'offer_and_hire']
 
     @api.multi
     def unlink(self):
