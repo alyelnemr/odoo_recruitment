@@ -12,6 +12,7 @@
                         <group>
                             <group>
                                 <field name="name" string="Policy"/>
+                                <field name="hr_policy_type"/>
                             </group>
                             <group>
                                 <field attrs="{'invisible': [('hr_policy_type', '=', 'offer_and_hire')]}" name="day"/>
@@ -72,7 +73,9 @@
             <field name="view_mode">tree,form</field>
             <field name="arch" type="xml">
                 <tree create="false">
-                    <field name="name"/>
+                    <field name="hr_policy"/>
+                    <field name="level"/>
+                    <field name="total"/>
                 </tree>
             </field>
         </record>
