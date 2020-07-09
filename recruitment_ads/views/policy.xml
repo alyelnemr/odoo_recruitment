@@ -87,7 +87,7 @@
                     view_type="form"/>
 
         <menuitem id="menu_hr_policy_level"
-                  name="HR policy"
+                  name="HR Policy Level"
                   parent="hr_recruitment.menu_hr_recruitment_configuration"
                   sequence="102"
                   action="act_hr_policy_level_menu"
