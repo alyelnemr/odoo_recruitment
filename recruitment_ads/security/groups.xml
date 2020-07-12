@@ -163,7 +163,7 @@
     </record>
     <record id="hr_set_daily_target_manager" model="ir.rule">
         <field name="name">See All daily targets</field>
-        <field name="model_id" ref="model_hr_department"/>
+        <field name="model_id" ref="model_hr_set_daily_target"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read">1</field>
         <field name="perm_write">1</field>
