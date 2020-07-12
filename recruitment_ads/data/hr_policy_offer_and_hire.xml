@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Call Result Data -->
+        <record id="record_hr_policy_offer_and_hire" model="hr.policy">
+            <field name="name">Offer and Hire</field>
+            <field name="hr_policy_type">offer_and_hire</field>
+        </record>
+        <!-- Call Result Data -->
+        <record id="record_hr_policy_offer_and_hire_level_director" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_director" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+        <record id="record_hr_policy_offer_and_hire_level_consultant" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_consultant" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+        <record id="record_hr_policy_offer_and_hire_level_manager" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_manager" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+        <record id="record_hr_policy_offer_and_hire_level_specialist" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_specialist" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+        <record id="record_hr_policy_offer_and_hire_level_supervisory" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_supervisory" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+        <record id="record_hr_policy_offer_and_hire_level_section_head" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_section_head" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+        <record id="record_hr_policy_offer_and_hire_level_entry" model="hr.policy.offer.and.hire.level">
+            <field name="level" ref="recruitment_ads.level_entry" />
+            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_offer_and_hire"/>
+        </record>
+    </data>
+</openerp>

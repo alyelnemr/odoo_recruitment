@@ -11,8 +11,8 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="name" string="Policy"/>
-                                <field name="hr_policy_type"/>
+                                <field name="name" readonly="1" string="Policy"/>
+                                <field attrs="{'invisible': 1}" name="hr_policy_type"/>
                             </group>
                             <group>
                                 <field attrs="{'invisible': [('hr_policy_type', '=', 'offer_and_hire')]}" name="day"/>
@@ -25,7 +25,7 @@
                             <page string="Job Levels">
                                 <field name="offer_and_hire_level">
                                     <tree editable="bottom" delete="false" create="false">
-                                        <field name="level"/>
+                                        <field name="level" readonly="1"/>
                                         <field name="offer"/>
                                         <field name="hire"/>
                                         <field name="total"/>

@@ -25,6 +25,7 @@ Handle recruitment Process for Andalusia
         'data/jobs_data.xml',
         'reports/reports.xml',
         'data/offer_data.xml',
+        'data/hr_policy_offer_and_hire.xml',
         'data/sequence.xml',
         'data/job_mail_template.xml',
         'views/offer_view.xml',
