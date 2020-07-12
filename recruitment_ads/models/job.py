@@ -100,7 +100,7 @@ class BusinessUnit(models.Model):
 class Department(models.Model):
     _inherit = "hr.department"
     # current_user=fields.Many2one('res.users',default=lambda self: self.env.uid)
-    allow_call = fields.Boolean(string='Allow Online Call')
+    allow_call = fields.Boolean(string='Allow Online Call', default=True)
 
     def _get_default_bu(self):
         if self.parent_id:
