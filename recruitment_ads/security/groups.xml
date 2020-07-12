@@ -149,13 +149,15 @@
     <record id="hr_set_daily_target_coordinator" model="ir.rule">
         <field name="name">Coordinator Set Daily Target</field>
         <field name="model_id" ref="model_hr_set_daily_target"/>
-        <field name="domain_force">['|','|','|','|','|',
+        <field name="domain_force">['|','|','|','|','|','|','|',
             ('bu_ids', 'in', [user.business_unit_id.id]),
             ('create_uid.business_unit_id', 'in', [user.business_unit_id.id]),
             ('create_uid.multi_business_unit_id', 'in', [user.business_unit_id.id]),
+            ('job_ids', 'in', [user.business_unit_id.id]),
             ('bu_ids', 'in', user.multi_business_unit_id.ids),
             ('create_uid.business_unit_id', 'in', user.multi_business_unit_id.ids),
-            ('create_uid.multi_business_unit_id', 'in', user.multi_business_unit_id.ids)
+            ('create_uid.multi_business_unit_id', 'in', user.multi_business_unit_id.ids),
+            ('job_ids', 'in', user.multi_business_unit_id.ids),
             ]
         </field>
         <field name="perm_read">1</field>
