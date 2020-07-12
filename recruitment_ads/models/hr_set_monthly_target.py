@@ -50,6 +50,12 @@ class HRSetMonthlyTargetLine(models.Model):
          ('critical', 'Critical'), ], string='Position Type',
         default='normal', )
 
+    @api.model
+    def create(self, vals):
+        res = super(HRSetMonthlyTargetLine, self).create(vals)
+        res.send_monthly_target_mail(vals)
+        return res
+
     @api.multi
     def write(self, vals):
         res = super(HRSetMonthlyTargetLine, self).write(vals)
