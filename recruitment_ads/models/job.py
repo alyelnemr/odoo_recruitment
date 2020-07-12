@@ -178,7 +178,21 @@ class JobLevel(models.Model):
             raise ValidationError(_("The field 'Level weight' must be greater than 0"))
         if vals['cv'] < 1:
             raise ValidationError(_("The field 'CV' must be greater than 0"))
-        return super(JobLevel, self).create(vals)
+        res = super(JobLevel, self).create(vals)
+        # add new inserted job level here in (HR Policy, offer and hire levels)
+        # to be always synced with HR Policy
+        hr_policy = self.env['hr.policy'].search([('hr_policy_type', '=', 'offer_and_hire')], limit=1)
+        hr_policy.update({
+                'offer_and_hire_level': (0, 0, {
+                    'level': res.id,
+                    'offer': 0,
+                    'hire': 0,
+                    'total': 0,
+                    'hr_policy': hr_policy.id
+                }),
+            })
+
+        return res
 
     @api.multi
     def write(self, vals):
