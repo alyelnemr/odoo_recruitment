@@ -24,7 +24,7 @@
                             <field name="user_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
                                    options="{'no_create_edit': True,'no_create':True}"/>
                         </group>
-<!--                      -->
+                        <!--                      -->
                     </sheet>
                 </form>
 
@@ -64,7 +64,7 @@
                   name="Monthly Target"
                   sequence="3"
                   parent="hr_recruitment.menu_hr_recruitment_root"
-                  groups="recruitment_ads.group_view_set_monthly_target"/>
+                  groups="recruitment_ads.group_view_set_monthly_target,recruitment_ads.group_view_generate_monthly_target_Report"/>
         <menuitem
                 action="action_hr_set_monthly_target"
                 id="menu_hr_set_monthly_target"
@@ -111,29 +111,29 @@
     </record>
 
 
-        <record id="action_hr_set_monthly_target_line" model="ir.actions.act_window">
-            <field name="name">Set Monthly Target line</field>
-            <field name="res_model">hr.set.monthly.target.line</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="view_ids" eval="[(5, 0, 0),
+    <record id="action_hr_set_monthly_target_line" model="ir.actions.act_window">
+        <field name="name">Set Monthly Target line</field>
+        <field name="res_model">hr.set.monthly.target.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_monthly_target_line_form')})]"/>
-            <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    Click to define a new Monthly target line.
-                </p>
-            </field>
-        </record>
-        <!--menu_hr_monthly_target Menu-->
-        <menuitem id="menu_hr_monthly_target_line"
-                  name="Monthly Target line"
-                  sequence="3"
-                  parent="hr_recruitment.menu_hr_recruitment_root"/>
-        <menuitem
-                action="action_hr_set_monthly_target_line"
-                id="menu_hr_set_monthly_target_line"
-                parent="menu_hr_monthly_target_line"
-                sequence="1"
-                name="Set Monthly Target line"
-                />
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a new Monthly target line.
+            </p>
+        </field>
+    </record>
+    <!--menu_hr_monthly_target Menu-->
+    <menuitem id="menu_hr_monthly_target_line"
+              name="Monthly Target line"
+              sequence="3"
+              parent="hr_recruitment.menu_hr_recruitment_root"/>
+    <menuitem
+            action="action_hr_set_monthly_target_line"
+            id="menu_hr_set_monthly_target_line"
+            parent="menu_hr_monthly_target_line"
+            sequence="1"
+            name="Set Monthly Target line"
+    />
 </odoo>

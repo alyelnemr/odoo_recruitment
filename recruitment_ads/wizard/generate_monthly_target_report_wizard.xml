@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="generate_monthly_target_wizard_view" model="ir.ui.view">
+        <field name="name">generate.monthly.target.wizard.view</field>
+        <field name="model">generate.monthly.target.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form name="Generate Monthly Target Report">
+                <sheet>
+                    <group col="4">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="bu_ids" widget="many2many_tags"
+                               options="{'no_create_edit': True,'no_create':True}"
+                        />
+                        <field name="job_ids" widget="many2many_tags"
+                               options="{'no_create_edit': True,'no_create':True}"
+                        />
+                        <field name="recruiter_ids" widget="many2many_tags"
+                               attrs="{'readonly':[('check_rec_manager','=','officer')]}"
+                               options="{'no_create_edit': True,'no_create':True}"
+                        />
+                        <field name="check_rec_manager" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="button_generate_monthly_report" type="object" string="Generate Report"
+                                class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="generate_monthly_target_report_wizard_action" model="ir.actions.act_window">
+        <field name="name">Generate Monthly Target Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">generate.monthly.target.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="hr_recruitment_generate_monthly_target_report"
+              name="Generate Monthly Target Report"
+              parent="menu_hr_monthly_target"
+              sequence="1"
+              action="generate_monthly_target_report_wizard_action"
+              groups="group_view_generate_monthly_target_Report"/>
+
+</odoo>

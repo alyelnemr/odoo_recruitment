@@ -6,3 +6,4 @@ from . import interview_mail_compose_message
 from . import compliance_report_wizard
 from . import interview_report_wizard
 from . import generate_daily_target_report_wizard
+from . import generate_monthly_target_report_wizard

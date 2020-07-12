@@ -4,3 +4,4 @@ from . import recruiter_activity_xlsx
 from . import compliance_report_xlsx
 from . import interview_report_xlsx
 from . import generate_daily_target_report_xlsx
+from . import generate_monthly_target_report_xlsx

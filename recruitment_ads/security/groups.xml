@@ -37,9 +37,11 @@
     <record id="group_view_generate_daily_target_Report" model="res.groups">
         <field name="name">View Generate Daily Target Report</field>
     </record>
-
     <record id="group_view_set_monthly_target" model="res.groups">
         <field name="name">View Set Monthly Target</field>
+    </record>
+    <record id="group_view_generate_monthly_target_Report" model="res.groups">
+        <field name="name">View Generate Monthly Target Report</field>
     </record>
 
     <!--   Add coordinator role to recruitment access right     -->
