@@ -8,14 +8,12 @@
             <field name="arch" type="xml">
                 <form string="Target">
                     <sheet>
-                        <field name="id" invisible="1"/>
-                        <div class="oe_title">
-                            <label for="name" class="oe_edit_only" string="Date"/>
-                            <h1>
-                                <field name="name" placeholder="Date" required="True"
-                                       attrs="{'readonly': [('id', '!=', False)]}"/>
-                            </h1>
-                        </div>
+                        <group>
+                           <field name="date_from" placeholder="Date From" required="True"
+                           attrs="{'readonly': [('id', '!=', False)]}"/>
+                          <field name="date_to" placeholder="Date To" required="True"
+                            attrs="{'readonly': [('id', '!=', False)]}"/>
+                        </group>
                         <group>
                             <field name="bu_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
                                    options="{'no_create_edit': True,'no_create': True}"/>
@@ -24,19 +22,51 @@
                             <field name="user_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
                                    options="{'no_create_edit': True,'no_create':True}"/>
                         </group>
-                        <!--                      -->
+                        <footer class="pull-right" attrs="{'invisible': [('id', '!=', False)]}">
+                            <button name="search_filter" string="Search" type="object" class="oe_highlight oe_inline "
+                                    icon="fa-search" style="margin-right:30px"/>
+                        </footer>
+                        <field name="lines_count" invisible="1"/>
+                        <notebook attrs="{'invisible':[('lines_count','=',0)]}">
+                            <page string="Recruiters Target">
+                                <field name="line_ids" nolabel="1">
+                                    <tree editable="bottom" delete="false" create="false">
+                                        <field name="name"/>
+                                        <field name="recruiter_bu_id"/>
+                                        <field name="recruiter_id"/>
+                                        <field name="bu_id"/>
+                                        <field name="department_id"/>
+                                        <field name="section_id"/>
+                                        <field name="job_id"/>
+                                        <field name="level_id"/>
+                                        <field name="position_type"/>
+                                        <field name="expecting_offer_date"/>
+                                        <field name="expecting_hire_date"/>
+                                         <field name="man_power"/>
+                                         <field name="current_emp"/>
+                                         <field name="replacement_emp"/>
+                                         <field name="vacant"/>
+                                        <field name="offer_target"/>
+                                        <field name="hire_target"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
                     </sheet>
                 </form>
 
             </field>
         </record>
+
         <!--hr.set.monthly.target tree-->
         <record id="view_hr_set_monthly_target_tree" model="ir.ui.view">
             <field name="name">hr.set.monthly.target.tree</field>
             <field name="model">hr.set.monthly.target</field>
             <field name="arch" type="xml">
                 <tree string="Set Daily Target">
-                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
                     <field name="bu_ids" widget="many2many_tags"/>
                     <field name="job_ids" widget="many2many_tags"/>
                     <field name="user_ids" widget="many2many_tags"/>
@@ -64,7 +94,7 @@
                   name="Monthly Target"
                   sequence="3"
                   parent="hr_recruitment.menu_hr_recruitment_root"
-                  groups="recruitment_ads.group_view_set_monthly_target,recruitment_ads.group_view_generate_monthly_target_Report"/>
+                  groups="recruitment_ads.group_view_set_monthly_target"/>
         <menuitem
                 action="action_hr_set_monthly_target"
                 id="menu_hr_set_monthly_target"
@@ -74,66 +104,6 @@
                 groups="recruitment_ads.group_view_set_monthly_target"/>
 
     </data>
-    <record id="view_hr_set_monthly_target_line_form" model="ir.ui.view">
-        <field name="name">hr.set.monthly.target.line.form</field>
-        <field name="model">hr.set.monthly.target.line</field>
-        <field name="arch" type="xml">
-            <form string="Target Line">
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="recruiter_bu_id"/>
-                            <field name="recruiter_id"/>
-                            <field name="bu_id"/>
-                            <field name="department_id"/>
-                        </group>
-                        <group>
-                            <field name="section_id"/>
-                            <field name="job_id"/>
-                            <field name="level_id"/>
-                            <field name="offer_target"/>
-                            <field name="hire_target"/>
-                            <field name="vacant"/>
-                            <field name="replacement_emp"/>
-                            <field name="position_type"/>
-                            <field name="man_power"/>
-                            <field name="job_position_id"/>
-                            <field name="current_emp"/>
-                            <field name="expecting_offer_date"/>
-                            <field name="expecting_hire_date"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-
-        </field>
-    </record>
 
 
-    <record id="action_hr_set_monthly_target_line" model="ir.actions.act_window">
-        <field name="name">Set Monthly Target line</field>
-        <field name="res_model">hr.set.monthly.target.line</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_monthly_target_line_form')})]"/>
-        <field name="help" type="html">
-            <p class="oe_view_nocontent_create">
-                Click to define a new Monthly target line.
-            </p>
-        </field>
-    </record>
-    <!--menu_hr_monthly_target Menu-->
-    <menuitem id="menu_hr_monthly_target_line"
-              name="Monthly Target line"
-              sequence="3"
-              parent="hr_recruitment.menu_hr_recruitment_root"/>
-    <menuitem
-            action="action_hr_set_monthly_target_line"
-            id="menu_hr_set_monthly_target_line"
-            parent="menu_hr_monthly_target_line"
-            sequence="1"
-            name="Set Monthly Target line"
-    />
 </odoo>
