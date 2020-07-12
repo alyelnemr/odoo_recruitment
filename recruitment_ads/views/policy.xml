@@ -23,7 +23,7 @@
                         <group>
                             <notebook attrs="{'invisible': [('hr_policy_type', '!=', 'offer_and_hire')]}">
                             <page string="Job Levels">
-                                <field name="offer_and_hire_level" nolabel="1">
+                                <field name="offer_and_hire_level">
                                     <tree editable="bottom" delete="false" create="false">
                                         <field name="level"/>
                                         <field name="offer"/>
