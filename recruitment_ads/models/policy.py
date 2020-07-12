@@ -50,6 +50,6 @@ class HRPolicy(models.Model):
 
     @api.multi
     def unlink(self):
-        # for line in self:
-        #     raise ValidationError(_('Cannot Delete HR Policy.'))
+        for line in self:
+            raise ValidationError(_('Cannot Delete HR Policy.'))
         return super(HRPolicy, self).unlink()
