@@ -1,7 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+
 
 class HRSetMonthlyTarget(models.Model):
     _name = 'hr.set.monthly.target'
@@ -122,8 +121,7 @@ class HRSetMonthlyTargetLine(models.Model):
     _name = 'hr.set.monthly.target.line'
     _description = 'Set Monthly Target Lines'
 
-
-    name = fields.Date(required=True,  track_visibility='always')
+    name = fields.Date(required=True, track_visibility='always')
     recruiter_bu_id = fields.Many2one('business.unit', string='Recruiter BU',
                                       track_visibility='always')
     recruiter_id = fields.Many2one('res.users', required=True,  string='Recruiter Responsible',
@@ -151,5 +149,38 @@ class HRSetMonthlyTargetLine(models.Model):
     target_id = fields.Many2one('hr.set.monthly.target', string='Set Monthly Target', track_visibility='always')
     position_type = fields.Selection(
         [('normal', 'Normal'),
-         ('critical', 'Critical'),], string='Position Type',
-        default='normal',)
+         ('critical', 'Critical'), ], string='Position Type',
+        default='normal', )
+
+    @api.model
+    def create(self, vals):
+        res = super(HRSetMonthlyTargetLine, self).create(vals)
+        res.send_monthly_target_mail(vals)
+        return res
+
+    @api.multi
+    def write(self, vals):
+        res = super(HRSetMonthlyTargetLine, self).write(vals)
+        self.send_monthly_target_mail(vals)
+        return res
+
+    def send_monthly_target_mail(self, data):
+        if data:
+            self.send_mail_set_monthly_target()
+
+    @api.multi
+    def send_mail_set_monthly_target(self):
+        template = self.env.ref('recruitment_ads.set_monthly_target_line_email_template')
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
+
+    def get_mail_url(self):
+        self.ensure_one()
+        res = self.env['generate.monthly.target.report.wizard'].with_env(self.env(user=self.recruiter_id)).create({
+            'date_from': self.name,
+            'date_to': self.name,
+            'job_ids': [(6, 0, [self.job_position_id.id] or [])] if self.job_position_id else False,
+            'recruiter_ids': [(6, 0, [self.recruiter_id.id] or [])] if self.recruiter_id else False,
+        })
+        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
+                                                              'generate_monthly_target_report_wizard_action')
+        return 'web#action=' + str(action.get('id')) + '&id=' + str(res.id)
