@@ -155,11 +155,11 @@
             ('bu_ids', 'in', [user.business_unit_id.id]),
             ('create_uid.business_unit_id', 'in', [user.business_unit_id.id]),
             ('create_uid.multi_business_unit_id', 'in', [user.business_unit_id.id]),
-            ('job_ids', 'in', [user.business_unit_id.id]),
+            ('job_ids.business_unit_id', 'in', [user.business_unit_id.id]),
             ('bu_ids', 'in', user.multi_business_unit_id.ids),
             ('create_uid.business_unit_id', 'in', user.multi_business_unit_id.ids),
             ('create_uid.multi_business_unit_id', 'in', user.multi_business_unit_id.ids),
-            ('job_ids', 'in', user.multi_business_unit_id.ids),
+            ('job_ids.business_unit_id', 'in', user.multi_business_unit_id.ids),
             ]
         </field>
         <field name="perm_read">1</field>
