@@ -5,7 +5,7 @@ from odoo.exceptions import ValidationError
 class HRPolicyOfferAndHire(models.Model):
     _name = 'hr.policy.offer.and.hire.level'
 
-    level = fields.Many2one('job.level', string='Job Level')
+    level = fields.Many2one('job.level', string='Job Level', ondelete='cascade')
     offer = fields.Integer('Offer', required=True, default=0)
     hire = fields.Integer('Hire', required=True, default=0)
     total = fields.Integer('Total', readonly=True, compute="_compute_total")
