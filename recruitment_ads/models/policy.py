@@ -48,17 +48,33 @@ class HRPolicy(models.Model):
                 'offer_and_hire_level': values,
             })
 
-    # @api.model
-    # def create(self, vals):
-    #     res = super(HRPolicy, self).create(vals)
-    #     return res
-    #
+    @api.model
+    def create(self, vals):
+        res = super(HRPolicy, self).create(vals)
+        if self.hr_policy_type == 'offer_and_hire':
+            self.offer_and_hire_level.unlink()
+            if self.hr_policy_type == 'offer_and_hire':
+                values = []
+                job_levels = self.env['job.level'].search([])
+                for level in job_levels:
+                    values.append((0, 0, {
+                        'level': level.id,
+                        'offer': 0,
+                        'hire': 0,
+                        'total': 0,
+                        'hr_policy': self._origin.id
+                    }))
+                self.update({
+                    'offer_and_hire_level': values,
+                })
+        return res
+
     # @api.multi
     # def write(self, vals):
     #     return super(HRPolicy, self).write(vals)
 
     @api.multi
     def unlink(self):
-        for line in self:
-            raise ValidationError(_('Cannot Delete HR Policy.'))
+        # for line in self:
+        #     raise ValidationError(_('Cannot Delete HR Policy.'))
         return super(HRPolicy, self).unlink()
