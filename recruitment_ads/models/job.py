@@ -182,15 +182,13 @@ class JobLevel(models.Model):
         # add new inserted job level here in (HR Policy, offer and hire levels)
         # to be always synced with HR Policy
         hr_policy = self.env['hr.policy'].search([('hr_policy_type', '=', 'offer_and_hire')], limit=1)
-        hr_policy.update({
-                'offer_and_hire_level': (0, 0, {
+        self.env['hr.policy.offer.and.hire.level'].create({
                     'level': res.id,
                     'offer': 0,
                     'hire': 0,
                     'total': 0,
                     'hr_policy': hr_policy.id
-                }),
-            })
+                })
 
         return res
 
