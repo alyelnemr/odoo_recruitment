@@ -9,4 +9,5 @@ from . import offer
 from . import res_users
 from . import policy
 from . import hr_set_daily_target
+from . import hr_set_monthly_target
 # test automation build mail

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--hr.set.monthly.target form-->
+        <record id="view_hr_set_monthly_target_form" model="ir.ui.view">
+            <field name="name">hr.set.monthly.target.form</field>
+            <field name="model">hr.set.monthly.target</field>
+            <field name="arch" type="xml">
+                <form string="Target">
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Date"/>
+                            <h1>
+                                <field name="name" placeholder="Date" required="True"
+                                       attrs="{'readonly': [('id', '!=', False)]}"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="bu_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
+                                   options="{'no_create_edit': True,'no_create': True}"/>
+                            <field name="job_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
+                                   options="{'no_create_edit': True,'no_create':True}"/>
+                            <field name="user_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
+                                   options="{'no_create_edit': True,'no_create':True}"/>
+                        </group>
+<!--                      -->
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+        <!--hr.set.monthly.target tree-->
+        <record id="view_hr_set_monthly_target_tree" model="ir.ui.view">
+            <field name="name">hr.set.monthly.target.tree</field>
+            <field name="model">hr.set.monthly.target</field>
+            <field name="arch" type="xml">
+                <tree string="Set Daily Target">
+                    <field name="name"/>
+                    <field name="bu_ids" widget="many2many_tags"/>
+                    <field name="job_ids" widget="many2many_tags"/>
+                    <field name="user_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--hr.set.monthly.target Action-->
+        <record id="action_hr_set_monthly_target" model="ir.actions.act_window">
+            <field name="name">Set Monthly Target</field>
+            <field name="res_model">hr.set.monthly.target</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree','view_id':ref('view_hr_set_monthly_target_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_monthly_target_form')})]"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Monthly target.
+                </p>
+            </field>
+        </record>
+        <!--menu_hr_monthly_target Menu-->
+        <menuitem id="menu_hr_monthly_target"
+                  name="Monthly Target"
+                  sequence="3"
+                  parent="hr_recruitment.menu_hr_recruitment_root"
+                  groups="recruitment_ads.group_view_set_monthly_target"/>
+        <menuitem
+                action="action_hr_set_monthly_target"
+                id="menu_hr_set_monthly_target"
+                parent="menu_hr_monthly_target"
+                sequence="1"
+                name="Set Monthly Target"
+                groups="recruitment_ads.group_view_set_monthly_target"/>
+
+    </data>
+    <record id="view_hr_set_monthly_target_line_form" model="ir.ui.view">
+        <field name="name">hr.set.monthly.target.line.form</field>
+        <field name="model">hr.set.monthly.target.line</field>
+        <field name="arch" type="xml">
+            <form string="Target Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="recruiter_bu_id"/>
+                            <field name="recruiter_id"/>
+                            <field name="bu_id"/>
+                            <field name="department_id"/>
+                        </group>
+                        <group>
+                            <field name="section_id"/>
+                            <field name="job_id"/>
+                            <field name="level_id"/>
+                            <field name="offer_target"/>
+                            <field name="hire_target"/>
+                            <field name="vacant"/>
+                            <field name="replacement_emp"/>
+                            <field name="position_type"/>
+                            <field name="man_power"/>
+                            <field name="job_position_id"/>
+                            <field name="current_emp"/>
+                            <field name="expecting_offer_date"/>
+                            <field name="expecting_hire_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+
+
+        <record id="action_hr_set_monthly_target_line" model="ir.actions.act_window">
+            <field name="name">Set Monthly Target line</field>
+            <field name="res_model">hr.set.monthly.target.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_monthly_target_line_form')})]"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Monthly target line.
+                </p>
+            </field>
+        </record>
+        <!--menu_hr_monthly_target Menu-->
+        <menuitem id="menu_hr_monthly_target_line"
+                  name="Monthly Target line"
+                  sequence="3"
+                  parent="hr_recruitment.menu_hr_recruitment_root"/>
+        <menuitem
+                action="action_hr_set_monthly_target_line"
+                id="menu_hr_set_monthly_target_line"
+                parent="menu_hr_monthly_target_line"
+                sequence="1"
+                name="Set Monthly Target line"
+                />
+</odoo>
