@@ -31,25 +31,25 @@
                             <page string="Recruiters Target">
                                 <field name="line_ids" nolabel="1">
                                     <tree editable="bottom" delete="false" create="false">
-                                        <field name="recruiter_id"/>
-                                        <field name="recruiter_bu_id"/>
-                                        <field name="start_date"/>
-                                        <field name="bu_id"/>
-                                        <field name="department_id"/>
-                                        <field name="section_id"/>
-                                        <field name="job_id"/>
-                                        <field name="level_id"/>
+                                        <field name="recruiter_id" force_save = "1"/>
+                                        <field name="recruiter_bu_id" force_save = "1"/>
+                                        <field name="start_date" />
+                                        <field name="bu_id" force_save = "1"/>
+                                        <field name="department_id" force_save = "1"/>
+                                        <field name="section_id" force_save = "1"/>
+                                        <field name="job_id" force_save = "1"/>
+                                        <field name="level_id" force_save = "1"/>
                                         <field name="position_type"/>
-                                        <field name="expecting_offer_date"/>
-                                        <field name="expecting_hire_date"/>
+                                        <field name="expecting_offer_date" force_save = "1"/>
+                                        <field name="expecting_hire_date" force_save = "1"/>
                                          <field name="man_power"/>
                                          <field name="current_emp"/>
                                          <field name="replacement_emp"/>
-                                         <field name="vacant"/>
+                                         <field name="vacant" force_save = "1"/>
                                         <field name="offer_target"/>
                                         <field name="hire_target"/>
-                                        <field name="offer_weight"/>
-                                        <field name="hire_weight"/>
+                                        <field name="offer_weight" force_save = "1"/>
+                                        <field name="hire_weight" force_save = "1"/>
                                     </tree>
                                 </field>
                             </page>
