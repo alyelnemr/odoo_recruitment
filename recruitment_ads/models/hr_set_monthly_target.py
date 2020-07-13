@@ -1,9 +1,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import datetime ,timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import datetime as datetime_now
-    #, timedelta
+
 
 class HRSetMonthlyTarget(models.Model):
     _name = 'hr.set.monthly.target'
@@ -115,33 +115,34 @@ class HRSetMonthlyTarget(models.Model):
                     })
 
         if len(self.line_ids) == 0:
-            self.env.cr.rollback()
-            self.env.cr.commit()
             raise ValidationError('Please Set Monthly Target first before saving')
 
         return True
 
     @api.model
     def create(self, vals):
+        users=[]
+        if vals.get('job_ids')[0][2]:
+            job_domain = [('id', 'in', vals.get('job_ids')[0][2])]
+        else:
+            job_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get('job_ids',
+                                                                                                             False)
+        if vals.get('user_ids')[0][2]:
+            user_domain = [('id', 'in', vals.get('user_ids')[0][2])]
+        else:
+            user_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get(
+                'user_ids', False)
 
-        # if vals['user_ids']:
-        #     raise ValidationError(_('Please Set Monthly Target first before saving'))
-        #     job_domain = [('id', 'in', self.job_ids.ids)]
-        # else:
-        #     job_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get('job_ids',
-        #                                                                                                      False)
-        # if self.user_ids:
-        #     user_domain = [('id', 'in', self.user_ids.ids)]
-        # else:
-        #     user_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get(
-        #         'user_ids', False)
-        #
-        # job_report = self.env['hr.job'].search(job_domain)
-        # x=len(job_report)
-        # user_report = self.env['res.users'].search(user_domain)
-        # y= len(user_report)
-        # if not vals.get('lines_count'):
-        #     raise ValidationError(_('Please Set Monthly Target first before saving'))
+        job_report = self.env['hr.job'].search(job_domain)
+        user_report = self.env['res.users'].search(user_domain)
+
+        for job in job_report:
+            for user in job.mapped('user_id') + job.mapped('other_recruiters_ids'):
+                if user in user_report:
+                    users.append(user)
+        if not users:
+          raise ValidationError('The Selected Job positions have no recruiters under your BU')
+
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
