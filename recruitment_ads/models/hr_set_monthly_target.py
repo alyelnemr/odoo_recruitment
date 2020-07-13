@@ -163,19 +163,19 @@ class HRSetMonthlyTargetLine(models.Model):
     _rec_name = 'start_date'
 
     start_date = fields.Date( track_visibility='always')
-    recruiter_bu_id = fields.Many2one('business.unit',required=True, string='Recruiter BU',
+    recruiter_bu_id = fields.Many2one('business.unit', string='Recruiter BU',
                                       track_visibility='always',readonly=True)
-    recruiter_id = fields.Many2one('res.users', required=True,  string='Recruiter Responsible',
+    recruiter_id = fields.Many2one('res.users',   string='Recruiter Responsible',
                                    track_visibility='always',readonly=True)
-    bu_id = fields.Many2one('business.unit', string='BU', required=True,  track_visibility='always',readonly=True)
-    department_id = fields.Many2one('hr.department', string='Department', required=True,
+    bu_id = fields.Many2one('business.unit', string='BU',  track_visibility='always',readonly=True)
+    department_id = fields.Many2one('hr.department', string='Department',
                                     track_visibility='always',readonly=True)
     section_id = fields.Many2one('hr.department', string='Section',
                                  track_visibility='always',readonly=True)
-    job_id = fields.Many2one('job.title', string='Position', required=True,  track_visibility='always',readonly=True)
+    job_id = fields.Many2one('job.title', string='Position',  track_visibility='always',readonly=True)
     job_position_id = fields.Many2one('hr.job', string='Position from target',
                                       track_visibility='always')
-    level_id = fields.Many2one('job.level', string='Level', track_visibility='always',required=True)
+    level_id = fields.Many2one('job.level', string='Level', track_visibility='always')
 
     offer_target = fields.Integer(string="Offer Target", track_visibility='always', default=0)
     hire_target = fields.Integer(string="Hire Target", track_visibility='always', default=0)
