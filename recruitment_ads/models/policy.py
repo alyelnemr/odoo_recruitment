@@ -20,12 +20,12 @@ class HRPolicyOfferAndHire(models.Model):
     @api.onchange('offer')
     def _on_change_check_offer_numbers_only(self):
         if not self.offer.isdigit():
-            raise ValidationError(_('Offer be numbers only!'))
+            raise ValidationError(_('Offer must be numbers only!'))
 
     @api.onchange('hire')
     def _on_change_check_hire_numbers_only(self):
         if not self.hire.isdigit():
-            raise ValidationError(_('Hire be numbers only!'))
+            raise ValidationError(_('Hire must be numbers only!'))
 
 class HRPolicy(models.Model):
     _name = 'hr.policy'
