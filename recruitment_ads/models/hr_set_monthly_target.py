@@ -98,7 +98,6 @@ class HRSetMonthlyTarget(models.Model):
 
         job_report = self.env['hr.job'].search(job_domain)
         user_report = self.env['res.users'].search(user_domain)
-
         for job in job_report:
             for user in job.mapped('user_id') + job.mapped('other_recruiters_ids'):
                 if user in user_report:
@@ -117,14 +116,32 @@ class HRSetMonthlyTarget(models.Model):
 
         if len(self.line_ids) == 0:
             self.env.cr.rollback()
+            self.env.cr.commit()
             raise ValidationError('Please Set Monthly Target first before saving')
 
         return True
 
     @api.model
     def create(self, vals):
-        # if not vals['line_ids'] :
-        #     raise ValidationError('Please Set Monthly Target first before saving')
+
+        # if vals['user_ids']:
+        #     raise ValidationError(_('Please Set Monthly Target first before saving'))
+        #     job_domain = [('id', 'in', self.job_ids.ids)]
+        # else:
+        #     job_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get('job_ids',
+        #                                                                                                      False)
+        # if self.user_ids:
+        #     user_domain = [('id', 'in', self.user_ids.ids)]
+        # else:
+        #     user_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get(
+        #         'user_ids', False)
+        #
+        # job_report = self.env['hr.job'].search(job_domain)
+        # x=len(job_report)
+        # user_report = self.env['res.users'].search(user_domain)
+        # y= len(user_report)
+        # if not vals.get('lines_count'):
+        #     raise ValidationError(_('Please Set Monthly Target first before saving'))
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
@@ -144,8 +161,8 @@ class HRSetMonthlyTargetLine(models.Model):
     _description = 'Set Monthly Target Lines'
     _rec_name = 'start_date'
 
-    start_date = fields.Date(required=True, track_visibility='always')
-    recruiter_bu_id = fields.Many2one('business.unit', string='Recruiter BU',
+    start_date = fields.Date( track_visibility='always')
+    recruiter_bu_id = fields.Many2one('business.unit',required=True, string='Recruiter BU',
                                       track_visibility='always',readonly=True)
     recruiter_id = fields.Many2one('res.users', required=True,  string='Recruiter Responsible',
                                    track_visibility='always',readonly=True)
@@ -157,7 +174,7 @@ class HRSetMonthlyTargetLine(models.Model):
     job_id = fields.Many2one('job.title', string='Position', required=True,  track_visibility='always',readonly=True)
     job_position_id = fields.Many2one('hr.job', string='Position from target',
                                       track_visibility='always')
-    level_id = fields.Many2one('job.level', string='Level', track_visibility='always')
+    level_id = fields.Many2one('job.level', string='Level', track_visibility='always',required=True)
 
     offer_target = fields.Integer(string="Offer Target", track_visibility='always', default=0)
     hire_target = fields.Integer(string="Hire Target", track_visibility='always', default=0)
@@ -204,7 +221,8 @@ class HRSetMonthlyTargetLine(models.Model):
                         hire_days = int(policy.hire)
                         date_1 = datetime_now.datetime.strptime(record.start_date, "%Y-%m-%d")
                         record.expecting_offer_date = date_1 + datetime_now.timedelta(days = offer_days)
-                        record.expecting_hire_date = date_1 + datetime_now.timedelta(days=hire_days)
+                        offer_date = datetime_now.datetime.strptime(record.expecting_offer_date, "%Y-%m-%d")
+                        record.expecting_hire_date = offer_date + datetime_now.timedelta(days=hire_days)
 
     # @api.model
     # def create(self, vals):

@@ -76,12 +76,27 @@
             </field>
         </record>
 
+        <!--   hr.set.monthly.target search filter     -->
+        <record id="view_hr_set_monthly_target_filter" model="ir.ui.view">
+            <field name="name">hr.set.monthly.target.search</field>
+            <field name="model">hr.set.monthly.target</field>
+            <field name="arch" type="xml">
+                <search string="Sections">
+                    <field name="date_from" string="start Date"/>
+                    <field name="date_to" string="End Date"/>
+                    <field name="bu_ids" string="Business Unit"/>
+                    <field name="job_ids" string="Job Position"/>
+                    <field name="user_ids" string="Recruiter Responsible"/>
+                </search>
+            </field>
+        </record>
         <!--hr.set.monthly.target Action-->
         <record id="action_hr_set_monthly_target" model="ir.actions.act_window">
             <field name="name">Set Monthly Target</field>
             <field name="res_model">hr.set.monthly.target</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+              <field name="search_view_id" ref="recruitment_ads.view_hr_set_monthly_target_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'tree','view_id':ref('view_hr_set_monthly_target_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_monthly_target_form')})]"/>
@@ -91,6 +106,50 @@
                 </p>
             </field>
         </record>
+        <!-- hr monthly target line -->
+            <record id="view_hr_set_monthly_target_line_form" model="ir.ui.view">
+        <field name="name">hr.set.monthly.target.line.form</field>
+        <field name="model">hr.set.monthly.target.line</field>
+        <field name="arch" type="xml">
+            <form string="Target Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="start_date" />
+                            <field name="recruiter_bu_id"/>
+                            <field name="recruiter_id"/>
+                            <field name="bu_id"/>
+                            <field name="department_id"/>
+                        </group>
+                        <group>
+                            <field name="section_id"/>
+                            <field name="job_id"/>
+                            <field name="level_id"/>
+                            <field name="position_type"/>
+                        </group>
+                        <group>
+                            <field name="expecting_offer_date"/>
+                            <field name="expecting_hire_date"/>
+                            <field name="man_power"/>
+                             <field name="current_emp"/>
+                             <field name="replacement_emp"/>
+                             <field name="vacant"/>
+                            <field name="offer_target"/>
+                            <field name="hire_target"/>
+                            <field name="offer_weight"/>
+                            <field name="hire_weight" />
+                        </group>
+                    </group>
+
+
+
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+
+
         <!--menu_hr_monthly_target Menu-->
         <menuitem id="menu_hr_monthly_target"
                   name="Monthly Target"
@@ -104,7 +163,6 @@
                 sequence="1"
                 name="Set Monthly Target"
                 groups="recruitment_ads.group_view_set_monthly_target"/>
-
     </data>
 
 
