@@ -31,9 +31,9 @@
                             <page string="Recruiters Target">
                                 <field name="line_ids" nolabel="1">
                                     <tree editable="bottom" delete="false" create="false">
-                                        <field name="name"/>
-                                        <field name="recruiter_bu_id"/>
                                         <field name="recruiter_id"/>
+                                        <field name="recruiter_bu_id"/>
+                                        <field name="start_date"/>
                                         <field name="bu_id"/>
                                         <field name="department_id"/>
                                         <field name="section_id"/>
@@ -48,6 +48,8 @@
                                          <field name="vacant"/>
                                         <field name="offer_target"/>
                                         <field name="hire_target"/>
+                                        <field name="offer_weight"/>
+                                        <field name="hire_weight"/>
                                     </tree>
                                 </field>
                             </page>

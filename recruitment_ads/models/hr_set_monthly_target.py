@@ -1,6 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class HRSetMonthlyTarget(models.Model):
     _name = 'hr.set.monthly.target'
@@ -100,9 +101,9 @@ class HRSetMonthlyTarget(models.Model):
             for user in job.mapped('user_id') + job.mapped('other_recruiters_ids'):
                 if user in user_report:
                     self.env['hr.set.monthly.target.line'].create({
-                        'name': self.date_from,
                         'recruiter_id': user.id,
                         'recruiter_bu_id': user.business_unit_id.id,
+                        'start_date': self.date_from,
                         'bu_id': job.business_unit_id.id,
                         'department_id': job.department_id.id,
                         'section_id': job.section_id.id,
@@ -120,8 +121,9 @@ class HRSetMonthlyTarget(models.Model):
 class HRSetMonthlyTargetLine(models.Model):
     _name = 'hr.set.monthly.target.line'
     _description = 'Set Monthly Target Lines'
+    _rec_name = 'start_date'
 
-    name = fields.Date(required=True, track_visibility='always')
+    start_date = fields.Date(required=True, track_visibility='always')
     recruiter_bu_id = fields.Many2one('business.unit', string='Recruiter BU',
                                       track_visibility='always')
     recruiter_id = fields.Many2one('res.users', required=True,  string='Recruiter Responsible',
@@ -144,6 +146,8 @@ class HRSetMonthlyTargetLine(models.Model):
     current_emp = fields.Integer(string="Current", track_visibility='always', default=0)
     expecting_offer_date = fields.Date( track_visibility='always',string='Expecting Offer Date')
     expecting_hire_date = fields.Date( track_visibility='always',string='Expecting Hire Date')
+    offer_weight = fields.Integer( track_visibility='always',string='Offer Weight')
+    hire_weight = fields.Integer(track_visibility='always', string='Hire Weight')
 
 
     target_id = fields.Many2one('hr.set.monthly.target', string='Set Monthly Target', track_visibility='always')
@@ -151,6 +155,10 @@ class HRSetMonthlyTargetLine(models.Model):
         [('normal', 'Normal'),
          ('critical', 'Critical'), ], string='Position Type',
         default='normal', )
+
+    @api.onchange('level_id')
+    def _compute_level(self):
+        self.hire_weight = self.offer_weight = self.level_id.weight
 
     @api.model
     def create(self, vals):
