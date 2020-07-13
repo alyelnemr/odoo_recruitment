@@ -36,6 +36,7 @@ Handle recruitment Process for Andalusia
         'views/policy.xml',
         'views/res_users_view.xml',
         'views/hr_set_daily_target_view.xml',
+        'views/hr_set_montly_target_view.xml',
         'wizard/recruitment_wizard_view.xml',
         'wizard/offer_wizard_view.xml',
         'wizard/interview_mail_compose_message_wizard_view.xml',
@@ -44,7 +45,6 @@ Handle recruitment Process for Andalusia
         'wizard/compliance_report_wizard.xml',
         'reports/offer_egypt_template.xml',
         'reports/offer_ksa_template.xml',
-        'views/hr_set_montly_target_view.xml',
     ],
 
     'qweb': [
