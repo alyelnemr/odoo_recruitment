@@ -6,16 +6,26 @@ class HRPolicyOfferAndHire(models.Model):
     _name = 'hr.policy.offer.and.hire.level'
 
     level = fields.Many2one('job.level', string='Job Level', ondelete='cascade')
-    offer = fields.Integer('Offer', required=True, default=0)
-    hire = fields.Integer('Hire', required=True, default=0)
+    offer = fields.Char('Offer', required=True, default=0)
+    hire = fields.Char('Hire', required=True, default=0)
     total = fields.Integer('Total', readonly=True, compute="_compute_total")
     hr_policy = fields.Many2one('hr.policy', string='HR Policy')
 
     @api.depends('offer', 'hire')
     @api.one
     def _compute_total(self):
-        self.total = self.hire + self.offer
+        if self.offer.isdigit() and self.hire.isdigit():
+            self.total = int(self.hire) + int(self.offer)
 
+    @api.onchange('offer')
+    def _on_change_check_offer_numbers_only(self):
+        if not self.offer.isdigit():
+            raise ValidationError(_('Offer be numbers only!'))
+
+    @api.onchange('hire')
+    def _on_change_check_hire_numbers_only(self):
+        if not self.hire.isdigit():
+            raise ValidationError(_('Hire be numbers only!'))
 
 class HRPolicy(models.Model):
     _name = 'hr.policy'
