@@ -22,9 +22,9 @@
     <record id="group_view_policy_menu" model="res.groups">
         <field name="name">View Policy Menu</field>
     </record>
-    <record id="group_view_policy_level_menu" model="res.groups">
-        <field name="name">View Policy Levels Menu</field>
-    </record>
+<!--    <record id="group_view_policy_level_menu" model="res.groups">-->
+<!--        <field name="name">View Policy Levels Menu</field>-->
+<!--    </record>-->
     <record id="group_view_allow_online_call_checkbox" model="res.groups">
         <field name="name">View Online Call</field>
     </record>
