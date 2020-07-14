@@ -174,7 +174,7 @@ class JobLevel(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals['weight'] < 1:
+        if vals['weight'] <= 0 :
             raise ValidationError(_("The field 'Level weight' must be greater than 0"))
         if vals['cv'] < 1:
             raise ValidationError(_("The field 'CV' must be greater than 0"))
@@ -195,10 +195,10 @@ class JobLevel(models.Model):
     @api.multi
     def write(self, vals):
         for level in self:
-            if level.weight < 1 and not vals.get('weight', False):
+            if level.weight <= 0 and not vals.get('weight', False):
                 raise ValidationError(_("The field 'Level weight' must be greater than 0"))
-            if vals.get('weight', False):
-                if vals['weight'] < 1:
+            if vals.get('weight', False) or vals.get('weight') <= 0:
+                if vals['weight'] <= 0   :
                     raise ValidationError(_("The field 'Level weight' must be greater than 0"))
             if level.cv < 1 and not vals.get('cv', False):
                 raise ValidationError(_("The field 'cv' must be greater than 0"))
