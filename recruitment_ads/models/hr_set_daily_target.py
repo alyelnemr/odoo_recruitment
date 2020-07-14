@@ -191,7 +191,7 @@ class HRSetDailyTargetLine(models.Model):
     job_position_id = fields.Many2one('hr.job', string='Position from target', required=True, readonly=True,
                                       track_visibility='always')
     level_id = fields.Many2one('job.level', string='Level', track_visibility='always')
-    weight = fields.Integer(string="Weight", track_visibility='always', default=0)
+    weight = fields.Float(string="Weight", track_visibility='always', default=0)
     cvs = fields.Integer(string="Target Application", track_visibility='always', default=0)
     target_id = fields.Many2one('hr.set.daily.target', string='Set Daily Target', track_visibility='always')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)

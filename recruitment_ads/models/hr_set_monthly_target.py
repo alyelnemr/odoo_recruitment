@@ -185,6 +185,9 @@ class HRSetMonthlyTargetLine(models.Model):
     current_emp = fields.Integer(string="Current", track_visibility='always', default=0)
     expecting_offer_date = fields.Date( track_visibility='always',string='Expecting Offer Date',readonly=True,compute ='compute_offer_hire_expecting_date')
     expecting_hire_date = fields.Date( track_visibility='always',string='Expecting Hire Date',readonly=True ,compute ='compute_offer_hire_expecting_date')
+    offer_weight = fields.Float( track_visibility='always',string='Offer Weight',readonly=True)
+    hire_weight = fields.Float(track_visibility='always', string='Hire Weight',readonly=True)
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
     offer_weight = fields.Float( track_visibility='always',string='Offer Weight')
     hire_weight = fields.Float(track_visibility='always', string='Hire Weight')
 
