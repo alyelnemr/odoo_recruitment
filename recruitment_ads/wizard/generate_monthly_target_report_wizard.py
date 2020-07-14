@@ -115,8 +115,8 @@ class GenerateMonthlyTargetReportWizard(models.TransientModel):
             lines = self.env['hr.set.monthly.target.line'].search([
                 ('recruiter_id', 'in', user_report.ids),
                 ('job_id', 'in', job_report.mapped('job_title_id').ids),
-                ('name', '>=', self.date_from),
-                ('name', '<=', self.date_to),
+                ('start_date', '>=', self.date_from),
+                ('start_date', '<=', self.date_to),
             ])
             if not lines:
                 raise ValidationError('No Monthly Target is set for the selected range')
