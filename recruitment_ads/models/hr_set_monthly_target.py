@@ -226,35 +226,35 @@ class HRSetMonthlyTargetLine(models.Model):
                         offer_date = datetime_now.datetime.strptime(record.expecting_offer_date, "%Y-%m-%d")
                         record.expecting_hire_date = offer_date + datetime_now.timedelta(days=hire_days)
 
-    # @api.model
-    # def create(self, vals):
-    #     res = super(HRSetMonthlyTargetLine, self).create(vals)
-    #     res.send_monthly_target_mail(vals)
-    #     return res
-    #
-    # @api.multi
-    # def write(self, vals):
-    #     res = super(HRSetMonthlyTargetLine, self).write(vals)
-    #     self.send_monthly_target_mail(vals)
-    #     return res
-    #
-    # def send_monthly_target_mail(self, data):
-    #     if data:
-    #         self.send_mail_set_monthly_target()
-    #
-    # @api.multi
-    # def send_mail_set_monthly_target(self):
-    #     template = self.env.ref('recruitment_ads.set_monthly_target_line_email_template')
-    #     self.env['mail.template'].browse(template.id).send_mail(self.id)
-    #
-    # def get_mail_url(self):
-    #     self.ensure_one()
-    #     res = self.env['generate.monthly.target.report.wizard'].with_env(self.env(user=self.recruiter_id)).create({
-    #         'date_from': self.name,
-    #         'date_to': self.name,
-    #         'job_ids': [(6, 0, [self.job_position_id.id] or [])] if self.job_position_id else False,
-    #         'recruiter_ids': [(6, 0, [self.recruiter_id.id] or [])] if self.recruiter_id else False,
-    #     })
-    #     action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
-    #                                                           'generate_monthly_target_report_wizard_action')
-    #     return 'web#action=' + str(action.get('id')) + '&id=' + str(res.id)
+    @api.model
+    def create(self, vals):
+        res = super(HRSetMonthlyTargetLine, self).create(vals)
+        res.send_monthly_target_mail(vals)
+        return res
+
+    @api.multi
+    def write(self, vals):
+        res = super(HRSetMonthlyTargetLine, self).write(vals)
+        self.send_monthly_target_mail(vals)
+        return res
+
+    def send_monthly_target_mail(self, data):
+        if data:
+            self.send_mail_set_monthly_target()
+
+    @api.multi
+    def send_mail_set_monthly_target(self):
+        template = self.env.ref('recruitment_ads.set_monthly_target_line_email_template')
+        self.env['mail.template'].browse(template.id).send_mail(self.id)
+
+    def get_mail_url(self):
+        self.ensure_one()
+        res = self.env['generate.monthly.target.report.wizard'].with_env(self.env(user=self.recruiter_id)).create({
+            'date_from': self.start_date,
+            'date_to': self.start_date,
+            'job_ids': [(6, 0, [self.job_position_id.id] or [])] if self.job_position_id else False,
+            'recruiter_ids': [(6, 0, [self.recruiter_id.id] or [])] if self.recruiter_id else False,
+        })
+        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads',
+                                                              'generate_monthly_target_report_wizard_action')
+        return 'web#action=' + str(action.get('id')) + '&id=' + str(res.id)
