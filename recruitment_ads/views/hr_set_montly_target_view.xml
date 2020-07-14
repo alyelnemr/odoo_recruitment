@@ -47,9 +47,9 @@
                                          <field name="replacement_emp"/>
                                          <field name="vacant" force_save = "1"/>
                                         <field name="offer_target"/>
-                                        <field name="offer_weight" force_save = "1"/>
+                                        <field name="offer_weight" />
                                         <field name="hire_target"/>
-                                        <field name="hire_weight" force_save = "1"/>
+                                        <field name="hire_weight" />
                                     </tree>
                                 </field>
                             </page>
