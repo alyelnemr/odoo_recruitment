@@ -57,6 +57,6 @@ class MonthlyTargetWrapper:
         self.replacement = line.replacement_emp
         self.vacant = line.vacant
         self.offer_target = line.offer_target
-        self.offer_weight = line.level_id.weight
+        self.offer_weight = line.offer_weight
         self.hire_target = line.hire_target
-        self.hire_weight = line.level_id.weight
+        self.hire_weight = line.hire_weight
