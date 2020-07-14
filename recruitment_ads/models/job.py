@@ -165,7 +165,7 @@ class JobLevel(models.Model):
     # job_title_id = fields.Many2one('job.title', string="Job Title", required=False, ondelete='cascade')
     job_title_ids = fields.Many2many('job.title', 'hr_level_title_rel', 'level_id', 'job_id', string="Job title",
                                      required=True)
-    weight = fields.Integer(string="Level weight", required=True)
+    weight = fields.Float(string="Level weight", required=True)
     cv = fields.Integer(string="CVs", required=True)
 
     _sql_constraints = [('name_job_title_unique',
