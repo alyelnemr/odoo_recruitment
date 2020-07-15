@@ -226,12 +226,6 @@ class HRSetMonthlyTargetLine(models.Model):
                         offer_date = datetime_now.datetime.strptime(record.expecting_offer_date, "%Y-%m-%d")
                         record.expecting_hire_date = offer_date + datetime_now.timedelta(days=hire_days)
 
-    @api.model
-    def create(self, vals):
-        res = super(HRSetMonthlyTargetLine, self).create(vals)
-        res.send_monthly_target_mail(vals)
-        return res
-
     @api.multi
     def write(self, vals):
         res = super(HRSetMonthlyTargetLine, self).write(vals)
