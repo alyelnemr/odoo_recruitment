@@ -190,7 +190,7 @@ class HRSetMonthlyTargetLine(models.Model):
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
 
 
-    target_id = fields.Many2one('hr.set.monthly.target', string='Set Monthly Target', track_visibility='always')
+    target_id = fields.Many2one('hr.set.monthly.target', string='Set Monthly Target', track_visibility='always',ondelete='cascade')
     position_type = fields.Selection(
         [('normal', 'Normal'),
          ('critical', 'Critical'), ], string='Position Type',
