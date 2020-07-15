@@ -238,7 +238,7 @@ FormController.include({
             }
         }
         else{
-            if (record.model ==='hr.set.daily.target' || record.model ==='hr.set.monthly.target' && record.data.line_ids.length ===0){
+            if ((record.model ==='hr.set.daily.target' || record.model ==='hr.set.monthly.target') && record.data.line_ids.length ===0){
                 this.do_warn(_t("Error"), _t("Please Set Daily Target first before saving"));
                 return
             }
