@@ -158,6 +158,29 @@ class HRSetDailyTarget(models.Model):
 
     @api.model
     def create(self, vals):
+        users = []
+        if vals.get('job_ids')[0][2]:
+            job_domain = [('id', 'in', vals.get('job_ids')[0][2])]
+        else:
+            job_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get(
+                'job_ids',
+                False)
+        if vals.get('user_ids')[0][2]:
+            user_domain = [('id', 'in', vals.get('user_ids')[0][2])]
+        else:
+            user_domain = self.with_context({'get_domain': True})._get_job_user_domain().get('domain', False).get(
+                'user_ids', False)
+
+        job_report = self.env['hr.job'].search(job_domain)
+        user_report = self.env['res.users'].search(user_domain)
+
+        for job in job_report:
+            for user in job.mapped('user_id') + job.mapped('other_recruiters_ids'):
+                if user in user_report:
+                    users.append(user)
+        if not users:
+            raise ValidationError('The Selected Job positions have no recruiters under your BU')
+
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
@@ -169,7 +192,11 @@ class HRSetDailyTarget(models.Model):
         if not (self.env.user.has_group('recruitment_ads.group_hr_recruitment_coordinator') or self.env.user.has_group(
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
-        return super(HRSetDailyTarget, self).write(vals)
+        res = super(HRSetDailyTarget, self).write(vals)
+        if not (all(e.level_id for e in self.line_ids) and all(e.cvs for e in self.line_ids) and all(
+                e.weight for e in self.line_ids)):
+            raise ValidationError('Please Set Daily Target first before saving')
+        return res
 
 
 class HRSetDailyTargetLine(models.Model):
