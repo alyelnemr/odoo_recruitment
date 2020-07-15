@@ -9,10 +9,10 @@
                 <form string="Target">
                     <sheet>
                         <group>
-                           <field name="date_from" placeholder="Date From" required="True"
-                           attrs="{'readonly': [('id', '!=', False)]}"/>
-                          <field name="date_to" placeholder="Date To" required="True"
-                            attrs="{'readonly': [('id', '!=', False)]}"/>
+                            <field name="date_from" placeholder="Date From" required="True"
+                                   attrs="{'readonly': [('id', '!=', False)]}"/>
+                            <field name="date_to" placeholder="Date To" required="True"
+                                   attrs="{'readonly': [('id', '!=', False)]}"/>
                         </group>
                         <group>
                             <field name="bu_ids" widget="many2many_tags" attrs="{'readonly': [('id', '!=', False)]}"
@@ -31,25 +31,25 @@
                             <page string="Recruiters Target">
                                 <field name="line_ids" nolabel="1">
                                     <tree editable="bottom" delete="false" create="false">
-                                        <field name="recruiter_id" force_save = "1"/>
-                                        <field name="recruiter_bu_id" force_save = "1"/>
-                                        <field name="start_date" />
-                                        <field name="bu_id" force_save = "1"/>
-                                        <field name="department_id" force_save = "1"/>
-                                        <field name="section_id" force_save = "1"/>
-                                        <field name="job_id" force_save = "1"/>
-                                        <field name="level_id" force_save = "1"/>
+                                        <field name="recruiter_id" force_save="1"/>
+                                        <field name="recruiter_bu_id" force_save="1"/>
+                                        <field name="start_date"/>
+                                        <field name="bu_id" force_save="1"/>
+                                        <field name="department_id" force_save="1"/>
+                                        <field name="section_id" force_save="1"/>
+                                        <field name="job_id" force_save="1"/>
+                                        <field name="level_id" force_save="1"/>
                                         <field name="position_type"/>
-                                        <field name="expecting_offer_date" force_save = "1"/>
-                                        <field name="expecting_hire_date" force_save = "1"/>
-                                         <field name="man_power"/>
-                                         <field name="current_emp"/>
-                                         <field name="replacement_emp"/>
-                                         <field name="vacant" force_save = "1"/>
+                                        <field name="expecting_offer_date" force_save="1"/>
+                                        <field name="expecting_hire_date" force_save="1"/>
+                                        <field name="man_power"/>
+                                        <field name="current_emp"/>
+                                        <field name="replacement_emp"/>
+                                        <field name="vacant" force_save="1"/>
                                         <field name="offer_target"/>
-                                        <field name="offer_weight" />
+                                        <field name="offer_weight"/>
                                         <field name="hire_target"/>
-                                        <field name="hire_weight" />
+                                        <field name="hire_weight"/>
                                     </tree>
                                 </field>
                             </page>
@@ -96,7 +96,7 @@
             <field name="res_model">hr.set.monthly.target</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-              <field name="search_view_id" ref="recruitment_ads.view_hr_set_monthly_target_filter"/>
+            <field name="search_view_id" ref="recruitment_ads.view_hr_set_monthly_target_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'tree','view_id':ref('view_hr_set_monthly_target_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_set_monthly_target_form')})]"/>
@@ -107,47 +107,46 @@
             </field>
         </record>
         <!-- hr monthly target line -->
-    <record id="view_hr_set_monthly_target_line_form" model="ir.ui.view">
-        <field name="name">hr.set.monthly.target.line.form</field>
-        <field name="model">hr.set.monthly.target.line</field>
-        <field name="arch" type="xml">
-            <form string="Target Line">
-                <sheet>
-                    <group>
+        <record id="view_hr_set_monthly_target_line_form" model="ir.ui.view">
+            <field name="name">hr.set.monthly.target.line.form</field>
+            <field name="model">hr.set.monthly.target.line</field>
+            <field name="arch" type="xml">
+                <form string="Target Line">
+                    <sheet>
                         <group>
-                            <field name="start_date" />
-                            <field name="recruiter_bu_id"/>
-                            <field name="recruiter_id"/>
-                            <field name="bu_id"/>
-                            <field name="department_id"/>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="recruiter_bu_id"/>
+                                <field name="recruiter_id"/>
+                                <field name="bu_id"/>
+                                <field name="department_id"/>
+                            </group>
+                            <group>
+                                <field name="section_id"/>
+                                <field name="job_id"/>
+                                <field name="level_id"/>
+                                <field name="position_type"/>
+                            </group>
+                            <group>
+                                <field name="expecting_offer_date"/>
+                                <field name="expecting_hire_date"/>
+                                <field name="man_power"/>
+                                <field name="current_emp"/>
+                                <field name="replacement_emp"/>
+                                <field name="vacant"/>
+                                <field name="offer_target"/>
+                                <field name="hire_target"/>
+                                <field name="offer_weight"/>
+                                <field name="hire_weight"/>
+                            </group>
                         </group>
-                        <group>
-                            <field name="section_id"/>
-                            <field name="job_id"/>
-                            <field name="level_id"/>
-                            <field name="position_type"/>
-                        </group>
-                        <group>
-                            <field name="expecting_offer_date"/>
-                            <field name="expecting_hire_date"/>
-                            <field name="man_power"/>
-                             <field name="current_emp"/>
-                             <field name="replacement_emp"/>
-                             <field name="vacant"/>
-                            <field name="offer_target"/>
-                            <field name="hire_target"/>
-                            <field name="offer_weight"/>
-                            <field name="hire_weight" />
-                        </group>
-                    </group>
 
 
+                    </sheet>
+                </form>
 
-                </sheet>
-            </form>
-
-        </field>
-    </record>
+            </field>
+        </record>
 
 
         <!--menu_hr_monthly_target Menu-->
@@ -155,7 +154,7 @@
                   name="Monthly Target"
                   sequence="3"
                   parent="hr_recruitment.menu_hr_recruitment_root"
-                  groups="recruitment_ads.group_view_set_monthly_target"/>
+                  groups="recruitment_ads.group_view_set_monthly_target,recruitment_ads.group_view_generate_monthly_target_Report"/>
         <menuitem
                 action="action_hr_set_monthly_target"
                 id="menu_hr_set_monthly_target"
