@@ -40,7 +40,8 @@ class GenerateMonthlyTargetReportWizard(models.TransientModel):
     bu_ids = fields.Many2many('business.unit', string='Business Unit', domain=lambda self: self._get_bu_domain())
     job_ids = fields.Many2many('hr.job', string='Job Position')
     recruiter_ids = fields.Many2many('res.users', string='Recruiter Responsible')
-    line_ids = fields.Many2many('hr.set.monthly.target.line', 'generate_monthly_target_lines', 'wizard_id', 'set_line_id',
+    line_ids = fields.Many2many('hr.set.monthly.target.line', 'generate_monthly_target_lines', 'wizard_id',
+                                'set_line_id',
                                 string='Lines')
 
     @api.constrains('date_from', 'date_to')
@@ -63,10 +64,14 @@ class GenerateMonthlyTargetReportWizard(models.TransientModel):
         if self.bu_ids:
             job_domain += [('business_unit_id', 'in', self.bu_ids.ids)]
         else:
-            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
+            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_user') and (
+                    self.env.user.business_unit_id or self.env.user.multi_business_unit_id):
                 job_domain += ['|', ('business_unit_id', 'in',
                                      self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids),
                                '|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', '=', self.env.user.id)]
+            elif self.env.user.has_group('hr_recruitment.group_hr_recruitment_user') and not self.env.user.has_group(
+                    'hr_recruitment.group_hr_recruitment_manager'):
+                job_domain += ['|', ('user_id', '=', self.env.user.id), ('other_recruiters_ids', '=', self.env.user.id)]
         # USER DOMAIN
         jobs = False
         bus = self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids
