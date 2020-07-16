@@ -33,7 +33,7 @@
                             <page string="Recruiters Target">
                                 <field name="line_ids" nolabel="1">
                                     <tree editable="bottom" delete="false" create="false">
-                                        <field name="name" force_save="1"/>
+                                        <field name="name" />
                                         <field name="recruiter_bu_id" />
                                         <field name="recruiter_id"/>
                                         <field name="bu_id"/>
