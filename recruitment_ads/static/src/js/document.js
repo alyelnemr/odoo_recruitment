@@ -13,6 +13,13 @@ var _t = core._t;
 Sidebar.include({
      init : function (parent, options) {
        this._super.apply(this, arguments);
+//           $(function(){
+//             alert('init');
+//             $('select').on('change', function()
+//                {
+//                    alert( this.value );
+//                });
+//            });
         var value_without_attach_button = this.sections;
         if (options.viewType === "form") {
         if (this.env.model === 'hr.applicant'){

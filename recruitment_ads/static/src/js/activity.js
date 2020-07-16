@@ -120,6 +120,12 @@ fieldRegistry.add('my-custom-field', CustomFieldChar);
 
 
 MailActivity.include({
+//        init: function(){
+//            $(function(){
+//             alert('helloooooo777887999');
+//            });
+//
+//    },
     _onScheduleInterview: function () {
         if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
             self = this;
@@ -231,6 +237,8 @@ MailActivity.include({
     },
 
     _markActivityDDDone: function (id, feedback,call_result_id ) {
+
+
         return this._rpc({
                 model: 'mail.activity',
                 method: 'action_call_result',
@@ -241,6 +249,7 @@ MailActivity.include({
 
 
     _markInterviewDone: function (id, feedback,interview_result) {
+
         return this._rpc({
                 model: 'mail.activity',
                 method: 'action_interview_result',
@@ -249,7 +258,16 @@ MailActivity.include({
             });
       },
 
+    _selection : function(event){
+                alert('helloooooo777887999');
+                $('select').on('change', function()
+                {
+                    if(this.value === 'Rejected'){ alert( this.value );}
+
+                });
+                },
     _onMarkActivityDone: function (event) {
+        this._selection();
         this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group){window.manager =  true; }
          });

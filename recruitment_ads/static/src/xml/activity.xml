@@ -20,7 +20,7 @@
                     <option value="Came Before">Came Before</option>
                 </select>
                 <b t-if="activity_category == 'interview'">Interview Result</b>
-                <select t-if="activity_category == 'interview'" type="text" name="interview" class="form-control o_required" rows="3" id="activity_interview_result" placeholder="interview Result">
+                <select t-if="activity_category == 'interview'" type="text" name="interview" class="form-control o_required activity_interview_result_class" rows="3" id="activity_interview_result" placeholder="interview Result">
                     <option value=""></option>
                     <option value="Accepted">Accepted</option>
                     <option value="Rejected">Rejected</option>
