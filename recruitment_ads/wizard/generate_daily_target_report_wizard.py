@@ -63,7 +63,7 @@ class GenerateDailyTargetReportWizard(models.TransientModel):
         if self.bu_ids:
             job_domain += [('business_unit_id', 'in', self.bu_ids.ids)]
         else:
-            if self.env.user.has_group('hr_recruitment.group_hr_recruitment_user') and (
+            if not self.env.user.has_group('hr_recruitment.group_hr_recruitment_manager') and (
                     self.env.user.business_unit_id or self.env.user.multi_business_unit_id):
                 job_domain += ['|', ('business_unit_id', 'in',
                                      self.env.user.business_unit_id.ids + self.env.user.multi_business_unit_id.ids),
