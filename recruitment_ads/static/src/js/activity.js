@@ -258,16 +258,7 @@ MailActivity.include({
             });
       },
 
-    _selection : function(event){
-                alert('helloooooo777887999');
-                $('select').on('change', function()
-                {
-                    if(this.value === 'Rejected'){ alert( this.value );}
-
-                });
-                },
     _onMarkActivityDone: function (event) {
-        this._selection();
         this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group){window.manager =  true; }
          });
@@ -409,6 +400,9 @@ MailActivity.include({
                         });
                         $popover.on('click', '.o_activity_popover_discard', function () {
                             $popover_el.popover('hide');
+                        });
+                        $popover.on('change', '.activity_interview_result_class', function () {
+                            alert('on change (' + this.value + ')');
                         });
                         return $popover;
                     },
