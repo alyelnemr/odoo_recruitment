@@ -141,6 +141,45 @@ class MailActivity(models.Model):
             'type': 'ir.actions.client',
             'tag': 'reload', }
 
+    @api.multi
+    def send_rejection_mail(self):
+        # self.ensure_one()
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'rejected_applicant_email_template')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'view_rejection_mail_compose_message_wizard_from')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = {
+            'default_model': 'calendar.event',
+            'default_res_id': self.calendar_event_id.id,
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'default_candidate_id': self.calendar_event_id.hr_applicant_id.partner_id.id,
+            'default_application_id': self.calendar_event_id.hr_applicant_id.id,
+            'default_partner_ids': [(6, 0, self.calendar_event_id.partner_ids.ids)],
+            'time_format': '%I:%M %p',
+            'force_email': True
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'rejection.mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
+
 
 class MailThread(models.AbstractModel):
 

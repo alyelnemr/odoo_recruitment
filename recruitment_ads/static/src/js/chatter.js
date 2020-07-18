@@ -99,6 +99,7 @@ Chatter.include({
         'click .o_chatter_button_log_note': '_onOpenComposerNote',
         'click .o_chatter_button_schedule_activity': '_onScheduleActivity',
         'click .o_chatter_button_schedule_interview': '_onScheduleInterview',
+        'click .rejection_send_mail': 'send_rejection_mail_method',
     },
     start: function () {
         //override to add interview button
@@ -123,6 +124,19 @@ Chatter.include({
 
 //        return this._super.apply(this, arguments);;
     },
+
+    send_rejection_mail_method : function () {
+        console.log(this);
+        return this._rpc({
+                model: 'mail.activity',
+                method: 'send_rejection_mail',
+                args: [[this.record.data.activity_ids.res_ids[0]]],
+
+            });
+
+      },
+
+
     _onScheduleInterview: function () {
          if (this.record.data.activity_ids.res_ids != false){
             alert('Please insert Activity Result in order to be transferred to another stage');

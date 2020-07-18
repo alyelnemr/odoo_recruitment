@@ -402,7 +402,16 @@ MailActivity.include({
                             $popover_el.popover('hide');
                         });
                         $popover.on('change', '.activity_interview_result_class', function () {
-                            alert('on change (' + this.value + ')');
+                            if(this.value === 'Rejected') {
+                              $('.rejection_send_mail').show();
+                               $('.o_activity_popover_done_next').hide();
+//                            $popover.addClass(".rejection_send_mail").hide();
+//                             alert('on change (' + this.value + ')');
+                            }else{
+                              $('.rejection_send_mail').hide();
+                              $('.o_activity_popover_done_next').show();
+                            }
+
                         });
                         return $popover;
                     },
@@ -424,6 +433,8 @@ MailActivity.include({
                 }).popover('show');
             }}
     },
+
+
 
     });
 });
