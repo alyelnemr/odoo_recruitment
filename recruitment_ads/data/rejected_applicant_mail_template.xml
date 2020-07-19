@@ -2,7 +2,7 @@
 <odoo>
     <data noupdate="0">
         <record id="rejected_applicant_email_template" model="mail.template">
-            <field name="name">Interview &amp; Followers Invitation</field>
+            <field name="name">Rejection Mail</field>
 <!--            <field name="email_from">${object.user_id.email or ''}</field>-->
             <field name="subject">${object.name}</field>
             <field name="model_id" ref="calendar.model_calendar_event"/>
