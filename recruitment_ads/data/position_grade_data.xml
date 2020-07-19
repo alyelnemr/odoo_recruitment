@@ -16,6 +16,12 @@
         <record id="position_grade_regional_manager" model="position.grade">
             <field name="name">Regional Manager</field>
         </record>
+        <record id="position_grade_area_manager" model="position.grade">
+            <field name="name">Area Manager</field>
+        </record>
+        <record id="position_grade_manager" model="position.grade">
+            <field name="name">Manager</field>
+        </record>
         <record id="position_grade_section_head" model="position.grade">
             <field name="name">Section Head</field>
         </record>
