@@ -19,6 +19,7 @@ Handle recruitment Process for Andalusia
         'views/mail_templates.xml',
         'views/interview_view.xml',
         'views/interview_templates.xml',
+        'data/rejected_applicant_mail_template.xml',
         'data/call_result_data.xml',
         'data/interview_data.xml',
         'data/interview_email_templates.xml',
@@ -45,6 +46,7 @@ Handle recruitment Process for Andalusia
         'wizard/compliance_report_wizard.xml',
         'reports/offer_egypt_template.xml',
         'reports/offer_ksa_template.xml',
+        'wizard/generate_rejection_mail_message_view.xml',
     ],
 
     'qweb': [

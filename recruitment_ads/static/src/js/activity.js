@@ -120,6 +120,12 @@ fieldRegistry.add('my-custom-field', CustomFieldChar);
 
 
 MailActivity.include({
+//        init: function(){
+//            $(function(){
+//             alert('helloooooo777887999');
+//            });
+//
+//    },
     _onScheduleInterview: function () {
         if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
             self = this;
@@ -231,6 +237,8 @@ MailActivity.include({
     },
 
     _markActivityDDDone: function (id, feedback,call_result_id ) {
+
+
         return this._rpc({
                 model: 'mail.activity',
                 method: 'action_call_result',
@@ -241,6 +249,7 @@ MailActivity.include({
 
 
     _markInterviewDone: function (id, feedback,interview_result) {
+
         return this._rpc({
                 model: 'mail.activity',
                 method: 'action_interview_result',
@@ -392,6 +401,18 @@ MailActivity.include({
                         $popover.on('click', '.o_activity_popover_discard', function () {
                             $popover_el.popover('hide');
                         });
+                        $popover.on('change', '.activity_interview_result_class', function () {
+                            if(this.value === 'Rejected') {
+                              $('.rejection_send_mail').show();
+                               $('.o_activity_popover_done_next').hide();
+//                            $popover.addClass(".rejection_send_mail").hide();
+//                             alert('on change (' + this.value + ')');
+                            }else{
+                              $('.rejection_send_mail').hide();
+                              $('.o_activity_popover_done_next').show();
+                            }
+
+                        });
                         return $popover;
                     },
                 }).on("show.bs.popover", function (e) {
@@ -412,6 +433,8 @@ MailActivity.include({
                 }).popover('show');
             }}
     },
+
+
 
     });
 });

@@ -20,7 +20,7 @@
                     <option value="Came Before">Came Before</option>
                 </select>
                 <b t-if="activity_category == 'interview'">Interview Result</b>
-                <select t-if="activity_category == 'interview'" type="text" name="interview" class="form-control o_required" rows="3" id="activity_interview_result" placeholder="interview Result">
+                <select t-if="activity_category == 'interview'" type="text" name="interview" class="form-control o_required activity_interview_result_class" rows="3" id="activity_interview_result" placeholder="interview Result">
                     <option value=""></option>
                     <option value="Accepted">Accepted</option>
                     <option value="Rejected">Rejected</option>
@@ -33,6 +33,8 @@
                 <!--textarea class="form-control" rows="3" id="activity_call_result" placeholder="Call Result"/-->
                 <textarea class="form-control" rows="3" id="activity_feedback" placeholder="Write Feedback"/>
                 <div class="mt8">
+                    <button type="button" class="btn btn-xs btn-primary rejection_send_mail" >
+                        Send Rejection Mail</button>
                     <button type="button" class="btn btn-xs btn-primary o_activity_popover_done_next" t-att-data-previous-activity-type-id="previous_activity_type_id">
                         Done &amp; Schedule Next</button>
                     <button type="button" class="btn btn-xs btn-primary o_activity_popover_done">
