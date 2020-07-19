@@ -50,6 +50,8 @@ class Offer(models.TransientModel):
     offer_name = fields.Char(compute='_offer_name')
     total_package = fields.Float(string='Total Package', compute='_compute_total_package', store=True)
     total_salary = fields.Float(string='Total Salary', compute='_compute_total_package', store=True)
+    salary_scale_id = fields.Many2one('salary.scale', string="Salary Scale", ondelete='restrict', required=True)
+    position_grade_id = fields.Many2one('position.grade', string="Position Grade", ondelete='restrict', required=True)
 
     @api.onchange('shifts_no')
     def onchange_shifts_no(self):

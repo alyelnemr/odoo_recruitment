@@ -13,12 +13,13 @@
                         </group>
                         <group colspan="3">
                             <field name="offer_type" widget="radio"/>
+                            <field name="position_grade_id"/>
                         </group>
                     </group>
                     <group>
                         <group>
                             <field name="fixed_salary"
-                                       attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
+                                   attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="variable_salary"
                                    attrs="{'invisible': [('offer_type', '=', 'nursing_offer')]}"/>
                             <field name="shifts_no"
@@ -41,9 +42,10 @@
                             <div/>
                         </group>
                         <group string="Salary">
+                            <field name="salary_scale_id"/>
                             <field name="total_amount" style="font-weight:900" widget='monetary'
-                                       attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')]}"
-                                       options="{'currency_field': 'currency_id'}"/>
+                                   attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')]}"
+                                   options="{'currency_field': 'currency_id'}"/>
                             <field name="total_salary" style="font-weight:900" widget='monetary'
                                    options="{'currency_field': 'currency_id'}"/>
                             <field name="total_package" style="font-weight:900" widget='monetary'
