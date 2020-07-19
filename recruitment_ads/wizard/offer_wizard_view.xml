@@ -13,7 +13,7 @@
                         </group>
                         <group colspan="3">
                             <field name="offer_type" widget="radio"/>
-                            <field name="position_grade_id"/>
+                            <field name="position_grade_id" options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
                         </group>
                     </group>
                     <group>
@@ -42,7 +42,7 @@
                             <div/>
                         </group>
                         <group string="Salary">
-                            <field name="salary_scale_id"/>
+                            <field name="salary_scale_id" options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
                             <field name="total_amount" style="font-weight:900" widget='monetary'
                                    attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')]}"
                                    options="{'currency_field': 'currency_id'}"/>
