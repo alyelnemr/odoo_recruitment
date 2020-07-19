@@ -116,7 +116,6 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Offer list" default_order='create_date desc' create="false" delete="false">
-                    <field name="issue_date" invisible="1"/>
                     <field name="state" string="Status"/>
                     <field name="applicant_name"/>
                     <field name="job_id"/>
@@ -127,7 +126,8 @@
                     <field name="last_activity_date"/>
                     <field name="fixed_salary"/>
                     <field name="total_package"/>
-                    <field name="availability"/>
+                    <field name="issue_date"/>
+                    <field name="hiring_date"/>
                     <button name="action_open_application" string="View Application" type="object"
                             class="oe_highlight"/>
                 </tree>
