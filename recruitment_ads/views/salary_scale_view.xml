@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Salary Scale Form View-->
+        <record model="ir.ui.view" id="view_hr_salary_scale_form">
+            <field name="name">Salary Scale Form</field>
+            <field name="model">salary.scale</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Salary Scale">
+                    <sheet>
+                        <div class="oe_title">
+                            <h4>
+                                <field name="name"/>
+                            </h4>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Salary Scale Tree view-->
+        <record model="ir.ui.view" id="view_hr_salary_scale_tree_view">
+            <field name="name">Salary Scale Form</field>
+            <field name="model">salary.scale</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Salary Scale">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <!--Search view-->
+        <record id="view_hr_salary_scale_filter" model="ir.ui.view">
+            <field name="name">salary.scale.view.search</field>
+            <field name="model">salary.scale</field>
+            <field name="arch" type="xml">
+                <search string="Salary Scale">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- Menu action-->
+        <record model="ir.actions.act_window" id="action_hr_salary_scale_menu">
+            <field name="name">Salary Scales</field>
+            <field name="res_model">salary.scale</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="recruitment_ads.view_hr_salary_scale_tree_view"/>
+            <field name="search_view_id" ref="recruitment_ads.view_hr_salary_scale_filter"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p>
+                    Here is the list of salary scales.
+                </p>
+            </field>
+        </record>
+        <menuitem id="hr_salary_scale_menu"
+                  name="Salary Scales"
+                   parent="hr_recruitment.menu_hr_recruitment_configuration"
+                  sequence="16"
+                  groups="hr_recruitment.group_hr_recruitment_user"
+                  action="action_hr_salary_scale_menu"/>
+    </data>
+</odoo>

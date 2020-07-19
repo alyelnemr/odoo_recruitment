@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="position_grade_group_director" model="position.grade">
+            <field name="name">Group Director</field>
+        </record>
+        <record id="position_grade_regional_operational_manager" model="position.grade">
+            <field name="name">Regional Operational Manager</field>
+        </record>
+        <record id="position_grade_hospital_director" model="position.grade">
+            <field name="name">Hospital Director</field>
+        </record>
+        <record id="position_grade_group_manager" model="position.grade">
+            <field name="name">Group Manager</field>
+        </record>
+        <record id="position_grade_regional_manager" model="position.grade">
+            <field name="name">Regional Manager</field>
+        </record>
+        <record id="position_grade_section_head" model="position.grade">
+            <field name="name">Section Head</field>
+        </record>
+        <record id="position_grade_supervisor" model="position.grade">
+            <field name="name">Supervisor</field>
+        </record>
+        <record id="position_grade_senior_specialist" model="position.grade">
+            <field name="name">Senior Specialist</field>
+        </record>
+        <record id="position_grade_specialist" model="position.grade">
+            <field name="name">Specialist</field>
+        </record>
+        <record id="position_grade_coordinator" model="position.grade">
+            <field name="name">Coordinator</field>
+        </record>
+        <record id="position_grade_worker" model="position.grade">
+            <field name="name">Worker</field>
+        </record>
+    </data>
+</openerp>

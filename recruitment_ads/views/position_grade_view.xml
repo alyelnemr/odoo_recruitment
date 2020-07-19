@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Position Grade Form View-->
+        <record model="ir.ui.view" id="view_hr_position_grade_form">
+            <field name="name">Position Grade Form</field>
+            <field name="model">position.grade</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Position Grade">
+                    <sheet>
+                        <div class="oe_title">
+                            <h4>
+                                <field name="name"/>
+                            </h4>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Position Grade Tree view-->
+        <record model="ir.ui.view" id="view_hr_position_grade_tree_view">
+            <field name="name">Position Grade Form</field>
+            <field name="model">position.grade</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Position Grade">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <!--Search view-->
+        <record id="view_hr_position_grade_filter" model="ir.ui.view">
+            <field name="name">position.grade.view.search</field>
+            <field name="model">position.grade</field>
+            <field name="arch" type="xml">
+                <search string="Position Grade">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- Menu action-->
+        <record model="ir.actions.act_window" id="action_hr_position_grade_menu">
+            <field name="name">Position Grades</field>
+            <field name="res_model">position.grade</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="recruitment_ads.view_hr_position_grade_tree_view"/>
+            <field name="search_view_id" ref="recruitment_ads.view_hr_position_grade_filter"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p>
+                    Here is the list of Position Grades.
+                </p>
+            </field>
+        </record>
+        <menuitem id="hr_position_grade_menu"
+                  name="Position Grades"
+                  parent="hr_recruitment.menu_hr_recruitment_configuration"
+                  sequence="15"
+                  groups="hr_recruitment.group_hr_recruitment_user"
+                  action="action_hr_position_grade_menu"/>
+    </data>
+</odoo>
