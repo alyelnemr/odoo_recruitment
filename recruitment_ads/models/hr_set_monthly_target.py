@@ -157,7 +157,7 @@ class HRSetMonthlyTarget(models.Model):
         res = super(HRSetMonthlyTarget, self).write(vals)
         if not (all(e.level_id for e in self.line_ids) and all(e.offer_target for e in self.line_ids) and all(
                 e.hire_target for e in self.line_ids)):
-            raise ValidationError('Monthly Target must be added')
+            raise ValidationError('Recruiter Monthly Target must be added')
         return res
 
 

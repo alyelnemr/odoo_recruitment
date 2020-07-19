@@ -195,7 +195,7 @@ class HRSetDailyTarget(models.Model):
         res = super(HRSetDailyTarget, self).write(vals)
         if not (all(e.level_id for e in self.line_ids) and all(e.cvs for e in self.line_ids) and all(
                 e.weight for e in self.line_ids)):
-            raise ValidationError('Please Set Daily Target first before saving')
+            raise ValidationError('Recruiter Daily Target must be added')
         return res
 
 
