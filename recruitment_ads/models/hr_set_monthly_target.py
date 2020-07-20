@@ -236,6 +236,8 @@ class HRSetMonthlyTargetLine(models.Model):
     @api.multi
     def write(self, vals):
         res = super(HRSetMonthlyTargetLine, self).write(vals)
+        if not (self.level_id or self.hire_target or self.offer_target):
+            raise ValidationError(_("Recruiter Monthly Target must be added"))
         self.send_monthly_target_mail(vals)
         return res
 

@@ -26,6 +26,7 @@ FormController.include({
         else{this._super.apply(this, arguments);}
 },
 	_onSave: function (ev) {
+
 	    var self = this;
         var record = self.model.get(self.handle, {raw: true});
         if (record.model ==='hr.applicant'){
@@ -237,11 +238,33 @@ FormController.include({
                 });
             }
         }
-        else{
-            if ((record.model ==='hr.set.daily.target' || record.model ==='hr.set.monthly.target') && record.data.line_ids.length ===0){
+        else if (record.model ==='hr.set.daily.target'){
+            if (record.data.line_ids.length === 0) {
                 this.do_warn(_t("Error"), _t("Please Set Daily Target first before saving"));
                 return
             }
+            else if (!self.model.isDirty(record.id)){
+                self.do_warn(_t("Error"), _t("Recruiter Daily Target must be added"));
+                return
+            }
+            else{
+                return self._super.apply(self, arguments);
+            }
+        }
+        else if (record.model ==='hr.set.monthly.target'){
+            if (record.data.line_ids.length === 0) {
+                this.do_warn(_t("Error"), _t("Please Set Monthly Target first before saving"));
+                return
+            }
+            else if (!self.model.isDirty(record.id)){
+                self.do_warn(_t("Error"), _t("Recruiter Monthly Target must be added"));
+                return
+            }
+            else{
+                return self._super.apply(self, arguments);
+            }
+        }
+        else{
             return self._super.apply(self, arguments);
 //             ev.stopPropagation(); // Prevent x2m lines to be auto-saved
 //             this.saveRecord();

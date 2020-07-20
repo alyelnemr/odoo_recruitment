@@ -232,6 +232,8 @@ class HRSetDailyTargetLine(models.Model):
     @api.multi
     def write(self, vals):
         res = super(HRSetDailyTargetLine, self).write(vals)
+        if not (self.level_id or self.weight or self.cvs):
+            raise ValidationError(_("Recruiter Daily Target must be added"))
         self.send_daily_target_mail(vals)
         return res
 
