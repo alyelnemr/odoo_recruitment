@@ -248,6 +248,16 @@ MailActivity.include({
       },
 
 
+    _markInterviewRejectionDone: function (id, feedback,interview_result) {
+
+        return this._rpc({
+                model: 'mail.activity',
+                method: 'action_interview_result',
+                args: [[id]],
+                kwargs: {feedback:feedback,interview_result: interview_result, is_rejection: true},
+            });
+      },
+
     _markInterviewDone: function (id, feedback,interview_result) {
 
         return this._rpc({
@@ -401,17 +411,25 @@ MailActivity.include({
                         $popover.on('click', '.o_activity_popover_discard', function () {
                             $popover_el.popover('hide');
                         });
+                        var interview_result = _.escape($popover.find('#activity_interview_result').val());
+                        $popover.find('.rejection_send_mail').hide();
                         $popover.on('change', '.activity_interview_result_class', function () {
                             if(this.value === 'Rejected') {
-                              $('.rejection_send_mail').show();
-                               $('.o_activity_popover_done_next').hide();
+                              $popover.find('.rejection_send_mail').show();
+                              $popover.find('.o_activity_popover_done_next').hide();
 //                            $popover.addClass(".rejection_send_mail").hide();
 //                             alert('on change (' + this.value + ')');
                             }else{
-                              $('.rejection_send_mail').hide();
-                              $('.o_activity_popover_done_next').show();
+                              $popover.find('.rejection_send_mail').hide();
+                              $popover.find('.o_activity_popover_done_next').show();
                             }
 
+                        });
+                        $popover.on('click', '.rejection_send_mail', function () {
+
+                            var feedback = _.escape($popover.find('#activity_feedback').val());
+                            self._markInterviewRejectionDone(activity_id,feedback,interview_result)
+                            .then(self._reload.bind(self, {activity: true, thread: true}));
                         });
                         return $popover;
                     },
