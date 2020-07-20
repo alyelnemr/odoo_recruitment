@@ -41,7 +41,7 @@ class MailActivity(models.Model):
                     {'last_stage_activity': activity.activity_type_id.name,
                      'last_stage_result': result})
 
-    def action_interview_result(self, feedback=False, interview_result=False):
+    def action_interview_result(self, feedback=False, interview_result=False, is_rejection=False):
         message = self.env['mail.message']
 
         self.write(dict(interview_result=interview_result, feedback=feedback))
@@ -60,6 +60,8 @@ class MailActivity(models.Model):
                     'interview_result_date':fields.Date.today()})
         self.mapped('calendar_event_id').write({'is_interview_done': True})
         self.update_calendar_event(interview_result)
+        if is_rejection:
+           self.send_rejection_mail()
         return message.ids and message.ids[0] or False
 
     def action_call_result(self, feedback=False, call_result_id=False):

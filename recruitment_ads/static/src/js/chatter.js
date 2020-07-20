@@ -99,7 +99,7 @@ Chatter.include({
         'click .o_chatter_button_log_note': '_onOpenComposerNote',
         'click .o_chatter_button_schedule_activity': '_onScheduleActivity',
         'click .o_chatter_button_schedule_interview': '_onScheduleInterview',
-        'click .rejection_send_mail': 'send_rejection_mail_method',
+//        'click .rejection_send_mail': 'send_rejection_mail_method',
     },
     start: function () {
         //override to add interview button
