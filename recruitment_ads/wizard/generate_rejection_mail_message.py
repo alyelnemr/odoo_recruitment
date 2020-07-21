@@ -4,7 +4,7 @@ from odoo.tools import pycompat
 
 
 
-class RejectionMailComposeMessage(models.Model):
+class RejectionMailComposeMessage(models.TransientModel):
     _name = 'rejection.mail.compose.message'
     _inherit = 'mail.compose.message'
     _description = 'Rejection Mail wizard'

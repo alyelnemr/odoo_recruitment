@@ -252,9 +252,9 @@ MailActivity.include({
 
         return this._rpc({
                 model: 'mail.activity',
-                method: 'action_interview_result',
+                method: 'send_rejection_mail',
                 args: [[id]],
-                kwargs: {feedback:feedback,interview_result: interview_result, is_rejection: true},
+                kwargs: {feedback:feedback,interview_result: interview_result},
             });
       },
 

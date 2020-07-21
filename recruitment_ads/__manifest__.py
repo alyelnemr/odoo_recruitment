@@ -7,7 +7,7 @@
     'category': 'Employees',
     'author': 'AHBS Odoo Team',
     'website': "http://www.andalusiagroup.net",
-    'sequence': 30,
+    'sequence': 1,
     'description': """
 Handle recruitment Process for Andalusia
     """,

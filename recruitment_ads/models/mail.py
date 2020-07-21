@@ -41,7 +41,7 @@ class MailActivity(models.Model):
                     {'last_stage_activity': activity.activity_type_id.name,
                      'last_stage_result': result})
 
-    def action_interview_result(self, feedback=False, interview_result=False, is_rejection=False):
+    def action_interview_result(self, feedback=False, interview_result=False):
         message = self.env['mail.message']
 
         self.write(dict(interview_result=interview_result, feedback=feedback))
@@ -60,8 +60,6 @@ class MailActivity(models.Model):
                     'interview_result_date':fields.Date.today()})
         self.mapped('calendar_event_id').write({'is_interview_done': True})
         self.update_calendar_event(interview_result)
-        if is_rejection:
-           self.send_rejection_mail()
         return message.ids and message.ids[0] or False
 
     def action_call_result(self, feedback=False, call_result_id=False):
@@ -144,8 +142,26 @@ class MailActivity(models.Model):
             'tag': 'reload', }
 
     @api.multi
-    def send_rejection_mail(self):
+    def send_rejection_mail(self, feedback=False, interview_result=False):
         # self.ensure_one()
+        # message = self.env['mail.message']
+        #
+        # self.write(dict(interview_result=interview_result, feedback=feedback))
+        # for activity in self:
+        #     record = self.env[activity.res_model].browse(activity.res_id)
+        #     interviewers = activity.calendar_event_id.partner_ids.mapped('name')
+        #     record.message_post_with_view(
+        #         'mail.message_activity_done',
+        #         values={'activity': activity, 'interviewers': ','.join(interviewers) if interviewers else False},
+        #         subtype_id=self.env.ref('mail.mt_activities').id,
+        #         mail_activity_type_id=activity.activity_type_id.id,
+        #     )
+        #     message |= record.message_ids[0]
+        #     record.write({'result': interview_result})
+        # self.write({'active': False,
+        #             'interview_result_date':fields.Date.today()})
+        # self.mapped('calendar_event_id').write({'is_interview_done': True})
+        # self.update_calendar_event(interview_result)
         ir_model_data = self.env['ir.model.data']
         try:
             template_id = \
