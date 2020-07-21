@@ -92,14 +92,3 @@ class RejectionMailComposeMessage(models.TransientModel):
 
             results[res_id] = mail_values
         return results
-
-    @api.multi
-    @api.onchange('template_id')
-    def onchange_template_id_wrapper(self):
-        """Override this function to add Candidate CV as an attachment for interviewer mail"""
-        super(RejectionMailComposeMessage, self).onchange_template_id_wrapper()
-        real_ids, xml_ids = zip(*self.template_id.get_xml_id().items())
-        if 'recruitment_ads.rejected_applicant_email_template' in xml_ids:
-            self.attachment_ids |= self.application_id.get_resume()
-        else:
-            self.attachment_ids -= self.application_id.get_resume()
