@@ -57,7 +57,6 @@ fieldRegistry.add('my-custom-field', CustomFieldChar);
 
 MailActivity.include({
     rejectedActivity: function (previous_activity_type_id) {
-        console.log('rejectedActivity')
         var callback = this._reload.bind(this, {activity: true, thread: true});
         return this._rejectedActivity(false, previous_activity_type_id, callback);
     },
@@ -91,8 +90,6 @@ MailActivity.include({
             method: 'read',
             args: [calendar_event_id, ["partner_ids"]],
         }).then(function (result) {
-            console.log('result.partner_ids')
-            console.log(result[0].partner_ids)
             partner_ids = result[0].partner_ids
         })).then(function(){
             var action = {
@@ -244,7 +241,6 @@ MailActivity.include({
 
 
     _markInterviewRejectionDone: function (id, feedback,interview_result) {
-        console.log('_markInterviewRejectionDone')
         return this._rpc({
                 model: 'mail.activity',
                 method: 'send_rejection_mail',
