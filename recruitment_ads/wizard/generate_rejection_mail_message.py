@@ -3,26 +3,17 @@ from odoo import models, fields, api
 from odoo.tools import pycompat
 
 
-
 class RejectionMailComposeMessage(models.TransientModel):
     _name = 'rejection.mail.compose.message'
     _inherit = 'mail.compose.message'
     _description = 'Rejection Mail wizard'
 
-
-
     candidate_id = fields.Many2one('res.partner', string='Candidate')
     application_id = fields.Many2one('hr.applicant', string='Application')
     partner_ids = fields.Many2many('res.partner', 'rejection_mail_compose_message_res_partner_rel', 'wizard_id',
                                    'partner_id', string='Interviewers', domain=[('applicant', '=', False)])
-    # follower_ids = fields.Many2many('res.partner', 'interview_mail_compose_message_res_follower_rel', 'wizard_id',
-    #                                 'follower_id', string='Followers', domain=[('applicant', '=', False)])
     attachment_ids = fields.Many2many('ir.attachment', 'interview_mail_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
-    # candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count",compute='_get_count')
-    # interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count",compute='_get_count')
-
-    # this field caused errors as it not inherited!!!! needed to be redefined again
     website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)
 
     @api.model
@@ -49,7 +40,6 @@ class RejectionMailComposeMessage(models.TransientModel):
             values[res_id] = res_id_values
 
         return multi_mode and values or values[res_ids[0]]
-
 
     @api.multi
     def get_mail_values(self, res_ids):
@@ -103,7 +93,6 @@ class RejectionMailComposeMessage(models.TransientModel):
             results[res_id] = mail_values
         return results
 
-
     @api.multi
     @api.onchange('template_id')
     def onchange_template_id_wrapper(self):
@@ -114,7 +103,3 @@ class RejectionMailComposeMessage(models.TransientModel):
             self.attachment_ids |= self.application_id.get_resume()
         else:
             self.attachment_ids -= self.application_id.get_resume()
-
-
-
-

@@ -49,6 +49,7 @@ class Applicant(models.Model):
                                   default=lambda self: self.env.user.id)
     old_data = fields.Text('Last Updated Data')
     tooltip_icon = fields.Char(string='Info.')
+    calendar_event_ids = fields.One2many('calendar.event', 'hr_applicant_id', string='Events')
 
     def get_last_activity(self):
         activity = {}
@@ -471,9 +472,9 @@ class Stage(models.Model):
         """Prevent deleting offer call cv_source hired interview  stage"""
         real_ids, xml_ids = zip(*self.get_xml_id().items())
         if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or (
-        'recruitment_ads.application_stage_cvsource_cycle_data') in xml_ids \
+                'recruitment_ads.application_stage_cvsource_cycle_data') in xml_ids \
                 or ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or (
-        'recruitment_ads.application_stage_interview_cycle_data') in xml_ids \
+                'recruitment_ads.application_stage_interview_cycle_data') in xml_ids \
                 or ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
             raise ValidationError(_("You are not allowed to delete this Stage"))
 
@@ -484,9 +485,9 @@ class Stage(models.Model):
         """Prevent edit  offer call cv_source hired interview  stage"""
         real_ids, xml_ids = zip(*self.get_xml_id().items())
         if ('recruitment_ads.application_stage_offer_cycle_data') in xml_ids or (
-        'recruitment_ads.application_stage_cvsource_cycle_data') in xml_ids \
+                'recruitment_ads.application_stage_cvsource_cycle_data') in xml_ids \
                 or ('recruitment_ads.application_stage_call_cycle_data') in xml_ids or (
-        'recruitment_ads.application_stage_interview_cycle_data') in xml_ids \
+                'recruitment_ads.application_stage_interview_cycle_data') in xml_ids \
                 or ('recruitment_ads.application_stage_hired_cycle_data') in xml_ids:
             raise ValidationError(_("You are not allowed to edit this Stage"))
 

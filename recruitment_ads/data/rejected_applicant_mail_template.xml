@@ -13,7 +13,7 @@
             <field name="user_signature" eval="True"/>
            <field name="body_html"><![CDATA[
                   <p>  Dear Candidate,,<br/><br/>
-                    <div style="text-align: center; margin-top: 16px;">
+                    <div style="text-align: left; margin-top: 16px;">
                         We would like to extend our sincerest appreciation to you for completing all the assessments and interviews as part of our screening procedure.
                         The caliber of candidates was very high and the decision of who to select was a difficult one. While we are impressed with your background and experience, we have come to the conclusion that another candidate's qualifications are more suitable for our requirements. We sincerely regret that you are not proceeding further to the next step with our organization at this time.
                         For your information we would like to emphasize that our evaluation of your qualifications is done only in connection with this specific position and in comparison with the other candidates who have applied for this position.
@@ -21,7 +21,7 @@
                         We will retain your resume in our files for future openings up to six months. In the event of an appropriate available position, we will not hesitate to contact you.
                         We appreciate your interest and the time you have invested in interviewing with ANDALUSIA GROUP.
                      </div>
-
+                     <br/>
                      <p>Best regards,</p>
 	            ]]>
             </field>

@@ -17,70 +17,6 @@ var fieldRegistry = require('web.field_registry');
 var AbstractField = require('web.AbstractField');
 var test;
 var rpc = require('web.rpc');
-//
-
-//var AbstractActivityField = AbstractField.extend({
-//    // inherited
-//    init: function () {
-//        this._super.apply(this, arguments);
-//        this.activities = [];
-//    },
-//
-//    // private
-//    _markActivityDone: function (id, feedback) {
-//        return this._rpc({
-//                model: 'mail.activity',
-//                method: 'action_feedback',
-//                args: [[id]],
-//                kwargs: {feedback: feedback},
-//            });
-//    },
-//    _readActivities: function () {
-//        var self = this;
-//        var missing_ids = _.difference(this.value.res_ids, _.pluck(this.activities, 'id'));
-//        var fetch_def;
-//        if (missing_ids.length) {
-//            fetch_def = this._rpc({
-//                    model: 'mail.activity',
-//                    method: 'read',
-//                    args: [missing_ids],
-//                });
-//        }
-//        return $.when(fetch_def).then(function (results) {
-//            // convert create_date and date_deadline to moments
-//            _.each(results, function (activity) {
-//                activity.create_date = moment(time.auto_str_to_date(activity.create_date));
-//                activity.date_deadline = moment(time.auto_str_to_date(activity.date_deadline));
-//            });
-//
-//            // filter out activities that are no longer linked to this record
-//            self.activities = _.filter(self.activities.concat(results || []), function (activity) {
-//                return _.contains(self.value.res_ids, activity.id);
-//            });
-//
-//            // sort activities by due date
-//            self.activities = _.sortBy(self.activities, 'date_deadline');
-//        });
-//    },
-//    _scheduleActivity: function (id, previous_activity_type_id, callback) {
-//        var action = {
-//            type: 'ir.actions.act_window',
-//            res_model: 'mail.activity',
-//            view_mode: 'form',
-//            view_type: 'form',
-//            views: [[false, 'form']],
-//            target: 'new',
-//            context: {
-//                default_res_id: this.res_id,
-//                default_res_model: this.model,
-//                default_previous_activity_type_id: previous_activity_type_id,
-//            },
-//            res_id: id || false,
-//        };
-//        return this.do_action(action, { on_close: callback });
-//    },
-//});
-//
 var CustomFieldChar = AbstractField.extend({
     template: "recruitment_ads.LastKanbanActivity",
     events: {
@@ -120,12 +56,71 @@ fieldRegistry.add('my-custom-field', CustomFieldChar);
 
 
 MailActivity.include({
-//        init: function(){
-//            $(function(){
-//             alert('helloooooo777887999');
-//            });
-//
-//    },
+    rejectedActivity: function (previous_activity_type_id) {
+        console.log('rejectedActivity')
+        var callback = this._reload.bind(this, {activity: true, thread: true});
+        return this._rejectedActivity(false, previous_activity_type_id, callback);
+    },
+    _rejectedActivity: function (id, previous_activity_type_id, callback) {
+        var self = this;
+        var template_id = false;
+        var compose_form_id = false;
+        var record = this.recordData;
+        var calendar_event_id = record.calendar_event_ids.res_ids[0];
+        var partner_ids;
+        $.when(this._rpc({
+            model: 'ir.model.data',
+            method: 'get_object_reference',
+            args: [],
+            kwargs:{module:'recruitment_ads', xml_id:'rejected_applicant_email_template'}
+        })
+        .then(function (result) {
+            template_id = result[1];
+        }),
+        this._rpc({
+            model: 'ir.model.data',
+            method: 'get_object_reference',
+            args: [],
+            kwargs:{module:'recruitment_ads', xml_id:'view_rejection_mail_compose_message_wizard_from'}
+        })
+        .then(function (result) {
+            compose_form_id = result[1];
+        }),
+        this._rpc({
+            model: 'calendar.event',
+            method: 'read',
+            args: [calendar_event_id, ["partner_ids"]],
+        }).then(function (result) {
+            console.log('result.partner_ids')
+            console.log(result[0].partner_ids)
+            partner_ids = result[0].partner_ids
+        })).then(function(){
+            var action = {
+                type: 'ir.actions.act_window',
+                res_model: 'rejection.mail.compose.message',
+                view_mode: 'form',
+                view_type: 'form',
+                views: [[compose_form_id, 'form']],
+                view_id: compose_form_id,
+                target: 'new',
+                context: {
+                    default_model: 'calendar.event',
+                    default_res_id: calendar_event_id,
+                    default_use_template: ((template_id) ? true : false),
+                    default_template_id: template_id,
+                    default_composition_mode: 'comment',
+                    default_candidate_id: record.partner_id.res_id,
+                    default_application_id: record.id,
+                    default_partner_ids: [[6, 0, partner_ids]],
+                    time_format: '%I:%M %p',
+                    force_email: true,
+                    rejection_mail: true
+                },
+                res_id: id || false,
+            };
+            return self.do_action(action, { on_close: callback });
+        });
+    },
     _onScheduleInterview: function () {
         if (this.record.data.partner_phone && this.record.data.partner_mobile && this.record.data.email_from){
             self = this;
@@ -249,7 +244,7 @@ MailActivity.include({
 
 
     _markInterviewRejectionDone: function (id, feedback,interview_result) {
-
+        console.log('_markInterviewRejectionDone')
         return this._rpc({
                 model: 'mail.activity',
                 method: 'send_rejection_mail',
@@ -294,6 +289,7 @@ MailActivity.include({
                             var call_result_id = _.escape($popover.find('#activity_call_result').val());
                             var interview_result = _.escape($popover.find('#activity_interview_result').val());
                             var previous_activity_type_id = $popover_el.data('previous-activity-type-id');
+                            debugger;
                             if (activity && activity.activity_category === 'interview') {
                                 if (interview_result === "") {
                                     Dialog.alert(
@@ -426,10 +422,12 @@ MailActivity.include({
 
                         });
                         $popover.on('click', '.rejection_send_mail', function () {
-
                             var feedback = _.escape($popover.find('#activity_feedback').val());
                             self._markInterviewRejectionDone(activity_id,feedback,interview_result)
-                            .then(self._reload.bind(self, {activity: true, thread: true}));
+                                        .then(self.rejectedActivity.bind(self, previous_activity_type_id));
+//                            self._markInterviewRejectionDone(activity_id,feedback,interview_result)
+//                            .then(self._reload.bind(self, {activity: true, thread: true}));
+//var callback = this._reload.bind(this, {activity: true, thread: true});
                         });
                         return $popover;
                     },

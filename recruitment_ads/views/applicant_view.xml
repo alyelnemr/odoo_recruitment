@@ -68,6 +68,7 @@
                     </div>
                 </xpath>
                 <xpath expr="//field[@name='description']" position="after">
+                    <field name="calendar_event_ids" invisible="1"/>
                     <separator string="History"/>
                     <field name="applicant_history_ids"
                            context="{'form_view_ref' : 'recruitment_ads.crm_case_form_view_job_inherit2'}">

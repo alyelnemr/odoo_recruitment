@@ -251,6 +251,6 @@
     <menuitem id="menu_interview_type"
               name="Interview Types"
               parent="hr_recruitment.menu_hr_recruitment_configuration"
-              sequence="100"
+              sequence="11"
               action="act_interview_type_menu"/>
 </odoo>

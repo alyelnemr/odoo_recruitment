@@ -9,10 +9,11 @@ from odoo.exceptions import ValidationError
 from odoo.tools import pycompat
 from datetime import datetime
 
+
 class Interview(models.Model):
     _inherit = 'calendar.event'
 
-    hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant')
+    hr_applicant_id = fields.Many2one('hr.applicant', 'Applicant', compute='_get_applicant', store=True)
     job_id = fields.Many2one('hr.job', 'Job Position', compute='_get_applicant', store=True)
     type = fields.Selection([('normal', 'Normal'), ('interview', 'Interview')], string="Type", default='normal')
     extra_followers_ids = fields.Many2many('res.partner', string="Followers", domain=[('applicant', '=', False)],
@@ -29,20 +30,21 @@ class Interview(models.Model):
     candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count")
     interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count")
 
-    display_corrected_start_date = fields.Char('start Datetime', compute='_compute_display_corrected_start_date',store =True)
+    display_corrected_start_date = fields.Char('start Datetime', compute='_compute_display_corrected_start_date',
+                                               store=True)
 
     interview_category = fields.Selection(selection=[
-        ('Personal','Personal'),
-        ('Phone','Phone'),
-        ('Online','Online'),],string='Category',default='Personal')
-    interview_type_id = fields.Many2one('interview.type',string='Type')
+        ('Personal', 'Personal'),
+        ('Phone', 'Phone'),
+        ('Online', 'Online'), ], string='Category', default='Personal')
+    interview_type_id = fields.Many2one('interview.type', string='Type')
 
     @api.multi
     @api.depends('allday', 'start_date', 'start_datetime')
     def _compute_display_corrected_start_date(self):
         """Convert interview start Date or Date time to the string with corrected Time zone and format"""
         for meeting in self:
-            date_format,time_format = self._get_date_formats()
+            date_format, time_format = self._get_date_formats()
             if meeting.allday:
                 # just correct the date format
                 start_date = fields.Date.from_string(meeting.start_date)
@@ -53,7 +55,7 @@ class Interview(models.Model):
                 start_datetime = fields.Datetime.from_string(meeting.start_datetime)
                 start_datetime = pytz.utc.localize(start_datetime)
                 start_datetime = tz.normalize(start_datetime)
-                meeting.display_corrected_start_date = start_datetime.strftime(date_format+' '+time_format)
+                meeting.display_corrected_start_date = start_datetime.strftime(date_format + ' ' + time_format)
 
     @api.constrains('partner_ids', 'start', 'stop')
     def check_overlapping_interviews(self):
@@ -112,7 +114,8 @@ class Interview(models.Model):
         """Override the write function to trigger create attendee function where there is a change in
         extra_followers_ids field"""
         # Prevent updates for done interview but a leave a window for implementation team in case of any updates needs to be done
-        if any(self.mapped('is_interview_done')) and not values.get('is_interview_done',False):
+        if any(self.mapped('is_interview_done')) and not values.get('is_interview_done', False) and \
+                not self._context.get('rejection_mail', False):
             raise ValidationError(_("You Can't change done interviews"))
         # compute duration, only if start and stop are modified
         if 'duration' not in values and 'start' in values and 'stop' in values:
@@ -211,8 +214,8 @@ class Interview(models.Model):
                 # get applicant id then get object of applicant to update resposible recruiter by current user
                 applicant_id = values.get('applicant_id', defaults.get('applicant_id'))
                 if applicant_id:
-                    applicant_obj=self.env['hr.applicant'].sudo().browse(applicant_id)
-                    if not applicant_obj.user_id :
+                    applicant_obj = self.env['hr.applicant'].sudo().browse(applicant_id)
+                    if not applicant_obj.user_id:
                         applicant_obj.write({'user_id': self.env.user.id})
                 #
                 user_id = values.get('user_id', defaults.get('user_id'))
@@ -229,9 +232,10 @@ class Interview(models.Model):
                             if applicant_obj:
                                 applicant_obj.write({'last_activity': meeting_activity_type.id,
                                                      'last_activity_date': fields.date.today(),
-                                                    'result' : False
+                                                     'result': False
                                                      })
-                                activity = self.env['hr.recruitment.stage'].search([('name', '=', 'First Interview')], limit=1)
+                                activity = self.env['hr.recruitment.stage'].search([('name', '=', 'First Interview')],
+                                                                                   limit=1)
                                 if activity:
                                     applicant_obj.write({'stage_id': activity.id})
                             if user_id:
@@ -522,4 +526,4 @@ class InterviewType(models.Model):
     _name = 'interview.type'
     _description = 'Interview Type'
 
-    name = fields.Char('Name',required=True)
+    name = fields.Char('Name', required=True)
