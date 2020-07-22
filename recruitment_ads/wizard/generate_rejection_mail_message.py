@@ -56,6 +56,7 @@ class RejectionMailComposeMessage(models.TransientModel):
 
         for res_id in res_ids:
             email_dict = template_values[res_id]
+            email_cc = email_to = ''
             if xml_ids[0] == 'recruitment_ads.rejected_applicant_email_template':
                 email_to = self.application_id.email_from or self.candidate_id.email
                 email_cc = ','.join([p.email for p in self.partner_ids])
@@ -92,3 +93,40 @@ class RejectionMailComposeMessage(models.TransientModel):
 
             results[res_id] = mail_values
         return results
+
+    @api.multi
+    def send_mail(self, auto_commit=False):
+        """ Process the wizard content and proceed with sending the related
+            email(s), rendering any template patterns on the fly if needed. """
+        for wizard in self:
+            # Duplicate attachments linked to the email.template.
+            # Indeed, basic mail.compose.message wizard duplicates attachments in mass
+            # mailing mode. But in 'single post' mode, attachments of an email template
+            # also have to be duplicated to avoid changing their ownership.
+            if wizard.attachment_ids and wizard.composition_mode != 'mass_mail' and wizard.template_id:
+                new_attachment_ids = []
+                for attachment in wizard.attachment_ids:
+                    if attachment in wizard.template_id.attachment_ids:
+                        new_attachment_ids.append(
+                            attachment.copy({'res_model': 'mail.compose.message', 'res_id': wizard.id}).id)
+                    else:
+                        new_attachment_ids.append(attachment.id)
+                    wizard.write({'attachment_ids': [(6, 0, new_attachment_ids)]})
+
+            Mail = self.env['mail.mail']
+            if wizard.template_id:
+                Mail = Mail.with_context(mail_notify_user_signature=True)
+
+            res_ids = [wizard.res_id]
+
+            batch_size = int(self.env['ir.config_parameter'].sudo().get_param('mail.batch_size')) or self._batch_size
+            sliced_res_ids = [res_ids[i:i + batch_size] for i in range(0, len(res_ids), batch_size)]
+
+            for res_ids in sliced_res_ids:
+                batch_mails = Mail
+                all_mail_values = wizard.get_mail_values(res_ids)
+                for res_id, mail_values in all_mail_values.items():
+                    batch_mails |= Mail.create(mail_values)
+                batch_mails.send(auto_commit=auto_commit)
+
+        return {'type': 'ir.actions.act_window_close'}
