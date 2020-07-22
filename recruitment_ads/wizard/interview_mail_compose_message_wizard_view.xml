@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_interview_mail_compose_message_wizard_from" model="ir.ui.view">
-        <field name="name">view_interview_mail_compose_message_wizard_from</field>
+        <field name="name">`view_interview_mail_compose_message_wizard_from</field>
         <field name="model">interview.mail.compose.message</field>
         <field name="inherit_id" eval="False"/>
         <field name="mode">primary</field>

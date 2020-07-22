@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <data>
+    <data noupdate="0">
         <record id="calendar_template_interview_invitation" model="mail.template">
             <field name="name">Interview &amp; Followers Invitation</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
-            <field name="email_from">${object.user_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="subject">${object.name}</field>
             <field name="model_id" ref="calendar.model_calendar_event"/>
-            <field name="reply_to">${object.user_id.email or ''}</field>
-            <field name="email_to" >${ctx and ctx['email_to']}</field>
+            <field name="email_to">${ctx and ctx['email_to']}</field>
             <field name="email_cc">${ctx and ctx['email_cc']}</field>
             <field name="auto_delete" eval="True"/>
             <field name="user_signature" eval="True"/>
@@ -64,11 +62,10 @@
         </record>
         <record id="calendar_template_interview_invitation_for_candidate" model="mail.template">
             <field name="name">Candidate Invitation</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="subject">${object.name}</field>
             <field name="model_id" ref="calendar.model_calendar_event"/>
-            <field name="reply_to">${object.user_id.email or ''}</field>
-            <field name="email_to" >${(object.hr_applicant_id.email_from) | safe}</field>
+            <field name="email_to">${(object.hr_applicant_id.email_from) | safe}</field>
             <field name="email_cc">${','.join(object.partner_ids.mapped('email'))}</field>
             <field name="auto_delete" eval="True"/>
             <field name="user_signature" eval="True"/>
@@ -126,12 +123,15 @@
         </record>
         <record id="calendar_template_interview_changedate" model="mail.template">
             <field name="name">Interview: Date updated</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="subject">${object.event_id.name}: Date updated</field>
             <field name="model_id" ref="calendar.model_calendar_attendee"/>
-            <field name="reply_to">${object.event_id.user_id.email or ''}</field>
-            <field name="email_to" >${('' if object.partner_id and object.partner_id.email and object.partner_id.email==object.email else object.email|safe)}</field>
-            <field name="partner_to">${object.partner_id and object.partner_id.email and object.partner_id.email==object.email and object.partner_id.id or False }</field>
+            <field name="email_to">
+                ${('' if object.partner_id and object.partner_id.email and object.partner_id.email==object.email else object.email|safe)}
+            </field>
+            <field name="partner_to">
+                ${object.partner_id and object.partner_id.email and object.partner_id.email==object.email and object.partner_id.id or False }
+            </field>
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
 <div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
@@ -205,12 +205,15 @@
         </record>
         <record id="calendar_template_interview_reminder" model="mail.template">
             <field name="name">Interview: Reminder</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="subject">${object.event_id.name} - Reminder</field>
             <field name="model_id" ref="calendar.model_calendar_attendee"/>
-            <field name="reply_to">${object.event_id.user_id.email or ''}</field>
-            <field name="email_to" >${('' if object.partner_id and object.partner_id.email and object.partner_id.email==object.email else object.email|safe)}</field>
-            <field name="partner_to">${object.partner_id and object.partner_id.email and object.partner_id.email==object.email and object.partner_id.id or False }</field>
+            <field name="email_to">
+                ${('' if object.partner_id and object.partner_id.email and object.partner_id.email==object.email else object.email|safe)}
+            </field>
+            <field name="partner_to">
+                ${object.partner_id and object.partner_id.email and object.partner_id.email==object.email and object.partner_id.id or False }
+            </field>
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
 <div summary="o_mail_template" style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">

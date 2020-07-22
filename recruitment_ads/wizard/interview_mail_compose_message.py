@@ -17,13 +17,16 @@ class InterviewMailComposeMessage(models.Model):
                                     'follower_id', string='Followers', domain=[('applicant', '=', False)])
     attachment_ids = fields.Many2many('ir.attachment', 'interview_mail_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
-    candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count",compute='_get_count')
-    interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count",compute='_get_count')
+    candidate_sent_count = fields.Integer(string="Sent Candidate Emails Count", compute='_get_count')
+    interviewer_sent_count = fields.Integer(string="Sent Interviewers Emails Count", compute='_get_count')
 
     # this field caused errors as it not inherited!!!! needed to be redefined again
     website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)
+    template_id = fields.Many2one(
+        'mail.template', 'Use template', index=True,
+        domain="[('model', '=', model),('name', 'in', ('Candidate Invitation','Interview & Followers Invitation'))]")
 
-    @api.depends('model','res_id')
+    @api.depends('model', 'res_id')
     def _get_count(self):
         for wizard in self:
             interview = self.env[wizard.model].browse(wizard.res_id)

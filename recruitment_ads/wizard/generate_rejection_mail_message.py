@@ -61,7 +61,7 @@ class RejectionMailComposeMessage(models.TransientModel):
                 email_cc = ','.join([p.email for p in self.partner_ids])
             else:
                 email_to = ','.join([p.email for p in self.partner_ids])
-                # email_cc = ','.join([p.email for p in self.follower_ids])
+                email_cc = ','.join([p.email for p in self.follower_ids])
 
             mail_values = {
                 'subject': self.subject,

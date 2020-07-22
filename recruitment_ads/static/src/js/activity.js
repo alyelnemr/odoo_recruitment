@@ -56,16 +56,16 @@ fieldRegistry.add('my-custom-field', CustomFieldChar);
 
 
 MailActivity.include({
-    rejectedActivity: function (previous_activity_type_id) {
+    rejectedActivity: function (previous_activity_type_id, calendar_event_id) {
         var callback = this._reload.bind(this, {activity: true, thread: true});
-        return this._rejectedActivity(false, previous_activity_type_id, callback);
+        return this._rejectedActivity(false, previous_activity_type_id, calendar_event_id, callback);
     },
-    _rejectedActivity: function (id, previous_activity_type_id, callback) {
+    _rejectedActivity: function (id, previous_activity_type_id, calendar_event_id, callback) {
+    console.log(calendar_event_id)
         var self = this;
         var template_id = false;
         var compose_form_id = false;
         var record = this.recordData;
-        var calendar_event_id = record.calendar_event_ids.res_ids[0];
         var partner_ids;
         $.when(this._rpc({
             model: 'ir.model.data',
@@ -419,8 +419,10 @@ MailActivity.include({
                         });
                         $popover.on('click', '.rejection_send_mail', function () {
                             var feedback = _.escape($popover.find('#activity_feedback').val());
+                            console.log(activity_id)
+                            console.log(self)
                             self._markInterviewRejectionDone(activity_id,feedback,interview_result)
-                                        .then(self.rejectedActivity.bind(self, previous_activity_type_id));
+                                        .then(self.rejectedActivity.bind(self, previous_activity_type_id,activity.calendar_event_id[0]));
 //                            self._markInterviewRejectionDone(activity_id,feedback,interview_result)
 //                            .then(self._reload.bind(self, {activity: true, thread: true}));
 //var callback = this._reload.bind(this, {activity: true, thread: true});
