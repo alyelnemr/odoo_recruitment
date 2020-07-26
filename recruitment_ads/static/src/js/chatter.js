@@ -126,7 +126,6 @@ Chatter.include({
     },
 
     send_rejection_mail_method : function () {
-        console.log(this);
         return this._rpc({
                 model: 'mail.activity',
                 method: 'send_rejection_mail',

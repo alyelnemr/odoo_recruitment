@@ -61,7 +61,6 @@ MailActivity.include({
         return this._rejectedActivity(false, previous_activity_type_id, calendar_event_id, callback);
     },
     _rejectedActivity: function (id, previous_activity_type_id, calendar_event_id, callback) {
-    console.log(calendar_event_id)
         var self = this;
         var template_id = false;
         var compose_form_id = false;
@@ -285,7 +284,6 @@ MailActivity.include({
                             var call_result_id = _.escape($popover.find('#activity_call_result').val());
                             var interview_result = _.escape($popover.find('#activity_interview_result').val());
                             var previous_activity_type_id = $popover_el.data('previous-activity-type-id');
-                            debugger;
                             if (activity && activity.activity_category === 'interview') {
                                 if (interview_result === "") {
                                     Dialog.alert(
@@ -418,14 +416,23 @@ MailActivity.include({
 
                         });
                         $popover.on('click', '.rejection_send_mail', function () {
+                            var interview_result = _.escape($popover.find('#activity_interview_result').val());
                             var feedback = _.escape($popover.find('#activity_feedback').val());
-                            console.log(activity_id)
-                            console.log(self)
-                            self._markInterviewRejectionDone(activity_id,feedback,interview_result)
+                            if (interview_result === "Rejected" && feedback === ""){
+                                    Dialog.alert(
+                                        self,
+                                        _t("Please fill the rejection reason in feedback!"), {
+                                            confirm_callback: function () {
+                                                self._reload.bind(self, {activity: true});
+                                            },
+                                        }
+                                    );
+                                }
+                            else{
+                                self._markInterviewRejectionDone(activity_id,feedback,interview_result)
                                         .then(self.rejectedActivity.bind(self, previous_activity_type_id,activity.calendar_event_id[0]));
-//                            self._markInterviewRejectionDone(activity_id,feedback,interview_result)
-//                            .then(self._reload.bind(self, {activity: true, thread: true}));
-//var callback = this._reload.bind(this, {activity: true, thread: true});
+
+                            }
                         });
                         return $popover;
                     },
