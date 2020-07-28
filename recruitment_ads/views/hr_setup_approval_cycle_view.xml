@@ -34,7 +34,7 @@
             <field name="name">hr.setup.approval.cycle.users.kanban</field>
             <field name="model">hr.setup.approval.cycle.users</field>
             <field name="arch" type="xml">
-                <kanban string="Setup Approval Cycles Users" group_create="false" group_edit="false" group_delete="false"
+                <kanban string="Setup Approval Cycles Users" create="false" edit="false" delete="false"
                         default_group_by="stage_id" default_order="id"
                         class="o_kanban_small_column o_kanban_project_tasks">
                     <field name="id"/>
