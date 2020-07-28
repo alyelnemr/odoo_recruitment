@@ -50,26 +50,45 @@ KanbanColumn.include({
                     self.$el.removeClass('o_kanban_hover');
                 },
                 update: function (event, ui) {
-                var record = ui.item.data('record');
-                if(record.recordData.activity_ids.res_ids != false){
-                 event.preventDefault();
-                 if(flag === 'over'){
-                    alert('Please insert Activity Result in order to be transferred to another stage');}}else{
-                    var checkmanager = window.manager;
-                    if (record.recordData.user_id !== false){
-                        if(record.recordData.user_id.data.id !== session.uid){
-                            responsible = 'false';
-                    }
-
-                    }else{
-                        responsible = 'false';
-                    }
-
-                    if(record.modelName === 'hr.applicant' && responsible === 'false' && checkmanager !== 'manager'){
+                    var record = ui.item.data('record');
+                    if (record.modelName === 'hr.applicant' && record.recordData.activity_ids){
+                        if(record.recordData.activity_ids.res_ids != false){
                          event.preventDefault();
                          if(flag === 'over'){
-                            return alert('This Application is owned by another Recruiter');}
-                    }else{
+                            alert('Please insert Activity Result in order to be transferred to another stage');}}
+                        else{
+                            var checkmanager = window.manager;
+                            if (record.recordData.user_id !== false){
+                                if(record.recordData.user_id.data.id !== session.uid){
+                                    responsible = 'false';
+                            }
+
+                            }else{
+                                responsible = 'false';
+                            }
+
+                            if(record.modelName === 'hr.applicant' && responsible === 'false' && checkmanager !== 'manager'){
+                                 event.preventDefault();
+                                 if(flag === 'over'){
+                                    return alert('This Application is owned by another Recruiter');}
+                            }else{
+                                var index = self.records.indexOf(record);
+                                record.$el.removeAttr('style');  // jqueryui sortable add display:block inline
+                                if (index >= 0) {
+                                    if ($.contains(self.$el[0], record.$el[0])) {
+                                        // resequencing records
+                                        self.trigger_up('kanban_column_resequence', {ids: self._getIDs()});
+                                    }
+                                } else {
+                                    // adding record to this column
+                                    ui.item.addClass('o_updating');
+                                    self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        var record = ui.item.data('record');
                         var index = self.records.indexOf(record);
                         record.$el.removeAttr('style');  // jqueryui sortable add display:block inline
                         if (index >= 0) {
@@ -82,8 +101,8 @@ KanbanColumn.include({
                             ui.item.addClass('o_updating');
                             self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
                         }
-                      }
-                }}
+                    }
+                }
             });
         }
 //        this.$el.click(function (event) {

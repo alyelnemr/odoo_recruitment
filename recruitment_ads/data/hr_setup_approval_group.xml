@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="record_hr_master_approval_group_ceo" model="hr.master.approval.group">
+            <field name="name">CEO</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="record_hr_master_approval_group_coo" model="hr.master.approval.group">
+            <field name="name">COO</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="record_hr_master_approval_group_group_hr_director" model="hr.master.approval.group">
+            <field name="name">Group HR Director</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="record_hr_master_approval_group_group_compensation_benefits_manager"
+                model="hr.master.approval.group">
+            <field name="name">Group Compensation &amp; Benefits Manager</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="record_hr_master_approval_group_group_ld_manager" model="hr.master.approval.group">
+            <field name="name">Group L&amp;D Manager</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="record_hr_master_approval_group_group_hr_manager" model="hr.master.approval.group">
+            <field name="name">Group HR Manager</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="record_hr_master_approval_group_group_technical_manager" model="hr.master.approval.group">
+            <field name="name">Group Technical Manager</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="record_hr_master_approval_group_regional_operation_manager" model="hr.master.approval.group">
+            <field name="name">Regional Operation Manager</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="record_hr_master_approval_group_regional_medical_manager" model="hr.master.approval.group">
+            <field name="name">Regional Medical Manager</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="record_hr_master_approval_group_regional_financial_manager" model="hr.master.approval.group">
+            <field name="name">Regional Financial Manager</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="record_hr_master_approval_group_area_regional_hr_manager" model="hr.master.approval.group">
+            <field name="name">Area/Regional HR Manager</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="record_hr_master_approval_group_area_operation_for_admin_finance" model="hr.master.approval.group">
+            <field name="name">Area Operation For Admin &amp; Finance</field>
+            <field name="sequence">12</field>
+        </record>
+        <record id="record_hr_master_approval_group_area_technical_manager" model="hr.master.approval.group">
+            <field name="name">Area Technical Manager</field>
+            <field name="sequence">13</field>
+        </record>
+        <record id="record_hr_master_approval_group_hospital_director" model="hr.master.approval.group">
+            <field name="name">Hospital Director</field>
+            <field name="sequence">14</field>
+        </record>
+        <record id="record_hr_master_approval_group_department_technical_manager" model="hr.master.approval.group">
+            <field name="name">Department Technical Manager</field>
+            <field name="sequence">15</field>
+        </record>
+        <record id="record_hr_master_approval_group_medical_director" model="hr.master.approval.group">
+            <field name="name">Medical Director</field>
+            <field name="sequence">16</field>
+        </record>
+        <record id="record_hr_master_approval_group_financial_manager" model="hr.master.approval.group">
+            <field name="name">Financial Manager</field>
+            <field name="sequence">17</field>
+        </record>
+        <record id="record_hr_master_approval_group_hr_manager" model="hr.master.approval.group">
+            <field name="name">HR Manager</field>
+            <field name="sequence">18</field>
+        </record>
+
+        <!--        hr.master.approval.group.state-->
+        <record id="record_hr_master_approval_group_state_approval_group" model="hr.master.approval.group.state">
+            <field name="name">Approval Group</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="record_hr_master_approval_group_state_users" model="hr.master.approval.group.state">
+            <field name="name">Users</field>
+            <field name="sequence">2</field>
+        </record>
+    </data>
+</odoo>

@@ -12,4 +12,5 @@ from . import res_users
 from . import policy
 from . import hr_set_daily_target
 from . import hr_set_monthly_target
+from . import hr_setup_approval_cycle
 # test automation build mail
