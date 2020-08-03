@@ -50,6 +50,8 @@ class Applicant(models.Model):
     old_data = fields.Text('Last Updated Data')
     tooltip_icon = fields.Char(string='Info.')
     calendar_event_ids = fields.One2many('calendar.event', 'hr_applicant_id', string='Events')
+    cv_counter = fields.Integer('CV Counter', default=0)
+    assessment_counter = fields.Integer('Assessment Counter', default=0)
 
     def get_last_activity(self):
         activity = {}
@@ -83,16 +85,17 @@ class Applicant(models.Model):
     @api.multi
     def write(self, vals):
         ctx = self._context.copy()
-        for applicant in self:
-            if not ctx.get('edit_contact', False):
-                old_dict = {}
-                for key, val in vals.items():
-                    if key in ('email_form', 'partner_mobile', 'partner_phone', 'face_book', 'linkedin'):
-                        old_dict[key] = applicant[key]
-                if old_dict:
-                    vals['old_data'] = json.dumps(old_dict)
-        if vals.get('job_id', False):
-            self.calculate_application_period_policy(vals, action="write")
+        if not ctx.get('write_counter', False):
+            for applicant in self:
+                if not ctx.get('edit_contact', False):
+                    old_dict = {}
+                    for key, val in vals.items():
+                        if key in ('email_form', 'partner_mobile', 'partner_phone', 'face_book', 'linkedin'):
+                            old_dict[key] = applicant[key]
+                    if old_dict:
+                        vals['old_data'] = json.dumps(old_dict)
+            if vals.get('job_id', False):
+                self.calculate_application_period_policy(vals, action="write")
         return super(Applicant, self).write(vals)
 
     def get_current_user_group(self):
