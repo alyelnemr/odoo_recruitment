@@ -185,6 +185,8 @@ class HRSetMonthlyTargetLine(models.Model):
     hire_target = fields.Integer(string="Hire Target", track_visibility='always', default=0)
     vacant = fields.Integer(string="Vacant", track_visibility='always', default=0, readonly=True,
                             compute='_compute_vacant')
+    total_need = fields.Integer(string="Total Need", track_visibility='always', default=0, readonly=True,
+                                compute='_compute_total_need')
     replacement_emp = fields.Integer(string="Replacement", track_visibility='always', default=0)
     man_power = fields.Integer(string="MP", track_visibility='always', default=0)
     current_emp = fields.Integer(string="Current", track_visibility='always', default=0)
@@ -200,13 +202,16 @@ class HRSetMonthlyTargetLine(models.Model):
                                 ondelete='cascade')
     position_type = fields.Selection(
         [('normal', 'Normal'),
-         ('critical', 'Critical'), ], string='Position Type',
+         ('critical', 'Critical'),
+         ('rare', 'Rare'),
+         ], string='Position Type',
         default='normal', )
 
-    @api.onchange('level_id')
+    @api.onchange('level_id', 'hire_target', 'offer_target')
     def _compute_level(self):
         for record in self:
-            record.hire_weight = record.offer_weight = record.level_id.weight
+            record.hire_weight = record.hire_target * record.level_id.weight
+            record.offer_weight = record.offer_target * record.level_id.weight
 
     @api.onchange('start_date')
     def _validation_start_date(self):
@@ -218,6 +223,11 @@ class HRSetMonthlyTargetLine(models.Model):
     def _compute_vacant(self):
         for record in self:
             record.vacant = record.man_power - record.current_emp
+
+    @api.depends('replacement_emp', 'vacant')
+    def _compute_total_need(self):
+        for record in self:
+            record.vacant = record.replacement_emp - record.vacant
 
     @api.depends('start_date', 'level_id')
     def compute_offer_hire_expecting_date(self):
