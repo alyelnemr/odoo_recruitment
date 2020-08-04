@@ -22,16 +22,32 @@ class IrAttachmentInherit(models.Model):
                     record = self.env[attachment.res_model].browse(attachment.res_id)
                     attachment.res_name = record.display_name
                     sequence = ''
-                    if attachment.attachment_type == 'cv':
-                        sequence = str('(' + str(record.cv_counter) + ')' if record.cv_counter > 0 else '')
-                        self_write_counter.name = record.name + sequence
-                    elif attachment.attachment_type == 'assessment':
-                        sequence = str(
-                            '_ASS_' + str(
-                                record.assessment_counter) if record.assessment_counter > 0 else '_ASS')
-                        self_write_counter.name = record.name + sequence
+                    if self.ids:
+                        if attachment.attachment_type == 'cv':
+                            sequence = str('(' + str(record.cv_counter) + ')' if record.cv_counter > 0 else '')
+                            self_write_counter.name = record.name + sequence
+                        elif attachment.attachment_type == 'assessment':
+                            sequence = str(
+                                '_ASS_' + str(
+                                    record.assessment_counter) if record.assessment_counter > 0 else '_ASS')
+                            self_write_counter.name = record.name + sequence
+                        else:
+                            attachment.name = record.display_name
                     else:
-                        attachment.name = record.display_name
+                        if attachment.attachment_type == 'cv' and self._origin.attachment_type != 'cv':
+                            sequence = str('(' + str(record.cv_counter) + ')' if record.cv_counter > 0 else '')
+                            self_write_counter.name = record.name + sequence
+                        elif attachment.attachment_type == 'cv' and self._origin.attachment_type == 'cv':
+                            self_write_counter.name = self._origin.name
+                        elif attachment.attachment_type == 'assessment' and self._origin.attachment_type != 'assessment':
+                            sequence = str(
+                                '_ASS_' + str(
+                                    record.assessment_counter) if record.assessment_counter > 0 else '_ASS')
+                            self_write_counter.name = record.name + sequence
+                        elif attachment.attachment_type == 'assessment' and self._origin.attachment_type == 'assessment':
+                            self_write_counter.name = self._origin.name
+                        else:
+                            attachment.name = record.display_name
                     if attachment.datas_fname:
                         self_write_counter.upload_date = fields.Datetime.to_string(
                             datetime_now.datetime.now())
@@ -40,10 +56,23 @@ class IrAttachmentInherit(models.Model):
                         last_item = len(extension) - 1
                         extension = extension[last_item]
 
-                        if attachment.attachment_type == 'cv':
+                        if self.ids:
                             self_write_counter.datas_fname = record.name + sequence + '.' + extension
-                        elif attachment.attachment_type == 'assessment':
-                            self_write_counter.datas_fname = record.name + sequence + '.' + extension
+                        else:
+                            if attachment.attachment_type == 'cv' and self._origin.attachment_type != 'cv':
+                                sequence = str('(' + str(record.cv_counter) + ')' if record.cv_counter > 0 else '')
+                                self_write_counter.datas_fname = record.name + sequence + '.' + extension
+                            elif attachment.attachment_type == 'cv' and self._origin.attachment_type == 'cv':
+                                self_write_counter.datas_fname = self._origin.datas_fname
+                            elif attachment.attachment_type == 'assessment' and self._origin.attachment_type != 'assessment':
+                                sequence = str(
+                                    '_ASS_' + str(
+                                        record.assessment_counter) if record.assessment_counter > 0 else '_ASS')
+                                self_write_counter.datas_fname = record.name + sequence + '.' + extension
+                            elif attachment.attachment_type == 'assessment' and self._origin.attachment_type == 'assessment':
+                                self_write_counter.datas_fname = self._origin.datas_fname
+                            else:
+                                attachment.name = record.display_name
 
         return res
 
