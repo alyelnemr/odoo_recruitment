@@ -45,6 +45,7 @@
                                         <field name="man_power"/>
                                         <field name="current_emp"/>
                                         <field name="replacement_emp"/>
+                                        <field name="total_need" force_save="1"/>
                                         <field name="vacant" force_save="1"/>
                                         <field name="offer_target"/>
                                         <field name="offer_weight"/>
