@@ -227,7 +227,7 @@ class HRSetMonthlyTargetLine(models.Model):
     @api.depends('replacement_emp', 'vacant')
     def _compute_total_need(self):
         for record in self:
-            record.vacant = record.replacement_emp - record.vacant
+            record.vacant = record.replacement_emp + record.vacant
 
     @api.depends('start_date', 'level_id')
     def compute_offer_hire_expecting_date(self):
