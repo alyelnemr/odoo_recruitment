@@ -28,14 +28,14 @@ class Applicant(models.Model):
     )
 
     def _select(self):
-        select_str = """select id,email_from,partner_phone,partner_mobile,partner_name,job_id,partner_id ,source_id,
-        offer_id,cv_matched,reason_of_rejection, salary_current,name,serial,active,description,email_cc,probability,
-        create_date, write_date,stage_id,last_stage_id,company_id,user_id,date_closed,date_open, 
-        date_last_stage_update,priority,salary_proposed_extra,salary_expected_extra,salary_proposed, salary_expected,
-        availability,type_id,department_id,section_id,allow_call,reference,delay_close, color ,emp_id,response_id,
-        campaign_id ,medium_id , message_last_post ,activity_date_deadline ,last_activity, last_activity_date, 
-        result,have_cv ,source_resp,old_data , tooltip_icon , have_assessment  from 
-        hr_applicant"""
+        select_str = """select id, email_from, partner_phone, partner_mobile, partner_name, job_id, partner_id, source_id,
+        offer_id, cv_matched, reason_of_rejection, salary_current, name, serial, active, description, email_cc, probability,
+        create_date, write_date, stage_id, last_stage_id, company_id, user_id, date_closed, date_open, 
+        date_last_stage_update, priority, salary_proposed_extra, salary_expected_extra, salary_proposed, salary_expected,
+        availability, type_id, department_id, section_id, allow_call, reference, delay_close, color, emp_id, response_id,
+        campaign_id, medium_id, message_last_post, activity_date_deadline ,last_activity, last_activity_date, 
+        result, source_resp, old_data, tooltip_icon, have_cv, have_assessment, cv_counter, assessment_counter  
+        from hr_applicant"""
         return select_str
 
     def column_exists(self):

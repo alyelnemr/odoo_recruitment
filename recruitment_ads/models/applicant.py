@@ -50,8 +50,8 @@ class Applicant(models.Model):
     old_data = fields.Text('Last Updated Data')
     tooltip_icon = fields.Char(string='Info.')
     calendar_event_ids = fields.One2many('calendar.event', 'hr_applicant_id', string='Events')
-    cv_counter = fields.Integer('CV Counter', default=0)
-    assessment_counter = fields.Integer('Assessment Counter', default=0)
+    cv_counter = fields.Integer('CV Counter', default=0, compute='_get_attachment', store=True)
+    assessment_counter = fields.Integer('Assessment Counter', default=0, compute='_get_attachment', store=True)
 
     def get_last_activity(self):
         activity = {}
@@ -122,6 +122,8 @@ class Applicant(models.Model):
                 record.have_assessment = True
             else:
                 record.have_assessment = False
+            record.cv_counter = len(cv)
+            record.assessment_counter = len(assessment)
 
     @api.one
     @api.depends('job_id.job_title_id.job_code', 'partner_mobile', 'partner_name', 'serial')
