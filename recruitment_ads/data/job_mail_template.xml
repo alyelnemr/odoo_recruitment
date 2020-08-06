@@ -166,7 +166,7 @@
                 <![CDATA[
 		            Dear ${(object.recruiter_id.name)},<br/><br/>
 		            Kindly the following target is <strong>inactive</strong>:<br/>
-                    Date: ${(object.name)}<br/>
+                    Date: ${(object.start_date)}<br/>
                     BU: ${(object.bu_id.name)}<br/>
                     Job Position: ${(object.job_id.name)}<br/>
                     Job Level: ${(object.level_id.name)}<br/>
