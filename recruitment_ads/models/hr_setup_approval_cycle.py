@@ -35,7 +35,7 @@ class HRSetupApprovalCycle(models.Model):
         ], limit=1)
         if is_exist:
             raise ValidationError(
-                _('There is exist approval cycle (%s) with the same filtration criteria.') % is_exist.name)
+                _('There is another Approval cycle exits (%s) with the same Filtration Criteria') % is_exist.name)
         approval_list = []
         stage_id = self.env['hr.master.approval.group.state'].search([], limit=1)
         for approval_user in self.env['hr.master.approval.group'].search([]):
@@ -60,7 +60,7 @@ class HRSetupApprovalCycle(models.Model):
             ], limit=1)
             if is_exist:
                 raise ValidationError(
-                    _('There is exist approval cycle (%s) with the same filtration criteria.') % is_exist.name)
+                    _('There is another Approval cycle exits (%s) with the same Filtration Criteria.') % is_exist.name)
         return super(HRSetupApprovalCycle, self).write(vals)
 
 
