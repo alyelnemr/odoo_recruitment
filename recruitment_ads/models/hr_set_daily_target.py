@@ -235,16 +235,20 @@ class HRSetDailyTargetLine(models.Model):
         res = super(HRSetDailyTargetLine, self).write(vals)
         if not (self.level_id or self.weight or self.cvs) and self.active:
             raise ValidationError(_("Recruiter Daily Target must be added"))
-        self.send_daily_target_mail(vals)
+        if vals.get('active', '') == True:
+            self.send_daily_target_mail(vals)
+        elif vals.get('active', '') == False:
+            self.send_daily_target_mail(vals, active=False)
         return res
 
-    def send_daily_target_mail(self, data):
+    def send_daily_target_mail(self, data, active=True):
         if data:
-            self.send_mail_set_daily_target()
+            self.send_mail_set_daily_target(active)
 
     @api.multi
-    def send_mail_set_daily_target(self):
-        template = self.env.ref('recruitment_ads.set_daily_target_line_email_template')
+    def send_mail_set_daily_target(self, active=True):
+        template = self.env.ref('recruitment_ads.set_daily_target_line_email_template') if active else self.env.ref(
+            'recruitment_ads.set_inactive_daily_target_line_email_template')
         self.env['mail.template'].browse(template.id).send_mail(self.id)
 
     def get_mail_url(self):

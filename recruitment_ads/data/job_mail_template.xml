@@ -4,7 +4,7 @@
         <record id="job_assignment_email_template" model="mail.template">
             <field name="name">Job Assignment e-mail template</field>
             <field name="subject">${(object.name)}'s Assignment</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="reply_to">${(object.create_uid.email)}</field>
             <field name="email_to">${(object.edited_recruiter_responsible.email)}</field>
             <field name="email_cc">${(object.create_uid.email)}</field>
@@ -32,7 +32,7 @@
         <record id="job_not_assignment_email_template" model="mail.template">
             <field name="name">Job Unassigned e-mail template</field>
             <field name="subject">${(object.name)}'s Unassignment</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="reply_to">${(object.create_uid.email)}</field>
             <field name="email_to">${(object.removed_recruiter_responsible.email)}</field>
             <field name="email_cc">${(object.create_uid.email)}</field>
@@ -60,7 +60,7 @@
         <record id="set_daily_target_line_email_template" model="mail.template">
             <field name="name">Set Daily Target Line e-mail Template</field>
             <field name="subject">Daily Target Report of "${(object.job_id.name)}"</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="reply_to">${(object.create_uid.email)}</field>
             <field name="email_to">${(object.recruiter_id.email)}</field>
             <field name="email_cc">${(object.create_uid.email)}</field>
@@ -94,10 +94,38 @@
             </field>
         </record>
 
+        <record id="set_inactive_daily_target_line_email_template" model="mail.template">
+            <field name="name">Set Daily Target Report -Inactive e-mail Template</field>
+            <field name="subject">Daily Target Report -Inactive</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
+            <field name="reply_to">${(object.create_uid.email)}</field>
+            <field name="email_to">${(object.recruiter_id.email)}</field>
+            <field name="email_cc">${(object.create_uid.email)}</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="recruitment_ads.model_hr_set_daily_target_line"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html">
+                <![CDATA[
+		            Dear ${(object.recruiter_id.name)},<br/><br/>
+		            Kindly the following target is <strong>inactive</strong>:<br/>
+                    Date: ${(object.name)}<br/>
+                    BU: ${(object.bu_id.name)}<br/>
+                    Job Position: ${(object.job_id.name)}<br/>
+                    Job Level: ${(object.level_id.name)}<br/>
+                    Weight: ${(object.weight)}<br/>
+                    Target Applications: ${(object.cvs)}<br/><br/>
+                    Best regards,<br/>
+                    ${object.company_id.name}<br/>
+                    ${(object.write_uid.name)}<br/>
+                    ${(object.write_uid.email)}<br/>
+	            ]]>
+            </field>
+        </record>
+
         <record id="set_monthly_target_line_email_template" model="mail.template">
             <field name="name">Set Monthly Target Line e-mail Template</field>
             <field name="subject">Monthly Target Report of "${(object.job_id.name)}"</field>
-            <field name="email_from">${object.company_id and object.company_id.email or ''}</field>
+            <field name="email_from">Recruitment@Andalusiagroup.net</field>
             <field name="reply_to">${(object.create_uid.email)}</field>
             <field name="email_to">${(object.recruiter_id.email)}</field>
             <field name="email_cc">${(object.create_uid.email)}</field>
