@@ -243,10 +243,10 @@ FormController.include({
                 this.do_warn(_t("Error"), _t("Please Set Daily Target first before saving"));
                 return
             }
-            else if (!self.model.isDirty(record.id)){
-                self.do_warn(_t("Error"), _t("Recruiter Daily Target must be added"));
-                return
-            }
+//            else if (!self.model.isDirty(record.id)){
+//                self.do_warn(_t("Error"), _t("Recruiter Daily Target must be added"));
+//                return
+//            }
             else{
                 return self._super.apply(self, arguments);
             }
@@ -256,10 +256,10 @@ FormController.include({
                 this.do_warn(_t("Error"), _t("Please Set Monthly Target first before saving"));
                 return
             }
-            else if (!self.model.isDirty(record.id)){
-                self.do_warn(_t("Error"), _t("Recruiter Monthly Target must be added"));
-                return
-            }
+//            else if (!self.model.isDirty(record.id)){
+//                self.do_warn(_t("Error"), _t("Recruiter Monthly Target must be added"));
+//                return
+//            }
             else{
                 return self._super.apply(self, arguments);
             }
