@@ -249,16 +249,21 @@ class HRSetMonthlyTargetLine(models.Model):
         res = super(HRSetMonthlyTargetLine, self).write(vals)
         if not (self.level_id or self.hire_target or self.offer_target) and self.active:
             raise ValidationError(_("Recruiter Monthly Target must be added"))
-        self.send_monthly_target_mail(vals)
+
+        if vals.get('active', '') == True:
+            self.send_monthly_target_mail(vals)
+        elif vals.get('active', '') == False:
+            self.send_monthly_target_mail(vals, active=False)
         return res
 
-    def send_monthly_target_mail(self, data):
+    def send_monthly_target_mail(self, data, active=True):
         if data:
-            self.send_mail_set_monthly_target()
+            self.send_mail_set_monthly_target(active)
 
     @api.multi
-    def send_mail_set_monthly_target(self):
-        template = self.env.ref('recruitment_ads.set_monthly_target_line_email_template')
+    def send_mail_set_monthly_target(self, active=True):
+        template = self.env.ref('recruitment_ads.set_monthly_target_line_email_template') if active else self.env.ref(
+            'recruitment_ads.set_inactive_monthly_target_line_email_template')
         self.env['mail.template'].browse(template.id).send_mail(self.id)
 
     def get_mail_url(self):
