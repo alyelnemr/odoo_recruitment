@@ -30,7 +30,8 @@
                         <notebook attrs="{'invisible':[('lines_count','=',0)]}">
                             <page string="Recruiters Target">
                                 <field name="line_ids" nolabel="1">
-                                    <tree editable="bottom" delete="false" create="false">
+                                    <tree editable="bottom" delete="false" create="false"
+                                          decoration-muted="active == False">
                                         <field name="recruiter_id" force_save="1"/>
                                         <field name="recruiter_bu_id" force_save="1"/>
                                         <field name="start_date"/>
@@ -51,6 +52,7 @@
                                         <field name="offer_weight"/>
                                         <field name="hire_target"/>
                                         <field name="hire_weight"/>
+                                        <field name="active" widget="toggle_button" class="oe_edit_only"/>
                                     </tree>
                                 </field>
                             </page>

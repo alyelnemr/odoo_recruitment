@@ -29,7 +29,8 @@ class HRSetMonthlyTarget(models.Model):
     job_ids = fields.Many2many('hr.job', string='Job Position')
     user_ids = fields.Many2many('res.users', 'set_monthly_target_users_rel', 'monthly_target_id', 'user_id',
                                 string='Recruiter Responsible')
-    line_ids = fields.One2many('hr.set.monthly.target.line', 'target_id', string='Lines')
+    line_ids = fields.One2many('hr.set.monthly.target.line', 'target_id', string='Lines',
+                               domain=['|', ('active', '=', False), ('active', '=', True)])
     lines_count = fields.Integer(compute='_compute_lines_count')
 
     @api.one
@@ -155,8 +156,7 @@ class HRSetMonthlyTarget(models.Model):
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
         res = super(HRSetMonthlyTarget, self).write(vals)
-        if not (all(e.level_id for e in self.line_ids) and all(e.offer_target for e in self.line_ids) and all(
-                e.hire_target for e in self.line_ids)):
+        if all(not (e.level_id or e.offer_target or e.hire_target) and e.active for e in self.line_ids):
             raise ValidationError('Recruiter Monthly Target must be added')
         return res
 
@@ -206,6 +206,7 @@ class HRSetMonthlyTargetLine(models.Model):
          ('rare', 'Rare'),
          ], string='Position Type',
         default='normal', )
+    active = fields.Boolean('Active')
 
     @api.onchange('level_id', 'hire_target', 'offer_target')
     def _compute_level(self):
@@ -246,7 +247,7 @@ class HRSetMonthlyTargetLine(models.Model):
     @api.multi
     def write(self, vals):
         res = super(HRSetMonthlyTargetLine, self).write(vals)
-        if not (self.level_id or self.hire_target or self.offer_target):
+        if not (self.level_id or self.hire_target or self.offer_target) and self.active:
             raise ValidationError(_("Recruiter Monthly Target must be added"))
         self.send_monthly_target_mail(vals)
         return res
