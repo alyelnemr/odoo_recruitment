@@ -57,7 +57,8 @@ class HRSetDailyTarget(models.Model):
     job_ids = fields.Many2many('hr.job', string='Job Position')
     user_ids = fields.Many2many('res.users', 'set_daily_target_users_rel', 'daily_target_id', 'user_id',
                                 string='Recruiter Responsible')
-    line_ids = fields.One2many('hr.set.daily.target.line', 'target_id', string='Lines')
+    line_ids = fields.One2many('hr.set.daily.target.line', 'target_id', string='Lines',
+                               domain=['|', ('active', '=', False), ('active', '=', True)])
     lines_count = fields.Integer(compute='_compute_lines_count')
 
     @api.one
@@ -193,8 +194,7 @@ class HRSetDailyTarget(models.Model):
                 'hr_recruitment.group_hr_recruitment_manager')):
             raise ValidationError(_('You are not allowed to set targets'))
         res = super(HRSetDailyTarget, self).write(vals)
-        if not (all(e.level_id for e in self.line_ids) and all(e.cvs for e in self.line_ids) and all(
-                e.weight for e in self.line_ids)):
+        if all(not (e.level_id or e.weight or e.cvs) and e.active for e in self.line_ids):
             raise ValidationError('Recruiter Daily Target must be added')
         return res
 
@@ -222,6 +222,7 @@ class HRSetDailyTargetLine(models.Model):
     cvs = fields.Integer(string="Target Application", track_visibility='always', default=0)
     target_id = fields.Many2one('hr.set.daily.target', string='Set Daily Target', track_visibility='always')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
+    active = fields.Boolean('Active')
 
     @api.onchange('level_id')
     def _compute_level(self):
@@ -232,7 +233,7 @@ class HRSetDailyTargetLine(models.Model):
     @api.multi
     def write(self, vals):
         res = super(HRSetDailyTargetLine, self).write(vals)
-        if not (self.level_id or self.weight or self.cvs):
+        if not (self.level_id or self.weight or self.cvs) and self.active:
             raise ValidationError(_("Recruiter Daily Target must be added"))
         self.send_daily_target_mail(vals)
         return res

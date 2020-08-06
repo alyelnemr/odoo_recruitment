@@ -122,6 +122,7 @@ class GenerateDailyTargetReportWizard(models.TransientModel):
                 ('job_id', 'in', job_report.mapped('job_title_id').ids),
                 ('name', '>=', self.date_from),
                 ('name', '<=', self.date_to),
+                ('active', '=', True),
             ])
             if not lines:
                 raise ValidationError('No Daily Target is set for the selected range')
