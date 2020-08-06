@@ -95,25 +95,36 @@ class RecruiterActivityReportWizard(models.TransientModel):
                     domain += [('real_create_uid', 'in', recruiters.ids)]
             calls = self.env['mail.activity'].search(domain, order='write_date desc')
 
-            applications_on_jobs = self.env['hr.applicant'].search([
-                ('id', 'in', calls.mapped('res_id')),
-                ('job_id', '!=', False),
-            ])
-            applications_ids = list(set(calls.mapped('res_id')) & set(applications_on_jobs.ids))
-            calls = self.env['mail.activity'].search(domain + [('res_id', 'in', applications_ids)],
-                                                     order='write_date desc')
-
             if self.job_ids:
-                calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in self.job_ids)
+                applications_on_jobs = self.env['hr.applicant'].search([
+                    ('id', 'in', calls.mapped('res_id')),
+                    ('job_id', 'in', self.job_ids.ids),
+                ])
+                applications_ids = list(set(calls.mapped('res_id')) & set(applications_on_jobs.ids))
+                calls = self.env['mail.activity'].search(domain + [('res_id', 'in', applications_ids)],
+                                                         order='write_date desc')
             else:
                 if self.bu_ids:
                     bu_jobs = self.env['hr.job'].search([('business_unit_id', 'in', self.bu_ids.ids)])
-                    calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs)
+                    applications_on_jobs = self.env['hr.applicant'].search([
+                        ('id', 'in', calls.mapped('res_id')),
+                        ('job_id', 'in', bu_jobs.ids),
+                    ])
+                    applications_ids = list(set(calls.mapped('res_id')) & set(applications_on_jobs.ids))
+                    calls = self.env['mail.activity'].search(domain + [('res_id', 'in', applications_ids)],
+                                                             order='write_date desc')
                 else:
                     if self.check_rec_manager == 'coordinator':
                         # bu_jobs = self.env['hr.job'].search(
                         #     ['|', ('business_unit_id', '=', self.env.user.business_unit_id.id),
                         #      ('business_unit_id', 'in', self.env.user.multi_business_unit_id.ids)])
+                        applications_on_jobs = self.env['hr.applicant'].search([
+                            ('id', 'in', calls.mapped('res_id')),
+                            ('job_id', 'in', bu_jobs.ids),
+                        ])
+                        applications_ids = list(set(calls.mapped('res_id')) & set(applications_on_jobs.ids))
+                        calls = self.env['mail.activity'].search(domain + [('res_id', 'in', applications_ids)],
+                                                                 order='write_date desc')
                         calls = calls.filtered(lambda c: self.env['hr.applicant'].browse(c.res_id).job_id in bu_jobs)
 
             if calls:
