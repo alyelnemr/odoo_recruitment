@@ -42,6 +42,7 @@ class HRSetupApprovalCycle(models.Model):
             approval_list.append((0, 0, {
                 'name': approval_user.name,
                 'stage_id': stage_id.id,
+                'sequence': approval_user.sequence,
             }))
         vals['approval_list_ids'] = approval_list
         vals['name'] = self.env.ref('recruitment_ads.sequence_approval_cycle').next_by_id()
@@ -68,7 +69,7 @@ class HRSetupApprovalCycleUsers(models.Model):
     _name = "hr.setup.approval.cycle.users"
     _description = 'Setup Approval User'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'utm.mixin']
-    _order = 'id asc'
+    _order = 'sequence asc'
 
     def _get_default_stage_id(self):
         """ Gives default stage_id """
@@ -83,11 +84,18 @@ class HRSetupApprovalCycleUsers(models.Model):
     stage_id = fields.Many2one('hr.master.approval.group.state', string="state", track_visibility='onchange',
                                default=_get_default_stage_id, group_expand='_read_group_stage_ids', copy=False,
                                index=True, required=True)
+    sequence = fields.Integer(default=10)
     approval_cycle_id = fields.Many2one('hr.setup.approval.cycle', 'Approval Cycle')
     kanban_state = fields.Selection([
         ('normal', 'Grey'),
         ('user', 'Green')], string='Kanban State',
-        copy=False, default='normal', required=True)
+        copy=False, default='user', required=True)
+
+    @api.multi
+    def write(self, vals):
+        if self.stage_id.id == 1 and vals.get('sequence', False):
+            return False
+        return super(HRSetupApprovalCycleUsers, self).write(vals)
 
 
 class HRMasterApprovalGroup(models.Model):

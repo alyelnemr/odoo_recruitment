@@ -34,11 +34,13 @@
             <field name="name">hr.setup.approval.cycle.users.kanban</field>
             <field name="model">hr.setup.approval.cycle.users</field>
             <field name="arch" type="xml">
-                <kanban string="Setup Approval Cycles Users" create="false" edit="false" delete="false"
-                        default_group_by="stage_id" default_order="id"
+                <kanban string="Setup Approval Cycles Users" create="false" edit="false" delete="false" group_create="false"
+                        group_delete="false" group_edit="false"
+                        default_group_by="stage_id"
                         class="o_kanban_small_column o_kanban_project_tasks">
                     <field name="id"/>
                     <field name="name"/>
+                    <field name="sequence"/>
                     <field name="stage_id" options='{"group_by_tooltip": {"description": "Stage Description"}}'/>
                     <progressbar field="kanban_state" colors='{"done": "success"}'/>
                     <templates>
