@@ -226,6 +226,7 @@ class HRSetMonthlyTargetLine(models.Model):
             record.vacant = record.man_power - record.current_emp
 
     @api.depends('replacement_emp', 'vacant')
+    @api.onchange('replacement_emp', 'vacant')
     def _compute_total_need(self):
         for record in self:
             record.total_need = record.replacement_emp + record.vacant
