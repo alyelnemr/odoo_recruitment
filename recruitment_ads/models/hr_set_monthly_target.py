@@ -251,7 +251,7 @@ class HRSetMonthlyTargetLine(models.Model):
         if not (self.level_id or self.hire_target or self.offer_target) and self.active:
             raise ValidationError(_("Recruiter Monthly Target must be added"))
 
-        if vals.get('active', '') == True:
+        if (vals.get('active', '') == True) or (self.active and vals.get('active', '') == ''):
             self.send_monthly_target_mail(vals)
         elif vals.get('active', '') == False:
             self.send_monthly_target_mail(vals, active=False)
