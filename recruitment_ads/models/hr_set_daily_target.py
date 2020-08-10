@@ -235,7 +235,7 @@ class HRSetDailyTargetLine(models.Model):
         res = super(HRSetDailyTargetLine, self).write(vals)
         if not (self.level_id or self.weight or self.cvs) and self.active:
             raise ValidationError(_("Recruiter Daily Target must be added"))
-        if vals.get('active', '') == True:
+        if (vals.get('active', '') == True) or (self.active and vals.get('active', '') == ''):
             self.send_daily_target_mail(vals)
         elif vals.get('active', '') == False:
             self.send_daily_target_mail(vals, active=False)
