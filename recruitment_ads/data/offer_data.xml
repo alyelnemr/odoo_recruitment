@@ -5,6 +5,10 @@
             <field name="name">Offer</field>
              <field name="sequence">7</field>
         </record>
+        <record id="application_stage_approval_cycle_data" model="hr.recruitment.stage">
+            <field name="name">Approval Cycle</field>
+             <field name="sequence">8</field>
+        </record>
         <record id="application_stage_cvsource_cycle_data" model="hr.recruitment.stage">
             <field name="name">Sourced CV</field>
             <field name="sequence">1</field>

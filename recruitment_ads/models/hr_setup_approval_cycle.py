@@ -15,7 +15,7 @@ class HRSetupApprovalCycle(models.Model):
     position_grade_id = fields.Many2many('position.grade', string='Position Grade', required=True)
     salary_scale_id = fields.Many2one('salary.scale', string='Salary Scale', required=True)
     offer_type = fields.Selection([('normal_offer', 'Normal Offer'),
-                                   ('nursing_offer', 'Nursing Offer'), ],
+                                   ('nursing_offer', 'Medical/Nursing Offer'), ],
                                   string="Offer Type", default="normal_offer", required=True)
     no_of_approval = fields.Integer('No Of Approval', compute='_compute_no_of_approval')
     approval_list_ids = fields.One2many('hr.setup.approval.cycle.users', 'approval_cycle_id', 'Approval List')

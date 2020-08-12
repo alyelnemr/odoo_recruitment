@@ -52,6 +52,7 @@ class Offer(models.Model):
     name = fields.Char(compute=_offer_name, string='Name')
     offer_name = fields.Char(compute=_offer_name)
     application_id = fields.Many2one('hr.applicant')
+    approval_cycle_ids = fields.One2many('hr.approval.cycle', 'offer_id', string='Approval Cycles', readonly=True)
     applicant_name = fields.Char(string='Applicant Name', related='application_id.partner_name')
     job_id = fields.Many2one('hr.job', string='Job position', related='application_id.job_id', store=True)
     department_id = fields.Many2one('hr.department', string='Department', related='application_id.department_id')
@@ -197,7 +198,14 @@ class Offer(models.Model):
             activity = self.env['hr.recruitment.stage'].search([('name', '=', 'Hired')], limit=1)
             if activity:
                 self.application_id.write({'stage_id': activity.id})
-        return super(Offer, self).write(vals)
+        res = super(Offer, self).write(vals)
+        if self.state == 'hired' and self.env['hr.approval.cycle'].search([
+            ('offer_id', '=', self.id),
+            ('state', '!=', 'approved'),
+        ], limit=1):
+            raise ValidationError('You can not change offer state to be hired until the approval cycle is accepted.')
+
+        return res
 
     @api.multi
     def print_offer_egypt(self):
@@ -306,6 +314,76 @@ class Offer(models.Model):
             'url': url,
             'target': 'new',
         }
+
+    @api.multi
+    def action_generate_approval_cycle(self):
+        self.ensure_one()
+        offer_id = self._context.get('default_offer_id', False)
+        application_id = self._context.get('default_application_id', False)
+        if offer_id and application_id:
+            offer = self.env['hr.offer'].browse(offer_id)
+            application = self.env['hr.applicant'].browse(application_id)
+            bu_relation = 'equal'
+            if offer.job_id.business_unit_id.id != self.env.user.business_unit_id.id:
+                bu_relation = 'not_equal'
+
+            setup_approval_cycle = self.env['hr.setup.approval.cycle'].search([
+                ('recruiter_bu', '=', bu_relation),
+                ('position_grade_id', '=', offer.position_grade_id.id),
+                ('salary_scale_id', '=', offer.salary_scale_id.id),
+                ('offer_type', '=', offer.offer_type),
+            ], limit=1)
+            if setup_approval_cycle:
+                setup_approval_cycle_id = setup_approval_cycle.id
+            else:
+                raise ValidationError(_('There is not exist approval cycle with this offer criteria.'))
+            name = []
+            if setup_approval_cycle.name:
+                name.append(setup_approval_cycle.name)
+            if offer.job_id.name:
+                name.append(offer.job_id.name)
+            if offer.department_id.name:
+                name.append(offer.department_id.name)
+            if offer.job_id.business_unit_id.name:
+                name.append(offer.job_id.business_unit_id.name)
+            if application.partner_name:
+                name.append(application.partner_name)
+            name = ' / '.join(name)  # Approval Cycle /Job position/department/BU/Candidate Name
+            # salary_scale_id = offer.salary_scale_id.id
+            # position_grade_id = offer.position_grade_id.id
+            users_list_ids = []
+            for user in self.env['hr.setup.approval.cycle.users'].search(
+                    [
+                        ('id', 'in', setup_approval_cycle.approval_list_ids.ids),
+                        ('stage_id.name', '=', 'Users'),
+                    ]):
+                users_list_ids.append((0, 0, {
+                    'approval_position_id': user.id,
+                    'state': 'no_action'
+                }))
+
+            wizard = self.env['hr.approval.cycle.wizard'].create({
+                'users_list_ids': users_list_ids,
+                # 'position_grade_id': position_grade_id,
+                # 'salary_scale_id': salary_scale_id,
+                'name': name,
+                'setup_approval_cycle_id': setup_approval_cycle_id,
+
+            })
+            form_view_id = self.env.ref('recruitment_ads.approval_cycle_form_wizard_view').id
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': 'Create Approval Cycle',
+                'res_model': 'hr.approval.cycle.wizard',
+                'res_id': wizard.id,
+                'view_mode': 'form',
+                'view_type': 'form',
+                'view_id': form_view_id,
+                'target': 'new',
+            }
+            return action
+        else:
+            return False
 
 
 class RejectionReason(models.Model):

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="approval_cycle_form_wizard_view" model="ir.ui.view">
+        <field name="name">approval.cycle.form.wizard.view</field>
+        <field name="model">hr.approval.cycle.wizard</field>
+        <field name="arch" type="xml">
+            <form name="Approval Cycle">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="salary_scale_id"
+                               options="{'no_create':True,'no_create_edit':True,'no_open':True}" readonly="1"/>
+                        <field name="position_grade_id"
+                               options="{'no_create':True,'no_create_edit':True,'no_open':True}" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Users">
+                            <field name="users_list_ids" nolabel="1">
+                                <tree editable="top" create="false" delete="false">
+                                    <field name="approval_position_id" force_save="1" readonly="1"/>
+                                    <field name="approval_user_id" force_save="1" required="1"
+                                           options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <field name="comment" nolabel="1" placeholder="Comments"/>
+                    <footer>
+                        <button name="action_save" string="Save &amp; Send" type="object" class="oe_highlight"/>
+                        <button name="action_save" string="Save" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

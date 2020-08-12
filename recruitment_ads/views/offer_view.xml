@@ -27,6 +27,12 @@
                                 attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
                                 type="object" states="offer,hired,pipeline" string="Export Offer Docx"
                                 class="oe_highlight"/>
+                        <button string="Generate Approval Cycle"
+                                name="action_generate_approval_cycle"
+                                type="object"
+                                context="{'default_offer_id': id,'default_application_id':application_id}"
+                                attrs="{'invisible': [('state', '!=', 'offer')]}"
+                        />
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -48,7 +54,8 @@
                             <group>
                                 <field name="business_unit_id" readonly="1" options="{'no_create':True}"/>
                                 <field name="job_id" readonly="1" options="{'no_create':True}"/>
-                                <field name="position_grade_id" options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
+                                <field name="position_grade_id"
+                                       options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
                             </group>
                             <group>
                                 <field name="department_id" readonly="1" options="{'no_create':True}"/>
@@ -81,7 +88,8 @@
                                 <div/>
                             </group>
                             <group string="Salary">
-                                <field name="salary_scale_id" options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
+                                <field name="salary_scale_id"
+                                       options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
                                 <field name="total_amount" style="font-weight:900" widget='monetary'
                                        attrs="{'invisible': [('offer_type', '!=', 'nursing_offer')]}"
                                        options="{'currency_field': 'currency_id'}"/>
@@ -99,8 +107,12 @@
                                 <field name="reject_reason" states="not_join,reject"
                                        attrs="{'required':[('state','=','reject')]}"/>
                             </group>
+                            <group string="Approval Cycles" attrs="{'invisible': [('approval_cycle_ids', '=', False)]}">
+                                <field name="approval_cycle_ids" readonly="1" nolabel="1"/>
+                            </group>
                             <field name="comment" states="hold,not_join,reject" nolabel="1" placeholder="Notes"
                                    attrs="{'required':[('state','=','hold')]}"/>
+                            <field name="application_id" invisible="1"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">

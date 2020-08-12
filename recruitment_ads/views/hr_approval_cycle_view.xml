@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--Approval Cycle form-->
+        <record id="view_hr_approval_cycle_form" model="ir.ui.view">
+            <field name="name">hr.approval.cycle.form</field>
+            <field name="model">hr.approval.cycle</field>
+            <field name="arch" type="xml">
+                <form string="Approval Cycle" create="false">
+                    <header>
+                        <button name="action_send" string="Send Email" states="created" class="oe_highlight"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="created,pending,approved,rejected"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="salary_scale_id"
+                                       options="{'no_create':True,'no_create_edit':True,'no_open':True}" readonly="1"/>
+                                <field name="position_grade_id"
+                                       options="{'no_create':True,'no_create_edit':True,'no_open':True}" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Users">
+                                <field name="users_list_ids" widget="one2many_list" colspan="4" nolabel="1" mode="tree">
+                                    <tree create="false" editable="top">
+                                        <field name="approval_position_id" force_save="1" readonly="1"/>
+                                        <field name="approval_user_id" required="1"
+                                               options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
+                                        <field name="state" invisible="1"/>
+                                        <button icon="fa-check text-success"
+                                                attrs="{'invisible': [('state', '!=', 'approved')]}"/>
+                                        <button icon="fa-close text-danger"
+                                                attrs="{'invisible': [('state', '!=', 'rejected')]}"/>
+                                        <button icon="fa-pause" attrs="{'invisible': [('state', '!=', 'no_action')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <field name="comment" nolabel="1" placeholder="Comments"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+        <!--Approval Cycle tree-->
+        <record id="view_hr_approval_cycle_tree" model="ir.ui.view">
+            <field name="name">hr.approval.cycle.tree</field>
+            <field name="model">hr.approval.cycle</field>
+            <field name="arch" type="xml">
+                <tree string="Approval Cycles" create="false" delete="false">
+                    <field name="applicant_name"/>
+                    <field name="job_id"/>
+                    <field name="department_id"/>
+                    <field name="section_id"/>
+                    <field name="business_unit_id"/>
+                    <field name="create_uid"/>
+                    <field name="generated_by_bu_id"/>
+                    <field name="total_package"/>
+                    <field name="salary_scale_id"/>
+                    <field name="position_grade_id"/>
+                    <field name="create_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Approval Cycle Search-->
+        <record id="view_hr_approval_cycle_filter" model="ir.ui.view">
+            <field name="name">hr.approval.cycle.search</field>
+            <field name="model">hr.approval.cycle</field>
+            <field name="arch" type="xml">
+                <search string="Approval Cycles">
+                    <field name="name" string="Approval Cycle"/>
+                    <field name="position_grade_id" string="Position Grade"/>
+                    <field name="salary_scale_id" string="Salary Scale"/>
+                    <filter string="Unread Messages" name="message_needaction"
+                            domain="[('message_needaction','=',True)]"/>
+                    <separator/>
+                    <group string="Group By..." expand="0" name="groupby">
+                        <filter string="Position Grade" context="{'group_by':'position_grade_id'}"
+                                name="position_grade_id"/>
+                        <filter string="Salary Scale" context="{'group_by':'salary_scale_id'}" name="salary_scale_id"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--Approval Cycle Action-->
+        <record id="action_hr_approval_cycle" model="ir.actions.act_window">
+            <field name="name">Approval Cycles</field>
+            <field name="res_model">hr.approval.cycle</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_hr_approval_cycle_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Approval Cycle.
+                </p>
+            </field>
+        </record>
+        <!--Approval Cycle Menu-->
+        <menuitem id="menu_hr_approval_cycle"
+                  name="Approval Cycle"
+                  sequence="27"
+                  parent="hr_recruitment.menu_crm_case_categ0_act_job"
+                  action="action_hr_approval_cycle"/>
+    </data>
+</odoo>
