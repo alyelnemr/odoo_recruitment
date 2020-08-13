@@ -46,6 +46,9 @@
     <record id="group_view_setup_approval_cycle" model="res.groups">
         <field name="name">View Setup Approval Cycle</field>
     </record>
+    <record id="group_view_approval_cycle" model="res.groups">
+        <field name="name">View Approval Cycle</field>
+    </record>
 
     <!--   Add coordinator role to recruitment access right     -->
     <record id="group_hr_recruitment_coordinator" model="res.groups">
