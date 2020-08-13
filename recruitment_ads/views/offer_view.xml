@@ -9,22 +9,22 @@
             <field name="arch" type="xml">
                 <form string="Offer" create="false">
                     <field name="button_visible" invisible="1"/>
-                    <header attrs="{'invisible': ['|',('id', '=', False) ,('button_visible','!=',True)]}">
+                    <header>
                         <field name="bu_location" invisible="1"/>
                         <button name="%(recruitment_ads.report_offer_egypt)d"
-                                attrs="{'invisible': ['|',('bu_location', '!=', 'egypt')]}"
+                                attrs="{'invisible': ['|','|','|',('bu_location', '!=', 'egypt'),('id', '=', False) ,('button_visible','!=',True)]}"
                                 type="action" states="offer,hired,pipeline" string="Export Offer PDF"
                                 class="oe_highlight"/>
                         <button name="print_offer_egypt"
-                                attrs="{'invisible': ['|',('bu_location', '!=', 'egypt')]}"
+                                attrs="{'invisible': ['|','|','|',('bu_location', '!=', 'egypt'),('id', '=', False) ,('button_visible','!=',True)]}"
                                 type="object" states="offer,hired,pipeline" string="Export Offer DOCX"
                                 class="oe_highlight"/>
                         <button name="%(recruitment_ads.report_offer_ksa)d"
-                                attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
+                                attrs="{'invisible': ['|','|','|',('bu_location', '=','egypt'),('id', '=', False) ,('button_visible','!=',True)]}"
                                 type="action" states="offer,hired,pipeline" string="Export Offer PDF"
                                 class="oe_highlight"/>
                         <button name="print_ksa_offer_docx"
-                                attrs="{'invisible': ['|',('bu_location', '=','egypt')]}"
+                                attrs="{'invisible': ['|','|','|',('bu_location', '=','egypt'),('id', '=', False) ,('button_visible','!=',True)]}"
                                 type="object" states="offer,hired,pipeline" string="Export Offer Docx"
                                 class="oe_highlight"/>
                         <button string="Generate Approval Cycle"
