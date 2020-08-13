@@ -9,6 +9,7 @@ class HrApprovalCycle(models.Model):
     _inherit = ['mail.thread']
     _order = 'id DESC'
 
+    @api.onchange('users_list_ids.state', 'users_list_ids.sent')
     @api.depends('users_list_ids.state', 'users_list_ids.sent')
     def _compute_state(self):
         for approval in self:
@@ -16,7 +17,7 @@ class HrApprovalCycle(models.Model):
                 approval.state = 'pending'
             elif all(x.state == 'approved' for x in approval.users_list_ids):
                 approval.state = 'approved'
-            elif all(x.state == 'rejected' for x in approval.users_list_ids):
+            elif any(x.state == 'rejected' for x in approval.users_list_ids):
                 approval.state = 'rejected'
             else:
                 approval.state = 'created'
@@ -73,3 +74,4 @@ class HrApprovalCycleUsers(models.Model):
         ('rejected', 'Rejected'),
     ], string='Status', default='no_action', required=True, copy=False)
     sent = fields.Boolean('Send Email', default=False, copy=False)
+    notes = fields.Text(string='Notes')

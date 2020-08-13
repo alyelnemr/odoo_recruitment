@@ -29,7 +29,8 @@
                         </group>
                         <notebook>
                             <page string="Users">
-                                <field name="users_list_ids" widget="one2many_list" colspan="4" nolabel="1" mode="tree">
+                                <field name="users_list_ids" widget="one2many_list" colspan="4" nolabel="1" mode="tree"
+                                       attrs="{'readonly': [('state', '!=', 'created')]}">
                                     <tree create="false" editable="top">
                                         <field name="approval_position_id" force_save="1" readonly="1"/>
                                         <field name="approval_user_id" required="1"
@@ -39,7 +40,9 @@
                                                 attrs="{'invisible': [('state', '!=', 'approved')]}"/>
                                         <button icon="fa-close text-danger"
                                                 attrs="{'invisible': [('state', '!=', 'rejected')]}"/>
-                                        <button icon="fa-pause-circle-o" attrs="{'invisible': [('state', '!=', 'no_action')]}"/>
+                                        <button icon="fa-pause-circle-o"
+                                                attrs="{'invisible': [('state', '!=', 'no_action')]}"/>
+                                        <field name="notes"/>
                                     </tree>
                                 </field>
                             </page>
