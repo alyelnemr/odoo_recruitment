@@ -46,7 +46,7 @@ class HrApprovalCycle(models.Model):
          ('approved', 'Approved'),
          ('rejected', 'Rejected')
          ], default='created', string="Approval Status", track_visibility='onchange', compute=_compute_state,
-        required=True)
+        required=True, store=True)
     comment = fields.Text(string='Comments')
     users_list_ids = fields.One2many('hr.approval.cycle.users', 'approval_cycle_id', 'Users', auto_join=True)
 
@@ -73,7 +73,3 @@ class HrApprovalCycleUsers(models.Model):
         ('rejected', 'Rejected'),
     ], string='Status', default='no_action', required=True, copy=False)
     sent = fields.Boolean('Send Email', default=False, copy=False)
-
-    @api.multi
-    def unlink(self):
-        return super(HrApprovalCycleUsers, self).unlink()

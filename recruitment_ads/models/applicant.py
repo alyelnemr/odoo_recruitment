@@ -9,6 +9,12 @@ from dateutil.relativedelta import relativedelta
 class Applicant(models.Model):
     _inherit = "hr.applicant"
 
+    @api.multi
+    def _compute_approval_cycles_number(self):
+        for applicant in self:
+            applicant.approval_cycles_number = len(applicant.approval_cycle_ids)
+            applicant.approved_approval_cycles_number = len(applicant.approved_approval_cycle_ids)
+
     email_from = fields.Char()
     partner_phone = fields.Char(related="partner_id.phone", size=256)
     partner_mobile = fields.Char(related="partner_id.mobile", size=256)
@@ -52,6 +58,17 @@ class Applicant(models.Model):
     calendar_event_ids = fields.One2many('calendar.event', 'hr_applicant_id', string='Events')
     cv_counter = fields.Integer('CV Counter', default=0, compute='_get_attachment', store=True)
     assessment_counter = fields.Integer('Assessment Counter', default=0, compute='_get_attachment', store=True)
+    approval_cycle_ids = fields.One2many('hr.approval.cycle', 'application_id', string='Approval Cycles', readonly=True,
+                                         related='offer_id.approval_cycle_ids', store=True)
+    approved_approval_cycle_ids = fields.One2many('hr.approval.cycle', 'application_id', string='Approval Cycles',
+                                                  readonly=True, store=True,
+                                                  related='offer_id.approval_cycle_ids',
+                                                  domain=[('state', '=', 'approved')])
+    approval_cycles_number = fields.Integer('Number of Approval Cycles',
+                                            compute=_compute_approval_cycles_number)
+
+    approved_approval_cycles_number = fields.Integer('Number of Approved Approval Cycles',
+                                                     compute=_compute_approval_cycles_number)
 
     def get_last_activity(self):
         activity = {}
@@ -94,9 +111,24 @@ class Applicant(models.Model):
                             old_dict[key] = applicant[key]
                     if old_dict:
                         vals['old_data'] = json.dumps(old_dict)
+
+        for applicant in self:
             if vals.get('job_id', False):
-                self.calculate_application_period_policy(vals, action="write")
-        return super(Applicant, self).write(vals)
+                applicant.calculate_application_period_policy(vals, action="write")
+            if vals.get('stage_id', False) and \
+                    applicant.stage_id.id == self.env.ref(
+                'recruitment_ads.application_stage_approval_cycle_data').id and self.approved_approval_cycles_number == 0:
+                raise ValidationError(
+                    'You can not move application to other stage until the approval cycle is approved.')
+
+        res = super(Applicant, self).write(vals)
+        for applicant in self:
+            if applicant.stage_id.id == self.env.ref('recruitment_ads.application_stage_approval_cycle_data').id \
+                    and len(applicant.offer_id.approval_cycle_ids) == 0:
+                raise ValidationError(
+                    'You can not add application to approval cycle stage until create Approval cycle on application.')
+
+        return res
 
     def get_current_user_group(self):
         res_user = self.env.user

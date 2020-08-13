@@ -13,7 +13,9 @@ var session = require('web.session');
 var _t = core._t;
 var QWeb = core.qweb;
 var RecordQuickCreate = kanban_quick_create.RecordQuickCreate;
-var rpc = require('web.rpc')
+var rpc = require('web.rpc');
+var target_column;
+var source_column;
 var manager;
 KanbanColumn.include({
     current_user_group: function (id){
@@ -42,11 +44,15 @@ KanbanColumn.include({
             // should find a way to use the touch events to make sortable work.
              this.$el.sortable({
                 over: function () {
+                debugger;
                     flag = 'over';
                     self.$el.addClass('o_kanban_hover');
+                    target_column = self.title;
                 },
                 out: function () {
+                debugger;
                     flag = 'out';
+                    source_column = self.title;
                     self.$el.removeClass('o_kanban_hover');
                 },
                 update: function (event, ui) {
@@ -55,39 +61,64 @@ KanbanColumn.include({
                         if(record.recordData.activity_ids.res_ids != false){
                          event.preventDefault();
                          if(flag === 'over'){
-                            alert('Please insert Activity Result in order to be transferred to another stage');}}
+                            alert('Please insert Activity Result in order to be transferred to another stage');}
+                        }
                         else{
                             var checkmanager = window.manager;
-                            if (record.recordData.user_id !== false){
+                            if (record.recordData.user_id !== false) {
                                 if(record.recordData.user_id.data.id !== session.uid){
                                     responsible = 'false';
-                            }
-
-                            }else{
+                                }
+                            }else {
                                 responsible = 'false';
                             }
 
                             if(record.modelName === 'hr.applicant' && responsible === 'false' && checkmanager !== 'manager'){
                                  event.preventDefault();
                                  if(flag === 'over'){
-                                    return alert('This Application is owned by another Recruiter');}
-                            }else{
+                                    return alert('This Application is owned by another Recruiter');
+                                 }
+                            } else {
                                 var index = self.records.indexOf(record);
                                 record.$el.removeAttr('style');  // jqueryui sortable add display:block inline
                                 if (index >= 0) {
                                     if ($.contains(self.$el[0], record.$el[0])) {
                                         // resequencing records
                                         self.trigger_up('kanban_column_resequence', {ids: self._getIDs()});
+                                    }else if (record.modelName==='hr.applicant' && target_column==='Approval Cycle' && record.recordData.approval_cycles_number===0){
+                                        event.preventDefault();
+                                        if(flag === 'over'){
+                                            alert('You can not add application to approval cycle stage until create Approval cycle on application.');
+                                        }
+                                    }else if (record.modelName==='hr.applicant' && source_column==='Approval Cycle' && record.recordData.approved_approval_cycles_number===0){
+                                        event.preventDefault();
+                                        if(flag === 'over'){
+                                            alert('You can not move application to other stage until the approval cycle is approved.');
+                                        }
                                     }
                                 } else {
-                                    // adding record to this column
-                                    ui.item.addClass('o_updating');
-                                    self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
+
+                                    if (record.modelName==='hr.applicant' && target_column==='Approval Cycle' && record.recordData.approval_cycles_number===0){
+                                        event.preventDefault();
+                                        if(flag === 'over'){
+                                            alert('You can not add application to approval cycle stage until create Approval cycle on application.');
+                                        }
+                                    }else if (record.modelName==='hr.applicant' && source_column==='Approval Cycle' && record.recordData.approved_approval_cycles_number===0){
+                                        event.preventDefault();
+                                        if(flag === 'over'){
+                                            alert('You can not move application to other stage until the approval cycle is approved.');
+                                        }
+                                    }
+                                    else{
+
+                                        // adding record to this column
+                                        ui.item.addClass('o_updating');
+                                        self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
+                                    }
                                 }
                             }
                         }
-                    }
-                    else{
+                    } else {
                         var record = ui.item.data('record');
                         var index = self.records.indexOf(record);
                         record.$el.removeAttr('style');  // jqueryui sortable add display:block inline
@@ -95,11 +126,35 @@ KanbanColumn.include({
                             if ($.contains(self.$el[0], record.$el[0])) {
                                 // resequencing records
                                 self.trigger_up('kanban_column_resequence', {ids: self._getIDs()});
-                            }
+                            }else if (record.modelName==='hr.applicant' && target_column==='Approval Cycle' && record.recordData.approval_cycles_number===0){
+                                event.preventDefault();
+                                if(flag === 'over'){
+                                    alert('You can not add application to approval cycle stage until create Approval cycle on application.');
+                                }
+                            }else if (record.modelName==='hr.applicant' && source_column==='Approval Cycle' && record.recordData.approved_approval_cycles_number===0){
+                                        event.preventDefault();
+                                        if(flag === 'over'){
+                                            alert('You can not move application to other stage until the approval cycle is approved.');
+                                        }
+                                    }
                         } else {
-                            // adding record to this column
-                            ui.item.addClass('o_updating');
-                            self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
+
+                             if (record.modelName==='hr.applicant' && target_column==='Approval Cycle' && record.recordData.approval_cycles_number===0){
+                                event.preventDefault();
+                                if(flag === 'over'){
+                                    alert('You can not add application to approval cycle stage until create Approval cycle on application.');
+                                }
+                            }else if (record.modelName==='hr.applicant' && source_column==='Approval Cycle' && record.recordData.approved_approval_cycles_number===0){
+                                event.preventDefault();
+                                if(flag === 'over'){
+                                    alert('You can not move application to other stage until the approval cycle is approved.');
+                                }
+                            }else{
+
+                                // adding record to this column
+                                ui.item.addClass('o_updating');
+                                self.trigger_up('kanban_column_add_record', {record: record, ids: self._getIDs()});
+                            }
                         }
                     }
                 }

@@ -14,6 +14,12 @@ class Applicant(models.Model):
     _inherit = 'hr.applicant'
     _auto = False
 
+    @api.multi
+    def _compute_approval_cycles_number(self):
+        for applicant in self:
+            applicant.approval_cycles_number = len(applicant.approval_cycle_ids)
+            applicant.approved_approval_cycles_number = len(applicant.approved_approval_cycle_ids)
+
     last_activity = fields.Many2one('mail.activity.type', readonly=True, compute=False)
     last_activity_date = fields.Date(readonly=True, compute=False)
     result = fields.Char(readonly=True, compute=False)
@@ -26,6 +32,11 @@ class Applicant(models.Model):
         'Next Activity Deadline', related='activity_ids.date_deadline',
         readonly=True,
     )
+    approval_cycles_number = fields.Integer('Number of Approval Cycles',
+                                            compute=_compute_approval_cycles_number)
+
+    approved_approval_cycles_number = fields.Integer('Number of Approved Approval Cycles',
+                                                     compute=_compute_approval_cycles_number)
 
     def _select(self):
         select_str = """select id, email_from, partner_phone, partner_mobile, partner_name, job_id, partner_id, source_id,
@@ -34,7 +45,7 @@ class Applicant(models.Model):
         date_last_stage_update, priority, salary_proposed_extra, salary_expected_extra, salary_proposed, salary_expected,
         availability, type_id, department_id, section_id, allow_call, reference, delay_close, color, emp_id, response_id,
         campaign_id, medium_id, message_last_post, activity_date_deadline ,last_activity, last_activity_date, 
-        result, source_resp, old_data, tooltip_icon, have_cv, have_assessment, cv_counter, assessment_counter  
+        result, source_resp, old_data, tooltip_icon, have_cv, have_assessment, cv_counter, assessment_counter 
         from hr_applicant"""
         return select_str
 

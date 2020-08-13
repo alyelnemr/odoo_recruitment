@@ -17,7 +17,7 @@ KanbanController.include({
         var column = event.target;
         this.alive(this.model.moveRecord(record.db_id, column.db_id, this.handle))
             .then(function (column_db_ids) {
-                if (event.target.modelName==='hr.setup.approval.cycle.users'){
+                if (column.modelName==='hr.setup.approval.cycle.users'){
                     if (column.title === 'Users'){
                         return self._resequenceRecords(column.db_id, event.data.ids)
                             .then(function () {

@@ -34,7 +34,7 @@
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='source_id']" position="attributes">
-                    <attribute name="options">{'no_create': '1', 'no_create_edit': '1'} </attribute>
+                    <attribute name="options">{'no_create': '1', 'no_create_edit': '1'}</attribute>
 
                 </xpath>
                 <xpath expr="//field[@name='source_id']" position="after">
@@ -160,24 +160,24 @@
                     <attribute name="attrs">{'invisible': [('applicant','=', True)]}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='email']" position="after">
-                    <field name="linkedin" widget ="url"/>
-                    <field name="face_book" widget ="url"/>
+                    <field name="linkedin" widget="url"/>
+                    <field name="face_book" widget="url"/>
                 </xpath>
-<!--                <xpath expr="//field[@name='mobile']" position="attributes">-->
-<!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//field[@name='email']" position="attributes">-->
-<!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//field[@name='mobile']" position="attributes">-->
+                <!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
+                <!--                </xpath>-->
+                <!--                <xpath expr="//field[@name='email']" position="attributes">-->
+                <!--                    <attribute name="attrs">{'required': [('applicant','=', True)]}</attribute>-->
+                <!--                </xpath>-->
                 <xpath expr="//field[@name='function']" position="after">
                     <field name="date_of_birth"/>
                 </xpath>
-<!--                <div name="button_box" position="inside">-->
-<!--                    <button name="action_open_partner_merge" type="object" class="oe_stat_button" icon="fa-archive">-->
-<!--                        Check-->
-<!--                        Duplication-->
-<!--                    </button>-->
-<!--                </div>-->
+                <!--                <div name="button_box" position="inside">-->
+                <!--                    <button name="action_open_partner_merge" type="object" class="oe_stat_button" icon="fa-archive">-->
+                <!--                        Check-->
+                <!--                        Duplication-->
+                <!--                    </button>-->
+                <!--                </div>-->
             </field>
         </record>
 
@@ -202,82 +202,92 @@
                 </xpath>
             </field>
         </record>
-<!--  Inherit Ir attachment to make field name readonly from applicant view-->
+        <!--  Inherit Ir attachment to make field name readonly from applicant view-->
 
-    <record id="inherit_view_document_form" model="ir.ui.view">
-        <field name="name">inherit.view.document.form</field>
-        <field name="model">ir.attachment</field>
-        <field name="inherit_id" ref="base.view_attachment_form"/>
-        <field name="mode">primary</field>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="attrs">{'readonly': [('res_model','=','hr.applicant')]}</attribute>
-                <attribute name='force_save'>1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='name']" position="after">
-                <field name="file_name_seq" invisible = "1"/>
-            </xpath>
-            <xpath expr="//field[@name='datas']" position="replace">
-                <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}" required="1"/>
-                <field name="upload_date" readonly="1" force_save="1"/>
-            </xpath>
-            <xpath expr="//group/group" position="after">
-                <group>
-                    <field name="attachment_type" widget="radio" nolabel="1"/>
-                </group>
-            </xpath>
-<!---->
-        </field>
-    </record>
-<!-- make field responsible and source_resp readonly for officer  -->
-    <record model="ir.ui.view"  id="user_view_id">
-        <field name="name">recruiter responsible</field>
-        <field name="model">hr.applicant</field>
-        <field name="inherit_id" ref="crm_case_form_view_job_inherited"/>
-        <field name="groups_id" eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
-        <field name="arch" type="xml">
-            <field name="user_id" position="attributes">
-                <attribute name="readonly">0</attribute>
+        <record id="inherit_view_document_form" model="ir.ui.view">
+            <field name="name">inherit.view.document.form</field>
+            <field name="model">ir.attachment</field>
+            <field name="inherit_id" ref="base.view_attachment_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('res_model','=','hr.applicant')]}</attribute>
+                    <attribute name='force_save'>1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="file_name_seq" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='datas']" position="replace">
+                    <field name="datas" filename="datas_fname" attrs="{'invisible':[('type','=','url')]}" required="1"/>
+                    <field name="upload_date" readonly="1" force_save="1"/>
+                </xpath>
+                <xpath expr="//group/group" position="after">
+                    <group>
+                        <field name="attachment_type" widget="radio" nolabel="1"/>
+                    </group>
+                </xpath>
+                <!---->
             </field>
-        </field>
-    </record>
-    <record model="ir.ui.view"  id="source_rec_view_id">
-        <field name="name">source responsible</field>
-        <field name="model">hr.applicant</field>
-        <field name="inherit_id" ref="crm_case_form_view_job_inherited"/>
-<!--        <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>-->
-        <field name="groups_id" eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
-        <field name="arch" type="xml">
-            <field name="source_resp" position="attributes">
-                <attribute name="readonly">0</attribute>
+        </record>
+        <!-- make field responsible and source_resp readonly for officer  -->
+        <record model="ir.ui.view" id="user_view_id">
+            <field name="name">recruiter responsible</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="crm_case_form_view_job_inherited"/>
+            <field name="groups_id"
+                   eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </field>
             </field>
-        </field>
-    </record>
-<!---->
+        </record>
+        <record model="ir.ui.view" id="source_rec_view_id">
+            <field name="name">source responsible</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="crm_case_form_view_job_inherited"/>
+            <!--        <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>-->
+            <field name="groups_id"
+                   eval="[(6, 0, [ref('recruitment_ads.group_hr_recruitment_coordinator','hr_recruitment.group_hr_recruitment_manager') ])]"/>
+            <field name="arch" type="xml">
+                <field name="source_resp" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </field>
+            </field>
+        </record>
         <!---->
-    <record id="hr_kanban_applicantion_view_inherit" model="ir.ui.view">
-        <field name="name">hr.applicantion.kanban.inherit</field>
-        <field name="model">hr.applicant</field>
-        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='activity_state']" position="after">
-                <field name="tooltip_icon"/>
-            </xpath>
-            <xpath expr="//div[hasclass('oe_kanban_bottom_right')]/div[1]" position="before">
-                <div>
-                <field name="tooltip_icon" widget="my-custom-field" />
-                </div>
-            </xpath>
-        </field>
-    </record>
-    <record model="ir.actions.act_window" id="hr_recruitment.crm_case_categ0_act_job">
-        <field name="context">{'allow_edit':True}</field>
-    </record>
-    <record model="ir.actions.act_window" id="hr_recruitment.action_hr_job_applications">
-        <field name="context">{'search_default_job_id': [active_id], 'default_job_id': active_id ,'allow_edit':True}</field>
+        <!---->
+        <record id="hr_kanban_applicantion_view_inherit" model="ir.ui.view">
+            <field name="name">hr.applicantion.kanban.inherit</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activity_state']" position="after">
+                    <field name="tooltip_icon"/>
+                    <field name="approval_cycles_number"/>
+                    <field name="approved_approval_cycles_number"/>
+                </xpath>
+                <xpath expr="//div[hasclass('oe_kanban_bottom_right')]/div[1]" position="before">
+                    <div>
+                        <field name="tooltip_icon" widget="my-custom-field"/>
+                    </div>
+                    <field name="approval_cycles_number" invisible="1"/>
+                    <field name="approved_approval_cycles_number" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="hr_recruitment.crm_case_categ0_act_job">
+            <field name="context">{'allow_edit':True}</field>
+        </record>
+        <record model="ir.actions.act_window" id="hr_recruitment.action_hr_job_applications">
+            <field name="context">{'search_default_job_id': [active_id], 'default_job_id': active_id
+                ,'allow_edit':True}
+            </field>
 
-    </record>
-   <menuitem action="utm.utm_source_action" id="menu_utm_source" parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="4" groups="recruitment_ads.group_view_source_menu" />
+        </record>
+        <menuitem action="utm.utm_source_action" id="menu_utm_source"
+                  parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="4"
+                  groups="recruitment_ads.group_view_source_menu"/>
 
     </data>
 </odoo>
