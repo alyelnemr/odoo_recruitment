@@ -10,6 +10,10 @@ class IrAttachmentInherit(models.Model):
     attachment_type = fields.Selection([('cv', 'CV'), ('assessment', 'Assessment')],
                                        string="Attachment Type", required=True, default="cv")
     upload_date = fields.Datetime(string='Upload date')
+    business_unit = fields.Many2one('business.unit')
+    section = fields.Many2one('hr.department')
+    department = fields.Many2one('hr.department')
+    job_position = fields.Many2one('hr.job')
 
     @api.depends('res_model', 'res_id')
     @api.onchange('datas_fname', 'attachment_type')
@@ -80,9 +84,29 @@ class IrAttachmentInherit(models.Model):
     def create(self, vals):
         res = super(IrAttachmentInherit, self).create(vals)
         if res.res_model == 'hr.applicant':
+            applicant = self.env['hr.applicant'].search([('id','=',res.res_id)])
+            if applicant:
+                 res.business_unit = applicant.job_id.business_unit_id
+                 res.job_position =  applicant.job_id
+                 res.section = applicant.section_id
+                 res.department = applicant.department_id
             if res.attachment_type == 'assessment' and '_ASS' not in res.name:
                 res._compute_res_name()
 
         if res.res_model == 'hr.offer':
             self._cr.execute(" update hr_offer set have_offer = %s where id =  %s ", (True, res.res_id,))
         return res
+
+    @api.model
+    def update_old_data(self):
+        attachments = self.search([('res_model', '=', 'hr.applicant')])
+        if attachments:
+            for attach in attachments:
+                applicant = self.env['hr.applicant'].search([('id', '=', attach.res_id)])
+                if applicant:
+                    attach.business_unit = applicant.job_id.business_unit_id
+                    attach.job_position = applicant.job_id
+                    attach.section = applicant.section_id
+                    attach.department = applicant.department_id
+
+

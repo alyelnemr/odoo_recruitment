@@ -24,7 +24,7 @@ class Applicant(models.Model):
     section_id = fields.Many2one('hr.department', "Section", domain=[('parent_id', '!=', False)])
 
     partner_name = fields.Char(required=True)
-    job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict')
+    job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict',required= True)
 
     partner_id = fields.Many2one('res.partner', "Applicant", required=True)
     # applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
