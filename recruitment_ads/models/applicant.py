@@ -69,6 +69,13 @@ class Applicant(models.Model):
 
     approved_approval_cycles_number = fields.Integer('Number of Approved Approval Cycles',
                                                      compute=_compute_approval_cycles_number)
+    last_approval_cycle_state= fields.Char(compute='_get_approval_cycles_state',store=True)
+
+    def _get_approval_cycles_state(self):
+        for rec in self:
+             approval_cycle = self.env['hr.approval.cycle'].search([('offer_id','=',rec.offer_id.id)],order= 'create_date desc',limit=1)
+             if approval_cycle:
+                 rec.last_approval_cycle_state = approval_cycle.state
 
     def get_last_activity(self):
         activity = {}

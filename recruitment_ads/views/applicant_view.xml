@@ -266,11 +266,14 @@
                     <field name="tooltip_icon"/>
                     <field name="approval_cycles_number"/>
                     <field name="approved_approval_cycles_number"/>
-                </xpath>
+                    <field name="last_approval_cycle_state"/>
+              </xpath>
                 <xpath expr="//div[hasclass('oe_kanban_bottom_right')]/div[1]" position="before">
+                    <t t-if="record.stage_id.value == 'Approval Cycle'">
                     <div>
-                        <field name="tooltip_icon" widget="my-custom-field"/>
+                         <img src='/recruitment_ads/static/src/image/approval_cycle.png' t-att-title="record.last_approval_cycle_state.raw_value" width="30" height="30" class="oe_kanban_avatar mr8"/>
                     </div>
+                    </t>
                     <field name="approval_cycles_number" invisible="1"/>
                     <field name="approved_approval_cycles_number" invisible="1"/>
                 </xpath>
