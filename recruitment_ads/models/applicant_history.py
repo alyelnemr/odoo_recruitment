@@ -14,6 +14,12 @@ class Applicant(models.Model):
     _inherit = 'hr.applicant'
     _auto = False
 
+    def _get_approval_cycles_state(self):
+        for rec in self:
+             approval_cycle = self.env['hr.approval.cycle'].search([('offer_id','=',rec.offer_id.id)],order= 'create_date desc',limit=1)
+             if approval_cycle:
+                 rec.last_approval_cycle_state = approval_cycle.state
+
     @api.multi
     def _compute_approval_cycles_number(self):
         for applicant in self:
@@ -37,6 +43,9 @@ class Applicant(models.Model):
 
     approved_approval_cycles_number = fields.Integer('Number of Approved Approval Cycles',
                                                      compute=_compute_approval_cycles_number)
+    last_approval_cycle_state= fields.Char(compute='_get_approval_cycles_state')
+
+
     def _select(self):
         select_str = """select id, email_from, partner_phone, partner_mobile, partner_name, job_id, partner_id, source_id,
         offer_id, cv_matched, reason_of_rejection, salary_current, name, serial, active, description, email_cc, probability,
@@ -44,7 +53,7 @@ class Applicant(models.Model):
         date_last_stage_update, priority, salary_proposed_extra, salary_expected_extra, salary_proposed, salary_expected,
         availability, type_id, department_id, section_id, allow_call, reference, delay_close, color, emp_id, response_id,
         campaign_id, medium_id, message_last_post, activity_date_deadline ,last_activity, last_activity_date, 
-        result, source_resp, old_data, tooltip_icon, have_cv, have_assessment, cv_counter, assessment_counter ,last_approval_cycle_state
+        result, source_resp, old_data, tooltip_icon, have_cv, have_assessment, cv_counter, assessment_counter 
         from hr_applicant"""
         return select_str
 
@@ -52,10 +61,10 @@ class Applicant(models.Model):
         """ Return whether the given column exists. """
         query = """SELECT column_name FROM information_schema.columns WHERE table_name=%s AND  (column_name = %s or 
         column_name = %s or column_name = %s or column_name = %s or column_name = %s or column_name = %s or 
-        column_name = %s  or column_name = %s or column_name = %s or column_name = %s or column_name = %s ) """
+        column_name = %s  or column_name = %s or column_name = %s or column_name = %s ) """
         result = self.env.cr.execute(query, (
             'hr_applicant', 'last_activity', 'last_activity_date', 'result', 'face_book', 'linkedin', 'response_id',
-            'source_resp', 'have_cv', 'tooltip_icon', 'have_assessment','last_approval_cycle_state'))
+            'source_resp', 'have_cv', 'tooltip_icon', 'have_assessment'))
         # return result
         return {row['column_name']: row for row in self.env.cr.dictfetchall()}
 

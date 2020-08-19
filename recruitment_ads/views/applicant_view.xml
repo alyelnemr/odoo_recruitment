@@ -274,11 +274,18 @@
                          <img src='/recruitment_ads/static/src/image/approval_cycle.png' t-att-title="record.last_approval_cycle_state.raw_value" width="30" height="30" class="oe_kanban_avatar mr8"/>
                     </div>
                     </t>
+                    <field name="tooltip_icon" widget="my-custom-field" />
                     <field name="approval_cycles_number" invisible="1"/>
                     <field name="approved_approval_cycles_number" invisible="1"/>
                 </xpath>
             </field>
         </record>
+
+
+
+
+
+
         <record model="ir.actions.act_window" id="hr_recruitment.crm_case_categ0_act_job">
             <field name="context">{'allow_edit':True}</field>
         </record>

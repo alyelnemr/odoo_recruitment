@@ -69,7 +69,7 @@ class Applicant(models.Model):
 
     approved_approval_cycles_number = fields.Integer('Number of Approved Approval Cycles',
                                                      compute=_compute_approval_cycles_number)
-    last_approval_cycle_state= fields.Char(compute='_get_approval_cycles_state',store=True)
+    last_approval_cycle_state= fields.Char(compute='_get_approval_cycles_state')
 
     def _get_approval_cycles_state(self):
         for rec in self:
