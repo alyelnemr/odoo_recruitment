@@ -124,7 +124,7 @@ class Applicant(models.Model):
                 applicant.calculate_application_period_policy(vals, action="write")
             if vals.get('stage_id', False) and \
                     applicant.stage_id.id == self.env.ref(
-                'recruitment_ads.application_stage_approval_cycle_data').id and self.approved_approval_cycles_number == 0:
+                'recruitment_ads.application_stage_approval_cycle_data').id and self.last_approval_cycle_state != 'approved' and vals.get('stage_id') != self.stage_id.id :
                 raise ValidationError(
                     'You can not move application to other stage until the approval cycle is approved.')
 

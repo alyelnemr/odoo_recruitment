@@ -31,8 +31,9 @@ class JobPosition(models.Model):
             results = self.env.cr.fetchall()
             if results:
                 if len(results) > 1:
-                    last_code = list(results[len(results) - 1])  # convert to list and get last item
-                    last_index = str(last_code[0])[-1:]  # convert to string then get last charcter
+                    last_code = list(results[len(results) - 1])
+                    last_number = last_code[0].split('_')# convert to list and get last item
+                    last_index = str(last_number[len(last_number)-1])  # convert to string then get last charcter
                     vals['job_code'] = job_code + '_' + str(int(last_index) + 1)
                 else:
                     vals['job_code'] = job_code + '_' + str(1)
