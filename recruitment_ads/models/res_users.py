@@ -15,6 +15,7 @@ class ResUsers(models.Model):
     @api.model
     def create(self, vals):
         res = super(ResUsers, self).create(vals)
+        res.partner_id.email = res.login
         if res.has_group('hr_recruitment.group_hr_recruitment_user') \
                 and res.has_group('recruitment_ads.group_view_setup_approval_cycle')\
                 and not (res.has_group('recruitment_ads.group_hr_recruitment_coordinator') or

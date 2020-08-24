@@ -241,3 +241,25 @@ class PartnerInherit(models.Model):
                 if old_dict:
                     vals['old_data'] = json.dumps(old_dict)
         return super(PartnerInherit, self).write(vals)
+
+    @api.multi
+    def action_create_user(self):
+        self.ensure_one()
+        partner = self.env['res.users'].search([('partner_id','=',self.id)])
+        if partner:
+            raise ValidationError(_('The user with name %s is already exist.'%(self.name)))
+        else:
+            form_view_id = self.env.ref('base.view_users_form').id
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': 'Create User',
+                'res_model': 'res.users',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'view_id': form_view_id,
+                'target': 'new',
+                'context': {'default_name':self.name,'default_partner_id':self.id,'default_login':self.email},
+            }
+            return action
+
+

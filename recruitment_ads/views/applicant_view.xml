@@ -139,6 +139,16 @@
             <field name="mode">extension</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before" >
+                    <header>
+                    <button string="Create User"
+                                name="action_create_user"
+                                context="{'default_partner_id': id,'default_name_id': name,'default_email_id': email}"
+                                type="object"
+                                attrs="{'invisible': [('id','=', False)]}"
+                        />
+                    </header>
+                </xpath>
                 <xpath expr="//page[@name='sales_purchases']/group/group/field[@name='customer']" position="after">
                     <field name="applicant"/>
                 </xpath>
