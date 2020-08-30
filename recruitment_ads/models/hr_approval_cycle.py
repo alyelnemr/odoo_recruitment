@@ -24,7 +24,7 @@ class HrApprovalCycle(models.Model):
 
     name = fields.Char(string='Name')
     offer_id = fields.Many2one('hr.offer', string='Offer')
-    application_id = fields.Many2one('hr.applicant', related='offer_id.application_id')
+    application_id = fields.Many2one('hr.applicant', related='offer_id.application_id',store=True)
     applicant_name = fields.Char(string='Candidate Name', related='application_id.partner_name')
     job_id = fields.Many2one('hr.job', string='Job position', related='application_id.job_id', store=True)
     department_id = fields.Many2one('hr.department', string='Department', related='application_id.department_id')
