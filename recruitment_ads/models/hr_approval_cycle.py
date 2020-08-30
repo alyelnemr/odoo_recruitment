@@ -54,6 +54,13 @@ class HrApprovalCycle(models.Model):
     @api.multi
     def action_send(self):
         self.ensure_one()
+        template = self.env.ref('recruitment_ads.approval_cycle_mail_template', False)
+        if template:
+            if self.users_list_ids[0].approval_user_id.email:
+                template.email_to = self.users_list_ids[0].approval_user_id.email
+                self.env['mail.template'].browse(template.id).send_mail(self.id)
+                self.state = 'pending'
+                self.users_list_ids[0].sent = True
         return True
 
 
