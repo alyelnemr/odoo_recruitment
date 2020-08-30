@@ -28,6 +28,7 @@ Handle recruitment Process for Andalusia
         'data/sequence.xml',
         'data/job_mail_template.xml',
         'data/hr_setup_approval_group.xml',
+        'data/approval_cycle_mail_template.xml',
         'reports/reports.xml',
         'views/mail_templates.xml',
         'views/interview_view.xml',
