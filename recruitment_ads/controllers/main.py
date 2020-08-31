@@ -11,7 +11,7 @@ class ApproveCycleController(Controller):
 
     @http.route(['/approval/cycle/approved'],csrf=False, type='http', methods=['GET'], auth="public", website=True)
     def approval_cycle_approve(self, **kwargs):
-        # client = erppeek.Client('http://localhost:8011', 'dbv11_last_db', 'admin', 'Admin@123456')
+        client = erppeek.Client('http://localhost:8011', 'dbv11_last_db', 'admin', 'Admin@123456')
         values = list(kwargs.keys())
         approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id','=',int(values[0]))],order='create_date desc',limit=1)
         if len(approval_cycle.users_list_ids) == 1 :
