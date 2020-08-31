@@ -43,6 +43,9 @@ class GenerateMonthlyTargetReportWizard(models.TransientModel):
     line_ids = fields.Many2many('hr.set.monthly.target.line', 'generate_monthly_target_lines', 'wizard_id',
                                 'set_line_id',
                                 string='Lines')
+    type_report = fields.Selection([('target', 'Target'), ('actual', 'Actual'), ('actual_vs_target', 'Actual vs Target')],
+                              required=True, default='target',string='Type')
+
 
     @api.constrains('date_from', 'date_to')
     def check_dates(self):

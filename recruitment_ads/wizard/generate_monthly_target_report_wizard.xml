@@ -21,6 +21,7 @@
                                options="{'no_create_edit': True,'no_create':True}"
                         />
                         <field name="check_rec_manager" invisible="1"/>
+                        <field name="type_report" widget="radio"/>
                     </group>
                     <footer>
                         <button name="button_generate_monthly_report" type="object" string="Generate Report"
