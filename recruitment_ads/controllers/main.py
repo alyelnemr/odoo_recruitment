@@ -4,20 +4,6 @@
 # import json
 from odoo import http, tools, _
 from odoo.http import request, Controller
-from docx import Document
-import erppeek
-
-class CustomController(Controller):
-
-    @http.route(['/report/docx/content/custom'], type='http', auth="public")
-    def report_docx(self, **kwargs):
-        # your code of report generation that use request.make_response
-        document = Document()
-        xlsxhttpheaders = [
-            ('Content-Type', 'application/vnd.openxmlformats-'
-                             'officedocument.spreadsheetml.sheet')
-        ]
-        return request.make_response(document,headers=xlsxhttpheaders)
 
 class ApproveCycleController(Controller):
 
