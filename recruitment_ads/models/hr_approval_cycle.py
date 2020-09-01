@@ -82,3 +82,4 @@ class HrApprovalCycleUsers(models.Model):
     ], string='Status', default='no_action', required=True, copy=False)
     sent = fields.Boolean('Send Email', default=False, copy=False)
     notes = fields.Text(string='Notes')
+    token = fields.Char()

@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+import uuid
 
 
 class HRApprovalCycleWizard(models.TransientModel):
@@ -15,7 +16,8 @@ class HRApprovalCycleWizard(models.TransientModel):
         for user in self.users_list_ids:
             user_list.append((0, 0, {
                 'approval_position_id': user.approval_position_id.id,
-                'approval_user_id': user.approval_user_id.id
+                'approval_user_id': user.approval_user_id.id,
+                'token': str(uuid.uuid4())
             }))
         self.env['hr.approval.cycle'].create({
             'name': self.name,
@@ -36,7 +38,8 @@ class HRApprovalCycleWizard(models.TransientModel):
         for user in self.users_list_ids:
             user_list.append((0, 0, {
                 'approval_position_id': user.approval_position_id.id,
-                'approval_user_id': user.approval_user_id.id
+                'approval_user_id': user.approval_user_id.id,
+                'token' : str(uuid.uuid4())
             }))
         approval_cycle=self.env['hr.approval.cycle'].create({
             'name': self.name,
