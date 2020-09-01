@@ -5,11 +5,13 @@
 from odoo import http, tools, _
 from odoo.http import request, Controller
 import erppeek
+
+
 class ApproveCycleController(Controller):
 
     @http.route(['/approval/cycle/approved'],csrf=False, type='http', methods=['GET'], auth="public", website=True)
     def approval_cycle_approve(self, **kwargs):
-        client = erppeek.Client('http://10.24.105.44:8069', 'recruitment_aly', 'admin', 'admin')
+        # client = erppeek.Client('http://localhost:8011', 'dbv11_last_db', 'admin', 'Admin@123456')
         values = list(kwargs.keys())
         approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id','=',int(values[0]))],order='create_date desc',limit=1)
         if len(approval_cycle.users_list_ids) == 1 :
@@ -37,7 +39,6 @@ class ApproveCycleController(Controller):
 
     @http.route(['/approval/cycle/reject'], csrf=False, type='http', methods=['GET'], auth="public", website=True)
     def approval_cycle_rejected(self, **kwargs):
-        client = erppeek.Client('http://10.24.105.44:8069', 'recruitment_aly', 'admin', 'admin')
         values = list(kwargs.keys())
         approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id', '=', int(values[0]))],
                                                                         order='create_date desc', limit=1)
