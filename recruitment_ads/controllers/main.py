@@ -14,6 +14,7 @@ class ApproveCycleController(Controller):
         data = request.params.copy()
         approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id','=',int(values[0]))],order='create_date desc',limit=1)
         data['applicant_name'] = approval_cycle.application_id.partner_name
+        data['approved'] = True
         if len(approval_cycle.users_list_ids) == 1 :
             if approval_cycle.users_list_ids[0].state == 'no_action':
                 approval_cycle.users_list_ids[0].state = 'approved'
@@ -44,8 +45,10 @@ class ApproveCycleController(Controller):
     def approval_cycle_rejected(self, **kwargs):
         # client = erppeek.Client('http://10.24.105.44:8069', 'recruitment_aly', 'admin', 'admin')
         values = list(kwargs.keys())
-        approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id', '=', int(values[0]))],
-                                                                        order='create_date desc', limit=1)
+        data = request.params.copy()
+        approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id','=',int(values[0]))],order='create_date desc',limit=1)
+        data['applicant_name'] = approval_cycle.application_id.partner_name
+        data['rejected'] = True
 
         if len(approval_cycle.users_list_ids) == 1 :
             if approval_cycle.users_list_ids[0].state == 'no_action':
@@ -58,39 +61,6 @@ class ApproveCycleController(Controller):
                     approval_cycle.state = 'rejected'
                     break;
 
-        # your code of report generation that use request.make_response
-# class ReportController(report.ReportController)
-#     @route()
-#     def report_routes(self, reportname, docids=None, converter=None, **data):
-#         if converter == 'xlsx':
-#             report = request.env['ir.actions.report']._get_report_from_name(
-#                 reportname)
-#             context = dict(request.env.context)
-#             if docids:
-#                 docids = [int(i) for i in docids.split(',')]
-#             if data.get('options'):
-#                 data.update(json.loads(data.pop('options')))
-#             if data.get('context'):
-#                 # Ignore 'lang' here, because the context in data is the one
-#                 # from the webclient *but* if the user explicitely wants to
-#                 # change the lang, this mechanism overwrites it.
-#                 data['context'] = json.loads(data['context'])
-#                 if data['context'].get('lang'):
-#                     del data['context']['lang']
-#                 context.update(data['context'])
-#             xlsx = report.with_context(context).render_xlsx(
-#                 docids, data=data
-#             )[0]
-#             xlsxhttpheaders = [
-#                 ('Content-Type', 'application/vnd.openxmlformats-'
-#                                  'officedocument.spreadsheetml.sheet'),
-#                 ('Content-Length', len(xlsx)),
-#                 (
-#                     'Content-Disposition',
-#                     content_disposition(report.report_file + '.xlsx')
-#                 )
-#             ]
-#             return request.make_response(xlsx, headers=xlsxhttpheaders)
-#         return super(ReportController, self).report_routes(
-#             reportname, docids, converter, **data
-#         )
+        response = request.render('auth_signup.signup', data)
+        response.headers['X-Frame-Options'] = 'DENY'
+        return response

@@ -1,16 +1,20 @@
 <odoo>
-        <template id="recruitment_ads.hr_approval_cycle_response" name="HR Approval Cycle Approved">
-            <div class="form-group field-approved" t-if="approved">
-                <label for="offer_name_approve" class="control-label">Offer</label>
-                <input type="text" name="offer_name_approve" t-att-value="offer_name" t-att-readonly="'readonly'"
-                       id="offer_name_approve" class="form-control" autofocus="autofocus" />
-                <label class="control-label"> Approved</label>
+        <template id="recruitment_ads.hr_approval_cycle_response" name="Approval Cycle Response">
+
+            <div class="form-group field-login" t-if="approved">
+                <label for="applicant_name" class="control-label">Your Email</label>
+                <input type="text" name="applicant_name" t-att-value="applicant_name" id="applicant_name" class="form-control" autofocus="autofocus"
+                    autocapitalize="off" required="required" t-att-readonly="'readonly'"/>
+                <label class="control-label">Approved</label>
             </div>
-            <div class="form-group field-approved" t-if="rejected">
-                <label for="offer_name_reject" class="control-label">Offer</label>
-                <input type="text" name="offer_name_reject" t-att-value="offer_name" t-att-readonly="'readonly'"
-                       id="offer_name_reject" class="form-control" autofocus="autofocus" />
-                <label class="control-label"> Rejected</label>
+
+            <div class="form-group field-login" t-if="rejected">
+                <label for="applicant_name" class="control-label">Your Email</label>
+                <input type="text" name="applicant_name" t-att-value="applicant_name" id="applicant_name" class="form-control" autofocus="autofocus"
+                    autocapitalize="off" required="required" t-att-readonly="'readonly'"/>
+                <label class="control-label">Rejected</label>
             </div>
+
         </template>
+
 </odoo>
