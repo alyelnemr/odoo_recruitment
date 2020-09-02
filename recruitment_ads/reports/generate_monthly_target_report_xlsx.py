@@ -90,9 +90,9 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
         elif report.type_report == 'actual':
             for line in report.line_ids:
                 offer = self.env['hr.offer'].search([('issue_date','>=',line.start_date),
-                         ('issue_date','<=',report.date_to),('create_uid','=',line.recruiter_id.id),('job_id','=',line.job_position_id.id)], order = 'issue_date asc')
+                         ('create_uid','=',line.recruiter_id.id),('job_id','=',line.job_position_id.id)], order = 'issue_date asc')
                 hired = self.env['hr.offer'].search(
-                    [('hiring_date', '>=', line.start_date), ('hiring_date', '<=', report.date_to),
+                    [('hiring_date', '>=', line.start_date),
                      ('create_uid', '=', line.recruiter_id.id), ('job_id', '=',line.job_position_id.id),('state','=','hired')], order = 'hiring_date asc')
                 if offer:
                  actual_offer_date = offer[0].issue_date
@@ -113,9 +113,9 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
         else:
             for line in report.line_ids:
                 offer = self.env['hr.offer'].search([('issue_date','>=',line.start_date),
-                         ('issue_date','<=',report.date_to),('create_uid','=',line.recruiter_id.id),('job_id','=',line.job_position_id.id)], order = 'issue_date asc')
+                         ('create_uid','=',line.recruiter_id.id),('job_id','=',line.job_position_id.id)], order = 'issue_date asc')
                 hired = self.env['hr.offer'].search(
-                    [('hiring_date', '>=', line.start_date), ('hiring_date', '<=', report.date_to),
+                    [('hiring_date', '>=', line.start_date),
                      ('create_uid', '=', line.recruiter_id.id), ('job_id', '=',line.job_position_id.id),('state','=','hired')], order = 'hiring_date asc')
                 if offer:
                  actual_offer_date = offer[0].issue_date
