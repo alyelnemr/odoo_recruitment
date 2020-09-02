@@ -4,14 +4,20 @@
 # import json
 from odoo import http, tools, _
 from odoo.http import request, Controller
+from ast import literal_eval
 
 class ApproveCycleController(Controller):
 
     @http.route(['/approval/cycle/approved'],csrf=False, type='http', methods=['GET'], auth="public", website=True)
     def approval_cycle_approve(self, **kwargs):
-        values = list(kwargs.keys())
+        for key in kwargs.keys():
+            values = key.split('/')
         data = request.params.copy()
+        # x=  literal_eval(values[1])
         approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id','=',int(values[0]))],order='create_date desc',limit=1)
+        users = request.env['hr.approval.cycle.users'].sudo().search([('id', 'in', literal_eval(values[1]))],
+                                                                        order='create_date desc')
+        x = request._cr
         data['applicant_name'] = approval_cycle.application_id.partner_name
         data['approved'] = True
         if len(approval_cycle.users_list_ids) == 1 :
