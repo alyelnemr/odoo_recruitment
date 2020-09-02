@@ -27,10 +27,11 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
                 12: {'header': _('Current'), 'field': 'current', 'width': 20, 'type': 'amount'},
                 13: {'header': _('Replacement'), 'field': 'replacement', 'width': 20, 'type': 'amount'},
                 14: {'header': _('Vacant'), 'field': 'vacant', 'width': 20, 'type': 'amount'},
-                15: {'header': _('Offer Target'), 'field': 'offer_target', 'width': 20, 'type': 'amount'},
-                16: {'header': _('Offer Weight'), 'field': 'offer_weight', 'width': 20, 'type': 'amount'},
-                17: {'header': _('Hire Target'), 'field': 'hire_target', 'width': 20, 'type': 'amount'},
-                18: {'header': _('Hire Weight'), 'field': 'hire_weight', 'width': 20, 'type': 'amount'},
+                15: {'header': _('Total Need'), 'field': 'total_need', 'width': 20, 'type': 'amount'},
+                16: {'header': _('Offer Target'), 'field': 'offer_target', 'width': 20, 'type': 'amount'},
+                17: {'header': _('Offer Weight'), 'field': 'offer_weight', 'width': 20, 'type': 'amount'},
+                18: {'header': _('Hire Target'), 'field': 'hire_target', 'width': 20, 'type': 'amount'},
+                19: {'header': _('Hire Weight'), 'field': 'hire_weight', 'width': 20, 'type': 'amount'},
             }
         }]
         if report.type_report == 'actual':
@@ -51,10 +52,11 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
                 12: {'header': _('Current'), 'field': 'current', 'width': 20, 'type': 'amount'},
                 13: {'header': _('Replacement'), 'field': 'replacement', 'width': 20, 'type': 'amount'},
                 14: {'header': _('Vacant'), 'field': 'vacant', 'width': 20, 'type': 'amount'},
-                15: {'header': _('Actual Offer '), 'field': 'actual_offer', 'width': 20 },
-                16: {'header': _('Actual Offer Weight'), 'field': 'actual_offer_weight', 'width': 20},
-                17: {'header': _('Actual Hire'), 'field': 'hire_actual', 'width': 20 },
-                18: {'header': _('Actual Hire Weight'), 'field': 'actual_hire_weight', 'width': 20},
+                15: {'header': _('Total Need'), 'field': 'total_need', 'width': 20, 'type': 'amount'},
+                16: {'header': _('Actual Offer '), 'field': 'actual_offer', 'width': 20 },
+                17: {'header': _('Actual Offer Weight'), 'field': 'actual_offer_weight', 'width': 20},
+                18: {'header': _('Actual Hire'), 'field': 'hire_actual', 'width': 20 },
+                19: {'header': _('Actual Hire Weight'), 'field': 'actual_hire_weight', 'width': 20},
             }
         }]
         if report.type_report == 'actual_vs_target':
@@ -75,10 +77,11 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
                 12: {'header': _('Current'), 'field': 'current', 'width': 20, 'type': 'amount'},
                 13: {'header': _('Replacement'), 'field': 'replacement', 'width': 20, 'type': 'amount'},
                 14: {'header': _('Vacant'), 'field': 'vacant', 'width': 20, 'type': 'amount'},
-                15: {'header': _('Actual Offer - Target Offer '), 'field': 'actual_offer_target_offer', 'width': 25 },
-                16: {'header': _('Actual Offer Weight - Target Offer Weight'), 'field': 'actual_offer_weight_target_offer_weight', 'width': 25},
-                17: {'header': _('Actual Hire - Target Hire'), 'field': 'hire_actual_target_hire', 'width': 25 },
-                18: {'header': _('Actual Hire Weight - Target Hire Weight'), 'field': 'actual_hire_weight_target_offer_weight', 'width': 25},
+                15: {'header': _('Total Need'), 'field': 'total_need', 'width': 20, 'type': 'amount'},
+                16: {'header': _('Actual Offer - Target Offer '), 'field': 'actual_offer_target_offer', 'width': 25 },
+                17: {'header': _('Actual Offer Weight - Target Offer Weight'), 'field': 'actual_offer_weight_target_offer_weight', 'width': 25},
+                18: {'header': _('Actual Hire - Target Hire'), 'field': 'hire_actual_target_hire', 'width': 25 },
+                19: {'header': _('Actual Hire Weight - Target Hire Weight'), 'field': 'actual_hire_weight_target_offer_weight', 'width': 25},
             }
         }]
 
@@ -150,6 +153,7 @@ class MonthlyTargetWrapper:
         self.current = line.current_emp
         self.replacement = line.replacement_emp
         self.vacant = line.vacant
+        self.total_need = line.total_need
         self.offer_target = line.offer_target
         self.offer_weight = line.offer_weight
         self.hire_target = line.hire_target
@@ -172,6 +176,7 @@ class MonthlyActualWrapper:
         self.current = line.current_emp
         self.replacement = line.replacement_emp
         self.vacant = line.vacant
+        self.total_need = line.total_need
         self.actual_offer = str(actual_offer)
         self.actual_offer_weight = str(actual_offer_weight)
         self.hire_actual = str(actual_hire)
@@ -194,6 +199,7 @@ class MonthlyActualVSTargetWrapper:
         self.current = line.current_emp
         self.replacement = line.replacement_emp
         self.vacant = line.vacant
+        self.total_need = line.total_need
         self.actual_offer_target_offer = str(actual_offer) +'  -  '+ str(line.offer_target)
         self.actual_offer_weight_target_offer_weight = str(actual_offer_weight) +'  -  '+ str(line.offer_weight)
         self.hire_actual_target_hire = str(actual_hire)+'  -  '+str(line.hire_target)
