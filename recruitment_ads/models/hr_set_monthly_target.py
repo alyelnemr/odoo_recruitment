@@ -217,8 +217,8 @@ class HRSetMonthlyTargetLine(models.Model):
     @api.onchange('start_date')
     def _validation_start_date(self):
         for record in self:
-            if record.start_date > record.target_id.date_to or record.start_date < record.target_id.date_from:
-                raise ValidationError('Cannot accept date before Start Date of the Target OR after the Target date .')
+            if record.start_date > record.target_id.date_to :
+                raise ValidationError('Cannot accept date after the Target date .')
 
     @api.depends('man_power', 'current_emp')
     def _compute_vacant(self):
