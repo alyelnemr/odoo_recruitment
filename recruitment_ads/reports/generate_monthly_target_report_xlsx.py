@@ -46,7 +46,7 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
                 7: {'header': _('Level'), 'field': 'level_id', 'width': 20, 'type': 'many2one'},
                 8: {'header': _('Position Type'), 'field': 'position_type', 'width': 20},
                 9: {'header': _('Actual  Offer Date'), 'field': 'actual_offer_date', 'width': 20},
-                10: {'header': _('Actual Hire Date'), 'field': 'actual_offer_date', 'width': 20},
+                10: {'header': _('Actual Hire Date'), 'field': 'actual_hire_date', 'width': 20},
                 11: {'header': _('MP'), 'field': 'mp', 'width': 20, 'type': 'amount'},
                 12: {'header': _('Current'), 'field': 'current', 'width': 20, 'type': 'amount'},
                 13: {'header': _('Replacement'), 'field': 'replacement', 'width': 20, 'type': 'amount'},
@@ -172,7 +172,7 @@ class MonthlyActualWrapper:
         self.current = line.current_emp
         self.replacement = line.replacement_emp
         self.vacant = line.vacant
-        self.actual_offer_actual = str(actual_offer)
+        self.actual_offer = str(actual_offer)
         self.actual_offer_weight = str(actual_offer_weight)
         self.hire_actual = str(actual_hire)
         self.actual_hire_weight = str(actual_hire_weight)
