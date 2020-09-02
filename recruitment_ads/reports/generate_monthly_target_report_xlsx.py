@@ -51,7 +51,7 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
                 12: {'header': _('Current'), 'field': 'current', 'width': 20, 'type': 'amount'},
                 13: {'header': _('Replacement'), 'field': 'replacement', 'width': 20, 'type': 'amount'},
                 14: {'header': _('Vacant'), 'field': 'vacant', 'width': 20, 'type': 'amount'},
-                15: {'header': _('Actual Offer '), 'field': 'offer_actual', 'width': 20 },
+                15: {'header': _('Actual Offer '), 'field': 'actual_offer', 'width': 20 },
                 16: {'header': _('Actual Offer Weight'), 'field': 'actual_offer_weight', 'width': 20},
                 17: {'header': _('Actual Hire'), 'field': 'hire_actual', 'width': 20 },
                 18: {'header': _('Actual Hire Weight'), 'field': 'actual_hire_weight', 'width': 20},
