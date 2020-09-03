@@ -15,22 +15,24 @@ class ApproveCycleController(Controller):
         data = request.params.copy()
         # x=  literal_eval(values[1])
         approval_cycle = request.env['hr.approval.cycle'].sudo().search([('offer_id','=',int(values[0]))],order='create_date desc',limit=1)
-        users = request.env['hr.approval.cycle.users'].sudo().search([('id', 'in', literal_eval(values[1]))],
-                                                                        order='create_date desc')
+        # users = request.env['hr.approval.cycle.users'].sudo().search([('id', 'in', literal_eval(values[1]))],
+        #                                                                 order='create_date desc')
         x = request._cr
         data['applicant_name'] = approval_cycle.application_id.partner_name
         data['approved'] = True
         if len(approval_cycle.users_list_ids) == 1 :
-            if approval_cycle.users_list_ids[0].state == 'no_action':
+            if approval_cycle.users_list_ids[0].state == 'no_action' and approval_cycle.users_list_ids[0].token :
                 approval_cycle.users_list_ids[0].state = 'approved'
+                approval_cycle.users_list_ids[0].token = False
                 approval_cycle.state = 'approved'
         else:
             count = 0
             number_users = len(approval_cycle.users_list_ids)
             for user in approval_cycle.users_list_ids :
                 count += 1
-                if user.state == 'no_action':
-                    user.sudo().write({'state' : 'approved'})
+                if user.state == 'no_action' and user.token:
+                    user.sudo().write({'state' : 'approved',
+                                       'token':False})
                     if count < number_users:
                         template = request.env.ref('recruitment_ads.approval_cycle_mail_template', False)
                         if template:
@@ -42,9 +44,9 @@ class ApproveCycleController(Controller):
                     else:
                         approval_cycle.state = 'approved'
 
-        response = request.render('recruitment_ads.hr_approval_cycle_response', data)
-        response.headers['X-Frame-Options'] = 'DENY'
-        return response
+                    response = request.render('recruitment_ads.hr_approval_cycle_response', data)
+                    response.headers['X-Frame-Options'] = 'DENY'
+                    return response
 
     @http.route(['/approval/cycle/reject'], csrf=False, type='http', methods=['GET'], auth="public", website=True)
     def approval_cycle_rejected(self, **kwargs):
