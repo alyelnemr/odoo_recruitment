@@ -58,7 +58,7 @@ class HrApprovalCycle(models.Model):
         if template:
             if self.users_list_ids[0].approval_user_id.email:
                 template.email_to = self.users_list_ids[0].approval_user_id.email
-                self.env['mail.template'].browse(template.id).send_mail(self.id)
+                self.env['mail.template'].browse(template.id).send_mail(self.users_list_ids[0].id)
                 self.state = 'pending'
                 self.users_list_ids[0].sent = True
         return True
@@ -83,3 +83,4 @@ class HrApprovalCycleUsers(models.Model):
     sent = fields.Boolean('Send Email', default=False, copy=False)
     notes = fields.Text(string='Notes')
     token = fields.Char()
+    sequence = fields.Char()

@@ -3,18 +3,28 @@
 
             <div class="form-group field-login" t-if="approved">
                 <label for="applicant_name" class="control-label">The Approval cycle for Candidate's Name </label>
-<!--                <input type="text" name="applicant_name" t-att-value="applicant_name" id="applicant_name" class="form-control" autofocus="autofocus"-->
-<!--                    autocapitalize="off" required="required" t-att-readonly="'readonly'"/>-->
-                 <input type="text"  size="100" name="applicant_name" class="form-control" t-att-value="applicant_name" readonly="1" id="applicant_name" style="resize:horizontal; width:200px;"/>
-                <label class="control-label"> is Approved</label>
+                 <input type="text"  name="applicant_name" class="form-control o_input" t-att-value="applicant_name" readonly="1" id="applicant_name" style="resize:horizontal; width:250px; border: none;"/>
+                <label class="control-label"> is Approved .</label>
             </div>
 
             <div class="form-group field-login" t-if="rejected">
                 <label for="applicant_name" class="control-label">The Approval cycle for Candidate's Name</label>
                 <input type="text" name="applicant_name" t-att-value="applicant_name" id="applicant_name" class="form-control" autofocus="autofocus"
-                    autocapitalize="off" required="required" readonly="1"/>
-                <label class="control-label">is Rejected</label>
+                    autocapitalize="off" required="required" readonly="1"  style="resize:horizontal; width:250px; border: none;"/>
+                <label class="control-label">is Rejected .</label>
             </div>
+            <div class="form-group field-login" t-if="approved_before">
+                <label for="applicant_name" class="control-label">You already approved the Approval cycle for Candidate's Name</label>
+                <input type="text" name="applicant_name" t-att-value="applicant_name" id="applicant_name" class="form-control" autofocus="autofocus"
+                    autocapitalize="off" required="required" readonly="1" style="resize:horizontal; width:250px; border: none;" />
+            </div>
+
+            <div class="form-group field-login" t-if="rejected_before">
+                <label for="applicant_name" class="control-label">You already rejected the Approval cycle for Candidate's Name</label>
+                <input type="text" name="applicant_name" t-att-value="applicant_name" id="applicant_name" class="form-control" autofocus="autofocus"
+                    autocapitalize="off" required="required" readonly="1" style="resize:horizontal; width:250px; border: none;"/>
+            </div>
+
 
         </template>
 
