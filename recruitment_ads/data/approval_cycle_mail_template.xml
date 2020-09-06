@@ -5,8 +5,8 @@
         <record id="approval_cycle_mail_template" model="mail.template">
             <field name="name">Approval Cycle</field>
             <field name="email_from">Recruitment@Andalusiagroup.net</field>
-            <field name="subject">${object.application_id.partner_name} - 's Approval Cycle</field>
-            <field name="model_id" ref="recruitment_ads.model_hr_approval_cycle"/>
+            <field name="subject">${object.approval_cycle_id.application_id.partner_name} - 's Approval Cycle</field>
+            <field name="model_id" ref="recruitment_ads.model_hr_approval_cycle_users"/>
 <!--            <field name="email_to">Esraa-ElMasry@andalusiagroup.net</field>-->
 <!--            <field name="partner_to">-->
 <!--                ${object.partner_id and object.partner_id.email and object.partner_id.email==object.email and object.partner_id.id or False }-->
@@ -14,8 +14,8 @@
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
             <div style="text-align: center; margin-top: 16px;">
-                <a href="/approval/cycle/approved?${object.offer_id.id}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">Approve</a>
-                 <a href="/approval/cycle/reject?${object.offer_id.id}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">Reject</a>
+                <a href="/approval/cycle/approved?o=${object.approval_cycle_id.offer_id.id}&t=${object.token}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">Approve</a>
+                <a href="/approval/cycle/reject?o=${object.approval_cycle_id.offer_id.id}&t=${object.token}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">Reject</a>
             </div>
 
 ]]></field>

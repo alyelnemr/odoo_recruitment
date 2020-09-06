@@ -27,5 +27,14 @@
             <field name="padding">5</field>
             <field name="company_id" eval="False"/>
         </record>
+                <record id="sequence_approval_cycle_users" model="ir.sequence">
+            <field name="name">Approval Cycle users</field>
+            <field name="number_increment">1</field>
+            <field name="code">hr.approval.cycle.users</field>
+<!--            <field name="prefix">User_</field>-->
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
     </data>
 </odoo>

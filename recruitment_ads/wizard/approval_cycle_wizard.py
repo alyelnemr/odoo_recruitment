@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+import uuid
 
 
 class HRApprovalCycleWizard(models.TransientModel):
@@ -12,16 +13,20 @@ class HRApprovalCycleWizard(models.TransientModel):
         if any(not user.approval_user_id for user in self.users_list_ids):
             raise ValidationError(_('Approval User is required.'))
         user_list = []
+        sequence = self.env.ref('recruitment_ads.sequence_approval_cycle_users')
         for user in self.users_list_ids:
             user_list.append((0, 0, {
                 'approval_position_id': user.approval_position_id.id,
-                'approval_user_id': user.approval_user_id.id
+                'approval_user_id': user.approval_user_id.id,
+                'token': str(uuid.uuid4()),
+                'sequence': sequence.next_by_id()
             }))
         self.env['hr.approval.cycle'].create({
             'name': self.name,
             'offer_id': self.offer_id.id,
             'users_list_ids': user_list,
             'comment': self.comment,
+
         })
         self.offer_id.application_id.stage_id = self.env.ref('recruitment_ads.application_stage_approval_cycle_data').id
         return {'type': 'ir.actions.act_window_close'}
@@ -33,10 +38,14 @@ class HRApprovalCycleWizard(models.TransientModel):
         if any(not user.approval_user_id for user in self.users_list_ids):
             raise ValidationError(_('Approval User is required.'))
         user_list = []
+        sequence = self.env.ref('recruitment_ads.sequence_approval_cycle_users')
         for user in self.users_list_ids:
             user_list.append((0, 0, {
                 'approval_position_id': user.approval_position_id.id,
-                'approval_user_id': user.approval_user_id.id
+                'approval_user_id': user.approval_user_id.id,
+                'token' : str(uuid.uuid4()),
+                'sequence' : sequence.next_by_id()
+
             }))
         approval_cycle=self.env['hr.approval.cycle'].create({
             'name': self.name,
@@ -49,7 +58,8 @@ class HRApprovalCycleWizard(models.TransientModel):
         if template:
             if self.users_list_ids[0].approval_user_id.email:
                 template.email_to = self.users_list_ids[0].approval_user_id.email
-                self.env['mail.template'].browse(template.id).send_mail(approval_cycle.id)
+                token = approval_cycle.users_list_ids[0].token
+                self.env['mail.template'].browse(template.id).send_mail(approval_cycle.users_list_ids[0].id)
                 approval_cycle.state = 'pending'
                 approval_cycle.users_list_ids[0].sent = True
         return {'type': 'ir.actions.act_window_close'}
