@@ -127,11 +127,17 @@ class GenerateDailyTargetReportWizard(models.TransientModel):
                 ('active', '=', True),
             ])
             if not lines:
-                raise ValidationError('No Daily Target is set for the selected range')
+                if self.type_report == 'actual':
+                    raise ValidationError('No Actual Target is set for the selected range')
+                else:
+                    raise ValidationError('No Daily Target is set for the selected range')
             else:
                 self.line_ids = lines
         else:
-            raise ValidationError('No Daily Target is set for the selected range')
+            if self.type_report == 'actual':
+                raise ValidationError('No Actual Target is set for the selected range')
+            else:
+                raise ValidationError('No Daily Target is set for the selected range')
 
         report = self.env.ref('recruitment_ads.action_report_generate_daily_target_xlsx')
         return report.report_action(self)
