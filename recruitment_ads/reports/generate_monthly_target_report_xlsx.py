@@ -90,7 +90,7 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
         if report.type_report == 'target':
             for line in report.line_ids:
                 self.write_line(MonthlyTargetWrapper(line), 'Monthly Target Report')
-        elif report.type_report == 'actual':
+        if report.type_report == 'actual' or report.type_report == 'actual_vs_target' :
             for line in report.line_ids:
                 offer = self.env['hr.offer'].search([('issue_date','>=',line.start_date),
                          ('create_uid','=',line.recruiter_id.id),('job_id','=',line.job_position_id.id)], order = 'issue_date asc')
@@ -98,43 +98,29 @@ class GenerateMonthlyTargetReportXslx(models.AbstractModel):
                     [('hiring_date', '>=', line.start_date),
                      ('create_uid', '=', line.recruiter_id.id), ('job_id', '=',line.job_position_id.id),('state','=','hired')], order = 'hiring_date asc')
                 if offer:
-                 actual_offer_date = offer[0].issue_date
-                 actual_offer = len(offer)
+                     actual_offer_date = offer[0].issue_date
+                     actual_offer = len(offer)
                 else:
                     actual_offer_date = '0-0-0'
                     actual_offer = 0
+
                 if hired :
-                 actual_hire_date =  hired[0].hiring_date
-                 actual_hire = len(hired)
+                     actual_hire_date =  hired[0].hiring_date
+                     actual_hire = len(hired)
                 else:
                     actual_hire_date = '0-0-0'
                     actual_hire = 0
+
                 actual_offer_weight = actual_offer * line.level_id.weight
                 actual_hire_weight = actual_hire * line.level_id.weight
 
-                self.write_line(MonthlyActualWrapper(line,actual_offer_date,actual_hire_date,actual_offer,actual_hire,actual_offer_weight,actual_hire_weight), 'Monthly Target Report')
-        else:
-            for line in report.line_ids:
-                offer = self.env['hr.offer'].search([('issue_date','>=',line.start_date),
-                         ('create_uid','=',line.recruiter_id.id),('job_id','=',line.job_position_id.id)], order = 'issue_date asc')
-                hired = self.env['hr.offer'].search(
-                    [('hiring_date', '>=', line.start_date),
-                     ('create_uid', '=', line.recruiter_id.id), ('job_id', '=',line.job_position_id.id),('state','=','hired')], order = 'hiring_date asc')
-                if offer:
-                 actual_offer_date = offer[0].issue_date
-                 actual_offer = len(offer)
+                if report.type_report == 'actual' :
+                    self.write_line(MonthlyActualWrapper(line,actual_offer_date,actual_hire_date,actual_offer,actual_hire,actual_offer_weight,actual_hire_weight), 'Monthly Target Report')
                 else:
-                    actual_offer_date = '0-0-0'
-                    actual_offer = 0
-                if hired :
-                 actual_hire_date =  hired[0].hiring_date
-                 actual_hire = len(hired)
-                else:
-                    actual_hire_date = '0-0-0'
-                    actual_hire = 0
-                actual_offer_weight = actual_offer * line.level_id.weight
-                actual_hire_weight = actual_hire * line.level_id.weight
-                self.write_line(MonthlyActualVSTargetWrapper(line,actual_offer_date,actual_hire_date,actual_offer,actual_hire,actual_offer_weight,actual_hire_weight), 'Monthly Target Report')
+                    self.write_line(
+                        MonthlyActualVSTargetWrapper(line, actual_offer_date, actual_hire_date, actual_offer,
+                                                     actual_hire, actual_offer_weight, actual_hire_weight),
+                        'Monthly Target Report')
 
 class MonthlyTargetWrapper:
     def __init__(self, line):
