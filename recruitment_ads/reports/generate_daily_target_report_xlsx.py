@@ -73,20 +73,50 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
         if report.type_report == 'target':
             for line in report.line_ids:
                 self.write_line(DailyTargetWrapper(line), 'Daily Target Report')
-        elif report.type_report == 'actual':
+        if report.type_report == 'actual' or report.type_report == 'actual_vs_target' :
             for line in report.line_ids:
+                count_actual_invitation = 0
                 cvs = self.env['hr.applicant'].search([('create_uid','=',line.recruiter_id.id),('create_date','>=',report.date_from ),
                                                        ('create_date','<=',report.date_to ),
-                                                       ('job_id','=',line.job_position_id.id)])
-
-                self.write_line(ActualTargetWrapper(line,cvs), 'Daily Target Report')
-        else:
-            for line in report.line_ids:
-                cvs = self.env['hr.applicant'].search([('create_uid','=',line.recruiter_id.id),('create_date','>=',report.date_from ),
-                                                       ('create_date','<=',report.date_to ),
-                                                       ('job_id','=',line.job_position_id.id)])
-
-                self.write_line(Actual_Vs_TargetWrapper(line,cvs), 'Daily Target Report')
+                                                       ])
+                if cvs:
+                    # get all calls on cvs regardless done or not
+                    actual_calls = self.env['mail.activity'].search(
+                        [('real_create_uid', '=', line.recruiter_id.id), ('create_date', '>=', report.date_from),
+                         ('create_date', '<=', report.date_to),
+                         ('res_id', 'in', cvs.ids), ('activity_type_id', 'in', (2, 6, 7)),'|',('active','=',True),('active','=',False)])
+                    actual_calls = len(actual_calls)
+                    for cv in cvs:
+                        # get first interview for each cv
+                        actual_invitation = self.env['mail.activity'].search(
+                            [('real_create_uid', '=', line.recruiter_id.id),('res_id', '=', cv.id),
+                             ('create_date', '>=', report.date_from),('create_date', '<=', report.date_to),
+                             ('res_model','=','hr.applicant'),('interview_result','!=',False),('active','=',False),
+                             ('activity_type_id','=',5)],limit=1)
+                        count_actual_invitation += len(actual_invitation)
+                    # get done hr interviews  for cvs
+                    hr_accepted = self.env['calendar.event'].search(
+                        [('create_uid', '=', line.recruiter_id.id),
+                         ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
+                         ('res_model', '=', 'hr.applicant'),('res_id','in',cvs.ids),
+                         ('interview_type_id', '=', 1),('is_interview_done','=',True)])
+                    hr_accepted = len(hr_accepted)
+                    # get done final interviews for cvs
+                    final_accepted = self.env['calendar.event'].search(
+                        [('create_uid', '=', line.recruiter_id.id),
+                         ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
+                         ('res_model', '=', 'hr.applicant'),('res_id','in',cvs.ids),
+                         ('interview_type_id', '=', 3),('is_interview_done','=',True)])
+                    final_accepted = len(final_accepted)
+                else:
+                    actual_calls = 0
+                    count_actual_invitation = 0
+                    hr_accepted = 0
+                    final_accepted = 0
+                if report.type_report == 'actual':
+                    self.write_line(ActualTargetWrapper(line,cvs,actual_calls,count_actual_invitation,hr_accepted,final_accepted), 'Daily Target Report')
+                else:
+                    self.write_line(Actual_Vs_TargetWrapper(line, cvs ,actual_calls,count_actual_invitation,hr_accepted,final_accepted), 'Daily Target Report')
 
 
 class DailyTargetWrapper:
@@ -107,7 +137,7 @@ class DailyTargetWrapper:
         self.target_final_accepted = self.target_hr_accepted * .5
 
 class ActualTargetWrapper:
-    def __init__(self, line,cvs):
+    def __init__(self, line,cvs,actual_calls,count_actual_invitation,hr_accepted,final_accepted):
         self.date = line.name
         self.user_bu = line.recruiter_bu_id
         self.recruiter_id = line.recruiter_id
@@ -118,13 +148,13 @@ class ActualTargetWrapper:
         self.level_id = line.level_id
         self.weight = line.weight or 0.0
         self.actual_screening = str(len(cvs))
-        self.actual_calls = str(float(self.actual_screening) * .8)
-        self.actual_invitation = str(float(self.actual_calls) * .3)
-        self.actual_hr_accepted = str(float(self.actual_invitation) * .35)
-        self.actual_final_accepted = str(float(self.actual_hr_accepted) * .5)
+        self.actual_calls = str(actual_calls)
+        self.actual_invitation = str(count_actual_invitation)
+        self.actual_hr_accepted = str(hr_accepted)
+        self.actual_final_accepted = str(final_accepted)
 
 class Actual_Vs_TargetWrapper:
-    def __init__(self, line,cvs):
+    def __init__(self, line,cvs,actual_calls,count_actual_invitation,hr_accepted,final_accepted):
         self.date = line.name
         self.user_bu = line.recruiter_bu_id
         self.recruiter_id = line.recruiter_id
@@ -134,21 +164,13 @@ class Actual_Vs_TargetWrapper:
         self.job_id = line.job_id
         self.level_id = line.level_id
         self.weight = line.weight or 0.0
-
         self.target_screening = str(line.cvs)
         self.target_calls = str(float(self.target_screening) * .8)
         self.target_invitation = str(float(self.target_calls) * .3)
         self.target_hr_accepted = str(float(self.target_invitation) * .35)
         self.target_final_accepted = str(float(self.target_hr_accepted) * .5)
-
-        self.actual_screening = str(len(cvs))
-        self.actual_calls = str(float(self.actual_screening) * .8)
-        self.actual_invitation = str(float(self.actual_calls) * .3)
-        self.actual_hr_accepted = str(float(self.actual_invitation) * .35)
-        self.actual_final_accepted = str(float(self.actual_hr_accepted) * .5)
-
-        self.actual_screening_vs_target = self.actual_screening + ' - ' + self.target_screening
-        self.actual_calls_vs_target = self.actual_calls  + ' - ' + self.target_calls
-        self.actual_invitation_vs_target = self.actual_invitation + ' - ' + self.target_invitation
-        self.actual_hr_accepted_vs_target = self.actual_hr_accepted + ' - ' + self.target_hr_accepted
-        self.actual_final_accepted_vs_target = self.actual_final_accepted + ' - ' + self.target_final_accepted
+        self.actual_screening_vs_target = str(len(cvs)) + ' - ' + self.target_screening
+        self.actual_calls_vs_target = str(actual_calls)  + ' - ' + self.target_calls
+        self.actual_invitation_vs_target = str(count_actual_invitation) + ' - ' + self.target_invitation
+        self.actual_hr_accepted_vs_target = str(hr_accepted) + ' - ' + self.target_hr_accepted
+        self.actual_final_accepted_vs_target = str(final_accepted) + ' - ' + self.target_final_accepted
