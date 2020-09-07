@@ -80,11 +80,11 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
                                                        ('create_date','<=',report.date_to ),
                                                        ])
                 if cvs:
-                    # get all calls on cvs regardless done or not
+                    # get done calls on cvs
                     actual_calls = self.env['mail.activity'].search(
                         [('real_create_uid', '=', line.recruiter_id.id), ('create_date', '>=', report.date_from),
                          ('create_date', '<=', report.date_to),
-                         ('res_id', 'in', cvs.ids), ('activity_type_id', 'in', (2, 6, 7)),'|',('active','=',True),('active','=',False)])
+                         ('res_id', 'in', cvs.ids), ('activity_type_id', 'in', (2, 6, 7)),('active','=',False)])
                     actual_calls = len(actual_calls)
                     for cv in cvs:
                         # get first interview for each cv
