@@ -120,12 +120,14 @@ class Offer(models.Model):
     salary_scale_id = fields.Many2one('salary.scale', string="Salary Scale", ondelete='restrict', required=True)
     position_grade_id = fields.Many2one('position.grade', string="Position Grade", ondelete='restrict', required=True)
     last_approval_cycle_state = fields.Boolean(compute='_get_last_approval_cycle_state')
+    approval_cycle_state = fields.Char(compute='_get_last_approval_cycle_state')
     def _get_last_approval_cycle_state(self):
         if not self.approval_cycle_ids:
             self.last_approval_cycle_state = True
         if self.approval_cycle_ids:
             approval_cycles = self.env['hr.approval.cycle'].search([('id','in',self.approval_cycle_ids.ids)],order='create_date desc',limit=1)
             if approval_cycles:
+                self.approval_cycle_state = approval_cycles.state
                 if approval_cycles.state =='rejected':
                     self.last_approval_cycle_state = True
 
