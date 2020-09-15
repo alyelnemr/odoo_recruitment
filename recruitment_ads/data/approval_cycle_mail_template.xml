@@ -5,7 +5,8 @@
         <record id="approval_cycle_mail_template" model="mail.template">
             <field name="name">Approval Cycle</field>
             <field name="email_from">Recruitment@Andalusiagroup.net</field>
-            <field name="subject">${object.approval_cycle_id.application_id.partner_name} - 's Approval Cycle</field>
+            <field name="subject">Test Approval Cycle</field>
+            <field name="subject">${object.approval_cycle_id.application_id.partner_name} - s Approval Cycle</field>
             <field name="model_id" ref="recruitment_ads.model_hr_approval_cycle_users"/>
 <!--            <field name="email_to">Esraa-ElMasry@andalusiagroup.net</field>-->
 <!--            <field name="partner_to">-->
@@ -13,13 +14,89 @@
 <!--            </field>-->
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
-            <div style="text-align: center; margin-top: 16px;">
-                <a href="/approval/cycle/approved?o=${object.approval_cycle_id.offer_id.id}&t=${object.token}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">Approve</a>
-                <a href="/approval/cycle/reject?o=${object.approval_cycle_id.offer_id.id}&t=${object.token}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">Reject</a>
+
+
+            ·<strong> Candidate Name:</strong> ${object.approval_cycle_id.application_id.partner_name}
+            <br/>
+            ·<strong> Position:</strong> ${object.approval_cycle_id.application_id.job_id.name}
+            <br/>
+            ·<strong> Department:</strong> ${object.approval_cycle_id.application_id.department_id.name}
+            <br/>
+            ·<strong> Direct Manager:</strong>
+            <br/>
+
+            <table border = 1px solid black style="border-collapse: collapse;width: 100%;">
+                <tr >
+                <td style="width:80px;">Recruitment reasons</td>
+                <td style="width:120px;"></td>
+              </tr>
+              <tr>
+                <td style="width:80px;">Who is approved for the new hiring</td>
+                <td style="width:120px;"></td>
+              </tr>
+            <tr>
+                <td style="width:80px;" >Justification</td>
+                <td style="width:120px;"></td>
+              </tr>
+              </table>
+              <br/>
+              <table border = 1px solid black>
+                <tr>
+                <th style="#000;background-color:rgb(205,216,247);">Row Labels</th>
+                <th style="#000;background-color:rgb(205,216,247);">Level</th>
+                <th style="#000;background-color:rgb(205,216,247);">Grade</th>
+                <th style="#000;background-color:rgb(205,216,247);">Min</th>
+                <th style="#000;background-color:rgb(205,216,247);">Min P2</th>
+                <th style="#000;background-color:rgb(205,216,247);">Min P3</th>
+                <th style="#000;background-color:rgb(205,216,247);">Mid</th>
+                <th style="#000;background-color:rgb(205,216,247);">Mid P2</th>
+                <th style="#000;background-color:rgb(205,216,247);">Mid P3</th>
+                <th style="#000;background-color:rgb(205,216,247);">Max</th>
+              </tr>
+              <tr>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+               <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+              </tr>
+              </table>
+              <br/>
+            <table border = 1px solid black>
+                <tr>
+                <th style="#000;background-color:rgb(205,216,247);">LOCATION</th>
+                <th style="#000;background-color:rgb(205,216,247);">BU</th>
+                <th style="#000;background-color:rgb(205,216,247);">Dept.</th>
+                <th style="#000;background-color:rgb(205,216,247);">Position</th>
+                <th style="#000;background-color:rgb(205,216,247);">Grade</th>
+                <th style="#000;background-color:rgb(205,216,247);">MPP</th>
+                <th style="#000;background-color:rgb(205,216,247);">Current</th>
+                <th style="#000;background-color:rgb(205,216,247);">Vacant</th>
+              </tr>
+              <tr>
+                <td style="height:30px;">${object.approval_cycle_id.offer_id.business_unit_id.bu_location}</td>
+               <td style="height:30px;">${object.approval_cycle_id.offer_id.business_unit_id.name}</td>
+                <td style="height:30px;">${object.approval_cycle_id.offer_id.department_id.name}</td>
+                <td style="height:30px;">${object.approval_cycle_id.offer_id.job_id.name}</td>
+                <td style="height:30px;">${object.approval_cycle_id.offer_id.position_grade_id.name}</td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+                <td style="height:30px;"></td>
+
+              </tr>
+              </table>
+              <div style="text-align: center; margin-top: 16px;">
+                <a href="/approval/cycle/approved?o=${object.approval_cycle_id.offer_id.id}&t=${object.id}" style="padding: 7px 13px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:5px">Approve</a>
+                <a href="/approval/cycle/reject?o=${object.approval_cycle_id.offer_id.id}&t=${object.id}" style="padding: 7px 13px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:5px">Reject</a>
             </div>
+
 
 ]]></field>
         </record>
-
     </data>
 </odoo>

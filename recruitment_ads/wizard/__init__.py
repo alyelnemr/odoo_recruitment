@@ -9,3 +9,4 @@ from . import interview_report_wizard
 from . import generate_daily_target_report_wizard
 from . import generate_monthly_target_report_wizard
 from . import generate_rejection_mail_message
+from . import approval_cycle_mail_message_wizard

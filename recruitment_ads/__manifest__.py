@@ -57,6 +57,7 @@ Handle recruitment Process for Andalusia
         'reports/offer_egypt_template.xml',
         'reports/offer_ksa_template.xml',
         'views/hr_approval_cycle_response.xml',
+        'wizard/approval_cycle_mail_message_wizard_view.xml'
     ],
 
     'qweb': [
