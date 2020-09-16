@@ -160,6 +160,7 @@ class HRApprovalCycleWizard(models.TransientModel):
                 'total_package': str(offer.total_package) + ' ' + offer.currency_id.symbol,
                 'date': datetime.strptime(offer.issue_date, '%Y-%m-%d').strftime('%d-%b-%Y')
             }
+            doc.render(context)
             sequence = self.env.ref('recruitment_ads.sequence_offer_egypt')
             number = sequence.next_by_id()
             file_number = "EGYPT_Offer_%s.docx" % number

@@ -74,12 +74,12 @@
                 <th style="#000;background-color:rgb(205,216,247);">Dept.</th>
                 <th style="#000;background-color:rgb(205,216,247);">Position</th>
                 <th style="#000;background-color:rgb(205,216,247);">Grade</th>
-                <th style="#000;background-color:rgb(205,216,247);">MPP</th>
+                <th style="#000;background-color:rgb(205,216,247);">MP</th>
                 <th style="#000;background-color:rgb(205,216,247);">Current</th>
                 <th style="#000;background-color:rgb(205,216,247);">Vacant</th>
               </tr>
               <tr>
-                <td style="height:30px;">${object.approval_cycle_id.offer_id.business_unit_id.bu_location}</td>
+                <td style="height:30px;"></td>
                <td style="height:30px;">${object.approval_cycle_id.offer_id.business_unit_id.name}</td>
                 <td style="height:30px;">${object.approval_cycle_id.offer_id.department_id.name}</td>
                 <td style="height:30px;">${object.approval_cycle_id.offer_id.job_id.name}</td>

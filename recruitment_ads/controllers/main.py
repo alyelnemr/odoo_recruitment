@@ -52,8 +52,16 @@ class ApproveCycleController(Controller):
                          'attachment_ids': [(6, 0, user.email_id.attachment_ids.ids)],
                          'email_cc':email_cc,
                      })
-                     new_template.send_mail(next_user.id)
-                     # user.email_id = email_obj.id
+                     x = new_template.send_mail(next_user.id)
+                     email = request.env['mail.mail'].browse(x)
+                     next_user.email_id = email.id
+                     email.auto_delete = False
+                     # x.auto_delete = False
+                     # obj=request.env['mail.mail'].browse(x)
+                     # next_user.write({
+                     #     'email_id': x
+                     # })
+
                      next_user.sent = True
                      new_template.unlink()
                   else:
