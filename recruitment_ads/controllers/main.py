@@ -17,7 +17,7 @@ class ApproveCycleController(Controller):
                 user.state = 'approved'
                 approval_cycle.state = 'approved'
                 if user.email_id.attachment_ids:
-                    attachment = self.env['ir.attachment'].search([('id','in',user.email_id.attachment_ids.ids)])
+                    attachment = request.env['ir.attachment'].search([('id','in',user.email_id.attachment_ids.ids)])
                     for attach in attachment:
                         attach.unlink()
             else:
