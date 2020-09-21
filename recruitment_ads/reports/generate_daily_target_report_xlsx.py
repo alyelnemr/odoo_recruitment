@@ -77,7 +77,7 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
             for line in report.line_ids:
                 count_actual_invitation = 0
                 cvs = self.env['hr.applicant'].search([('create_uid','=',line.recruiter_id.id),('create_date','>=',report.date_from ),
-                                                       ('create_date','<=',report.date_to ),
+                                                       ('create_date','<=',report.date_to ),('job_id','=',line.job_position_id.id)
                                                        ])
                 if cvs:
                     # get done calls on cvs
@@ -131,10 +131,10 @@ class DailyTargetWrapper:
         self.level_id = line.level_id
         self.weight = line.weight or 0.0
         self.target_screening = line.cvs or 0.0
-        self.target_calls = self.target_screening * .8
-        self.target_invitation = self.target_calls * .3
-        self.target_hr_accepted = self.target_invitation * .35
-        self.target_final_accepted = self.target_hr_accepted * .5
+        self.target_calls = round(self.target_screening * .8,2)
+        self.target_invitation = round(self.target_calls * .3,2)
+        self.target_hr_accepted = round(self.target_invitation * .35,2)
+        self.target_final_accepted = round(self.target_hr_accepted * .5,2)
 
 class ActualTargetWrapper:
     def __init__(self, line,cvs,actual_calls,count_actual_invitation,hr_accepted,final_accepted):
@@ -165,10 +165,10 @@ class Actual_Vs_TargetWrapper:
         self.level_id = line.level_id
         self.weight = line.weight or 0.0
         self.target_screening = str(line.cvs)
-        self.target_calls = str(float(self.target_screening) * .8)
-        self.target_invitation = str(float(self.target_calls) * .3)
-        self.target_hr_accepted = str(float(self.target_invitation) * .35)
-        self.target_final_accepted = str(float(self.target_hr_accepted) * .5)
+        self.target_calls = str(round(float(self.target_screening) * .8,2))
+        self.target_invitation = str(round(float(self.target_calls) * .3,2))
+        self.target_hr_accepted = str(round(float(self.target_invitation) * .35,2))
+        self.target_final_accepted = str(round(float(self.target_hr_accepted) * .5,2))
         self.actual_screening_vs_target = str(len(cvs)) + ' - ' + self.target_screening
         self.actual_calls_vs_target = str(actual_calls)  + ' - ' + self.target_calls
         self.actual_invitation_vs_target = str(count_actual_invitation) + ' - ' + self.target_invitation
