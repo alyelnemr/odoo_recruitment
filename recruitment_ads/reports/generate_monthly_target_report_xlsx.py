@@ -126,7 +126,7 @@ class MonthlyTargetWrapper:
     def __init__(self, line):
         self.recruiter_id = line.recruiter_id
         self.user_bu = line.recruiter_bu_id
-        self.date = line.start_date
+        self.date = line.start_date9
         self.bu_id = line.bu_id
         self.department_id = line.department_id
         self.section_id = line.section_id

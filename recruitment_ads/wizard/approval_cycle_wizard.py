@@ -134,7 +134,7 @@ class HRApprovalCycleWizard(models.TransientModel):
                 'job': offer.job_id.name,
                 'dep': offer.department_id.name,
                 'basic_salary': str(
-                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type == 'normal_offer' else str(
+                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type in ('normal_offer' or 'exceeding_salary_scale' or 'cont_renewal') else str(
                     offer.total_salary) + ' ' + offer.currency_id.symbol,
                 'total_salary': str(offer.total_salary) + ' ' + offer.currency_id.symbol,
                 'package_salary': str(offer.total_package) + ' ' + offer.currency_id.symbol,
@@ -154,7 +154,7 @@ class HRApprovalCycleWizard(models.TransientModel):
                 'department': offer.department_id.name,
                 'business_unit': offer.business_unit_id.name,
                 'fixed_salary': str(
-                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type == 'normal_offer' else str(
+                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type in ('normal_offer' or 'exceeding_salary_scale' or 'cont_renewal') else str(
                     offer.total_salary) + ' ' + offer.currency_id.symbol,
                 'variable_salary': str(offer.variable_salary) + ' ' + offer.currency_id.symbol,
                 'total_package': str(offer.total_package) + ' ' + offer.currency_id.symbol,

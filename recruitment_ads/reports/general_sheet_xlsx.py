@@ -274,6 +274,10 @@ class GeneralSheetWrapper:
         self.hiring_date = app_data[0]['hiring_date']
         if app_data[0]['offer_type'] == 'normal_offer' :
             self.offer_type =  'Normal Offer'
+        if app_data[0]['offer_type'] == 'cont_renewal':
+            self.offer_type = 'Contract Renewal'
+        if app_data[0]['offer_type']== 'exceeding_salary_scale':
+            self.offer_type = 'Offer exceeding salary scale'
         if app_data[0]['offer_type'] == 'nursing_offer' :
             self.offer_type =  'Nursing Offer'
         self.total_package = app_data[0]['total_package']

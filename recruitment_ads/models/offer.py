@@ -34,7 +34,7 @@ class Offer(models.Model):
                  'mobile_allowance', 'shifts_no', 'hour_rate', 'offer_type', 'years_of_exp', 'amount_per_year')
     def _compute_total_package(self):
         for offer in self:
-            if offer.offer_type == "normal_offer":
+            if offer.offer_type in("normal_offer" or 'exceeding_salary_scale' or 'cont_renewal' ):
                 total_salary = offer.fixed_salary + offer.variable_salary
                 total_package = total_salary + offer.housing_allowance + offer.medical_insurance + \
                                 offer.travel_allowance + offer.mobile_allowance
@@ -109,7 +109,7 @@ class Offer(models.Model):
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
     offer_type = fields.Selection([('normal_offer', 'Normal Offer'),
-                                   ('nursing_offer', 'Medical/Nursing Offer'), ],
+                                   ('nursing_offer', 'Medical/Nursing Offer'),('cont_renewal','Contract Renewal'),('exceeding_salary_scale','Offer exceeding salary scale') ],
                                   string="Offer Type", default="normal_offer", required=True)
     shifts_no = fields.Integer('No. of Shifts/Month', required=False)
     shift_hours = fields.Float('No. of hours/Shift', required=False, default=12)
@@ -239,7 +239,7 @@ class Offer(models.Model):
             'department': self.department_id.name,
             'business_unit': self.business_unit_id.name,
             'fixed_salary': str(
-                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type == 'normal_offer' else str(
+                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type in ('normal_offer' or 'exceeding_salary_scale' or 'cont_renewal') else str(
                 self.total_salary) + ' ' + self.currency_id.symbol,
             'variable_salary': str(self.variable_salary) + ' ' + self.currency_id.symbol,
             'total_package': str(self.total_package) + ' ' + self.currency_id.symbol,
@@ -293,7 +293,7 @@ class Offer(models.Model):
             'job': self.job_id.name,
             'dep': self.department_id.name,
             'basic_salary': str(
-                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type == 'normal_offer' else str(
+                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type in ('normal_offer' or 'exceeding_salary_scale' or 'cont_renewal') else str(
                 self.total_salary) + ' ' + self.currency_id.symbol,
             'total_salary': str(self.total_salary) + ' ' + self.currency_id.symbol,
             'package_salary': str(self.total_package) + ' ' + self.currency_id.symbol,

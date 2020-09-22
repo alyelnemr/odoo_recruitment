@@ -287,6 +287,16 @@
                                               t-att-style="style"
                                               t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                                     </t>
+                                    <t t-if="o.offer_type == 'cont_renewal'">
+                                        <span t-field="o.fixed_salary" style="color:black!important;"
+                                              t-att-style="style"
+                                              t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </t>
+                                    <t t-if="o.offer_type == 'exceeding_salary_scale'">
+                                        <span t-field="o.fixed_salary" style="color:black!important;"
+                                              t-att-style="style"
+                                              t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </t>
                                     <t t-if="o.offer_type == 'nursing_offer'">
                                         <span t-field="o.total_salary" style="color:black!important;"
                                               t-att-style="style"
