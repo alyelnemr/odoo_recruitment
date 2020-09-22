@@ -15,9 +15,9 @@
                                 <field attrs="{'invisible': 1}" name="hr_policy_type"/>
                             </group>
                             <group>
-                                <field attrs="{'invisible': [('hr_policy_type', '=', 'offer_and_hire')]}" name="day"/>
-                                <field attrs="{'invisible': [('hr_policy_type', '=', 'offer_and_hire')]}" name="month"/>
-                                <field attrs="{'invisible': [('hr_policy_type', '=', 'offer_and_hire')]}" name="year"/>
+                                <field attrs="{'invisible': [('hr_policy_type', '!=', 'application_period')]}" name="day"/>
+                                <field attrs="{'invisible': [('hr_policy_type', '!=', 'application_period')]}" name="month"/>
+                                <field attrs="{'invisible': [('hr_policy_type', '!=', 'application_period')]}" name="year"/>
                             </group>
                         </group>
                         <group>
@@ -33,6 +33,18 @@
                                 </field>
                             </page>
                         </notebook>
+                        </group>
+                        <group>
+                            <field attrs="{'invisible': [('hr_policy_type', '!=', 'ceo_approval_amount')]}" name="ceo_approval_amount"/>
+                            <notebook attrs="{'invisible': [('hr_policy_type', '!=', 'ceo_approval_amount')]}">
+                                <page string="Approval Group">
+                                    <field name="ceo_approval_group">
+                                        <tree editable="bottom">
+                                            <field name="approval_group"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
                         </group>
                     </sheet>
                 </form>
