@@ -9,7 +9,8 @@ class ApprovalCycleMailComposeMessage(models.TransientModel):
     _description = 'Approval cycle Mail wizard'
 
     approval_user = fields.Many2one('res.partner', string='to')
-    recruiter_id = fields.Many2one('res.partner', string='CC', domain=[('applicant', '=', False)])
+    recruiter_id = fields.Many2many('res.partner', 'approval_mail_compose_message_res_partner_rel', 'wizard_id',
+                                   'partner_id', string='CC', domain=[('applicant', '=', False)])
     attachment_ids = fields.Many2many('ir.attachment', 'approval_mail_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
     website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)

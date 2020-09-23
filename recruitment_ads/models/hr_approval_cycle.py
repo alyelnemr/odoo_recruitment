@@ -154,7 +154,7 @@ class HrApprovalCycle(models.Model):
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'default_approval_user': self.users_list_ids[0].approval_user_id.id,
-            'default_recruiter_id': self.create_uid.partner_id.id,
+            'default_recruiter_id': [self.create_uid.partner_id.id],
             'default_attachment_ids': [(6, 0, attach)],
             'time_format': '%I:%M %p',
             'force_email': True
