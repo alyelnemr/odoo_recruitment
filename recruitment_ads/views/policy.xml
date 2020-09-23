@@ -13,6 +13,7 @@
                             <group>
                                 <field name="name" readonly="1" string="Policy"/>
                                 <field attrs="{'invisible': 1}" name="hr_policy_type"/>
+                                <field attrs="{'invisible': [('hr_policy_type', '!=', 'ceo_approval_amount')]}" name="ceo_approval_amount"/>
                             </group>
                             <group>
                                 <field attrs="{'invisible': [('hr_policy_type', '!=', 'application_period')]}" name="day"/>
@@ -35,7 +36,6 @@
                         </notebook>
                         </group>
                         <group>
-                            <field attrs="{'invisible': [('hr_policy_type', '!=', 'ceo_approval_amount')]}" name="ceo_approval_amount"/>
                             <notebook attrs="{'invisible': [('hr_policy_type', '!=', 'ceo_approval_amount')]}">
                                 <page string="Approval Group">
                                     <field name="ceo_approval_group">
