@@ -107,9 +107,9 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
                         [('create_uid', '=', line.recruiter_id.id),
                          ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
                          ('res_model', '=', 'hr.applicant'),('res_id','in',cvs.ids),
-                         ('interview_type_id', '=', 1),('is_interview_done','=',True)],order ='create_date desc',limit = 1)
+                         ('interview_type_id', '=', 1),('is_interview_done','=',True)])
 
-                    result= self.env['mail.activity'].search([('calendar_event_id','=',hr_accepted.id),('active','=',False)])
+                    result= self.env['mail.activity'].search([('calendar_event_id','in',hr_accepted.ids),('active','=',False)],order ='write_date desc',limit = 1)
                     if result.interview_result == "Accepted":
                         hr_accepted = 1
                     else:
