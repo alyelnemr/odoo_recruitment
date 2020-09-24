@@ -12,11 +12,11 @@ class GeneralSheetXslx(models.AbstractModel):
     def _get_report_sheets(self, report):
         sheets = []
         max_interviews_count = 0
-        max_interviews_count_query ='select max(x.count) from( select count(res_id) from mail_activity where res_id in %s and activity_type_id = %s and active = %s group by res_id) x'
-        self.env.cr.execute(max_interviews_count_query, (tuple(report.application_ids.ids),5,False))
+        max_interviews_count_query = 'select max(x.count) from( select count(res_id) from mail_activity where res_id in %s and activity_type_id = %s and active = %s group by res_id) x'
+        self.env.cr.execute(max_interviews_count_query, (tuple(report.application_ids.ids), 5, False))
         interviews_count = self.env.cr.dictfetchall()
-        if interviews_count[0]['max'] :
-            max_interviews_count = interviews_count[0]['max'] -1
+        if interviews_count[0]['max']:
+            max_interviews_count = interviews_count[0]['max'] - 1
         sheets.append({
             'General Sheet': {
                 0: {'header': _('Recruiter Responsible'), 'field': 'user_id', 'width': 20},
@@ -30,8 +30,8 @@ class GeneralSheetXslx(models.AbstractModel):
                 8: {'header': _('Facebook'), 'field': 'facebook_link', 'width': 20},
                 9: {'header': _('Linkedin'), 'field': 'linkedin_link', 'width': 20},
                 10: {'header': _('Yes/No'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                11: {'header': _('Expected salary'), 'field': 'salary_expected','width': 20},
-                12: {'header': _('Current salary'), 'field': 'salary_current','width': 20},
+                11: {'header': _('Expected salary'), 'field': 'salary_expected', 'width': 20},
+                12: {'header': _('Current salary'), 'field': 'salary_current', 'width': 20},
                 13: {'header': _('CV Source'), 'field': 'source_id', 'width': 10},
                 14: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20},
                 15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18},
@@ -54,13 +54,13 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 1: {'header': _('Section'),
                                'field': 'section_id',
                                'width': 20,
-                                }})
+                               }})
             last_row = last_row + 1
         #
         sheets[0]['General Sheet'].update(
             {
                 last_row + 1: {'header': _('Job Position'), 'field': 'job_id', 'width': 35},
-        #
+                #
                 last_row + 2: {'header': _('Call Type'), 'field': 'call_type', 'width': 18},
                 last_row + 3: {'header': _('Call Date'), 'field': 'call_date', 'width': 18},
                 last_row + 4: {'header': _('Called by'), 'field': 'called_by', 'width': 18},
@@ -75,19 +75,21 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 13: {'header': _('Interview type 1'), 'field': 'interview_type_id', 'width': 20
                                 },
                 last_row + 14: {'header': _('Interview Comment 1'), 'field': 'interview_comment', 'width': 22},
-             })
+            })
         last_row = max(sheets[0]['General Sheet']) + 1
         if max_interviews_count > 0:
             for i in range(max_interviews_count):
                 sheets[0]['General Sheet'].update(
                     {
-                        last_row : {'header': _('Interview Creation Date ' + str(i + 2)), 'field': 'interview_create_date' + str(i + 1),
-                                       'width': 22},
-                        last_row + 1: {'header': _('Interview Date ' + str(i + 2)), 'field': 'interview_date' + str(i + 1),
-                                   'width': 18},
+                        last_row: {'header': _('Interview Creation Date ' + str(i + 2)),
+                                   'field': 'interview_create_date' + str(i + 1),
+                                   'width': 22},
+                        last_row + 1: {'header': _('Interview Date ' + str(i + 2)),
+                                       'field': 'interview_date' + str(i + 1),
+                                       'width': 18},
                         last_row + 2: {'header': _('Interviewers ' + str(i + 2)), 'field': 'interviewers' + str(i + 1),
                                        'width': 30,
-                        },
+                                       },
                         last_row + 3: {'header': _('Interview result ' + str(i + 2)),
                                        'field': 'interview_result' + str(i + 1),
                                        'width': 20, },
@@ -113,17 +115,20 @@ class GeneralSheetXslx(models.AbstractModel):
                 last_row + 5: {'header': _('Total Salary'), 'field': 'total_salary', 'width': 20, 'type': 'amount'},
                 last_row + 6: {'header': _('Total Package'), 'field': 'total_package', 'width': 20, 'type': 'amount'},
                 last_row + 7: {'header': _('Have Offer'), 'field': 'have_offer', 'width': 20, 'type': 'bool'},
-                last_row + 8: {'header': _('Generated By'), 'field': 'offer_generated_by_bu_id', 'width': 40,
+                last_row + 8: {'header': _('Have Approval Cycle'), 'field': 'have_approval_cycle', 'width': 20,
+                               'type': 'bool'},
+                last_row + 9: {'header': _('Generated By'), 'field': 'offer_generated_by_bu_id', 'width': 40,
                                }
             }
 
-         )
+        )
         return sheets
 
     def _generate_report_content(self, workbook, report):
         if report:
             self.write_array_header('General Sheet')
-            applications = self.env['hr.applicant'].search([('id','in',report.application_ids.ids)], order='create_date desc')
+            applications = self.env['hr.applicant'].search([('id', 'in', report.application_ids.ids)],
+                                                           order='create_date desc')
             for app_line in applications:
                 app_datas_query = '''
                 select  app.name,app.partner_name,app.have_cv ,app.have_assessment ,app_partner.mobile ,
@@ -132,7 +137,7 @@ class GeneralSheetXslx(models.AbstractModel):
                 prt_uid_name.name creater , cr_bu.name cr_bu , utm_source.name source_name , job.name job_name ,
                 job_bu.name job_bu , department.name department ,section.name section,
                 offer.state , offer.issue_date , offer.hiring_date ,offer.offer_type , 
-                offer.total_package , offer.have_offer , offer.total_salary ,
+                offer.total_package , offer.have_offer, offer.have_approval_cycle , offer.total_salary ,
                 offer_bu.name offer_bu
                 from hr_applicant app 
                 inner join res_partner app_partner
@@ -157,9 +162,9 @@ class GeneralSheetXslx(models.AbstractModel):
                 
                 '''
                 self._cr.execute(app_datas_query, (app_line.id,))
-                app_data= self.env.cr.dictfetchall()
+                app_data = self.env.cr.dictfetchall()
 
-                call_activity_query ='''
+                call_activity_query = '''
                     select MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
                     from mail_activity MA
                     inner join mail_activity_type MAT
@@ -172,7 +177,7 @@ class GeneralSheetXslx(models.AbstractModel):
                     order by  MA.write_date desc limit 1
                 '''
                 self._cr.execute(call_activity_query, (app_line.id,))
-                call_data= self.env.cr.dictfetchall()
+                call_data = self.env.cr.dictfetchall()
 
                 interviews_activity_query = '''
                 select MA.create_date , MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
@@ -192,17 +197,16 @@ class GeneralSheetXslx(models.AbstractModel):
                 order by  MA.write_date asc 
                 '''
                 self._cr.execute(interviews_activity_query, (app_line.id,))
-                interviews_data= self.env.cr.dictfetchall()
-                self.write_line(GeneralSheetWrapper(app_data,call_data ,interviews_data), 'General Sheet')
-
+                interviews_data = self.env.cr.dictfetchall()
+                self.write_line(GeneralSheetWrapper(app_data, call_data, interviews_data), 'General Sheet')
 
 
 class GeneralSheetWrapper:
-    def __init__(self,app_data , call_data , interviews_data):
+    def __init__(self, app_data, call_data, interviews_data):
         self.user_id = app_data[0]['prt_name']
-        self.generated_by_bu_id =  app_data[0]['cr_bu']
+        self.generated_by_bu_id = app_data[0]['cr_bu']
         self.application_code = app_data[0]['name']
-        self.partner_name =app_data[0]['partner_name']
+        self.partner_name = app_data[0]['partner_name']
         self.have_cv = app_data[0]['have_cv']
         self.have_assessment = app_data[0]['have_assessment']
         self.partner_mobile = app_data[0]['mobile']
@@ -219,11 +223,11 @@ class GeneralSheetWrapper:
         self.department_id = app_data[0]['department']
         # else:
         self.section_id = app_data[0]['section']
-            # self.department_id = app_data[0]['parent_dept']
-        self.job_id =  app_data[0]['job_name']
+        # self.department_id = app_data[0]['parent_dept']
+        self.job_id = app_data[0]['job_name']
 
         if call_data:
-            self.call_type = call_data[0]['name'] if call_data[0]['name']  else False
+            self.call_type = call_data[0]['name'] if call_data[0]['name'] else False
             self.call_date = call_data[0]['write_date'] if call_data[0]['write_date'] else False
             self.called_by = call_data[0]['create_uid'] if call_data[0]['create_uid'] else False
             self.call_result = call_data[0]['call_result_id'] if call_data[0]['call_result_id'] else False
@@ -231,9 +235,10 @@ class GeneralSheetWrapper:
             self.call_comment = re.sub(r"<.*?>", '', call_data[0]['feedback']) if call_data[0]['feedback'] else False
 
         if interviews_data:
-            self.interview_type_id = interviews_data[0]['name'] if interviews_data[0]['name']  else False
-            self.interviewers = interviews_data[0]['string_agg']if interviews_data[0]['string_agg'] else False
-            self.interview_create_date = interviews_data[0]['create_date'] if interviews_data[0]['create_date'] else False
+            self.interview_type_id = interviews_data[0]['name'] if interviews_data[0]['name'] else False
+            self.interviewers = interviews_data[0]['string_agg'] if interviews_data[0]['string_agg'] else False
+            self.interview_create_date = interviews_data[0]['create_date'] if interviews_data[0][
+                'create_date'] else False
             # self.interview_date = interviews_data[0]['display_corrected_start_date'] if interviews_data[0]['display_corrected_start_date'] else False
             if interviews_data[0]['display_corrected_start_date']:
                 self.interview_date = interviews_data[0]['display_corrected_start_date']
@@ -243,11 +248,14 @@ class GeneralSheetWrapper:
                 self.interview_date = interviews_data[0]['start_date']
             else:
                 False
-            self.interview_result = interviews_data[0]['interview_result'] if interviews_data[0]['interview_result'] else False
-            self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0]['interview_result_date'] else False
+            self.interview_result = interviews_data[0]['interview_result'] if interviews_data[0][
+                'interview_result'] else False
             self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0][
                 'interview_result_date'] else False
-            self.interview_comment = re.sub(r"<.*?>", '', interviews_data[0]['feedback']) if interviews_data[0]['feedback'] else False
+            self.interview_result_date = interviews_data[0]['interview_result_date'] if interviews_data[0][
+                'interview_result_date'] else False
+            self.interview_comment = re.sub(r"<.*?>", '', interviews_data[0]['feedback']) if interviews_data[0][
+                'feedback'] else False
 
         for i in range(len(interviews_data)):
             if i == 0:
@@ -263,21 +271,21 @@ class GeneralSheetWrapper:
                 False
             # setattr(self, 'interview_date' + str(i), interviews_data[i]['display_corrected_start_date'])
             setattr(self, 'interviewers' + str(i), interviews_data[i]['string_agg'])
-            setattr(self, 'interview_result' + str(i),interviews_data[i]['interview_result'])
+            setattr(self, 'interview_result' + str(i), interviews_data[i]['interview_result'])
             setattr(self, 'interview_result_date' + str(i), interviews_data[i]['interview_result_date'])
             setattr(self, 'interview_type_id' + str(i), interviews_data[i]['name'])
             setattr(self, 'interview_comment' + str(i),
-                            re.sub(r"<.*?>", '', interviews_data[i]['feedback'] if interviews_data[i]['feedback'] else ''))
+                    re.sub(r"<.*?>", '', interviews_data[i]['feedback'] if interviews_data[i]['feedback'] else ''))
 
         self.offer_status = app_data[0]['state']
         self.offer_date = app_data[0]['issue_date']
         self.hiring_date = app_data[0]['hiring_date']
-        if app_data[0]['offer_type'] == 'normal_offer' :
-            self.offer_type =  'Normal Offer'
-        if app_data[0]['offer_type'] == 'nursing_offer' :
-            self.offer_type =  'Nursing Offer'
+        if app_data[0]['offer_type'] == 'normal_offer':
+            self.offer_type = 'Normal Offer'
+        if app_data[0]['offer_type'] == 'nursing_offer':
+            self.offer_type = 'Nursing Offer'
         self.total_package = app_data[0]['total_package']
         self.have_offer = app_data[0]['have_offer']
+        self.have_approval_cycle = app_data[0]['have_approval_cycle']
         self.total_salary = app_data[0]['total_salary']
         self.offer_generated_by_bu_id = app_data[0]['offer_bu']
-
