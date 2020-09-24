@@ -134,7 +134,7 @@ class HRApprovalCycleWizard(models.TransientModel):
                 'job': offer.job_id.name,
                 'dep': offer.department_id.name,
                 'basic_salary': str(
-                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type == 'normal_offer' else str(
+                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type in ('normal_offer' , 'exceeding_salary_scale' , 'cont_renewal') else str(
                     offer.total_salary) + ' ' + offer.currency_id.symbol,
                 'total_salary': str(offer.total_salary) + ' ' + offer.currency_id.symbol,
                 'package_salary': str(offer.total_package) + ' ' + offer.currency_id.symbol,
@@ -154,7 +154,7 @@ class HRApprovalCycleWizard(models.TransientModel):
                 'department': offer.department_id.name,
                 'business_unit': offer.business_unit_id.name,
                 'fixed_salary': str(
-                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type == 'normal_offer' else str(
+                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type in ('normal_offer' , 'exceeding_salary_scale' , 'cont_renewal') else str(
                     offer.total_salary) + ' ' + offer.currency_id.symbol,
                 'variable_salary': str(offer.variable_salary) + ' ' + offer.currency_id.symbol,
                 'total_package': str(offer.total_package) + ' ' + offer.currency_id.symbol,
@@ -179,7 +179,8 @@ class HRApprovalCycleWizard(models.TransientModel):
             'name': file_number,
             'datas': b64_pdf,
             'datas_fname': file_number})
-        temp=self.env['mail.template'].browse(template_id)
+        attach = self.env['ir.attachment'].search([('res_model','=','hr.applicant'),('res_id','=',self.application_id.id),('attachment_type','in',('cv','assessment'))])
+        attach = res.ids + attach.ids
         ctx = {
             'default_model': 'hr.approval.cycle.users',
             'default_res_id': approval_cycle.users_list_ids[0].id,
@@ -187,8 +188,8 @@ class HRApprovalCycleWizard(models.TransientModel):
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'default_approval_user': approval_cycle.users_list_ids[0].approval_user_id.id,
-            'default_recruiter_id': approval_cycle.create_uid.id,
-            'default_attachment_ids': [(6, 0, res.ids)],
+            'default_recruiter_id': [approval_cycle.create_uid.partner_id.id],
+            'default_attachment_ids': [(6, 0, attach)],
             'time_format': '%I:%M %p',
             'force_email': True
         }

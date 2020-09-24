@@ -31,18 +31,18 @@ class Offer(models.TransientModel):
                  'mobile_allowance', 'shifts_no', 'hour_rate', 'offer_type', 'years_of_exp', 'amount_per_year')
     def _compute_total_package(self):
         for offer in self:
-            if offer.offer_type == "normal_offer":
-                total_salary = offer.fixed_salary + offer.variable_salary
-                total_package = total_salary + offer.housing_allowance + offer.medical_insurance + \
-                                offer.travel_allowance + offer.mobile_allowance
-                offer.total_salary = total_salary
-                offer.total_package = total_package
-            elif offer.offer_type == "nursing_offer":
+            if offer.offer_type == "nursing_offer":
                 total_amount = offer.years_of_exp * offer.amount_per_year
                 total_salary = (offer.hour_rate * offer.shifts_no * offer.shift_hours) + total_amount
                 total_package = total_salary + offer.housing_allowance + \
                                 offer.medical_insurance + offer.travel_allowance + offer.mobile_allowance
                 offer.total_amount = total_amount
+                offer.total_salary = total_salary
+                offer.total_package = total_package
+            else :
+                total_salary = offer.fixed_salary + offer.variable_salary
+                total_package = total_salary + offer.housing_allowance + offer.medical_insurance + \
+                                offer.travel_allowance + offer.mobile_allowance
                 offer.total_salary = total_salary
                 offer.total_package = total_package
 

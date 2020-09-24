@@ -41,6 +41,13 @@
                          <t t-if="o.offer_type == 'normal_offer'">
                             <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " ><strong t-field="o.fixed_salary"/></td>
                          </t>
+                        <t t-if="o.offer_type == 'cont_renewal'">
+                              <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " ><strong t-field="o.fixed_salary"/></td>
+                        </t>
+                        <t t-if="o.offer_type == 'exceeding_salary_scale'">
+                              <td class="text-center" style="border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " ><strong t-field="o.fixed_salary"/></td>
+                        </t>
+
                          <t t-if="o.offer_type == 'nursing_offer'">
                             <td class="text-center" style=" border-left: 7px double black; border-right: 7px double black; width : 150px;padding:5px; " ><strong t-field="o.total_salary"/></td>
                          </t>

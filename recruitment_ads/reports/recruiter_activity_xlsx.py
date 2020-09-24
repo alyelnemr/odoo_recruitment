@@ -797,6 +797,10 @@ class offerLineWrapper:
         offer_dict = {'normal_offer': 'Normal Offer', 'nursing_offer': 'Nursing Offer'}
         if offer['offer_type'] == 'normal_offer':
             self.offer_type = 'Normal Offer'
+        elif  offer['offer_type'] == 'cont_renewal':
+            self.offer_type = 'Contract Renewal'
+        elif  offer['offer_type'] == 'exceeding_salary_scale':
+            self.offer_type = 'Offer exceeding salary scale'
         else:
             self.offer_type = 'Nursing Offer'
         self.source_resp = offer['source_resp']

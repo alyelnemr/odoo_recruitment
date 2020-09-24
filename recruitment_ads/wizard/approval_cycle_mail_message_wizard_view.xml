@@ -9,7 +9,9 @@
             <form string="Compose approval cycle Email">
                 <group>
                      <field name="approval_user" readonly="1"/>
-                    <field name="recruiter_id" readonly="1"/>
+                    <field name="recruiter_id" readonly="0" widget="many2many_short_tags"
+                    options="{'no_create':True}"
+                   context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}"/>
                     <field name="subject" placeholder="Subject..." required="True" />
                 </group>
 

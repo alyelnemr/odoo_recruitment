@@ -60,11 +60,19 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
                     6: {'header': _('Position'), 'field': 'job_id', 'width': 20, 'type': 'many2one'},
                     7: {'header': _('Level'), 'field': 'level_id', 'width': 20, 'type': 'many2one'},
                     8: {'header': _('Weight'), 'field': 'weight', 'width': 20, 'type': 'amount'},
-                    9: {'header': _('Actual Screening -Target Screening'), 'field': 'actual_screening_vs_target', 'width': 25},
-                    10: {'header': _('Actual calls- Target Calls '), 'field': 'actual_calls_vs_target', 'width': 25},
-                    11: {'header': _('Actual invitation- Target Invitation '), 'field': 'actual_invitation_vs_target', 'width': 25},
-                    12: {'header': _('Actual HR Accepted - Target HR accepted'), 'field': 'actual_hr_accepted_vs_target', 'width': 25},
-                    13: {'header': _('Actual Final Accepted - Target Final Accepted '), 'field': 'actual_final_accepted_vs_target', 'width': 25},
+                    9: {'header': _('Target Screening'), 'field': 'target_screening', 'width': 25},
+                    10: {'header': _('Actual Screening'), 'field': 'actual_screening', 'width': 25},
+                    11: {'header': _('Target Calls'), 'field': 'target_calls', 'width': 25},
+                    12: {'header': _('Actual calls'), 'field': 'actual_calls', 'width': 25},
+                    13: {'header': _('Target Invitation '), 'field': 'target_invitation',
+                         'width': 25},
+                    14: {'header': _('Actual invitation'), 'field': 'actual_invitation', 'width': 25},
+                    15: {'header': _('Target HR accepted'), 'field': 'target_hr_accepted',
+                         'width': 25},
+                    16: {'header': _('Actual HR Accepted'), 'field': 'actual_hr_accepted', 'width': 25},
+                    17: {'header': _('Target Final Accepted '), 'field': 'target_final_accepted', 'width': 25},
+                    18: {'header': _('Actual Final Accepted'),
+                         'field': 'actual_final_accepted', 'width': 25},
                 }
             }]
 
@@ -76,6 +84,7 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
         if report.type_report == 'actual' or report.type_report == 'actual_vs_target' :
             for line in report.line_ids:
                 count_actual_invitation = 0
+                hr_accepted = 0
                 cvs = self.env['hr.applicant'].search([('create_uid','=',line.recruiter_id.id),('create_date','>=',report.date_from ),
                                                        ('create_date','<=',report.date_to ),('job_id','=',line.job_position_id.id)
                                                        ])
@@ -95,12 +104,25 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
                              ('activity_type_id','=',5)],limit=1)
                         count_actual_invitation += len(actual_invitation)
                     # get done hr interviews  for cvs
-                    hr_accepted = self.env['calendar.event'].search(
-                        [('create_uid', '=', line.recruiter_id.id),
-                         ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
-                         ('res_model', '=', 'hr.applicant'),('res_id','in',cvs.ids),
-                         ('interview_type_id', '=', 1),('is_interview_done','=',True)])
-                    hr_accepted = len(hr_accepted)
+                        hr_accepted_records = self.env['calendar.event'].search(
+                            [('create_uid', '=', line.recruiter_id.id),
+                             ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
+                             ('res_model', '=', 'hr.applicant'),('res_id','=',cv.id),
+                             ('interview_type_id', '=', 1),('is_interview_done','=',True)])
+
+                        result = self.env['mail.activity'].search(
+                            [('calendar_event_id', 'in', hr_accepted_records.ids), ('active', '=', False)],
+                            order='write_date desc', limit=1)
+
+                        if result.interview_result == "Accepted":
+                            hr_accepted += 1
+                        # else:
+                        #     hr_accepted = hr_accepted
+                    # result= self.env['mail.activity'].search([('calendar_event_id','in',hr_accepted.ids),('active','=',False)],order ='write_date desc',limit = 1)
+                    # if result.interview_result == "Accepted":
+                    #     hr_accepted = 1
+                    # else:
+                    #     hr_accepted = 0
                     # get done final interviews for cvs
                     final_accepted = self.env['calendar.event'].search(
                         [('create_uid', '=', line.recruiter_id.id),
@@ -165,12 +187,12 @@ class Actual_Vs_TargetWrapper:
         self.level_id = line.level_id
         self.weight = line.weight or 0.0
         self.target_screening = str(line.cvs)
+        self.actual_screening = str(len(cvs))
         self.target_calls = str(round(float(self.target_screening) * .8,2))
+        self.actual_calls = str(actual_calls)
         self.target_invitation = str(round(float(self.target_calls) * .3,2))
+        self.actual_invitation = str(count_actual_invitation)
         self.target_hr_accepted = str(round(float(self.target_invitation) * .35,2))
+        self.actual_hr_accepted = str(hr_accepted)
         self.target_final_accepted = str(round(float(self.target_hr_accepted) * .5,2))
-        self.actual_screening_vs_target = str(len(cvs)) + ' - ' + self.target_screening
-        self.actual_calls_vs_target = str(actual_calls)  + ' - ' + self.target_calls
-        self.actual_invitation_vs_target = str(count_actual_invitation) + ' - ' + self.target_invitation
-        self.actual_hr_accepted_vs_target = str(hr_accepted) + ' - ' + self.target_hr_accepted
-        self.actual_final_accepted_vs_target = str(final_accepted) + ' - ' + self.target_final_accepted
+        self.actual_final_accepted = str(final_accepted)

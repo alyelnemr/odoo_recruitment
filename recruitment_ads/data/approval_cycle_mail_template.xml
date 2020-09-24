@@ -24,7 +24,11 @@
             <br/>
             ·<strong> Direct Manager:</strong>
             <br/>
-
+           <div style="text-align: center; margin-top: 16px;">
+                <a href="/approval/cycle/approved?o=${object.approval_cycle_id.offer_id.id}&t=${object.id}" style="padding: 7px 13px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:5px">Approve</a>
+                <a href="/approval/cycle/reject?o=${object.approval_cycle_id.offer_id.id}&t=${object.id}" style="padding: 7px 13px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:5px">Reject</a>
+            </div>
+            <br/>
             <table border = 1px solid black style="border-collapse: collapse;width: 100%;">
                 <tr >
                 <td style="width:80px;">Recruitment reasons</td>
@@ -90,10 +94,6 @@
 
               </tr>
               </table>
-              <div style="text-align: center; margin-top: 16px;">
-                <a href="/approval/cycle/approved?o=${object.approval_cycle_id.offer_id.id}&t=${object.id}" style="padding: 7px 13px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:5px">Approve</a>
-                <a href="/approval/cycle/reject?o=${object.approval_cycle_id.offer_id.id}&t=${object.id}" style="padding: 7px 13px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:5px">Reject</a>
-            </div>
 
 
 ]]></field>
