@@ -84,6 +84,7 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
         if report.type_report == 'actual' or report.type_report == 'actual_vs_target' :
             for line in report.line_ids:
                 count_actual_invitation = 0
+                hr_accepted = 0
                 cvs = self.env['hr.applicant'].search([('create_uid','=',line.recruiter_id.id),('create_date','>=',report.date_from ),
                                                        ('create_date','<=',report.date_to ),('job_id','=',line.job_position_id.id)
                                                        ])
@@ -103,17 +104,25 @@ class GenerateDailyTargetReportXslx(models.AbstractModel):
                              ('activity_type_id','=',5)],limit=1)
                         count_actual_invitation += len(actual_invitation)
                     # get done hr interviews  for cvs
-                    hr_accepted = self.env['calendar.event'].search(
-                        [('create_uid', '=', line.recruiter_id.id),
-                         ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
-                         ('res_model', '=', 'hr.applicant'),('res_id','in',cvs.ids),
-                         ('interview_type_id', '=', 1),('is_interview_done','=',True)])
+                        hr_accepted_records = self.env['calendar.event'].search(
+                            [('create_uid', '=', line.recruiter_id.id),
+                             ('create_date', '>=', report.date_from), ('create_date', '<=', report.date_to),
+                             ('res_model', '=', 'hr.applicant'),('res_id','=',cv.id),
+                             ('interview_type_id', '=', 1),('is_interview_done','=',True)])
 
-                    result= self.env['mail.activity'].search([('calendar_event_id','in',hr_accepted.ids),('active','=',False)],order ='write_date desc',limit = 1)
-                    if result.interview_result == "Accepted":
-                        hr_accepted = 1
-                    else:
-                        hr_accepted = 0
+                        result = self.env['mail.activity'].search(
+                            [('calendar_event_id', 'in', hr_accepted_records.ids), ('active', '=', False)],
+                            order='write_date desc', limit=1)
+
+                        if result.interview_result == "Accepted":
+                            hr_accepted += 1
+                        # else:
+                        #     hr_accepted = hr_accepted
+                    # result= self.env['mail.activity'].search([('calendar_event_id','in',hr_accepted.ids),('active','=',False)],order ='write_date desc',limit = 1)
+                    # if result.interview_result == "Accepted":
+                    #     hr_accepted = 1
+                    # else:
+                    #     hr_accepted = 0
                     # get done final interviews for cvs
                     final_accepted = self.env['calendar.event'].search(
                         [('create_uid', '=', line.recruiter_id.id),
