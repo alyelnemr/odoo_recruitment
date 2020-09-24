@@ -228,8 +228,10 @@ Chatter.include({
       this.getSession().user_has_group('hr_recruitment.group_hr_recruitment_manager').then(function(has_group) {
             if(has_group){window.manager =  true; }
          });
-        if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
-           alert('This Application is Owned by another Recruiter , you are not allowed to take any action on.');
+        if(this.record.data.user_id){
+            if (this.record.data.user_id != false && this.record.data.user_id.data.id !== Session.uid && window.manager !== true){
+                alert('This Application is Owned by another Recruiter , you are not allowed to take any action on.');
+            }else{this._super.apply(this, arguments);}
         }else{this._super.apply(this, arguments);}
     },
 
