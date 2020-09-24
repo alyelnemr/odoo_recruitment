@@ -34,7 +34,7 @@ class Offer(models.Model):
                  'mobile_allowance', 'shifts_no', 'hour_rate', 'offer_type', 'years_of_exp', 'amount_per_year')
     def _compute_total_package(self):
         for offer in self:
-            if offer.offer_type in("normal_offer" , 'exceeding_salary_scale' , 'cont_renewal' ):
+            if offer.offer_type in ("normal_offer", 'exceeding_salary_scale', 'cont_renewal'):
                 total_salary = offer.fixed_salary + offer.variable_salary
                 total_package = total_salary + offer.housing_allowance + offer.medical_insurance + \
                                 offer.travel_allowance + offer.mobile_allowance
@@ -109,7 +109,8 @@ class Offer(models.Model):
     comment = fields.Text(string='Notes')
     reject_reason = fields.Many2one('reject.reason', string='Rejection Reason')
     offer_type = fields.Selection([('normal_offer', 'Normal Offer'),
-                                   ('nursing_offer', 'Medical/Nursing Offer'),('cont_renewal','Contract Renewal'),('exceeding_salary_scale','Offer exceeding salary scale') ],
+                                   ('nursing_offer', 'Medical/Nursing Offer'), ('cont_renewal', 'Contract Renewal'),
+                                   ('exceeding_salary_scale', 'Offer exceeding salary scale')],
                                   string="Offer Type", default="normal_offer", required=True)
     shifts_no = fields.Integer('No. of Shifts/Month', required=False)
     shift_hours = fields.Float('No. of hours/Shift', required=False, default=12)
@@ -252,7 +253,8 @@ class Offer(models.Model):
             'department': self.department_id.name,
             'business_unit': self.business_unit_id.name,
             'fixed_salary': str(
-                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type in ('normal_offer' , 'exceeding_salary_scale' ,'cont_renewal') else str(
+                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type in (
+                'normal_offer', 'exceeding_salary_scale', 'cont_renewal') else str(
                 self.total_salary) + ' ' + self.currency_id.symbol,
             'variable_salary': str(self.variable_salary) + ' ' + self.currency_id.symbol,
             'total_package': str(self.total_package) + ' ' + self.currency_id.symbol,
@@ -306,7 +308,8 @@ class Offer(models.Model):
             'job': self.job_id.name,
             'dep': self.department_id.name,
             'basic_salary': str(
-                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type in ('normal_offer' , 'exceeding_salary_scale' ,'cont_renewal') else str(
+                self.fixed_salary) + ' ' + self.currency_id.symbol if self.offer_type in (
+                'normal_offer', 'exceeding_salary_scale', 'cont_renewal') else str(
                 self.total_salary) + ' ' + self.currency_id.symbol,
             'total_salary': str(self.total_salary) + ' ' + self.currency_id.symbol,
             'package_salary': str(self.total_package) + ' ' + self.currency_id.symbol,
@@ -408,6 +411,121 @@ class Offer(models.Model):
             return action
         else:
             return False
+
+    def get_approval_cycle_url(self):
+        self.ensure_one()
+        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads', 'action_hr_approval_cycle')
+        approval_cycle_id = self.env['hr.approval.cycle'].search(
+            [('id', 'in', self.approval_cycle_ids.ids), ('state', '!=', 'rejected')],
+            order='create_date desc', limit=1)
+        return 'web#id=' + str(approval_cycle_id.id) + '&view_type=form&model=hr.approval.cycle&action=' + str(
+            action.get('id'))
+
+    @api.multi
+    def action_send_hr_mail(self):
+        self.ensure_one()
+
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'send_hr_mail_template')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = \
+                ir_model_data.get_object_reference('recruitment_ads',
+                                                   'view_send_hr_mail_compose_message_wizard_from')[1]
+        except ValueError:
+            compose_form_id = False
+        offer = self
+        from docxtpl import DocxTemplate
+        paths = config['addons_path'].split(',')
+        c_p = ''
+        for path in paths:
+            c_p = path + '/recruitment_ads/static/src/docx/'
+            if os.path.isdir(c_p):
+                break
+        if not c_p:
+            raise ValidationError('Check addon paths on configuration file')
+        if offer.bu_location != 'egypt':
+            doc = DocxTemplate(c_p + "KSA_Offer_template.docx")
+            context = {
+                'partner_name': offer.application_id.partner_id.name,
+                'job': offer.job_id.name,
+                'dep': offer.department_id.name,
+                'basic_salary': str(
+                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type in (
+                    'normal_offer', 'exceeding_salary_scale', 'cont_renewal') else str(
+                    offer.total_salary) + ' ' + offer.currency_id.symbol,
+                'total_salary': str(offer.total_salary) + ' ' + offer.currency_id.symbol,
+                'package_salary': str(offer.total_package) + ' ' + offer.currency_id.symbol,
+                'house_allowance': str(offer.housing_allowance) + ' ' + offer.currency_id.symbol,
+                'travel_allowance': str(offer.travel_allowance) + ' ' + offer.currency_id.symbol,
+            }
+            doc.render(context)
+            sequence = self.env.ref('recruitment_ads.sequence_offer_ksa')
+            number = sequence.next_by_id()
+            file_number = "KSA_Offer_%s.docx" % number
+        else:
+            doc = DocxTemplate(c_p + "egypt-offer.docx")
+            context = {
+                'name_en': offer.application_id.partner_id.name,
+                'job': offer.job_id.job_title_id.name,
+                'level': offer.job_id.job_level_id.name or '',
+                'department': offer.department_id.name,
+                'business_unit': offer.business_unit_id.name,
+                'fixed_salary': str(
+                    offer.fixed_salary) + ' ' + offer.currency_id.symbol if offer.offer_type in (
+                    'normal_offer', 'exceeding_salary_scale', 'cont_renewal') else str(
+                    offer.total_salary) + ' ' + offer.currency_id.symbol,
+                'variable_salary': str(offer.variable_salary) + ' ' + offer.currency_id.symbol,
+                'total_package': str(offer.total_package) + ' ' + offer.currency_id.symbol,
+                'date': datetime.strptime(offer.issue_date, '%Y-%m-%d').strftime('%d-%b-%Y')
+            }
+            doc.render(context)
+            sequence = self.env.ref('recruitment_ads.sequence_offer_egypt')
+            number = sequence.next_by_id()
+            file_number = "EGYPT_Offer_%s.docx" % number
+
+        with osutil.tempdir() as dump_dir:
+            file_name = dump_dir
+        doc.save(file_name)
+        if hasattr(file_name, 'read'):
+            buf = file_name.read()
+        else:
+            with open(file_name, 'rb') as fh:
+                buf = fh.read()
+
+        b64_pdf = base64.encodestring(buf)
+        res = self.env['ir.attachment'].create({
+            'name': file_number,
+            'datas': b64_pdf,
+            'datas_fname': file_number})
+        attach = self.env['ir.attachment'].search(
+            [('res_model', '=', 'hr.applicant'), ('res_id', '=', self.application_id.id),
+             ('attachment_type', 'in', ('cv', 'assessment'))])
+        attach = res.ids + attach.ids
+        ctx = {
+            'default_model': 'hr.offer',
+            'default_offer_id': offer.id,
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'default_attachment_ids': [(6, 0, attach)],
+            'time_format': '%I:%M %p',
+            'force_email': True
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'send.hr.mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
 
 class RejectionReason(models.Model):

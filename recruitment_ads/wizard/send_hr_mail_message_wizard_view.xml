@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_send_hr_mail_compose_message_wizard_from" model="ir.ui.view">
+        <field name="name">view_send_hr_mail_compose_message_wizard_from</field>
+        <field name="model">send.hr.mail.compose.message</field>
+        <field name="inherit_id" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <form string="Compose Send HR Email">
+                <group>
+                    <field name="approval_user" widget="many2many_short_tags"
+                           options="{'no_create':True}"
+                           domain="[('GUID','!=',False)]"
+                           context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}"/>
+                    <field name="recruiter_id" widget="many2many_short_tags"
+                           options="{'no_create':True}"
+                           domain="[('GUID','!=',False)]"
+                           context="{'display_pos':True,'force_email':True,'orderby':'name','match_name_start':True,'short_name_display':True}"/>
+                    <field name="subject" placeholder="Subject..." required="True"/>
+                </group>
+                <field name="body" options="{'style-inline': true}"/>
+                <group col="4">
+
+                    <field name="template_id" options="{'no_create': True}" invisible="1"
+                           context="{'default_model': model,'default_body_html': body,'default_subject': subject}"/>
+                </group>
+                <group col="4">
+                    <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+                </group>
+                <footer>
+                    <button string="Send" name="send_mail_action"
+                            type="object" class="btn-primary o_mail_send"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                    <field name="composition_mode" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="model" invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -33,6 +33,12 @@
                                 context="{'default_offer_id': id,'default_application_id':application_id}"
                                 attrs="{'invisible': ['|',('state', '!=', 'offer'),('last_approval_cycle_state','=',False)]}"
                         />
+                        <button string="Send HR Mail"
+                                name="action_send_hr_mail"
+                                type="object"
+                                context="{'default_offer_id': id,'default_application_id':application_id}"
+                                attrs="{'invisible': [('state', '!=', 'hired')]}"
+                        />
                     </header>
                     <sheet>
                         <div class="oe_title">
