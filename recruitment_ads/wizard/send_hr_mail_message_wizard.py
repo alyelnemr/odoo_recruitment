@@ -9,13 +9,14 @@ class SendHRMailComposeMessage(models.TransientModel):
     _description = 'Send HR Mail wizard'
 
     approval_user = fields.Many2many('res.partner', 'send_hr_mail_to_compose_message_res_partner_rel', 'wizard_id',
-                                     'partner_id', string='To')
+                                     'partner_id', string='To',required = True)
     recruiter_id = fields.Many2many('res.partner', 'send_hr_mail_cc_compose_message_res_partner_rel', 'wizard_id',
                                     'partner_id', string='CC')
 
     attachment_ids = fields.Many2many('ir.attachment', 'send_hr_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
     website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)
+    hr_offer_id = fields.Many2one('hr.offer')
 
     @api.model
     def generate_email_for_composer(self, template_id, res_ids, fields=None):
@@ -100,6 +101,8 @@ class SendHRMailComposeMessage(models.TransientModel):
     def send_mail(self, auto_commit=False):
         """ Process the wizard content and proceed with sending the related
             email(s), rendering any template patterns on the fly if needed. """
+
+
         for wizard in self:
             # Duplicate attachments linked to the email.template.
             # Indeed, basic mail.compose.message wizard duplicates attachments in mass
@@ -130,5 +133,17 @@ class SendHRMailComposeMessage(models.TransientModel):
                 for res_id, mail_values in all_mail_values.items():
                     batch_mails |= Mail.create(mail_values)
                 batch_mails.send(auto_commit=auto_commit)
+            hr_request = self.env['hr.request'].create({
+                'applicant_code': wizard.hr_offer_id.application_id.name,
+                'applicant_name': wizard.hr_offer_id.applicant_name,
+                'business_unit_id': wizard.hr_offer_id.business_unit_id.id,
+                'job_id': wizard.hr_offer_id.job_id.id,
+                'department_id': wizard.hr_offer_id.department_id.id,
+                'section_id': wizard.hr_offer_id.job_id.section_id.id,
+                'recruiter_responsible': wizard.hr_offer_id.application_id.user_id.id,
+                'hr_responsible': wizard.approval_user[0].id,
+                'hiring_status': 'Hired',
+                'hiring_date': wizard.hr_offer_id.hiring_date,
+            })
 
         return {'type': 'ir.actions.act_window_close'}

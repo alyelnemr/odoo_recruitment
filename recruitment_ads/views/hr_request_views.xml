@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--Hr Request form View-->
+        <record id="hr_request_form_view" model="ir.ui.view">
+            <field name="name">hr.request.form.view.</field>
+            <field name="model">hr.request</field>
+            <field name="arch" type="xml">
+                <form string="Hr Request" create="false" edit="false" delete="false">
+                <header>
+                    <button string="Create User Account"
+                                name="create_user_account"
+                                type="object"
+                        />
+                </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h3>
+                                <field name="applicant_code" readonly="1"/>
+                                <field name="applicant_name" readonly="1"/>
+                            </h3>
+                        </div>
+                        <group>
+                        <group>
+                                <field name="hiring_status" readonly="1"/>
+                                <field name="hiring_date" readonly="1"/>
+                            </group>
+                            <group>
+
+                                <field name="recruiter_responsible" readonly="1"/>
+                                <field name="hr_responsible" readonly="1"/>
+                            </group>
+                            <group>
+                                 <field name="job_id" readonly="1"/>
+                                <field name="business_unit_id" readonly="1"/>
+                                <field name="department_id" readonly="1"/>
+                                <field name="section_id" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+        <!--hr request tree view-->
+        <record id="hr_request_tree_view" model="ir.ui.view">
+            <field name="name">hr_request_tree_view</field>
+            <field name="model">hr.request</field>
+            <field name="arch" type="xml">
+                <tree string="Hr Request" create="false" delete="false">
+                    <field name="applicant_name"/>
+                    <field name="applicant_code"/>
+                    <field name="job_id"/>
+                    <field name="business_unit_id"/>
+                    <field name="department_id"/>
+                    <field name="section_id"/>
+                    <field name="recruiter_responsible"/>
+                    <field name="hr_responsible"/>
+                </tree>
+            </field>
+        </record>
+        <!--View hr request Search-->
+        <record id="view_hr_request_filter" model="ir.ui.view">
+            <field name="name">hr.request.search</field>
+            <field name="model">hr.request</field>
+            <field name="arch" type="xml">
+                <search string="View hr request">
+                    <field name="hiring_date" string="Date"/>
+                    <field name="applicant_name" string="Applicant Name"/>
+                    <field name="applicant_code" string="Applicant Code"/>
+                    <field name="job_id" string="Job Position"/>
+                    <field name="business_unit_id" string="Business Unit"/>
+                    <field name="department_id" string="Department"/>
+                    <field name="section_id" string="Section"/>
+                    <field name="recruiter_responsible" string="Recruiter"/>
+                    <field name="hr_responsible" string="Hr Responsible"/>
+                    <filter string="Unread Messages" name="message_needaction"
+                            domain="[('message_needaction','=',True)]"/>
+                    <separator/>
+                    <group string="Group By..." expand="0" name="groupby">
+                        <filter string="Recruiter" context="{'group_by':'recruiter_responsible'}"
+                                name="recruiter_responsible"/>
+                        <filter string="Hr Responsible" context="{'group_by':'hr_responsible'}"
+                                name="hr_responsible"/>
+                        <filter string="Job Position" context="{'group_by':'job_id'}" name="job_id"/>
+                        <filter string="Department" context="{'group_by':'department_id'}" name="department_id"/>
+                        <filter string="Section" context="{'group_by':'section_id'}" name="section_id"/>
+                        <filter string="Business Unit" context="{'group_by':'business_unit_id'}" name="business_unit_id"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--Hr Request Action-->
+        <record id="action_hr_request" model="ir.actions.act_window">
+            <field name="name">Hr Request Views</field>
+            <field name="res_model">hr.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_hr_request_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Hr Request.
+                </p>
+            </field>
+        </record>
+        <!--View hr request Menu-->
+        <menuitem id="menu_hr_request_parent"
+                  name="Hr Requests"
+                  sequence="2"
+                  parent="hr_recruitment.menu_hr_recruitment_root"
+                  groups="recruitment_ads.group_view_hr_request"/>
+        <menuitem
+                action="action_hr_request"
+                id="menu_hr_request"
+                parent="menu_hr_request_parent"
+                sequence="1"
+                name="Hr Requests"
+                groups="recruitment_ads.group_view_hr_request"/>
+    </data>
+</odoo>

@@ -53,6 +53,10 @@
     <record id="group_view_recruitment_tickets" model="res.groups">
         <field name="name">View Recruitment Tickets</field>
     </record>
+
+    <record id="group_view_hr_request" model="res.groups">
+        <field name="name">View Hr Requests</field>
+    </record>
     <!--   Add coordinator role to recruitment access right     -->
     <record id="group_hr_recruitment_coordinator" model="res.groups">
         <field name="name">Coordinator</field>
