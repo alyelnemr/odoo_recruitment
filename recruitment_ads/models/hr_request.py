@@ -16,6 +16,7 @@ class HrRequest(models.Model):
     hr_responsible = fields.Many2one('res.partner', string='Hr Responsible', readonly=True)
     hiring_status = fields.Char()
     hiring_date = fields.Date()
+    create_account = fields.Boolean()
 
     @api.multi
     def create_user_account(self):
@@ -42,6 +43,7 @@ class HrRequest(models.Model):
             'default_composition_mode': 'comment',
             'time_format': '%I:%M %p',
             'force_email': True,
+            'default_recruiter_id':[self.env.user.partner_id.id]
         }
 
         return {

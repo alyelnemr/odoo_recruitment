@@ -21,13 +21,13 @@
 
                 </group>
 
-                <field name="body"   options="{'style-inline': true}"/>
+                <field name="body"   options="{'style-inline': true}" height ="100" />
                 <group col="4">
                 <field name="template_id" options="{'no_create': True}" invisible="1"
                            context="{'default_model': model,'default_body_html': body,'default_subject': subject}" />
                 </group>
                 <group col="4">
-                    <field name="attachment_ids" widget="many2many_binary"  nolabel="1"/>
+                    <field name="attachment_ids" widget="many2many_binary"  nolabel="1" invisible="1"/>
                 </group>
                 <footer>
                     <button string="Send" name="send_mail_action"

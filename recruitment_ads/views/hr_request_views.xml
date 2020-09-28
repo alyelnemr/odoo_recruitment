@@ -63,9 +63,11 @@
                     <field name="hr_responsible"/>
                     <field name="hiring_date" string="Date"/>
                      <field name="hiring_status" readonly="1"/>
+                    <field name="create_account" invisible="1"/>
                     <button string="Create User Account"
                     name="create_user_account"
                     type="object"
+                    attrs="{'invisible': [('create_account', '=',True)]}"
                         />
                 </tree>
             </field>

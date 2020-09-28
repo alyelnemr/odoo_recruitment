@@ -9,7 +9,61 @@
             <field name="model_id" ref="recruitment_ads.model_hr_request"/>
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
-            <strong>testtttttt</strong>
+            <p style="font-size: 15px; text-align: center;color:#00008B;">Create New Account - انشاء حساب جديد</p>
+            <br/>
+           <p style="font-size: 18px; text-align: right; color:#000000;"><strong>: الاسم العربى</strong></p>
+
+           <table  border = 1px solid black style="border-collapse: collapse;width: 100%; text-align: center;">
+                <tr>
+                <th style="color:#00008B; text-align: center;"> الاسم الرابع</th>
+                <th style="color:#00008B; text-align: center;"> الاسم الثالث</th>
+                <th style="color:#00008B; text-align: center;"> الاسم الثانى</th>
+                <th style="color:#00008B; text-align: center;"> الاسم الاول</th>
+                </tr>
+                <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>
+            </table>
+            <br/>
+           <p style="font-size: 18px; text-align: left; color:#000000;"><strong>English Name :</strong></p>
+
+           <table  border = 1px solid black style="border-collapse: collapse;width: 100%; text-align: center;">
+                <tr>
+                <th style="color:#00008B; text-align: center;">First Name</th>
+                <th style="color:#00008B; text-align: center;">Second Name</th>
+                <th style="color:#00008B; text-align: center;">Third Name</th>
+                <th style="color:#00008B; text-align: center;">Fourth Name</th>
+                </tr>
+                <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>
+            </table>
+            <br/>
+
+            <table id="job" style="border-collapse: collapse;width: 100%; text-align: center;">
+                <tr>
+                <td id ="td1_job" style="color:#00008B; text-align: right;"><strong>  :المسمى الوظيفى </strong></td>
+                <td id ="td2_job" style="text-align: right;"><span>${object.department_id.name}/${object.section_id.name}</span><strong style="color:#00008B;"> : القسم</strong></td>
+                </tr>
+
+            </table>
+
+            <br/>
+            <p style="font-size: 18px; text-align:right;"><span>${object.hiring_date}</span><strong style="color:#00008B;">: تاريخ التعيين</strong></p>
+            <br/>
+            <div dir ="rtl">
+            <p style="font-size: 18px; text-align:right;  color:#00008B;"><strong>المدير المباشر (باللغة الانجليزية) :</strong></p>
+             <br/>
+            <p style="font-size: 18px; text-align:right; color:#00008B;"><strong>ملاحظات :</strong></p>
+            </div>
+
+
 
 ]]></field>
         </record>

@@ -64,9 +64,30 @@ class CreateUserAccountComposeMessage(models.TransientModel):
             #     email_to = ','.join([p.email for p in self.partner_ids])
             #     email_cc = ','.join([p.email for p in self.follower_ids])
 
+                body = """        
+
+            <style>
+            td,th  {
+              border: 1px solid black;
+              border-collapse: collapse;
+            }
+            
+            #job{
+              border-collapse: collapse;
+               width: 100%;
+               text-align: center;
+            }
+            
+           #td1_job , #td2_job {
+                border: 0px solid #FFFFE0;
+           }
+
+            </style>""" + self.body
+
+
             mail_values = {
                 'subject': self.subject,
-                'body_html': self.body or '',
+                'body_html': body or '',
                 'parent_id': self.parent_id and self.parent_id.id,
                 'partner_ids': [],
                 'email_to': email_to or False,
@@ -124,7 +145,9 @@ class CreateUserAccountComposeMessage(models.TransientModel):
 
             batch_size = int(self.env['ir.config_parameter'].sudo().get_param('mail.batch_size')) or self._batch_size
             sliced_res_ids = [res_ids[i:i + batch_size] for i in range(0, len(res_ids), batch_size)]
-
+            record = self.env['hr.request'].browse(wizard.res_id)
+            if record:
+                record.create_account = True
             for res_ids in sliced_res_ids:
                 batch_mails = Mail
                 all_mail_values = wizard.get_mail_values(res_ids)
