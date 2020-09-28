@@ -123,6 +123,7 @@ class Offer(models.Model):
     position_grade_id = fields.Many2one('position.grade', string="Position Grade", ondelete='restrict', required=True)
     last_approval_cycle_state = fields.Boolean(compute='_get_last_approval_cycle_state')
     approval_cycle_state = fields.Char(compute='_get_last_approval_cycle_state')
+    send_hr_mail_flag = fields.Boolean(default=False)
 
     @api.multi
     @api.depends('approval_cycle_ids')

@@ -9,7 +9,7 @@ class SendHRMailComposeMessage(models.TransientModel):
     _description = 'Send HR Mail wizard'
 
     approval_user = fields.Many2many('res.partner', 'send_hr_mail_to_compose_message_res_partner_rel', 'wizard_id',
-                                     'partner_id', string='To',required = True)
+                                     'partner_id', string='To', required=True)
     recruiter_id = fields.Many2many('res.partner', 'send_hr_mail_cc_compose_message_res_partner_rel', 'wizard_id',
                                     'partner_id', string='CC')
 
@@ -102,7 +102,6 @@ class SendHRMailComposeMessage(models.TransientModel):
         """ Process the wizard content and proceed with sending the related
             email(s), rendering any template patterns on the fly if needed. """
 
-
         for wizard in self:
             # Duplicate attachments linked to the email.template.
             # Indeed, basic mail.compose.message wizard duplicates attachments in mass
@@ -145,5 +144,6 @@ class SendHRMailComposeMessage(models.TransientModel):
                 'hiring_status': 'Hired',
                 'hiring_date': wizard.hr_offer_id.hiring_date,
             })
+            wizard.hr_offer_id.send_hr_mail_flag = True
 
         return {'type': 'ir.actions.act_window_close'}
