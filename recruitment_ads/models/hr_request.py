@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 
+
 class HrRequest(models.Model):
     _name = 'hr.request'
     _inherit = ['mail.thread']
@@ -37,13 +38,14 @@ class HrRequest(models.Model):
             compose_form_id = False
 
         ctx = {
-            'default_model':'hr.request',
+            'default_model': 'hr.request',
             'default_use_template': bool(template_id),
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'time_format': '%I:%M %p',
             'force_email': True,
-            'default_recruiter_id':[self.env.user.partner_id.id]
+            'default_recruiter_id': [self.env.user.partner_id.id],
+            'default_hr_request_id': self.id,
         }
 
         return {

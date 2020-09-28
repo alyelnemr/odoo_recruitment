@@ -8,13 +8,15 @@ class CreateUserAccountComposeMessage(models.TransientModel):
     _inherit = 'mail.compose.message'
     _description = 'Create User Account Mail wizard'
 
-    approval_user = fields.Many2many('res.partner','create_user_mail_to_compose_message_res_partner_rel', 'wizard_id',
-                                     'partner_id', string='To',required = True, domain=[('applicant', '=', False)])
+    approval_user = fields.Many2many('res.partner', 'create_user_mail_to_compose_message_res_partner_rel', 'wizard_id',
+                                     'partner_id', string='To', required=True, domain=[('applicant', '=', False)])
     recruiter_id = fields.Many2many('res.partner', 'create_user_mail_cc_compose_message_res_partner_rel', 'wizard_id',
-                                   'partner_id', string='CC', domain=[('applicant', '=', False)])
-    attachment_ids = fields.Many2many('ir.attachment', 'create_user_mail_compose_message_ir_attachments_rel', 'wizard_id',
+                                    'partner_id', string='CC', domain=[('applicant', '=', False)])
+    attachment_ids = fields.Many2many('ir.attachment', 'create_user_mail_compose_message_ir_attachments_rel',
+                                      'wizard_id',
                                       'attachment_id', string='Attachments')
     website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)
+    hr_request_id = fields.Many2one('hr.request')
 
     @api.model
     def generate_email_for_composer(self, template_id, res_ids, fields=None):
@@ -60,9 +62,9 @@ class CreateUserAccountComposeMessage(models.TransientModel):
             if xml_ids[0] == 'recruitment_ads.create_user_account_mail_template':
                 email_to = ','.join([p.email for p in self.approval_user])
                 email_cc = ','.join([p.email for p in self.recruiter_id])
-            # else:
-            #     email_to = ','.join([p.email for p in self.partner_ids])
-            #     email_cc = ','.join([p.email for p in self.follower_ids])
+                # else:
+                #     email_to = ','.join([p.email for p in self.partner_ids])
+                #     email_cc = ','.join([p.email for p in self.follower_ids])
 
                 body = """        
 
@@ -83,7 +85,6 @@ class CreateUserAccountComposeMessage(models.TransientModel):
            }
 
             </style>""" + self.body
-
 
             mail_values = {
                 'subject': self.subject,
@@ -121,7 +122,6 @@ class CreateUserAccountComposeMessage(models.TransientModel):
         """ Process the wizard content and proceed with sending the related
             email(s), rendering any template patterns on the fly if needed. """
 
-
         for wizard in self:
             # Duplicate attachments linked to the email.template.
             # Indeed, basic mail.compose.message wizard duplicates attachments in mass
@@ -154,5 +154,14 @@ class CreateUserAccountComposeMessage(models.TransientModel):
                 for res_id, mail_values in all_mail_values.items():
                     batch_mails |= Mail.create(mail_values)
                 batch_mails.send(auto_commit=auto_commit)
+
+            recruitment_ticket = self.env['recruitment.tickets'].create({
+                'applicant_code': wizard.hr_request_id.applicant_code,
+                'applicant_name': wizard.hr_request_id.applicant_name,
+                'business_unit_id': wizard.hr_request_id.business_unit_id.id,
+                'job_id': wizard.hr_request_id.job_id.id,
+                'department_id': wizard.hr_request_id.department_id.id,
+                'section_id': wizard.hr_request_id.section_id.id
+            })
 
         return {'type': 'ir.actions.act_window_close'}
