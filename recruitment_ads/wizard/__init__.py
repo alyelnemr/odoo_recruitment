@@ -11,3 +11,4 @@ from . import generate_monthly_target_report_wizard
 from . import generate_rejection_mail_message
 from . import approval_cycle_mail_message_wizard
 from . import send_hr_mail_message_wizard
+from .import create_user_account_wizard

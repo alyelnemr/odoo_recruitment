@@ -530,7 +530,8 @@ class Offer(models.Model):
             'default_composition_mode': 'comment',
             'default_attachment_ids': [(6, 0, attach)],
             'time_format': '%I:%M %p',
-            'force_email': True
+            'force_email': True,
+            'default_hr_offer_id': offer.id,
         }
         return {
             'type': 'ir.actions.act_window',

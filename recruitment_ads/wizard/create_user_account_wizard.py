@@ -3,20 +3,18 @@ from odoo import models, fields, api
 from odoo.tools import pycompat
 
 
-class SendHRMailComposeMessage(models.TransientModel):
-    _name = 'send.hr.mail.compose.message'
+class CreateUserAccountComposeMessage(models.TransientModel):
+    _name = 'create.user.account.mail.compose.message'
     _inherit = 'mail.compose.message'
-    _description = 'Send HR Mail wizard'
+    _description = 'Create User Account Mail wizard'
 
-    approval_user = fields.Many2many('res.partner', 'send_hr_mail_to_compose_message_res_partner_rel', 'wizard_id',
-                                     'partner_id', string='To',required = True)
-    recruiter_id = fields.Many2many('res.partner', 'send_hr_mail_cc_compose_message_res_partner_rel', 'wizard_id',
-                                    'partner_id', string='CC')
-
-    attachment_ids = fields.Many2many('ir.attachment', 'send_hr_compose_message_ir_attachments_rel', 'wizard_id',
+    approval_user = fields.Many2many('res.partner','create_user_mail_to_compose_message_res_partner_rel', 'wizard_id',
+                                     'partner_id', string='To',required = True, domain=[('applicant', '=', False)])
+    recruiter_id = fields.Many2many('res.partner', 'create_user_mail_cc_compose_message_res_partner_rel', 'wizard_id',
+                                   'partner_id', string='CC', domain=[('applicant', '=', False)])
+    attachment_ids = fields.Many2many('ir.attachment', 'create_user_mail_compose_message_ir_attachments_rel', 'wizard_id',
                                       'attachment_id', string='Attachments')
     website_published = fields.Boolean(string='Published', help="Visible on the website as a comment", copy=False)
-    hr_offer_id = fields.Many2one('hr.offer')
 
     @api.model
     def generate_email_for_composer(self, template_id, res_ids, fields=None):
@@ -59,7 +57,7 @@ class SendHRMailComposeMessage(models.TransientModel):
         for res_id in res_ids:
             email_dict = template_values[res_id]
             email_cc = email_to = ''
-            if xml_ids[0] == 'recruitment_ads.send_hr_mail_template':
+            if xml_ids[0] == 'recruitment_ads.create_user_account_mail_template':
                 email_to = ','.join([p.email for p in self.approval_user])
                 email_cc = ','.join([p.email for p in self.recruiter_id])
             # else:
@@ -133,17 +131,5 @@ class SendHRMailComposeMessage(models.TransientModel):
                 for res_id, mail_values in all_mail_values.items():
                     batch_mails |= Mail.create(mail_values)
                 batch_mails.send(auto_commit=auto_commit)
-            hr_request = self.env['hr.request'].create({
-                'applicant_code': wizard.hr_offer_id.application_id.name,
-                'applicant_name': wizard.hr_offer_id.applicant_name,
-                'business_unit_id': wizard.hr_offer_id.business_unit_id.id,
-                'job_id': wizard.hr_offer_id.job_id.id,
-                'department_id': wizard.hr_offer_id.job_id.department_id.id,
-                'section_id': wizard.hr_offer_id.job_id.section_id.id,
-                'recruiter_responsible': wizard.hr_offer_id.application_id.user_id.id,
-                'hr_responsible': wizard.approval_user[0].id,
-                'hiring_status': 'Hired',
-                'hiring_date': wizard.hr_offer_id.hiring_date,
-            })
 
         return {'type': 'ir.actions.act_window_close'}
