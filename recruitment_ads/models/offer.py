@@ -347,6 +347,7 @@ class Offer(models.Model):
         self.ensure_one()
         offer_id = self._context.get('default_offer_id', False)
         application_id = self._context.get('default_application_id', False)
+        offer = False
         if offer_id and application_id:
             offer = self.env['hr.offer'].browse(offer_id)
             application = self.env['hr.applicant'].browse(application_id)
@@ -379,15 +380,30 @@ class Offer(models.Model):
             # salary_scale_id = offer.salary_scale_id.id
             # position_grade_id = offer.position_grade_id.id
             users_list_ids = []
+            unduplicated_user_list = []
             for user in self.env['hr.setup.approval.cycle.users'].search(
                     [
                         ('id', 'in', setup_approval_cycle.approval_list_ids.ids),
                         ('stage_id.name', '=', 'Users'),
                     ]):
+                unduplicated_user_list.append(user.id)
                 users_list_ids.append((0, 0, {
                     'approval_position_id': user.id,
                     'state': 'no_action'
                 }))
+
+            hr_policy = self.env['hr.policy'].search([('hr_policy_type', '=', 'ceo_approval_amount')], limit=1)
+            if hr_policy:
+                if offer.total_package >= hr_policy.ceo_approval_amount:
+                    for user in hr_policy.ceo_approval_group:
+                        approval_user_ceo = self.env['hr.setup.approval.cycle.users'].search(
+                            [('name', '=', user.approval_group.name),
+                             ('approval_cycle_id', '=', setup_approval_cycle.id)], limit=1)
+                        if approval_user_ceo.id not in unduplicated_user_list:
+                            users_list_ids.append((0, 0, {
+                                'approval_position_id': approval_user_ceo.id,
+                                'state': 'no_action'
+                            }))
 
             wizard = self.env['hr.approval.cycle.wizard'].create({
                 'users_list_ids': users_list_ids,

@@ -4,9 +4,11 @@ from odoo.exceptions import ValidationError
 
 class HRPolicyCEOApproval(models.Model):
     _name = 'hr.policy.ceo.approval'
+    _order = 'sequence'
 
     approval_group = fields.Many2one('hr.master.approval.group', string='Approval Group', ondelete='cascade')
     hr_policy = fields.Many2one('hr.policy', string='HR Policy')
+    sequence = fields.Integer('Sequence', required=True, default=10)
 
 
 class HRPolicyOfferAndHire(models.Model):
@@ -33,6 +35,7 @@ class HRPolicyOfferAndHire(models.Model):
     def _on_change_check_hire_numbers_only(self):
         if not self.hire.isdigit():
             raise ValidationError(_('Hire must be numbers only!'))
+
 
 class HRPolicy(models.Model):
     _name = 'hr.policy'
