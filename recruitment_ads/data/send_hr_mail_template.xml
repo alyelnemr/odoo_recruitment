@@ -9,16 +9,42 @@
             <field name="model_id" ref="recruitment_ads.model_hr_offer"/>
             <field name="auto_delete" eval="True"/>
             <field name="body_html"><![CDATA[
-                <p>Kindly be informed that &quot;${object.applicant_name}&quot; - &quot;${object.job_id.name}&quot;  will join &quot;${object.business_unit_id.name}&quot; from (&quot;${object.hiring_date}&quot;)</p>
-                <p>Approval Cycle Link</p>
-                % set access_url =object.get_approval_cycle_url()
-                <div style="text-align: center; margin-top: 16px;">
-                        <a href="${access_url}"
-                        style="background-color: #9E588B; margin-top: 10px; padding: 10px; text-decoration: none;
-                        color: #fff; border-radius: 5px; font-size: 16px;">
-                            View Approval Cycle
-                        </a>
-                    </div><br/><br/>
+                <p>Kindly be informed that &quot;${object.applicant_name}&quot; - &quot;${object.job_id.name}&quot; will
+                    join &quot;${object.business_unit_id.name}&quot; from (&quot;${object.hiring_date}&quot;)
+                </p>
+                <p>Approval Cycle Details:</p>
+                % set approval_cycle =object.get_approval_cycle_url()
+                <p style="font-size:10px;"><strong>Salary Scale:</strong>${approval_cycle.salary_scale_id.name}</p>
+                <p style="font-size:10px;"><strong>Position Grade:</strong>${approval_cycle.position_grade_id.name}</p>
+
+                <p><strong>Users</strong></p>
+                <table width="100%"
+                      border = 1px solid black style="border-collapse: collapse;font-family: 'Helvetica';font-size:10px; background-color: #EEE;">
+                    <tbody>
+                        <tr>
+                            <th style="width: 85px;border:1px solid black;">Approval Position</th>
+                            <th style="width: 85px;border:1px solid black;">Approval Users</th>
+                            <th style="width: 25px;border:1px solid black;">Status</th>
+                            <th style="width: 50px;border:1px solid black;">Notes</th>
+                        </tr>
+                        % for row in approval_cycle.users_list_ids:
+                        <tr>
+                            <td style="border:1px solid black;">${row.approval_position_id.name}</td>
+                            <td style="border:1px solid black;">${row.approval_user_id.name or ''}</td>
+                            <td style="border:1px solid black;">${row.state or ''}</td>
+                            <td style="border:1px solid black;">${row.notes or ''}</td>
+                        </tr>
+                        %endfor
+                    </tbody>
+                </table>
+
+                % if approval_cycle.comment:
+                <strong style="font-size:10px;">Notes:</strong>
+                <p style="font-size:10px;">${approval_cycle.comment}</p>
+                % endif
+
+                <br/>
+                <br/>
                 <p>Candidate will need &quot; &quot;</p>
             ]]></field>
         </record>

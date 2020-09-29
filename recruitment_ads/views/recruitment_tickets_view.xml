@@ -7,7 +7,7 @@
             <field name="name">recruitment.tickets.form</field>
             <field name="model">recruitment.tickets</field>
             <field name="arch" type="xml">
-                <form string="View Recruitment Tickets" create="false" edit="false" delete="false">
+                <form string="Recruitment Tickets" create="false" edit="false" delete="false">
                     <sheet>
                         <div class="oe_title">
                             <h3>
@@ -41,7 +41,7 @@
             <field name="name">recruitment.tickets.tree</field>
             <field name="model">recruitment.tickets</field>
             <field name="arch" type="xml">
-                <tree string="View Recruitment Tickets" create="false" delete="false">
+                <tree string="Recruitment Tickets" create="false" delete="false">
                     <field name="applicant_name"/>
                     <field name="applicant_code"/>
                     <field name="job_id"/>
@@ -58,7 +58,7 @@
             <field name="name">recruitment.tickets.search</field>
             <field name="model">recruitment.tickets</field>
             <field name="arch" type="xml">
-                <search string="View Recruitment Tickets">
+                <search string="Recruitment Tickets">
                     <field name="create_date" string="Date"/>
                     <field name="applicant_name" string="Applicant Name"/>
                     <field name="applicant_code" string="Applicant Code"/>
@@ -98,7 +98,7 @@
         <!--View Recruitment Tickets Menu-->
         <menuitem id="menu_hr_recruitment_tickets_parent"
                   name="Recruitment Tickets"
-                  sequence="5"
+                  sequence="3"
                   parent="hr_recruitment.menu_hr_recruitment_root"
                   groups="recruitment_ads.group_view_recruitment_tickets"/>
         <menuitem

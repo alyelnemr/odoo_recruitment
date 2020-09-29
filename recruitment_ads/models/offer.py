@@ -431,12 +431,13 @@ class Offer(models.Model):
 
     def get_approval_cycle_url(self):
         self.ensure_one()
-        action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads', 'action_hr_approval_cycle')
+        # action = self.env['ir.actions.act_window'].for_xml_id('recruitment_ads', 'action_hr_approval_cycle')
         approval_cycle_id = self.env['hr.approval.cycle'].search(
             [('id', 'in', self.approval_cycle_ids.ids), ('state', '!=', 'rejected')],
             order='create_date desc', limit=1)
-        return 'web#id=' + str(approval_cycle_id.id) + '&view_type=form&model=hr.approval.cycle&action=' + str(
-            action.get('id'))
+        # return 'web#id=' + str(approval_cycle_id.id) + '&view_type=form&model=hr.approval.cycle&action=' + str(
+        #     action.get('id'))
+        return approval_cycle_id
 
     @api.multi
     def action_send_hr_mail(self):
