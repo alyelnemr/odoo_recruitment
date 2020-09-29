@@ -161,7 +161,7 @@ class CreateUserAccountComposeMessage(models.TransientModel):
                 'business_unit_id': wizard.hr_request_id.business_unit_id.id,
                 'job_id': wizard.hr_request_id.job_id.id,
                 'department_id': wizard.hr_request_id.department_id.id,
-                'section_id': wizard.hr_request_id.section_id.id
+                'section_id': wizard.hr_request_id.section_id.id if wizard.hr_request_id.section_id else False
             })
 
         return {'type': 'ir.actions.act_window_close'}

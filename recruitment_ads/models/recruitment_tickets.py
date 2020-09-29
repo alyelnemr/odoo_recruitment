@@ -15,5 +15,5 @@ class RecruitmentTickets(models.Model):
     business_unit_id = fields.Many2one('business.unit', string='Business Unit', required=True)
     job_id = fields.Many2one('hr.job', string='Job Position', required=True)
     department_id = fields.Many2one('hr.department', string='Department', required=True)
-    section_id = fields.Many2one('hr.department', string='Section', required=True)
+    section_id = fields.Many2one('hr.department', string='Section')
     create_uid = fields.Many2one('res.users', string='Requester', readonly=True)

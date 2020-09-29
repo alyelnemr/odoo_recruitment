@@ -138,7 +138,7 @@ class SendHRMailComposeMessage(models.TransientModel):
                 'business_unit_id': wizard.hr_offer_id.business_unit_id.id,
                 'job_id': wizard.hr_offer_id.job_id.id,
                 'department_id': wizard.hr_offer_id.job_id.department_id.id,
-                'section_id': wizard.hr_offer_id.job_id.section_id.id,
+                'section_id': wizard.hr_offer_id.job_id.section_id.id if wizard.hr_offer_id.job_id.section_id else False,
                 'recruiter_responsible': wizard.hr_offer_id.application_id.user_id.id,
                 'hr_responsible': wizard.approval_user[0].id,
                 'hiring_status': 'Hired',
