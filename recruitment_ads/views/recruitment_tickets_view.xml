@@ -98,7 +98,7 @@
         <!--View Recruitment Tickets Menu-->
         <menuitem id="menu_hr_recruitment_tickets_parent"
                   name="Recruitment Tickets"
-                  sequence="3"
+                  sequence="2"
                   parent="hr_recruitment.menu_hr_recruitment_root"
                   groups="recruitment_ads.group_view_recruitment_tickets"/>
         <menuitem
