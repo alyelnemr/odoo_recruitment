@@ -7,10 +7,10 @@
             <field name="name">Max Offer Amount for CEO Approval</field>
             <field name="hr_policy_type">ceo_approval_amount</field>
         </record>
-        <record id="record_hr_policy_ceo_approval_ceo" model="hr.policy.ceo.approval">
-            <field name="approval_group" ref="recruitment_ads.record_hr_master_approval_group_ceo" />
-            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_ceo_approval"/>
-        </record>
+<!--        <record id="record_hr_policy_ceo_approval_ceo" model="hr.policy.ceo.approval">-->
+<!--            <field name="approval_group" ref="recruitment_ads.record_hr_master_approval_group_ceo" />-->
+<!--            <field name="hr_policy" ref="recruitment_ads.record_hr_policy_ceo_approval"/>-->
+<!--        </record>-->
         <record id="record_hr_policy_ceo_approval_coo" model="hr.policy.ceo.approval">
             <field name="approval_group" ref="recruitment_ads.record_hr_master_approval_group_coo" />
             <field name="hr_policy" ref="recruitment_ads.record_hr_policy_ceo_approval"/>
