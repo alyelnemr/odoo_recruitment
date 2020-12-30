@@ -12,7 +12,7 @@
 Handle recruitment Process for Andalusia
     """,
     'depends': ['base', 'base_setup', 'bus', 'web_tour', 'hr_recruitment', 'mail', 'sync_ldap_ads', 'report_xlsx',
-                'decimal_precision', 'contacts'],
+                'decimal_precision', 'contacts', 'survey', 'website_form'],
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',

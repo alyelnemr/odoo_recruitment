@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="0">
+        <record model="res.partner" id="recruitment_ads.website_partner_root">
+            <field name="name">Website Administrator</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="customer" eval="False"/>
+            <field name="email">website.admin@example.com</field>
+        </record>
+
+        <record model="res.users" id="recruitment_ads.website_user_root">
+            <field name="partner_id" ref="recruitment_ads.website_partner_root"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
+            <field name="login" eval="Website Administrator"/>
+            <field name="signature"><![CDATA[<span>-- <br/>
+Website Administrator</span>]]></field>
+        </record>
+
+        <record model="utm.source" id="utm_source_website">
+            <field name="name">Website</field>
+        </record>
         <record id="mail_activity_type_data_interview" model="mail.activity.type">
             <field name="name">Interview</field>
             <field name="category">interview</field>
