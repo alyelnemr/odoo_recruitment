@@ -143,13 +143,14 @@ class JobForm(WebsiteForm):
                 data['record']['source_id'] = request.env.ref('recruitment_ads.utm_source_website', False).id
                 data['record']['medium_id'] = request.env.ref('utm.utm_medium_website', False).id
                 data['record']['cv_matched'] = True
+                data['record']['from_website'] = True
                 data['record']['source_resp'] = request.env.ref('recruitment_ads.website_user_root', False).id
                 email = data['record'].get('email_from', False).strip().lower()
                 phone = data['record'].get('partner_phone', False)
                 partner = request.env['res.partner'].search(
                     ['|', '|', ('email', '=', email), ('phone', '=', phone), ('mobile', '=', phone)], limit=1)
                 if not partner:
-                    partner = request.env['res.partner'].create(
+                    partner = request.env['res.partner'].sudo().create(
                         {'name': data['record']['partner_name'],
                          'email': data['record']['email_from'],
                          'phone': data['record']['partner_phone'],

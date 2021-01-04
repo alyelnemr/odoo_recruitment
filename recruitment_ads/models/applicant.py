@@ -27,6 +27,7 @@ class Applicant(models.Model):
     job_id = fields.Many2one('hr.job', "Applied Job", ondelete='restrict',required= True)
 
     partner_id = fields.Many2one('res.partner', "Applicant", required=True)
+    from_website=fields.Boolean('Submitted From Website', default=False)
     # applicant_history_ids = fields.Many2many('hr.applicant', 'applicant_history_rel', 'applicant_id', 'history_id',
     #                                          string='History', readonly=False)
     applicant_history_ids = fields.Many2many('hr.applicant.history', 'applicant_history_relation', 'applicant_id',
@@ -188,7 +189,7 @@ class Applicant(models.Model):
                 parent_id = vals['partner_id']
             elif action == "write":
                 parent_id = self.partner_id.id
-            policy = self.env['hr.policy'].search([], limit=1)
+            policy = self.env['hr.policy'].search([('hr_policy_type','=','application_period')], limit=1)
             domain = [('partner_id', '=', parent_id), ('job_id', '=', vals['job_id'])]
             old_applications = self.env['hr.applicant'].search(domain)
             if old_applications:

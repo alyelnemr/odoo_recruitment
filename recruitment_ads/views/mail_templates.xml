@@ -2,7 +2,6 @@
 <odoo>
     <data>
 
-
         <template id="assets_backend" name="a_js assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/recruitment_ads/static/src/js/activity.js"/>
@@ -17,6 +16,11 @@
             </xpath>
         </template>
 
+        <template id="assets_frontend" name="Website Form Assets Frontend" inherit_id="website.assets_frontend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/recruitment_ads/static/src/js/website_form.js"/>
+            </xpath>
+        </template>
 
         <template id="callresult" inherit_id="mail.message_activity_done">
             <xpath expr="//span[@t-field='activity.user_id.name']" position="replace">
@@ -37,6 +41,18 @@
                     <strong>Interview result</strong>
                     <div t-field="activity.interview_result" style="margin-left: 8px;"></div>
                 </div>
+            </xpath>
+        </template>
+
+        <template id="website_hr_recruitment_inherit" inherit_id="website_hr_recruitment.index">
+            <xpath expr="//small[@t-if='job.no_of_recruitment &gt; 1']" position="after">
+                <h4 t-field="job.business_unit_id.name"/>
+            </xpath>
+        </template>
+
+        <template id="website_hr_recruitment_detail_inherit" inherit_id="website_hr_recruitment.detail">
+            <xpath expr="//h1[@t-field='job.name']" position="after">
+                <h4 t-field="job.business_unit_id.name"/>
             </xpath>
         </template>
 
