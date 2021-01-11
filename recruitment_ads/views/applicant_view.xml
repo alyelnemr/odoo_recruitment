@@ -33,20 +33,23 @@
             <field name="model">hr.applicant</field>
             <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='source_id']" position="attributes">
-                    <attribute name="options">{'no_create': '1', 'no_create_edit': '1'}</attribute>
-                    <attribute name="readonly">[('from_website','=',True)]</attribute>
+<!--                <xpath expr="//field[@name='source_id']" position="attributes">-->
+<!--                    <attribute name="options"></attribute>-->
+<!--                    <attribute name="readonly">[('from_website','=',False)]</attribute>-->
+<!--                </xpath>-->
+                <xpath expr="//field[@name='medium_id']" position="replace">
+
+                    <field name="from_website" invisible="1"/>
+                     <field name="medium_id" groups="base.group_no_one" attrs="{'readonly':[('from_website','=',True)]}" />
                 </xpath>
-                <xpath expr="//field[@name='medium_id']" position="attributes">
-                    <attribute name="readonly">[('from_website','=',True)]</attribute>
-                </xpath>
-                <xpath expr="//field[@name='source_id']" position="after">
+                <xpath expr="//field[@name='source_id']" position="replace">
+                    <field name="source_id" options="{'no_create': '1', 'no_create_edit': '1'}"
+                           attrs="{'readonly':[('from_website','=',True)]}" />
                     <field name="source_resp" readonly="1"/>
                 </xpath>
                 <xpath expr="//field[@name='priority']" position="after">
                     <!--"allow_call" is a related filed, called in this view to allow the javascript to read its value to apply a certain condition-->
                     <field name="allow_call" invisible="1"/>
-                    <field name="from_website" invisible="1"/>
                     <field name="cv_matched"/>
                     <field name="reason_of_rejection"
                            attrs="{'required':[('cv_matched','=',False)],'invisible':[('cv_matched','=',True)]}"/>
