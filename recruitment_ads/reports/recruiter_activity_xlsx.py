@@ -38,9 +38,10 @@ class RecActivityXslx(models.AbstractModel):
                     10: {'header': _('LinkedIn'), 'field': 'linkedin', 'width': 20},
                     11: {'header': _('CV Source'), 'field': 'source_id', 'width': 10},
                     12: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20},
-                    13: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18},
-                    14: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18},
-                    15: {'header': _('Department'), 'field': 'department_id', 'width': 20},
+                    13: {'header': _('Referred By'), 'field': 'reference_by', 'width': 20},
+                    14: {'header': _('Creation Date'), 'field': 'create_date', 'width': 18},
+                    15: {'header': _('Business unit'), 'field': 'business_unit_id', 'width': 18},
+                    16: {'header': _('Department'), 'field': 'department_id', 'width': 20},
                 }
             })
 
@@ -137,8 +138,9 @@ class RecActivityXslx(models.AbstractModel):
                 last_row + 2: {'header': _('Expected Salary'), 'field': 'salary_expected', 'width': 18},
                 last_row + 3: {'header': _('Current  Salary'), 'field': 'salary_current', 'width': 18},
                 last_row + 4: {'header': _('Matched'), 'field': 'cv_matched', 'width': 10, 'type': 'bool'},
-                last_row + 5: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
-                               },
+                last_row + 5: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20},
+                last_row + 6: {'header': _('Referred By'), 'field': 'reference_by', 'width': 20},
+
                 #
             })
 
@@ -209,14 +211,15 @@ class RecActivityXslx(models.AbstractModel):
                 last_row + 5: {'header': _('Have Assessment'), 'field': 'have_assessment', 'width': 20, 'type': 'bool'},
                 last_row + 6: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20
                                },
-                last_row + 7: {'header': _('Created on'), 'field': 'interview_create_date', 'width': 18},
-                last_row + 8: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
-                last_row + 9: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30},
-                last_row + 10: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30
+                last_row + 7: {'header': _('Referred By'), 'field': 'reference_by', 'width': 20},
+                last_row + 8: {'header': _('Created on'), 'field': 'interview_create_date', 'width': 18},
+                last_row + 9: {'header': _('Interview date 1'), 'field': 'interview_date', 'width': 18},
+                last_row + 10: {'header': _('Interviewers 1'), 'field': 'interviewers', 'width': 30},
+                last_row + 11: {'header': _('Interviewer type 1'), 'field': 'interview_type_id', 'width': 30
                                 },
-                last_row + 11: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20},
-                last_row + 12: {'header': _('Interview Done Date 1'), 'field': 'interview_result_date', 'width': 20},
-                last_row + 13: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
+                last_row + 12: {'header': _('Interview result 1'), 'field': 'interview_result', 'width': 20},
+                last_row + 13: {'header': _('Interview Done Date 1'), 'field': 'interview_result_date', 'width': 20},
+                last_row + 14: {'header': _('Comment 1'), 'field': 'interview_comment', 'width': 22},
             })
             last_row = max(sheets[tap_count]['Interviews'])
             max_interviews_count = False
@@ -334,6 +337,7 @@ class RecActivityXslx(models.AbstractModel):
                                 },
                 last_row + 12: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
                                 },
+                last_row + 13: {'header': _('Referred By'), 'field': 'reference_by', 'width': 20},
             })
 
         if report.hired:
@@ -405,6 +409,7 @@ class RecActivityXslx(models.AbstractModel):
                                },
                 last_row + 10: {'header': _('Source Responsible'), 'field': 'source_resp', 'width': 20,
                                 },
+                last_row + 11: {'header': _('Referred By'), 'field': 'reference_by', 'width': 20},
             })
 
         return sheets
@@ -414,7 +419,7 @@ class RecActivityXslx(models.AbstractModel):
             self.write_array_header('CV Source')
             cvs = '''select prt_user.name user_id , prt_creater.name source_resp , creater_bu.name creater_bu ,
             app.name app_name , app_partner.mobile, app_partner.phone , app.email_from , app.have_assessment,
-            app.have_cv ,app.partner_name , app_partner.face_book , app_partner.linkedin, app.create_date,
+            app.have_cv, app.reference reference_by, app.partner_name , app_partner.face_book , app_partner.linkedin, app.create_date,
             source.name source , app.cv_matched , app.salary_expected , app.salary_current ,app.reason_of_rejection,
             job.name job_name , job_bu.name bu_name ,department.name department ,section.name section
             from hr_applicant app
@@ -449,7 +454,7 @@ class RecActivityXslx(models.AbstractModel):
                 for i in range(len(calls)):
                     call_activity_query = '''
                         select app.name app_name ,app_partner.phone,app_partner.mobile ,
-                         app.email_from,app_partner.face_book,app.partner_name,
+                         app.email_from,app_partner.face_book,app.partner_name,app.reference reference_by, 
                         app_partner.linkedin ,app.cv_matched , app.salary_expected , app.salary_current,cr_bu.name cr_bu,
                         job.name job_name,job_bu.name job_bu , department.name department ,section.name section, prt_uid_name.name source_resp ,
                          MAT.name , MA.write_date , MA.call_result_id ,MA.call_result_date,MA.feedback ,prt.name create_uid
@@ -496,7 +501,7 @@ class RecActivityXslx(models.AbstractModel):
                 for i in range(len(applications)):
                     interviews_activity_query = '''
                     select  app.name app_name, app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
-                    app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
+                    app.have_cv ,app.have_assessment ,app_partner.phone , app.reference reference_by, prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
                     department.name department, section.name section , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
                     app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
                     it.name, CE.display_corrected_start_date ,CE.start_datetime,CE.start_date,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
@@ -556,7 +561,7 @@ class RecActivityXslx(models.AbstractModel):
         if report.offer or report.hired:
             offer_query = '''
                             select  app.name app_name , app.partner_name,app.email_from, 
-                            app_partner.mobile, app_partner.face_book , app_partner.linkedin ,app.have_assessment,
+                            app_partner.mobile, app_partner.face_book , app.reference reference_by, app_partner.linkedin ,app.have_assessment,
                             prt_creater.name create_uid , offer_bu.name bu_name,source_prt.name source_resp ,
                             job.name job_name, section.name section ,department.name department,
                             offer.issue_date, offer.total_package , offer.have_offer, offer.have_approval_cycle,
@@ -611,6 +616,7 @@ class CVSourceLineWrapper:
         self.face_book = cv_source['face_book']
         self.linkedin = cv_source['linkedin']
         self.source_id = cv_source['source']
+        self.reference_by = cv_source['reference_by']
         self.source_resp = cv_source['source_resp']
         self.create_date = cv_source['create_date']
         self.business_unit_id = cv_source['bu_name']
@@ -673,6 +679,7 @@ class CallLineWrapper:
 
         self.cv_matched = call[0]['cv_matched']
         self.source_resp = call[0]['source_resp']
+        self.reference_by = call[0]['reference_by']
 
 
 # noinspection PyUnresolvedReferences,PyMissingConstructor,PyProtectedMember
@@ -740,6 +747,7 @@ class InterviewsPerApplicationWrapper(GeneralSheetWrapper):
         self.cv_matched = interviews_data[0]['cv_matched']
         self.have_assessment = interviews_data[0]['have_assessment']
         self.source_resp = interviews_data[0]['creater']
+        self.reference_by = interviews_data[0]['reference_by']
 
     # def _get_activity(self, activity, data):
     #     """
@@ -812,3 +820,4 @@ class offerLineWrapper:
         else:
             self.offer_type = 'Nursing Offer'
         self.source_resp = offer['source_resp']
+        self.reference_by = offer['reference_by']
