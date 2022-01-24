@@ -500,8 +500,8 @@ class RecActivityXslx(models.AbstractModel):
                 # y = len(applications)
                 for i in range(len(applications)):
                     interviews_activity_query = '''
-                    select  app.name app_name, app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
-                    app.have_cv ,app.have_assessment ,app_partner.phone , app.reference reference_by, prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
+                    select app.reference reference_by,  app.name app_name, app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
+                    app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name creater ,job_bu.name job_bu,app.write_date,
                     department.name department, section.name section , job.name job_name , cr_bu.name cr_bu , res_partner.name prt_name , 
                     app.salary_expected , app.salary_current ,  MA.create_date create_on, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
                     it.name, CE.display_corrected_start_date ,CE.start_datetime,CE.start_date,STRING_AGG ( res.name, '•'  )  ,app.cv_matched
@@ -546,7 +546,7 @@ class RecActivityXslx(models.AbstractModel):
 
                     where MA.res_id = %s
 
-                    group by MA.id, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
+                    group by app.reference , MA.id, MA.write_date , MA.interview_result ,MA.interview_result_date,MA.feedback ,
                     CE.display_corrected_start_date, it.name ,
                     app.name ,app.partner_name, app_partner.mobile , app.email_from,app_partner.face_book, app_partner.linkedin ,
                     app.have_cv ,app.have_assessment ,app_partner.phone , prt_uid_name.name,job_bu.name ,
