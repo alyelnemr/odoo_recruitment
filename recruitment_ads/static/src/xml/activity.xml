@@ -30,6 +30,10 @@
                 </select>
                 <hr></hr>
 
+                <input t-if="previous_activity_type_id == 2 or previous_activity_type_id == 6 or previous_activity_type_id == 7"
+                        type="date" name="delivery_time_aly" class="form-control o_required" />
+                <hr></hr>
+
                 <!--textarea class="form-control" rows="3" id="activity_call_result" placeholder="Call Result"/-->
                 <textarea class="form-control" rows="3" id="activity_feedback" placeholder="Write Feedback"/>
                 <div class="mt8">
