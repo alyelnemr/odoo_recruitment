@@ -24,6 +24,7 @@ class MailActivity(models.Model):
                                      default=lambda self: self.env.user)
     call_result_date = fields.Date()
     interview_result_date = fields.Date()
+    call_not_interested_date = fields.Date()
 
     @api.multi
     def write(self, vals):
@@ -63,10 +64,11 @@ class MailActivity(models.Model):
         self.update_calendar_event(interview_result)
         return message.ids and message.ids[0] or False
 
-    def action_call_result(self, feedback=False, call_result_id=False):
+    def action_call_result(self, feedback=False, call_result_id=False, not_interested_date=False):
         message = self.env['mail.message']
 
-        self.write(dict(call_result_id=call_result_id, feedback=feedback))
+        self.write(dict(call_result_id=call_result_id,
+                        feedback=feedback, call_not_interested_date=not_interested_date))
 
         for activity in self:
             record = self.env[activity.res_model].browse(activity.res_id)

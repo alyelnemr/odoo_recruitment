@@ -227,14 +227,14 @@ MailActivity.include({
             }}
     },
 
-    _markActivityDDDone: function (id, feedback,call_result_id ) {
+    _markActivityDDDone: function (id, feedback,call_result_id, not_interested_date) {
 
 
         return this._rpc({
                 model: 'mail.activity',
                 method: 'action_call_result',
                 args: [[id]],
-                kwargs: {feedback:feedback,call_result_id: call_result_id},
+                kwargs: {feedback:feedback,call_result_id: call_result_id, not_interested_date:not_interested_date},
             });
       },
 
@@ -321,9 +321,18 @@ MailActivity.include({
                                         }
                                     );
                                 }
+                                else if (call_result_id ==="Not interested") {
+                                    if (record.partner_phone && record.partner_mobile && record.email_from){
+                                              self._markActivityDDDone(activity_id, feedback,call_result_id,date_not_interested )
+                                             .then(self._onScheduleInterview(self));
+                                    }else{
+                                        alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
+
+                                    }
+                                }
                                 else if (call_result_id ==="Invited") {
-                                    if (record.partner_phone && record.partner_mobile && record.email_from){                                    self._markActivityDDDone(activity_id, feedback,call_result_id )
-                                              self._markActivityDDDone(activity_id, feedback,call_result_id )
+                                    if (record.partner_phone && record.partner_mobile && record.email_from){
+                                              self._markActivityDDDone(activity_id, feedback,call_result_id,date_not_interested )
                                              .then(self._onScheduleInterview(self));
                                     }else{
                                         alert('Please insert Applicant Mobile /Email /Phone in order to schedule activity .');
@@ -331,7 +340,7 @@ MailActivity.include({
                                     }
                                 }
                                 else{
-                                    self._markActivityDDDone(activity_id, feedback,call_result_id )
+                                    self._markActivityDDDone(activity_id, feedback,call_result_id,date_not_interested )
                                         .then(self.scheduleActivity.bind(self, previous_activity_type_id));
                                 }
                             }
@@ -343,6 +352,7 @@ MailActivity.include({
                         $popover.on('click', '.o_activity_popover_done', function () {
 
                             var feedback = _.escape($popover.find('#activity_feedback').val());
+                            debugger;
 
     //                        if (previous_activity_type_id != 2 ){
     //                              self._markActivityDone(activity_id, feedback)
@@ -351,6 +361,7 @@ MailActivity.include({
     //                        }
                             if (previous_activity_type_id == 2 || previous_activity_type_id == 6 || previous_activity_type_id == 7){
                                 var call_result_id = _.escape($popover.find('#activity_call_result').val());
+                                var date_not_interested = _.escape($popover.find('#date_not_interested').val());
                                    if (call_result_id === "") {
                                         Dialog.alert(
                                             self,
@@ -362,7 +373,7 @@ MailActivity.include({
                                         );
                                    }
                                    else{
-                                        self._markActivityDDDone(activity_id,feedback,call_result_id)
+                                        self._markActivityDDDone(activity_id,feedback,call_result_id,date_not_interested)
                                         .then(self._reload.bind(self, {activity: true, thread: true}));
                                    }
                             }
