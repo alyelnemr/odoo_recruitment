@@ -322,7 +322,18 @@ MailActivity.include({
                                     );
                                 }
                                 else if (call_result_id ==="Not interested") {
+                                    if (date_not_interested === "") {
+                                        Dialog.alert(
+                                            self,
+                                            _t("Please select date for note interested!"), {
+                                                confirm_callback: function () {
+                                                    self._reload.bind(self, {activity: true});
+                                                },
+                                            }
+                                        );
+                                    }
                                     if (record.partner_phone && record.partner_mobile && record.email_from){
+                                                feedback = date_not_interested + '\n' + feedback
                                               self._markActivityDDDone(activity_id, feedback,call_result_id,date_not_interested )
                                              .then(self._onScheduleInterview(self));
                                     }else{
