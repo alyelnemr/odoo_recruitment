@@ -333,7 +333,7 @@ MailActivity.include({
                                         );
                                     }
                                     if (record.partner_phone && record.partner_mobile && record.email_from){
-                                                feedback = date_not_interested + '\n' + feedback
+                                                feedback = 'date not interested: ' + date_not_interested + '\n' + feedback
                                               self._markActivityDDDone(activity_id, feedback,call_result_id,date_not_interested )
                                              .then(self._onScheduleInterview(self));
                                     }else{
