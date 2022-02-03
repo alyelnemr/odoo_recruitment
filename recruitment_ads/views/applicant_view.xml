@@ -86,6 +86,7 @@
                             <field name="last_activity_date" string="Last Activity Date"/>
                             <field name="result" string="Result"/>
                             <field name="stage_id" string="Last Stage"/>
+                            <field name="activity_feedback" string="Comment"/>
                         </tree>
                     </field>
                 </xpath>
