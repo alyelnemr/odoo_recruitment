@@ -67,8 +67,13 @@ class MailActivity(models.Model):
     def action_call_result(self, feedback=False, call_result_id=False, not_interested_date=False):
         message = self.env['mail.message']
 
+        try:
+            d = datetime.strptime(not_interested_date, "%Y-%m-%d")
+        except ValueError:
+            d = None
+
         self.write(dict(call_result_id=call_result_id,
-                        feedback=feedback, call_not_interested_date=not_interested_date))
+                        feedback=feedback, call_not_interested_date=d))
 
         for activity in self:
             record = self.env[activity.res_model].browse(activity.res_id)
